@@ -13,8 +13,6 @@ module.exports = function(client, data){
 			Mini3Cay_red.countDocuments({uid: client.UID}).exec(function(err, total){
 				Mini3Cay_red.find({uid: client.UID}, 'id bet win kq time', {sort:{'_id':-1}, skip: (page-1)*kmess, limit: kmess}, function(err, result) {
 					if (result.length) {
-
-						console.log(result)
 						Promise.all(result.map(function(obj){
 							obj = obj._doc;
 							delete obj.__v;
@@ -33,7 +31,6 @@ module.exports = function(client, data){
 			Mini3Cay_xu.countDocuments({uid: client.UID}).exec(function(err, total){
 				Mini3Cay_xu.find({uid: client.UID}, 'id bet win kq time', {sort:{'_id':-1}, skip: (page-1)*kmess, limit: kmess}, function(err, result) {
 					if (result.length) {
-						console.log(result)
 						Promise.all(result.map(function(obj){
 							obj = obj._doc;
 							delete obj.__v;

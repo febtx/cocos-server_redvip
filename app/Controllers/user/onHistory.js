@@ -13,8 +13,8 @@ function historyNapRed(client, data){
 	var page  = data.page>>0;
 	var kmess = 10;
 	if (page > 0) {
-		NapThe.countDocuments({'name': client.profile.name}).exec(function(err, total){
-			NapThe.find({'name': client.profile.name}, 'GD menhGia nhaMang nhan seri status time', {sort:{'_id':-1}, skip: (page-1)*kmess, limit: kmess}, function(err, result) {
+		NapThe.countDocuments({'uid': client.UID}).exec(function(err, total){
+			NapThe.find({'uid': client.UID}, 'GD menhGia nhaMang nhan seri status time', {sort:{'_id':-1}, skip: (page-1)*kmess, limit: kmess}, function(err, result) {
 				client.send(JSON.stringify({profile:{history:{nap_red:result, page:page, kmess:kmess, total:total}}}));
 			});
 		});
@@ -25,8 +25,8 @@ function historyMuaThe(client, data){
 	var page  = data.page>>0
 	var kmess = 10;
 	if (page > 0) {
-		MuaThe.countDocuments({'name': client.profile.name}).exec(function(err, total){
-			MuaThe.find({'name': client.profile.name}, {}, {sort:{'_id':-1}, skip: (page-1)*kmess, limit: kmess}, function(err, result) {
+		MuaThe.countDocuments({'uid': client.UID}).exec(function(err, total){
+			MuaThe.find({'uid': client.UID}, {}, {sort:{'_id':-1}, skip: (page-1)*kmess, limit: kmess}, function(err, result) {
 				client.send(JSON.stringify({profile:{history:{mua_the:result, page:page, kmess:kmess, total:total}}}));
 			});
 		});
@@ -59,8 +59,12 @@ function historyChuyenRed(client, data){
 }
 
 function the_cao(client, id){
-	MuaThe_card.find({'cart': id}, function(err, data){
-		client.send(JSON.stringify({profile:{the_cao:data}}));
+	MuaThe.findOne({'_id': id, 'uid': client.UID}, function(err, card) {
+		if (!!card) {
+			MuaThe_card.find({'cart': id}, function(err, data){
+				client.send(JSON.stringify({profile:{the_cao:data}}));
+			});
+		}
 	});
 }
 

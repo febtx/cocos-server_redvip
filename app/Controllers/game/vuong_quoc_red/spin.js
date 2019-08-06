@@ -9,36 +9,12 @@ const UserInfo  = require('../../../Models/UserInfo');
 const Helpers   = require('../../../Helpers/Helpers');
 
 function random_cel3(){
-	// 21+13+8+5+3+2+1 = 53
-	var a = (Math.random()*28)>>0;
-	if (a === 27) {
-		// 27
-		return 0;
-	}else if (a >= 25 && a < 27) {
-		// 25 26
-		return 1;
-	}else if (a >= 22 && a < 25) {
-		// 22 23 24
-		return 2;
-	}else if (a >= 18 && a < 22) {
-		// 18 19 20 21
-		return 3;
-	}else if (a >= 13 && a < 18) {
-		// 13 14 15 16 17
-		return 4;
-	}else if (a >= 7 && a < 13) {
-		// 7 8 9 10 11 12
-		return 5;
-	}else{
-		// 0 1 2 3 4 5 6   
-		return 6;
-	}
+	return (Math.random()*7)>>0;
 }
 
 function random_cel2(){
-	// 21+13+8+5+3+2+1 = 53
 	var a = (Math.random()*28)>>0;
-	if (a === 27) {
+	if (a == 27) {
 		// 27
 		return 6;
 	}else if (a >= 25 && a < 27) {
@@ -58,33 +34,6 @@ function random_cel2(){
 		return 1;
 	}else{
 		// 0 1 2 3 4 5 6   
-		return 0;
-	}
-}
-
-function random_cel1(){
-	// 21+13+8+5+3+2+1 = 53
-	var a = (Math.random()*53)>>0;
-	if (a === 52) {
-		// 52
-		return 6;
-	}else if (a >= 50 && a < 52) {
-		// 50 51
-		return 5;
-	}else if (a >= 47 && a < 50) {
-		// 47 48 49
-		return 4;
-	}else if (a >= 42 && a < 47) {
-		// 42 43 44 45 46
-		return 3;
-	}else if (a >= 34 && a < 42) {
-		// 34 35 36 37 38 39 40 41
-		return 2;
-	}else if (a >= 21 && a < 34) {
-		// 21 22 23 24 25 26 27 28 29 30 31 32 33
-		return 1;
-	}else{
-		// 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20
 		return 0;
 	}
 }
@@ -120,10 +69,44 @@ function check_win(data, line){
 	})
 }
 
+function gameBonusX(bet, x){
+	if (x == 0) {
+		return (bet*((Math.random()*(150-40+1))+40))>>0;
+	}else {
+		return bet*x;
+	}
+}
+
 function gameBonus(client, bet){
-	var map = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
-	Promise.all(map.map(function(obj, index){
-		return {isOpen: false, bet: bet*(((Math.random()*(110))+40)>>0)};
+	var map = [
+		gameBonusX(bet, 0),
+		gameBonusX(bet, 0),
+		gameBonusX(bet, 0),
+		gameBonusX(bet, 0),
+		gameBonusX(bet, 0),
+		gameBonusX(bet, 0),
+		gameBonusX(bet, 0),
+		gameBonusX(bet, 60),
+		gameBonusX(bet, 60),
+		gameBonusX(bet, 60),
+		gameBonusX(bet, 60),
+		gameBonusX(bet, 60),
+		gameBonusX(bet, 40),
+		gameBonusX(bet, 40),
+		gameBonusX(bet, 40),
+		gameBonusX(bet, 40),
+		gameBonusX(bet, 40),
+		gameBonusX(bet, 40),
+		gameBonusX(bet, 40),
+		gameBonusX(bet, 40)
+	];
+
+	map = Helpers.shuffle(map); // tráo bài lần 1
+	map = Helpers.shuffle(map); // tráo bài lần 2
+	map = Helpers.shuffle(map); // tráo bài lần 3
+
+	Promise.all(map.map(function(obj){
+		return {isOpen: false, bet: obj};
 	}))
 	.then(result => {
 		client.VuongQuocRed.bonus = result;
@@ -145,58 +128,36 @@ module.exports = function(client, data){
 				client.send(JSON.stringify({VuongQuocRed:{status:0, notice: 'Bạn không đủ ' + (red ? 'RED':'XU') + ' để quay.!!'}}));
 			}else{
 				var phe = red ? 2 : 4;    // Phế
-				var addQuy = (tongCuoc*0.03)>>0;
+				var addQuy = (tongCuoc*0.01)>>0;
 				VuongQuocRed_hu.findOneAndUpdate({type:bet, red:red}, {$inc:{bet:addQuy}}, function(err1,cat){});
 				var line_nohu = 0;
-				var bet_win = 0;
-				var free    = 0;
-				var bonusX  = 0;
-				var type    = 0;   // Loại được ăn lớn nhất trong phiên
-				var isFree  = false;
-				var nohu    = false;
+				var bet_win  = 0;
+				var free     = 0;
+				var bonusX   = 0;
+				var type     = 0;   // Loại được ăn lớn nhất trong phiên
+				var isFree   = false;
+				var nohu     = false;
 				var isBigWin = false;
 				// tạo kết quả
 				VuongQuocRed_hu.findOne({type:bet, red:red}, {}, function(err2, dataHu){
-					var icons = [0,0,0,0,0,0,0];
 
 					var celSS = [
-						random_cel3(), random_cel3(), random_cel3(),
+						random_cel3(), random_cel3(), random_cel2(),
 						random_cel2(), random_cel2(), random_cel2(),
-						random_cel2(), random_cel2(), random_cel2(),
-						random_cel1(), random_cel1(), random_cel1(),
-						random_cel1(), random_cel1(), random_cel1(),
+						random_cel2(), 3,             2,
+						2,             1,             1,
+						0,             0,             0,
 					]; // Super
 
 					celSS = Helpers.shuffle(celSS); // tráo bài lần 1
 					celSS = Helpers.shuffle(celSS); // tráo bài lần 2
 					celSS = Helpers.shuffle(celSS); // tráo bài lần 3
 
-					var cel1 = [celSS[0], celSS[1], celSS[2]]; // Cột 1
-					var cel2 = [celSS[3], celSS[4], celSS[5]]; // Cột 2
-					var cel3 = [celSS[6], celSS[7], celSS[8]]; // Cột 3
-					var cel4 = [celSS[9], celSS[10], celSS[11]]; // Cột 4
+					var cel1 = [celSS[0],  celSS[1],  celSS[2]];  // Cột 1
+					var cel2 = [celSS[3],  celSS[4],  celSS[5]];  // Cột 2
+					var cel3 = [celSS[6],  celSS[7],  celSS[8]];  // Cột 3
+					var cel4 = [celSS[9],  celSS[10], celSS[11]]; // Cột 4
 					var cel5 = [celSS[12], celSS[13], celSS[14]]; // Cột 5
-
-					var wain1 = Promise.all(cel1.map(function(icon){
-						icons[icon]++;
-					}));
-					var wain2 = Promise.all(cel2.map(function(icon){
-						icons[icon]++;
-					}))
-					var wain3 = Promise.all(cel3.map(function(icon){
-						icons[icon]++;
-					}))
-					var wain4 = Promise.all(cel4.map(function(icon){
-						icons[icon]++;
-					}))
-					var wain5 = Promise.all(cel5.map(function(icon){
-						icons[icon]++;
-					}))
-					.then(tesst =>{
-						console.log(icons)
-
-					})
-
 
 					var quyHu     = dataHu.bet;
 					var checkName = new RegExp("^" + client.profile.name + "$", 'i');
@@ -448,17 +409,24 @@ module.exports = function(client, data){
 									bonusX += 1;
 								}
 							}else if(line_win.win == 5) {
-								if (line_win.type === 5 && !nohu) {
+								if (line_win.type === 5) {
 									checkWin = true;
 									// Nổ Hũ
+									type = 2;
+									if (!nohu) {
+										bet_win += quyHu;
+										VuongQuocRed_hu.findOneAndUpdate({type:bet, red:red}, {$set:{name:"", bet:dataHu.min}}, function(err3,cat){});
+										red && Helpers.ThongBaoNoHu(client, {title: "VƯƠNG QUỐC RED", name: client.profile.name, bet: quyHu});
+									}else{
+										bet_win += dataHu.min;
+										red && Helpers.ThongBaoNoHu(client, {title: "VƯƠNG QUỐC RED", name: client.profile.name, bet: dataHu.min});
+									}
 									nohu = true;
-									bet_win += quyHu;
-									VuongQuocRed_hu.findOneAndUpdate({type:bet, red:red}, {$set:{name:"", bet:dataHu.min}}, function(err3,cat){});
-								}else if (line_win.type === 4){
+								}else if (!nohu && line_win.type === 4){
 									// x30
 									checkWin = true;
 									bet_win += bet*30;
-								}else if (line_win.type === 3){
+								}else if (!nohu && line_win.type === 3){
 									// x5
 									checkWin = true;
 									bet_win += bet*5;
@@ -480,7 +448,7 @@ module.exports = function(client, data){
 									free += 1;
 									isFree = true;
 								}
-							}else if(line_win.win == 3) {
+							}else if(!nohu && line_win.win == 3) {
 								if (line_win.type === 5) {
 									checkWin = true;
 									// x500
@@ -494,7 +462,7 @@ module.exports = function(client, data){
 									checkWin = true;
 									bet_win += bet*4;
 								}
-							}else if(line_win.win == 2) {
+							}else if(!nohu && line_win.win == 2) {
 								if (line_win.type === 5) {
 									checkWin = true;
 									// x200
@@ -508,7 +476,7 @@ module.exports = function(client, data){
 									checkWin = true;
 									bet_win += bet*3;
 								}
-							}else if(line_win.win == 1) {
+							}else if(!nohu && line_win.win == 1) {
 								if (line_win.type === 5) {
 									checkWin = true;
 									// x75
@@ -522,7 +490,7 @@ module.exports = function(client, data){
 									checkWin = true;
 									bet_win += bet*2;
 								}
-							}else if(line_win.win == 0) {
+							}else if(!nohu && line_win.win == 0) {
 								if (line_win.type === 5) {
 									checkWin = true;
 									// x30
@@ -536,8 +504,7 @@ module.exports = function(client, data){
 							return checkWin;
 						}))
 						.then(result2 => {
-							console.log(icons)
-							bet_win = bet_win-Math.ceil(bet_win*phe/100); // Cắt phế 2% - 4% ăn được
+							bet_win = (bet_win-Math.ceil(bet_win*phe/100))>>0; // Cắt phế 2% - 4% ăn được
 							var tien = 0;
 							if (client.VuongQuocRed.free > 0) {
 								tien = bet_win;
@@ -545,8 +512,9 @@ module.exports = function(client, data){
 							}else{
 								tien = bet_win - tongCuoc;
 							}
-							if (bet_win >= tongCuoc*5) {
+							if (!nohu && bet_win >= tongCuoc*3.5) {
 								isBigWin = true;
+								type = 1;
 							}
 							if (free > 0) {
 								client.VuongQuocRed.free += free;
@@ -569,12 +537,11 @@ module.exports = function(client, data){
 								if (tien < 0){
 									uInfo['redLost'] = mini_users['lost'] = tien*(-1); // Cập nhật Số Red đã Thua
 								}
-								if (!!nohu){
+								if (nohu){
 									uInfo['hu'] = mini_users['hu'] = 1;         // Cập nhật Số Hũ Red đã Trúng
 								}
 
-
-								client.send(JSON.stringify({VuongQuocRed:{status:1, cel:[cel1, cel2, cel3, cel4, cel5], line_win: result2, win: bet_win, free: client.VuongQuocRed.free, isFree: isFree, isBonus: !!client.VuongQuocRed.bonusX, isNoHu: nohu, isBigWin: isBigWin}, user:{red:user.red-bet}}));
+								client.send(JSON.stringify({VuongQuocRed:{status:1, cel:[cel1, cel2, cel3, cel4, cel5], line_win: result2, win: bet_win, free: client.VuongQuocRed.free, isFree: isFree, isBonus: !!client.VuongQuocRed.bonusX, isNoHu: nohu, isBigWin: isBigWin}, user:{red:user.red-tongCuoc}}));
 								VuongQuocRed_red.create({'name': client.profile.name, 'type': type, 'win': bet_win, 'bet': bet, 'kq': result2.length, 'line': line.length, 'time': new Date()}, function (err4, small) {
 									client.VuongQuocRed.id = small._id;
 								});
@@ -591,16 +558,16 @@ module.exports = function(client, data){
 								if (tien < 0){
 									uInfo['xuLost'] = mini_users['lostXu'] = tien*(-1); // Cập nhật Số Red đã Thua
 								}
-								if (!!nohu){
+								if (nohu){
 									uInfo['huXu'] = mini_users['huXu'] = 1;      // Cập nhật Số Hũ Xu đã Trúng
 								}
-								client.send(JSON.stringify({VuongQuocRed:{status:1, cel:[cel1, cel2, cel3, cel4, cel5], line_win: result2, win: bet_win, free: client.VuongQuocRed.free, isFree: isFree, isBonus: !!client.VuongQuocRed.bonusX, isNoHu: nohu, isBigWin: isBigWin, thuong:thuong}, user:{xu:user.xu-bet}}));
+								client.send(JSON.stringify({VuongQuocRed:{status:1, cel:[cel1, cel2, cel3, cel4, cel5], line_win: result2, win: bet_win, free: client.VuongQuocRed.free, isFree: isFree, isBonus: !!client.VuongQuocRed.bonusX, isNoHu: nohu, isBigWin: isBigWin, thuong:thuong}, user:{xu:user.xu-tongCuoc}}));
 								VuongQuocRed_xu.create({'name': client.profile.name, 'type': type, 'win': bet_win, 'bet': bet, 'kq': result2.length, 'line': line.length, 'time': new Date()}, function (err4, small) {
 									client.VuongQuocRed.id = small._id;
 								});
 							}
 							UserInfo.findOneAndUpdate({id:client.UID},{$inc:uInfo}, function(err,cat){});
-							VuongQuocRed_users.findOneAndUpdate({id:client.UID}, {$inc:mini_users}, function(err,cat){});
+							VuongQuocRed_users.findOneAndUpdate({'uid':client.UID}, {$inc:mini_users}, function(err,cat){});
 						})
 					})
 				})

@@ -4,6 +4,7 @@ const TaiXiu   = require('./TaiXiu')
 const Shop     = require('./Shop')
 const GiftCode = require('./GiftCode')
 const Game     = require('./Game')
+const OTP      = require('./OTP')
 
 //const ControlAvatar  = require('./Avatar.js');
 
@@ -31,8 +32,12 @@ module.exports = function(client, p){
 			client.scene = p.scene;
 			User.next_scene(client);
 		}
+		if (void 0 !== p.otp){
+			OTP(client, p.otp);
+		}
 
 		//if (p.avatar   !== void 0)
 		//	ControlAvatar.upload(client, p.avatar);
+
 	}
 }

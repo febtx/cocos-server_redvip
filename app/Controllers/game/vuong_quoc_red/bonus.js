@@ -31,9 +31,9 @@ function onSelectBox(client, box){
 					client.VuongQuocRed.bonusX   = 0;
 					UserInfo.findOneAndUpdate({id:client.UID}, client.VuongQuocRed.red ? {$inc:{red:betWin}} : {$inc:{xu:betWin}}, function(err, user){
 						if (client.VuongQuocRed.red) {
-							client.send(JSON.stringify({VuongQuocRed:{bonus:{win: betWin}}, user:{red:user.red+betWin}}));
+							client.send(JSON.stringify({VuongQuocRed:{bonus:{win: betWin}}, user:{red:user.red*1+betWin}}));
 						}else{
-							client.send(JSON.stringify({VuongQuocRed:{bonus:{win: betWin}}, user:{xu:user.xu+betWin}}));
+							client.send(JSON.stringify({VuongQuocRed:{bonus:{win: betWin}}, user:{xu:user.xu*1+betWin}}));
 						}
 					});
 				}, 700);

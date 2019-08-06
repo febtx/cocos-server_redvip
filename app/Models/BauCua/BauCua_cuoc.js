@@ -3,6 +3,7 @@ const mongoose      = require('mongoose');
 
 const Schema = new mongoose.Schema({
 	uid:       {type: String,  required: true},    // ID Người cược
+	name:      {type: String,  required: true},    // Name Người cược
 	phien:     {type: Number,  required: true},    // phiên cược
 	red:       {type: Boolean, required: true},    // loại tiền (Red = true,   Xu = false)
 

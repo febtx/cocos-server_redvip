@@ -18,7 +18,7 @@ function init(obj){
 	io = obj;
 	io.BauCua_phien = 1;
 
-	BauCua_phien.findOne({}, 'id', {sort:{'id':-1}}, function(err, last) {
+	BauCua_phien.findOne({}, 'id', {sort:{'_id':-1}}, function(err, last) {
 		if (!!last){
 			io.BauCua_phien = last.id+1;
 		}
@@ -53,13 +53,13 @@ function thongtin_thanhtoan(dice = null){
 						var TienThang = 0; // Số tiền thắng (chưa tính gốc)
 						var TongThua  = 0; // Số tiền thua
 						var TongThang = 0; // Tổng tiền thắng (đã tính gốc)
-						var thuong = 0;
-						var huou = 0;
-						var bau  = 0;
-						var ga   = 0;
-						var ca   = 0;
-						var cua  = 0;
-						var tom  = 0;
+						var thuong    = 0;
+						var huou      = 0;
+						var bau       = 0;
+						var ga        = 0;
+						var ca        = 0;
+						var cua       = 0;
+						var tom       = 0;
 
 						// Cược Hươu
 						if (cuoc[0] > 0) {
@@ -143,13 +143,6 @@ function thongtin_thanhtoan(dice = null){
 								update['redLost'] = updateGame['red_lost'] = TongThua;
 							}
 
-							updateGame['huou'] = huou;
-							updateGame['bau']  = bau;
-							updateGame['ga']   = ga;
-							updateGame['ca']   = ca;
-							updateGame['cua']  = cua;
-							updateGame['tom']  = tom;
-
 							var active1 = UserInfo.findOneAndUpdate({id:cuoc.uid}, {$inc:update}).exec();
 							var active2 = BauCua_cuoc.findOneAndUpdate({_id:cuoc._id}, {$set:{thanhtoan: true, betwin:TongThang}}).exec();
 							var active3 = BauCua_user.findOneAndUpdate({uid: cuoc.uid}, {$inc:updateGame}).exec();
@@ -167,13 +160,6 @@ function thongtin_thanhtoan(dice = null){
 								update['xuLost'] = updateGame['xu_lost'] = TongThua;
 							}
 
-							updateGame['huouXu'] = huou;
-							updateGame['bauXu']  = bau;
-							updateGame['gaXu']   = ga;
-							updateGame['caXu']   = ca;
-							updateGame['cuaXu']  = cua;
-							updateGame['tomXu']  = tom;
-
 							var active1 = UserInfo.findOneAndUpdate({id:cuoc.uid}, {$inc:update}).exec();
 							var active2 = BauCua_cuoc.findOneAndUpdate({_id:cuoc._id}, {$set:{thanhtoan: true, betwin:TongThang}}).exec();
 							var active3 = BauCua_user.findOneAndUpdate({uid: cuoc.uid}, {$inc:updateGame}).exec();
@@ -185,7 +171,7 @@ function thongtin_thanhtoan(dice = null){
 								var status = {mini:{baucua:{status:{win:false, bet: TongThua}}}};
 							}
 							Promise.all(io.users[cuoc.uid].map(function(client){
-								client.send(JSON.stringify(status));
+								client.red(status);
 							}));
 						}
 						return Promise.all([active1, active2, active3])
@@ -202,13 +188,15 @@ function thongtin_thanhtoan(dice = null){
 							}))
 							.then(result => {
 								if (result.length>0) {
+									result = {news:{a:result}};
 									Promise.all(Object.values(io.users).map(function(users){
 										Promise.all(users.map(function(client){
 											if(client.scene == "home"){
-												client.send(JSON.stringify({news:{a:result}}));
+												client.red(result);
 											}
 										}));
 									}));
+									io.sendAllClient(result);
 								}
 							})
 						playGame();
@@ -243,20 +231,41 @@ function thongtin_thanhtoan(dice = null){
 			}))
 			Promise.all([active1, active2])
 			.then(Results => {
-				var temp_data  = JSON.stringify({mini:{baucua:{data:data}}});
-				var admin_data = JSON.stringify({baucua:{red: temp.red, xu: temp.xu}});
-				Promise.all(Object.values(io.users).map(function(users){
-					Promise.all(users.map(function(client){
-						if (client.gameEvent !== void 0 && client.gameEvent.viewBauCua !== void 0 && client.gameEvent.viewBauCua)
-							client.send(temp_data);
+				var phien = io.BauCua_phien;
+				BauCua_cuoc.find({phien: phien}, {}, function(err, list) {
+
+					var temp_data  = {mini:{baucua:{data:data}}};
+					Promise.all(Object.values(io.users).map(function(users){
+						Promise.all(users.map(function(client){
+							if (client.gameEvent !== void 0 && client.gameEvent.viewBauCua !== void 0 && client.gameEvent.viewBauCua)
+								client.red(temp_data);
+						}));
 					}));
-				}));
-				Promise.all(Object.values(io.admins).map(function(admin){
-					Promise.all(admin.map(function(client){
-						if (client.gameEvent !== void 0 && client.gameEvent.viewBauCua !== void 0 && client.gameEvent.viewBauCua)
-							client.send(admin_data);
-					}));
-				}));
+
+					Promise.all(list.map(function(cuoc){
+						cuoc = cuoc._doc;
+
+						delete cuoc._id;
+						delete cuoc.__v;
+						delete cuoc.uid;
+						delete cuoc.phien;
+						delete cuoc.thanhtoan;
+						delete cuoc.bigWin;
+						delete cuoc.betwin;
+						delete cuoc.time;
+
+						return cuoc;
+					}))
+					.then(resultH => {
+						var admin_data = {baucua:{red: temp.red, xu: temp.xu, ingame: resultH}};
+						Promise.all(Object.values(io.admins).map(function(admin){
+							Promise.all(admin.map(function(client){
+								if (client.gameEvent !== void 0 && client.gameEvent.viewBauCua !== void 0 && client.gameEvent.viewBauCua)
+									client.red(admin_data);
+							}));
+						}));
+					})
+				})
 			})
 		}
 	});
@@ -266,9 +275,7 @@ function playGame(){
 	//io.BauCua_time = 15;
 
 	gameLoop = setInterval(async function(){
-		console.log(io.BauCua_time);
 		io.BauCua_time--;
-		//console.log(io.BauCua_time);
 		if (io.BauCua_time <= 60) {
 			if (io.BauCua_time < 0) {
 				clearInterval(gameLoop);
@@ -292,22 +299,22 @@ function playGame(){
 					const create = await BauCua_phien.create({'dice1':dice1, 'dice2':dice2, 'dice3':dice3, 'time':new Date()})
 					if (!!create) {
 						io.BauCua_phien = create.id+1;
+
 						var chothanhtoan = await thongtin_thanhtoan([dice1, dice2, dice3]);
 
 						Promise.all(Object.values(io.users).map(function(users){
 							Promise.all(users.map(function(client){
-								client.send(JSON.stringify({mini: {baucua: {finish:{dices:[create.dice1, create.dice2, create.dice3], phien:create.id}}}}));
+								client.red({mini: {baucua: {finish:{dices:[create.dice1, create.dice2, create.dice3], phien:create.id}}}});
 							}));
 						}));
 
 						Promise.all(Object.values(io.admins).map(function(admin){
 							Promise.all(admin.map(function(client){
-								client.send(JSON.stringify({baucua: {finish: true, dices:[create.dice1, create.dice2, create.dice3]}}));
+								client.red({baucua: {finish: true, dices:[create.dice1, create.dice2, create.dice3]}});
 							}));
 						}));
 					}
 				} catch (err) {
-					console.log(err)
 				}
 			}else
 				thongtin_thanhtoan()

@@ -73,6 +73,7 @@ function DaiLy(client, data){
 
 function NhaMang_add(client, data){
 	var name = data.name;
+	var code = data.value;
 	var nap  = !!data.nap;
 	var mua  = !!data.mua;
 	if (Helper.isEmpty(name) || (!nap && !mua)) {
@@ -84,7 +85,7 @@ function NhaMang_add(client, data){
 				client.send(JSON.stringify({notice:{title:'THÊM NHÀ MẠNG',text:'Nhà mạng đã tồn tại...'}}));
 			}else{
 				try {
-					const create = await tabNhaMang.create({'name':name, 'nap':nap, 'mua':mua});
+					const create = await tabNhaMang.create({'name':name, 'value':code, 'nap':nap, 'mua':mua});
 					if (!!create) {
 						tabNhaMang.find({}, function(err, data){
 							client.send(JSON.stringify({thecao:{nhamang:data}, notice:{title:'THÊM NHÀ MẠNG',text:'Thêm NHÀ MẠNG thành công...'}}));

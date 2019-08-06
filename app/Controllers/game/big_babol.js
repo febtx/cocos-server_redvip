@@ -3,8 +3,6 @@ const spin = require('./big_babol/spin');
 const log  = require('./big_babol/log');
 const top  = require('./big_babol/top');
 
-
-
 module.exports = function(client, data){
 	if (void 0 !== data.info) {
 		//info(client, data.info)

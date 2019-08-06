@@ -15,7 +15,7 @@ module.exports = function(client) {
 			return void 0;
 		}))
 		.then(varT => {
-			client.send(JSON.stringify({mini3cay:data}));
+			client.red({mini3cay:data});
 		})
 	});
 }

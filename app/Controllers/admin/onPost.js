@@ -12,6 +12,8 @@ const MiniPoker    = require('./game/mini_poker')
 const BigBabol     = require('./game/big_babol')
 const VuongQuocRed = require('./game/vq_red')
 const mini3cay     = require('./game/mini3cay')
+const angrybirds   = require('./game/angrybirds')
+
 
 module.exports = function(client, data) {
 	if (client.auth && client.UID) {
@@ -38,6 +40,9 @@ module.exports = function(client, data) {
 		if (void 0 !== data.mini3cay) {
 			mini3cay(client, data.mini3cay)
 		}
+		if (void 0 !== data.angrybird) {
+			angrybirds(client, data.angrybird)
+		}
 		// End Game
 
 		if (void 0 !== data.nap_the) {
@@ -47,7 +52,7 @@ module.exports = function(client, data) {
 			MuaThe.onData(client, data.mua_the)
 		}
 		if (void 0 !== data.users) {
-			Users.onData(client, data.users)
+			Users(client, data.users)
 		}
 		if (void 0 !== data.shop) {
 			Shop.onData(client, data.shop)

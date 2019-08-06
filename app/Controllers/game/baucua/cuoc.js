@@ -1,6 +1,5 @@
 
 const BauCua_cuoc = require('../../../Models/BauCua/BauCua_cuoc');
-const BauCua_user = require('../../../Models/BauCua/BauCua_user');
 const BauCua_temp = require('../../../Models/BauCua/BauCua_temp');
 
 const UserInfo    = require('../../../Models/UserInfo');
@@ -58,7 +57,7 @@ module.exports = function(client, data){
 							})
 						});
 					}else{
-						var create = {uid: client.UID, phien: client.redT.BauCua_phien, red:red, time: new Date()};
+						var create = {uid: client.UID, name: client.profile.name, phien: client.redT.BauCua_phien, red:red, time: new Date()};
 						create[linhVat] = cuoc;
 						BauCua_cuoc.create(create);
 						data[tab[linhVat]] = cuoc;

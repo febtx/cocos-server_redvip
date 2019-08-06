@@ -57,15 +57,6 @@ function getLogs(client){
 		});
 	});
 	var active2 = new Promise((resolve, reject) => {
-		TXChat.find({},'name value id', {sort:{'id':-1}, limit: 20}, function(err, post) {
-			if (err) return reject(err)
-			Promise.all(post.map(function(obj){return {'user':obj.name, 'value':obj.value}}))
-			.then(function(arrayOfResults) {
-				resolve(arrayOfResults)
-			})
-		});
-	});
-	var active3 = new Promise((resolve, reject) => {
 		UserInfo.findOne({id:client.UID}, 'name', function(err, user){
 			username = user.name
 		});
@@ -149,15 +140,15 @@ function getLogs(client){
 		});
 	});
 
-	var active4 = new Promise((resolve, reject) => {
-		TaiXiu_User.findOne({uid: client.UID}, 't_day_thang_red t_day_thua_red t_day_thang_xu t_day_thua_xu c_day_thang_red c_day_thua_red c_day_thang_xu c_day_thua_xu t_day_thang_red_ht t_day_thua_red_ht t_day_thang_xu_ht t_day_thua_xu_ht c_day_thang_red_ht c_day_thua_red_ht c_day_thang_xu_ht c_day_thua_xu_ht', function(err, data) {
+	var active3 = new Promise((resolve, reject) => {
+		TaiXiu_User.findOne({uid: client.UID}, 'tLineWinRed tLineLostRed tLineWinXu tLineLostXu cLineWinRed cLineLostRed cLineWinXu cLineLostXu tLineWinRedH tLineLostRedH tLineWinXuH tLineLostXuH cLineWinRedH cLineLostRedH cLineWinXuH cLineLostXuH', function(err, data) {
 			if (err) return reject(err)
 			resolve(data)
 		});
 	});
 
-	Promise.all([active1, active2, active3, active4]).then(values => {
-		client.send(JSON.stringify({taixiu:{du_day: values[3], logs: values[0], chat:{logs: values[1].reverse()}, taixiu:{ red_tai: TaiXiu_red_tong_tai, red_xiu: TaiXiu_red_tong_xiu, xu_tai: TaiXiu_xu_tong_tai, xu_xiu: TaiXiu_xu_tong_xiu, red_me_tai: TaiXiu_red_me_tai, red_me_xiu: TaiXiu_red_me_xiu, xu_me_tai: TaiXiu_xu_me_tai, xu_me_xiu: TaiXiu_xu_me_xiu, red_player_tai: taixiu_red_player_tai, red_player_xiu: taixiu_red_player_xiu, xu_player_tai: taixiu_xu_player_tai, xu_player_xiu: taixiu_xu_player_xiu, }, chanle:{ red_chan: ChanLe_red_tong_chan, red_le: ChanLe_red_tong_le, xu_chan: ChanLe_xu_tong_chan, xu_le: ChanLe_xu_tong_le, red_me_chan: ChanLe_red_me_chan, red_me_le: ChanLe_red_me_le, xu_me_chan: ChanLe_xu_me_chan, xu_me_le: ChanLe_xu_me_le, red_player_chan: chanle_red_player_chan, red_player_le: chanle_red_player_le, xu_player_chan: chanle_xu_player_chan, xu_player_le: chanle_xu_player_le}}}));
+	Promise.all([active1, active2, active3]).then(values => {
+		client.send(JSON.stringify({taixiu:{du_day: values[2], logs: values[0], taixiu:{ red_tai: TaiXiu_red_tong_tai, red_xiu: TaiXiu_red_tong_xiu, xu_tai: TaiXiu_xu_tong_tai, xu_xiu: TaiXiu_xu_tong_xiu, red_me_tai: TaiXiu_red_me_tai, red_me_xiu: TaiXiu_red_me_xiu, xu_me_tai: TaiXiu_xu_me_tai, xu_me_xiu: TaiXiu_xu_me_xiu, red_player_tai: taixiu_red_player_tai, red_player_xiu: taixiu_red_player_xiu, xu_player_tai: taixiu_xu_player_tai, xu_player_xiu: taixiu_xu_player_xiu, }, chanle:{ red_chan: ChanLe_red_tong_chan, red_le: ChanLe_red_tong_le, xu_chan: ChanLe_xu_tong_chan, xu_le: ChanLe_xu_tong_le, red_me_chan: ChanLe_red_me_chan, red_me_le: ChanLe_red_me_le, xu_me_chan: ChanLe_xu_me_chan, xu_me_le: ChanLe_xu_me_le, red_player_chan: chanle_red_player_chan, red_player_le: chanle_red_player_le, xu_player_chan: chanle_xu_player_chan, xu_player_le: chanle_xu_player_le}}}));
 	}, reason => {
 		console.log(reason)
 	});
@@ -171,7 +162,7 @@ function getNew(client){
 		});
 	});
 	var active2 = new Promise((resolve, reject) => {
-		TaiXiu_User.findOne({uid: client.UID}, 't_day_thang_red t_day_thua_red t_day_thang_xu t_day_thua_xu c_day_thang_red c_day_thua_red c_day_thang_xu c_day_thua_xu t_day_thang_red_ht t_day_thua_red_ht t_day_thang_xu_ht t_day_thua_xu_ht c_day_thang_red_ht c_day_thua_red_ht c_day_thang_xu_ht c_day_thua_xu_ht', function(err, data) {
+		TaiXiu_User.findOne({uid: client.UID}, 'tLineWinRed tLineLostRed tLineWinXu tLineLostXu cLineWinRed cLineLostRed cLineWinXu cLineLostXu tLineWinRedH tLineLostRedH tLineWinXuH tLineLostXuH cLineWinRedH cLineLostRedH cLineWinXuH cLineLostXuH', function(err, data) {
 			if (err) return reject(err)
 			resolve(data)
 		});
@@ -240,7 +231,7 @@ const cuoc = async function(client, data){
 			});
 
 			Promise.all([active_findUser, active_findPhienGame]).then(values => {
-				var user  = values[0]
+				var user  = values[0];
 				var phien = values[1].id+1;
 				var active_check = new Promise((resolve, reject) => {
 					TXCuoc.find({uid:client.UID, phien:phien, taixiu:taixiu, red:red}, async function(err, list) {
@@ -263,7 +254,6 @@ const cuoc = async function(client, data){
 								try {
 									const create = await TXCuoc.create({uid:client.UID, name:user.name, phien:phien, bet:bet, taixiu:taixiu, select:select, red:red, time:new Date()});
 									if (!!create) {
-										//var userVery = red ? {$inc:{red:-bet}} : {$inc:{xu:-bet}};
 										UserInfo.findOneAndUpdate({id:client.UID}, red ? {$inc:{red:-bet}} : {$inc:{xu:-bet}}, function(err,cat){});
 
 										TXCuocOne.findOne({uid: client.UID, phien: phien, taixiu:taixiu, select:select, red:red}, function(err, checkOne) {
@@ -383,14 +373,14 @@ const get_log = async function(client, data){
 const get_top = async function(client, data){
 	var taixiu = !!data.taixiu;
 	var red    = !!data.red;
-	var query = 'uid ' + (taixiu ? (red ? 't_thang_lon_red' : 't_thang_lon_xu') : (red ? 'c_thang_lon_red' : 'c_thang_lon_xu'));
-	var sort  = taixiu ? (red ? {'t_thang_lon_red':-1} : {'t_thang_lon_xu':-1}) : (red ? {'c_thang_lon_red':-1} : {'c_thang_lon_xu':-1});
-	TaiXiu_User.find({}, query, {sort: sort, limit: 20}, function(err, result){
+	var query = 'uid ' + (taixiu ? (red ? 'tWinRed' : 'tWinXu') : (red ? 'cWinRed' : 'cWinXu'));
+	var sort  = taixiu ? (red ? {'tWinRed':-1} : {'tWinXu':-1}) : (red ? {'cWinRed':-1} : {'cWinXu':-1});
+	TaiXiu_User.find({}, query, {sort: sort, limit: 50}, function(err, result){
 		if (result.length) {
 			Promise.all(result.map(function(obj){
 				var getUser = UserInfo.findOne({id: obj.uid}, 'name').exec();
 				return Promise.all([getUser]).then(values => {
-					return values[0] ? {name: values[0].name, bet: (taixiu ? (red ? obj.t_thang_lon_red : obj.t_thang_lon_xu) : (red ? obj.c_thang_lon_red : obj.c_thang_lon_xu))} : [];
+					return values[0] ? {name: values[0].name, bet: (taixiu ? (red ? obj.tWinRed : obj.tWinXu) : (red ? obj.cWinRed : obj.cWinXu))} : [];
 				});
 			}))
 			.then(function(arrayOfResults) {

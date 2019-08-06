@@ -10,9 +10,9 @@ module.exports = function(client, data) {
 	UserInfo.findOne({name: {$regex: regex}}, 'name', function(err, data){
 		if (!!data) {
 			VuongQuocRed_hu.findOneAndUpdate({type:bet, red:true}, {$set:{name:data.name}}, function(err,cat){});
-			client.send(JSON.stringify({vq_red:{name_hu:{bet: bet, name: data.name}}, notice:{title:'VƯƠNG QUỐC RED',text:'Hũ ' + bet + ' sẽ được kích nổ bởi ' + data.name + '...'}}));
+			client.red({vq_red:{name_hu:{bet: bet, name: data.name}}, notice:{title:'VƯƠNG QUỐC RED',text:'Hũ ' + bet + ' sẽ được kích nổ bởi ' + data.name + '...'}});
 		}else{
-			client.send(JSON.stringify({notice:{title:'THẤT BẠI',text:'Người dùng không tồn tại...'}}));
+			client.red({notice:{title:'THẤT BẠI',text:'Người dùng không tồn tại...'}});
 		}
 	})
 }

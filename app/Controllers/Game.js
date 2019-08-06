@@ -12,7 +12,13 @@ const vq_red     = require('./game/vuong_quoc_red');
 const baucua     = require('./game/baucua');
 
 // Mini 3 Cây
-const mini3cay     = require('./game/mini3cay');
+const mini3cay   = require('./game/mini3cay');
+
+// Mini 3 Cây
+const caothap    = require('./game/caothap');
+
+// AngryBirds
+const angrybird  = require('./game/angrybird');
 
 module.exports = function(client, data){
 	if (void 0 !== data.mini_poker) {
@@ -29,5 +35,11 @@ module.exports = function(client, data){
 	}
 	if (void 0 !== data.mini3cay) {
 		mini3cay(client, data.mini3cay);
+	}
+	if (void 0 !== data.caothap) {
+		caothap(client, data.caothap);
+	}
+	if (void 0 !== data.angrybird) {
+		angrybird(client, data.angrybird);
 	}
 }

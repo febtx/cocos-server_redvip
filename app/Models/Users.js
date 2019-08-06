@@ -1,14 +1,13 @@
 
-const mongoose      = require('mongoose');
-
-//const uniqueValidator = require("mongoose-unique-validator");
-//const mongooseHidden = require('mongoose-hidden')();
-const bcrypt = require("bcrypt-nodejs");
+const mongoose = require('mongoose');
+const bcrypt   = require("bcrypt-nodejs");
 
 const Schema = new mongoose.Schema({
 	local: {
-		username:   { type: String, required: true, unique: true },
-		password:   { type: String, required: true, hide: true },
+		username:   { type: String,  required: true, unique: true },
+		password:   { type: String,  required: true, hide: true },
+		ban_pass:   { type: Number,  default: 0 },
+		ban_login:  { type: Boolean, default: false },
 		token:      String,
 		lastDate:   String,
 		lastLogin:  String,
@@ -37,9 +36,6 @@ const Schema = new mongoose.Schema({
 	},
 });
 
-//Schema.plugin(uniqueValidator);
-//Schema.plugin(mongooseHidden, {hidden: {'_id': false, 'local.password': true}});
-
 // Các phương thức ======================
 // Tạo mã hóa mật khẩu
 Schema.methods.generateHash = function(password) {
@@ -49,7 +45,16 @@ Schema.methods.generateHash = function(password) {
 // kiểm tra mật khẩu có trùng khớp
 Schema.methods.validPassword = function(password) {
 	return bcrypt.compareSync(password, this.local.password);
-
 };
-const Users = mongoose.model("Users", Schema);
-module.exports = Users;
+
+// Tài khoản bị khóa
+Schema.methods.isBan = function() {
+	return this.local.ban_login;
+};
+
+// Kiểm tra khóa lấy lại mật khẩu
+Schema.methods.forGotPass = function() {
+	return this.local.ban_pass;
+};
+
+module.exports = mongoose.model("Users", Schema);

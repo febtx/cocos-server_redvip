@@ -8,20 +8,25 @@ const Bigbabol_User  = require('../Models/BigBabol/BigBabol_users');
 const VQRed_User     = require('../Models/VuongQuocRed/VuongQuocRed_users');
 const BauCua_User    = require('../Models/BauCua/BauCua_user');
 const Mini3Cay_User  = require('../Models/Mini3Cay/Mini3Cay_user');
+const CaoThap_User   = require('../Models/CaoThap/CaoThap_user');
+
 
 const Helper      = require('../Helpers/Helpers');
 const onHistory   = require('./user/onHistory');
 const ket_sat     = require('./user/ket_sat');
 
 const next_scene  = require('./user/next_scene');
+const security    = require('./user/security');
+
+const nhanthuong  = require('./user/nhanthuong');
 
 const GameState = require('./GameState.js')
 
 const first = function(client, select){
-	UserInfo.findOne({id: client.UID}, 'name redPlay red xu ketSat UID phone email security joinedOn', function(err, user) {
+	UserInfo.findOne({id: client.UID}, 'name lastVip redPlay red xu ketSat UID phone cmt email security joinedOn', function(err, user) {
 		if (!!user) {
 			user = user._doc;
-			var vipHT = (user.redPlay/100000)>>0; // Điểm vip Hiện Tại
+			var vipHT = ((user.redPlay-user.lastVip)/100000)>>0; // Điểm vip Hiện Tại
 			// Cấp vip hiện tại
 			var vipLevel = 1;
 			var vipPre   = 0;   // Điểm víp cấp Hiện tại
@@ -63,11 +68,22 @@ const first = function(client, select){
 			user.vipNext = vipNext-vipPre;
 			user.vipHT   = vipHT-vipPre;
 
-
 			delete user._id;
 			delete user.redPlay;
+			delete user.lastVip;
 
-			client.profile = user;
+			if (!Helper.isEmpty(user.phone)) {
+				user.phone = Helper.cutPhone(user.phone)
+			}
+
+			if (!Helper.isEmpty(user.email)) {
+				user.email = Helper.cutEmail(user.email)
+			}
+
+			client.profile = {name: user.name};
+
+			addToListOnline(client);
+
 			var data = {
 				Authorized: true,
 				user:       user,
@@ -98,7 +114,7 @@ const signName = function(client, name){
 		client.send(JSON.stringify({notice: {title: "TÊN NHÂN VẬT", text: error}}));
 		return;
 	}
-	UserInfo.findOne({id: client.UID}, 'name red xu ketSat UID phone email security joinedOn', function(err, d){
+	UserInfo.findOne({id: client.UID}, 'name red xu ketSat UID phone email cmt security joinedOn', function(err, d){
 		if (d == null) {
 			var regex = new RegExp("^" + name + "$", 'i');
 			User.findOne({'_id': client.UID}, function(err, base){
@@ -119,10 +135,6 @@ const signName = function(client, name){
 									user.vipNext = 100;
 									user.vipHT   = 0;
 
-									delete user.birthyeah;
-									delete user.birthmonth;
-									delete user.birthday;
-
 									delete user._id;
 									delete user.redWin;
 									delete user.redLost;
@@ -135,17 +147,20 @@ const signName = function(client, name){
 									delete user.hu;
 									delete user.huXu;
 
+									addToListOnline(client);
+
 									var data = {
 										Authorized: true,
 										user: user,
 									};
-									client.profile = user;
+									client.profile = {name: user.name};
 									TaiXiu_User.create({'uid': client.UID});
 									MiniPoker_User.create({'uid': client.UID});
 									Bigbabol_User.create({'uid': client.UID});
 									VQRed_User.create({'uid': client.UID});
 									BauCua_User.create({'uid': client.UID});
 									Mini3Cay_User.create({'uid': client.UID});
+									CaoThap_User.create({'uid': client.UID});
 									GameState(client);
 									client.send(JSON.stringify(data));
 								}
@@ -188,7 +203,7 @@ function changePassword(client, data){
 						client.send(JSON.stringify({notice:{load: 0, title: 'THÀNH CÔNG', text:'Đổi mật khẩu thành công.'}}));
 					});
 				}else{
-					client.send(JSON.stringify({notice:{load: 0, title: 'THÀNH CÔNG', text:'Mật khẩu cũ không đúng.'}}));
+					client.send(JSON.stringify({notice:{load: 0, title: 'THẤT BẠI', text:'Mật khẩu cũ không đúng.'}}));
 				}
 			}
 		});
@@ -196,8 +211,8 @@ function changePassword(client, data){
 }
 
 function getLevel(client){
-	UserInfo.findOne({id:client.UID}, 'redPlay vip', function(err, user){
-		var vipHT = (user.redPlay/100000)>>0; // Điểm vip Hiện Tại
+	UserInfo.findOne({id:client.UID}, 'lastVip redPlay vip', function(err, user){
+		var vipHT = ((user.redPlay-user.lastVip)/100000)>>0; // Điểm vip Hiện Tại
 		// Cấp vip hiện tại
 		var vipLevel = 1;
 		var vipPre   = 0; // Điểm víp cấp Hiện tại
@@ -240,6 +255,14 @@ function getLevel(client){
 	});
 }
 
+function addToListOnline(client){
+	if (void 0 !== client.redT.users[client.UID]) {
+		client.redT.users[client.UID].push(client);
+	}else{
+		client.redT.users[client.UID] = [client];
+	}
+}
+
 function onData(client, data) {
 	if (void 0 !== data.doi_pass) {
 		changePassword(client, data.doi_pass)
@@ -255,6 +278,12 @@ function onData(client, data) {
 	}
 	if (void 0 !== data.getLevel) {
 		getLevel(client);
+	}
+	if (void 0 !== data.nhanthuong) {
+		nhanthuong(client);
+	}
+	if (void 0 !== data.security) {
+		security(client, data.security);
 	}
 }
 

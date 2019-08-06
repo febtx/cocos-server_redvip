@@ -10,6 +10,25 @@ const validPassword = function(password, Hash) {
 	return bcrypt.compareSync(password, Hash)
 }
 
+const cutEmail = function(email) {
+	var data = email.split("@");
+	var string = "";
+	var start = '';
+	if (data[0].length > 7) {
+		start = data[0].slice(0, 6);
+	}else{
+		start = data[0].slice(0, data[0].length-3);
+	}
+	return string.concat(start, '***@', data[1]);
+}
+
+const cutPhone = function(phone) {
+	var string = "";
+	var start = phone.slice(0, 3);
+	var end   = phone.slice(phone.length-2, phone.length);
+	return string.concat(start, '*****', end);
+}
+
 const validateEmail = function(t) {
 	return /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(t)
 }
@@ -92,6 +111,17 @@ function shuffle(arra1) {
     return arra1;
 }
 
+function ThongBaoNoHu(io, data){
+	Promise.all(Object.values(io.redT.users).map(function(users){
+		Promise.all(users.map(function(client){
+			if(client.scene == "home" && io.UID != client.UID){
+				client.red({pushnohu:data});
+			}
+		}));
+	}));
+	io.redT.sendAllClient({pushnohu:data});
+}
+
 module.exports = {
 	generateHash:  generateHash,
 	validPassword: validPassword,
@@ -99,9 +129,12 @@ module.exports = {
 	isEmpty:       isEmpty,
 	numberWithCommas: numberWithCommas,
 	getOnlyNumberInString: getOnlyNumberInString,
-	numberPad:     numberPad,
-	shuffle:       shuffle,
-	validateEmail: validateEmail,
+	numberPad:       numberPad,
+	shuffle:         shuffle,
+	validateEmail:   validateEmail,
 	checkPhoneValid: checkPhoneValid,
 	nFormatter:      nFormatter,
+	ThongBaoNoHu:    ThongBaoNoHu,
+	cutEmail:        cutEmail,
+	cutPhone:        cutPhone,
 }

@@ -1,83 +1,90 @@
 
-const BigBabol_hu   = require('../../../Models/BigBabol/BigBabol_hu');
-const BigBabol_red  = require('../../../Models/BigBabol/BigBabol_red');
-const BigBabol_xu   = require('../../../Models/BigBabol/BigBabol_xu');
+const BigBabol_hu    = require('../../../Models/BigBabol/BigBabol_hu');
+const BigBabol_red   = require('../../../Models/BigBabol/BigBabol_red');
+const BigBabol_xu    = require('../../../Models/BigBabol/BigBabol_xu');
 const BigBabol_users = require('../../../Models/BigBabol/BigBabol_users');
 
-const UserInfo  = require('../../../Models/UserInfo');
-const Helpers   = require('../../../Helpers/Helpers');
-/**
-function random_cel(){
-	// 7+6+5+4+3+2+1 = 28
-	var a = (Math.random()*28)>>0;
-	if (a === 27) {
-		return 6;
-	}else if (a >= 25 && a < 27) {
-		return 5;
-	}else if (a >= 22 && a < 25) {
-		return 4;
-	}else if (a >= 18 && a < 22) {
-		return 3;
-	}else if (a >= 13 && a < 18) {
-		return 2;
-	}else if (a >= 7 && a < 13) {
-		return 1;
-	}else{
-		return 0;
-	}
-}
-*/
+const UserInfo     = require('../../../Models/UserInfo');
+const ThongBaoNoHu = require('../../../Helpers/Helpers').ThongBaoNoHu;
+const shuffle      = require('../../../Helpers/Helpers').shuffle;
 
-function random_cel(){
-	// 21+13+8+5+3+2+1 = 53
-	var a = (Math.random()*53)>>0;
-	if (a === 52) {
-		// 52
-		return 6;
-	}else if (a >= 50 && a < 52) {
-		// 50 51
+function random_cel3(){
+	return (Math.random()*6)>>0;
+}
+
+function random_cel2(){
+	var a = (Math.random()*21)>>0;
+	if (a == 20) {
+		// 20
 		return 5;
-	}else if (a >= 47 && a < 50) {
-		// 47 48 49
+	}else if (a >= 18 && a < 20) {
+		// 18 19
 		return 4;
-	}else if (a >= 42 && a < 47) {
-		// 42 43 44 45 46
+	}else if (a >= 15 && a < 18) {
+		// 15 16 17
 		return 3;
-	}else if (a >= 34 && a < 42) {
-		// 34 35 36 37 38 39 40 41
+	}else if (a >= 11 && a < 15) {
+		// 11 12 13 14
 		return 2;
-	}else if (a >= 21 && a < 34) {
-		// 21 22 23 24 25 26 27 28 29 30 31 32 33
+	}else if (a >= 6 && a < 11) {
+		// 6 7 8 9 10
 		return 1;
 	}else{
-		// 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20
+		// 0 1 2 3 4 5
 		return 0;
 	}
 }
 
 function check_win(data, line){
 	var win_icon = 0;
+	var heso     = 0;
 	var win_type = null;
-	var arrT   = [];           // Mảng lọc các bộ
+
+	var thaythe  = 0;  // Thay Thế (WinD)
+
+	var arrT     = []; // Mảng lọc các bộ
+
 	for (var i = 0; i < 3; i++) {
 		var dataT = data[i];
+		if (dataT == 5) {
+			++thaythe;
+		}
 		if (void 0 === arrT[dataT]) {
 			arrT[dataT] = 1;
 		}else{
 			arrT[dataT] += 1;
 		}
 	}
-	return Promise.all(arrT.map(function(c, index){
-		if (c === 3 && index > 0) {
-			win_icon = index;
-			win_type = 3;
-		}
-		if (c === 2 && (index == 1 || index == 2)) {
-			win_icon = index;
-			win_type = 2;
-		}
-	})).then(result => {
-		return {line: line, win: win_icon, type: win_type};
+
+	return new Promise((aT, bT) => {
+		Promise.all(arrT.map(function(c, index){
+			if (index != 5) {
+				arrT[index] += thaythe;
+			}
+			return index != 5 ? c+thaythe : c;
+		})).then(resultA1 => {
+			Promise.all(arrT.map(function(c, index){
+				if (c === 3) {
+					win_icon = index;
+					win_type = 3;
+				}
+				if (c === 2 && (index == 0 || index == 1)) {
+					win_icon = index;
+					win_type = 2;
+					if (index == 0) {
+						heso += 0.4;
+					}else{
+						heso += 0.8;
+					}
+				}
+				return void 0;
+			})).then(result => {
+				aT({line: line, win: win_icon, type: win_type, heso: heso});
+			})
+		})
+	})
+	.then(result => {
+		return result;
 	})
 }
 
@@ -94,149 +101,272 @@ module.exports = function(client, data){
 				client.send(JSON.stringify({mini:{big_babol:{status:0, notice: 'Bạn không đủ ' + (red ? 'RED':'XU') + ' để quay.!!'}}}));
 			}else{
 				var phe = red ? 2 : 4;    // Phế
-				var addQuy = (cuoc*0.03)>>0;
+				var addQuy = (cuoc*0.01)>>0;
 				BigBabol_hu.findOneAndUpdate({type:bet, red:red}, {$inc:{bet:addQuy}}, function(err,cat){});
-				var win_arr = null;
-				var bet_win = 0;
-				var type = 0;   // Loại được ăn lớn nhất trong phiên
+
+
+				var line_nohu = 0;
+				var win_arr   = null;
+				var bet_win   = 0;
+				var type      = 0;   // Loại được ăn lớn nhất trong phiên
 				// tạo kết quả
 				BigBabol_hu.findOne({type:bet, red:red}, {}, function(err, dataHu){
-					var cel1 = [random_cel(), random_cel(), random_cel()]; // Cột 1
-					var cel2 = [random_cel(), random_cel(), random_cel()]; // Cột 2
-					var cel3 = [random_cel(), random_cel(), random_cel()]; // Cột 3
+
+					var celSS = [
+						random_cel3(), random_cel2(), random_cel2(),
+						random_cel2(), 2,             1,
+						1,             0,             0,
+					]; // Super
+
+					celSS = shuffle(celSS); // tráo bài lần 1
+					celSS = shuffle(celSS); // tráo bài lần 2
+
+					var cel1 = [celSS[0], celSS[1], celSS[2]]; // Cột 1
+					var cel2 = [celSS[3], celSS[4], celSS[5]]; // Cột 2
+					var cel3 = [celSS[6], celSS[7], celSS[8]]; // Cột 3
+
 					var nohu      = false;
+					var isBigWin  = false;
 					var quyHu     = dataHu.bet;
+					var quyMin    = dataHu.min;
 					var checkName = new RegExp("^" + client.profile.name + "$", 'i');
 					checkName     = checkName.test(dataHu.name);
 					if (checkName) {
 						BigBabol_hu.findOneAndUpdate({type:bet, red:red}, {$set:{name:"", bet:dataHu.min}}, function(err,cat){});
-						cel1[(Math.random()*3)>>0] = 6;
-						cel2[(Math.random()*3)>>0] = 6;
-						cel3[(Math.random()*3)>>0] = 6;
+
+						line_nohu = ((Math.random()*line.length)>>0);
+						line_nohu = line[line_nohu];
 					}
 					// kiểm tra kết quả
 					Promise.all(line.map(function(selectLine){
 						switch(selectLine){
 							case 1:
+								if (!!line_nohu && line_nohu == selectLine) {
+									cel1[0] = 5;
+									cel2[0] = 5;
+									cel3[0] = 5;
+								}
 								return check_win([cel1[0], cel2[0], cel3[0]], selectLine);
 								break;
 
 							case 2:
+								if (!!line_nohu && line_nohu == selectLine) {
+									cel1[1] = 5;
+									cel2[1] = 5;
+									cel3[1] = 5;
+								}
 								return check_win([cel1[1], cel2[1], cel3[1]], selectLine);
 								break;
 
 							case 3:
+								if (!!line_nohu && line_nohu == selectLine) {
+									cel1[2] = 5;
+									cel2[2] = 5;
+									cel3[2] = 5;
+								}
 								return check_win([cel1[2], cel2[2], cel3[2]], selectLine);
 								break;
 
 							case 4:
+								if (!!line_nohu && line_nohu == selectLine) {
+									cel1[0] = 5;
+									cel2[2] = 5;
+									cel3[0] = 5;
+								}
 								return check_win([cel1[0], cel2[2], cel3[0]], selectLine);
 								break;
 
 							case 5:
+								if (!!line_nohu && line_nohu == selectLine) {
+									cel1[2] = 5;
+									cel2[0] = 5;
+									cel3[2] = 5;
+								}
 								return check_win([cel1[2], cel2[0], cel3[2]], selectLine);
 								break;
 
 							case 6:
+								if (!!line_nohu && line_nohu == selectLine) {
+									cel1[0] = 5;
+									cel2[1] = 5;
+									cel3[0] = 5;
+								}
 								return check_win([cel1[0], cel2[1], cel3[0]], selectLine);
 								break;
 
 							case 7:
+								if (!!line_nohu && line_nohu == selectLine) {
+									cel1[0] = 5;
+									cel2[1] = 5;
+									cel3[2] = 5;
+								}
 								return check_win([cel1[0], cel2[1], cel3[2]], selectLine);
 								break;
 
 							case 8:
+								if (!!line_nohu && line_nohu == selectLine) {
+									cel1[2] = 5;
+									cel2[1] = 5;
+									cel3[0] = 5;
+								}
 								return check_win([cel1[2], cel2[1], cel3[0]], selectLine);
 								break;
 
 							case 9:
+								if (!!line_nohu && line_nohu == selectLine) {
+									cel1[1] = 5;
+									cel2[2] = 5;
+									cel3[1] = 5;
+								}
 								return check_win([cel1[1], cel2[2], cel3[1]], selectLine);
 								break;
 
 							case 10:
+								if (!!line_nohu && line_nohu == selectLine) {
+									cel1[1] = 5;
+									cel2[0] = 5;
+									cel3[1] = 5;
+								}
 								return check_win([cel1[1], cel2[0], cel3[1]], selectLine);
 								break;
 
 							case 11:
+								if (!!line_nohu && line_nohu == selectLine) {
+									cel1[2] = 5;
+									cel2[1] = 5;
+									cel3[2] = 5;
+								}
 								return check_win([cel1[2], cel2[1], cel3[2]], selectLine);
 								break;
 
 							case 12:
+								if (!!line_nohu && line_nohu == selectLine) {
+									cel1[0] = 5;
+									cel2[0] = 5;
+									cel3[1] = 5;
+								}
 								return check_win([cel1[0], cel2[0], cel3[1]], selectLine);
 								break;
 
 							case 13:
+								if (!!line_nohu && line_nohu == selectLine) {
+									cel1[1] = 5;
+									cel2[1] = 5;
+									cel3[2] = 5;
+								}
 								return check_win([cel1[1], cel2[1], cel3[2]], selectLine);
 								break;
 
 							case 14:
+								if (!!line_nohu && line_nohu == selectLine) {
+									cel1[1] = 5;
+									cel2[1] = 5;
+									cel3[0] = 5;
+								}
 								return check_win([cel1[1], cel2[1], cel3[0]], selectLine);
 								break;
 
 							case 15:
+								if (!!line_nohu && line_nohu == selectLine) {
+									cel1[2] = 5;
+									cel2[2] = 5;
+									cel3[1] = 5;
+								}
 								return check_win([cel1[2], cel2[2], cel3[1]], selectLine);
 								break;
 
 							case 16:
+								if (!!line_nohu && line_nohu == selectLine) {
+									cel1[1] = 5;
+									cel2[0] = 5;
+									cel3[0] = 5;
+								}
 								return check_win([cel1[1], cel2[0], cel3[0]], selectLine);
 								break;
 
 							case 17:
+								if (!!line_nohu && line_nohu == selectLine) {
+									cel1[2] = 5;
+									cel2[1] = 5;
+									cel3[1] = 5;
+								}
 								return check_win([cel1[2], cel2[1], cel3[1]], selectLine);
 								break;
 
 							case 18:
+								if (!!line_nohu && line_nohu == selectLine) {
+									cel1[0] = 5;
+									cel2[1] = 5;
+									cel3[1] = 5;
+								}
 								return check_win([cel1[0], cel2[1], cel3[1]], selectLine);
 								break;
 
 							case 19:
+								if (!!line_nohu && line_nohu == selectLine) {
+									cel1[1] = 5;
+									cel2[2] = 5;
+									cel3[2] = 5;
+								}
 								return check_win([cel1[1], cel2[2], cel3[2]], selectLine);
 								break;
 
 							case 20:
+								if (!!line_nohu && line_nohu == selectLine) {
+									cel1[0] = 5;
+									cel2[2] = 5;
+									cel3[1] = 5;
+								}
 								return check_win([cel1[0], cel2[2], cel3[1]], selectLine);
 								break;
 						}
 					}))
 					.then(result => {
 						Promise.all(result.filter(function(line_win){
-							if (!!line_win.win) {
-								if (line_win.win == 6 && !nohu) {
+							if (line_win.type != null) {
+								if(line_win.win == 5) {
 									// Nổ hũ
+									if (!nohu) {
+										bet_win += quyHu;
+										red && ThongBaoNoHu(client, {title: "BigBabol", name: client.profile.name, bet: quyHu-Math.ceil(quyHu*phe/100)});
+									}else{
+										bet_win += quyMin;
+										red && ThongBaoNoHu(client, {title: "BigBabol", name: client.profile.name, bet: quyMin-Math.ceil(quyMin*phe/100)});
+									}
 									nohu = true;
-									bet_win += quyHu;
-									type = 6;
-								}else if(line_win.win == 5) {
-									// x85
-									bet_win += bet*85;
-									type = type < 5 ? 5 : type;
-								}else if(line_win.win == 4) {
+									type = 2;
+								}else if(!nohu && line_win.win == 4) {
+									// x80
+									bet_win += bet*80;
+								}else if(!nohu && line_win.win == 3) {
 									// x40
 									bet_win += bet*40;
-									type = type < 4 ? 4 : type;
-								}else if(line_win.win == 3) {
+								}else if(!nohu && line_win.win == 2) {
 									// x20
 									bet_win += bet*20;
-									type = type < 3 ? 3 : type;
-								}else if(line_win.win == 2 && line_win.type == 3) {
+								}else if(!nohu && line_win.win == 1 && line_win.type == 3) {
 									// x8
 									bet_win += bet*8;
-								}else if(line_win.win == 2 && line_win.type == 2) {
+								}else if(!nohu && line_win.win == 1 && line_win.type == 2) {
 									//	x0.8
-									bet_win += (bet*0.8)>>0;
-								}else if(line_win.win == 1 && line_win.type == 3) {
+									bet_win += (bet*line_win.heso)>>0;
+								}else if(!nohu && line_win.win == 0 && line_win.type == 3) {
 									// x4
 									bet_win += bet*4;
-								}else if(line_win.win == 1 && line_win.type == 2) {
+								}else if(!nohu && line_win.win == 0 && line_win.type == 2) {
 									// x0.4
-									bet_win += (bet*0.4)>>0;
+									bet_win += (bet*line_win.heso)>>0;
 								}
 							}
-							return !!line_win.win;
+							return (line_win.type != null);
 						}))
 						.then(result2 => {
-							bet_win = bet_win-Math.ceil(bet_win*phe/100); // Cắt phế 2% - 4% ăn được
-							var tien = bet_win - cuoc;
+							bet_win  = (bet_win-Math.ceil(bet_win*phe/100))>>0; // Cắt phế 2% - 4% ăn được
+							var tien = bet_win-cuoc;
+							if (!nohu && bet_win >= cuoc*3.5) {
+								isBigWin = true;
+								type = 1;
+							}
 							var uInfo      = {};
 							var mini_users = {};
 							var thuong     = 0;
@@ -256,7 +386,7 @@ module.exports = function(client, data){
 								  if (err){
 								  	client.send(JSON.stringify({mini:{big_babol:{status:0, notice: 'Có lỗi sảy ra, vui lòng thử lại.!!'}}}));
 								  }else{
-								  	client.send(JSON.stringify({mini:{big_babol:{status:1, cel:[cel1, cel2, cel3], line_win: result2, nohu: nohu, win: bet_win, phien: small.id}}, user:{red:user.red-bet}}));
+								  	client.send(JSON.stringify({mini:{big_babol:{status:1, cel:[cel1, cel2, cel3], line_win: result2, nohu: nohu, isBigWin: isBigWin, win: bet_win, phien: small.id}}, user:{red:user.red-cuoc}}));
 								  }
 								});
 							}else{
@@ -279,12 +409,12 @@ module.exports = function(client, data){
 								  if (err){
 								  	client.send(JSON.stringify({mini:{big_babol:{status:0, notice: 'Có lỗi sảy ra, vui lòng thử lại.!!'}}}));
 								  }else{
-								  	client.send(JSON.stringify({mini:{big_babol:{status:1, cel:[cel1, cel2, cel3], line_win: result2, nohu: nohu, win: bet_win, phien: small.id, thuong:thuong}}, user:{xu:user.xu-bet}}));
+								  	client.send(JSON.stringify({mini:{big_babol:{status:1, cel:[cel1, cel2, cel3], line_win: result2, nohu: nohu, isBigWin: isBigWin, win: bet_win, phien: small.id, thuong:thuong}}, user:{xu:user.xu-cuoc}}));
 								  }
 								});
 							}
 							UserInfo.findOneAndUpdate({id:client.UID}, {$inc:uInfo}, function(err,cat){});
-							BigBabol_users.findOneAndUpdate({id:client.UID}, {$inc:mini_users}, function(err,cat){});
+							BigBabol_users.findOneAndUpdate({'uid':client.UID}, {$inc:mini_users}, function(err,cat){});
 						})
 					})
 				})

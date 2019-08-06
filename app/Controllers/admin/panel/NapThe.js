@@ -14,14 +14,48 @@ function get_data(client, data){
 	if (status == -1) {
 		NapThe.estimatedDocumentCount().exec(function(err, total){
 			NapThe.find({}, {}, {sort:{'_id':-1}, skip: (page-1)*kmess, limit: kmess}, function(err, result) {
-				client.send(JSON.stringify({nap_the:{get_data:{data:result, page:page, kmess:kmess, total:total}}}));
+				if (result.length) {
+					Promise.all(result.map(function(obj){
+						obj = obj._doc;
+						var user = UserInfo.findOne({id: obj.uid}, 'name').exec();
+						return Promise.all([user]).then(values => {
+							Object.assign(obj, values[0]._doc);
+							delete obj.__v;
+							delete obj._id;
+							delete obj.uid;
+							return obj;
+						});
+					}))
+					.then(function(arrayOfResults) {
+						client.red({nap_the:{get_data:{data:arrayOfResults, page:page, kmess:kmess, total:total}}});
+					})
+				}else{
+					client.red({nap_the:{get_data:{data:result, page:page, kmess:kmess, total:total}}});
+				}
 			});
 		});
 	}else{
 		var query = status == 0 ? {status: 0} : {status: {$gt: 0}};
 		NapThe.countDocuments(query).exec(function(err, total){
 			NapThe.find(query, {}, {sort:{'_id':-1}, skip: (page-1)*kmess, limit: kmess}, function(err, result) {
-				client.send(JSON.stringify({nap_the:{get_data:{data:result, page:page, kmess:kmess, total:total}}}));
+				if (result.length) {
+					Promise.all(result.map(function(obj){
+						obj = obj._doc;
+						var user = UserInfo.findOne({id: obj.uid}, 'name').exec();
+						return Promise.all([user]).then(values => {
+							Object.assign(obj, values[0]._doc);
+							delete obj.__v;
+							delete obj._id;
+							delete obj.uid;
+							return obj;
+						});
+					}))
+					.then(function(arrayOfResults) {
+						client.red({nap_the:{get_data:{data:arrayOfResults, page:page, kmess:kmess, total:total}}});
+					})
+				}else{
+					client.red({nap_the:{get_data:{data:result, page:page, kmess:kmess, total:total}}});
+				}
 			});
 		});
 	}

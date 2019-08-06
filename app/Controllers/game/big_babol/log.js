@@ -6,7 +6,7 @@ module.exports = function(client, data){
 	var page = data.page>>0; // trang
 	var red  = !!data.red;                    // Loại tiền (Red: true, Xu: false)
 	if (page < 1) {
-		client.send(JSON.stringify({notice:{text: "DỮ LIỆU KHÔNG ĐÚNG...", title: "THẤT BẠI"}}));
+		client.red({notice:{text: "DỮ LIỆU KHÔNG ĐÚNG...", title: "THẤT BẠI"}});
 	}else{
 		var kmess = 8;
 		var regex = new RegExp("^" + client.profile.name + "$", 'i');
@@ -19,7 +19,7 @@ module.exports = function(client, data){
 						return obj;
 					}))
 					.then(resultArr => {
-						client.send(JSON.stringify({mini:{big_babol:{log:{data:resultArr, page:page, kmess:kmess, total:total}}}}));
+						client.red({mini:{big_babol:{log:{data:resultArr, page:page, kmess:kmess, total:total}}}});
 					})
 				});
 			})
@@ -32,7 +32,7 @@ module.exports = function(client, data){
 						return obj;
 					}))
 					.then(resultArr => {
-						client.send(JSON.stringify({mini:{big_babol:{log:{data:resultArr, page:page, kmess:kmess, total:total}}}}));
+						client.red({mini:{big_babol:{log:{data:resultArr, page:page, kmess:kmess, total:total}}}});
 					})
 				});
 			})

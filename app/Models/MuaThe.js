@@ -3,7 +3,7 @@ const AutoIncrement = require('mongoose-auto-increment-reworked').MongooseAutoIn
 const mongoose = require("mongoose");
 
 const Schema = new mongoose.Schema({
-	name:    {type: String, required: true}, // Tên người chơi
+	uid:     {type: String, required: true}, // ID người chơi
 	nhaMang: {type: String, required: true}, // Nhà mạng
 	menhGia: {type: Number, required: true}, // Mệnh giá
 	soLuong: {type: Number, required: true}, // Số lượng

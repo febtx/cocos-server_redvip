@@ -23,7 +23,7 @@ module.exports = function(client, spin) {
 				client.send(JSON.stringify({mini:{bacay:{status:0, notice: 'Bạn không đủ ' + (red ? 'RED':'XU') + ' để quay.!!'}}}));
 			}else{
 				var phe = red ? 2 : 4;    // Phế
-				var addQuy = (cuoc*0.03)>>0;
+				var addQuy = (cuoc*0.01)>>0;
 				// Sử lý bài
 				var an      = 0;
 				var code    = 0;
@@ -106,6 +106,7 @@ module.exports = function(client, spin) {
 						an   = quyHu;
 						text = 'Nổ Hũ';
 						code = 6;
+						red && Helpers.ThongBaoNoHu(client, {title: "MINI 3 CÂY", name: client.profile.name, bet: quyHu});
 					}else if (Day && dongChat) {
 						// x30    3 lá liên tiếp đồng chất
 						an   = cuoc*30;
@@ -136,7 +137,7 @@ module.exports = function(client, spin) {
 						Mini3Cay_hu.findOneAndUpdate({type:cuoc, red:red}, {$inc:{bet:addQuy}}, function(err,cat){});
 					}
 
-					an = an-Math.ceil(an*phe/100); // Cắt phế 2% - 4% ăn được
+					an = (an-Math.ceil(an*phe/100))>>0; // Cắt phế 2% - 4% ăn được
 
 					var tien = an-cuoc;
 

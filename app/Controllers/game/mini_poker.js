@@ -9,7 +9,6 @@ const miniPokerXu  = require('../../Models/miniPoker/miniPokerXu');
 const UserInfo  = require('../../Models/UserInfo');
 const Helpers   = require('../../Helpers/Helpers');
 const base_card = require('../../../data/card');
-const base_hu   = require('../../../data/miniPoker_hu');
 
 function spin(client, data){
 	var bet = data.cuoc>>0; // Mức cược
@@ -22,7 +21,7 @@ function spin(client, data){
 				client.send(JSON.stringify({mini:{poker:{status:0, notice: 'Bạn không đủ ' + (red ? 'RED':'XU') + ' để quay.!!'}}}));
 			}else{
 				var phe = red ? 2 : 4;    // Phế
-				var addQuy = (bet*0.03)>>0;
+				var addQuy = (bet*0.01)>>0;
 				miniPokerHu.findOneAndUpdate({type:bet, red:red}, {$inc:{bet:addQuy}}, function(err,cat){});
 				var an      = 0;
 				var code    = 0;
@@ -105,11 +104,24 @@ function spin(client, data){
 						miniPokerHu.findOneAndUpdate({type:bet, red:red}, {$set:{name:"", bet:quyMin}}, function(err,cat){});
 						if (checkName){
 							// đặt kết quả thành nổ hũ nếu người chơi được xác định thủ công
-							ketqua = base_hu[~~(Math.random()*(base_hu.length-1))];
+							var randomType = (Math.random()*4)>>0;           // Ngẫu nhiên chất bài
+							var randomMin  = ((Math.random()*(9-6+1))+6)>>0; // Ngẫu nhiên dây bài bắt đầu từ
+							Promise.all(base_card.card.filter(function(cardT){
+								if (randomMin == 9 && cardT.card == 0 && cardT.type == randomType) {
+									return true;
+								}else if (cardT.card >= randomMin && cardT.card < randomMin+5 && cardT.type == randomType) {
+									return true;
+								}
+								return false;
+							}))
+							.then(resultCard => {
+								ketqua = Helpers.shuffle(resultCard); // tráo bài
+							})
 						}
 						an   = quyHu;
 						text = 'Nổ Hũ';
 						code = 9;
+						red && Helpers.ThongBaoNoHu(client, {title: "MINI POKER", name: client.profile.name, bet: quyHu});
 					}else if ((DAK && dongChat) || (DAKj && !dongChat)) {
 						// x1000    THÙNG PHÁ SẢNH (DÂY ĐỒNG CHẤT HOẶC DÂY ĐẾN A)
 						an   = (bet*1000);
@@ -152,59 +164,60 @@ function spin(client, data){
 						code = 1;
 					}
 
-					an = an-Math.ceil(an*phe/100); // Cắt phế 2% - 4% ăn được
+					an = (an-Math.ceil(an*phe/100))>>0; // Cắt phế 2% - 4% ăn được
 
 					var tien = an-bet;
 					var uInfo      = {};
 					var mini_users = {};
-
-					if (red) {
-						uInfo['red'] = tien;         // Cập nhật Số dư Red trong tài khoản
-						uInfo['redPlay'] = mini_users['bet'] = bet;     // Cập nhật Số Red đã chơi
-						if (tien > 0){
-							uInfo['redWin'] = mini_users['win'] = tien;    // Cập nhật Số Red đã Thắng
-						}
-						if (tien < 0){
-							uInfo['redLost'] = mini_users['lost'] = tien*(-1); // Cập nhật Số Red đã Thua
-						}
-						if (code == 9){
-							uInfo['hu'] = mini_users['hu'] = 1;         // Cập nhật Số Hũ Red đã Trúng
-						}
-						miniPokerRed.create({'name': client.profile.name, 'win': an, 'bet': bet, 'type': code, 'kq': ketqua, 'time': new Date()}, function (err, small) {
-							if (err){
-								client.send(JSON.stringify({mini:{poker:{status:0, notice: 'Có lỗi sảy ra, vui lòng thử lại.!!'}}}));
-							}else{
-								client.send(JSON.stringify({mini:{poker:{status:1, card:ketqua, phien: small.id, win: an, text: text, code: code}}, user:{red: user.red-bet, xu: user.xu}}));
-							 }
-						});
-						//UserInfo.findOneAndUpdate({id:client.UID}, {$inc:{red:tien}}, function(err,cat){});
-					}else{
-						thuong = (an*0.039589)>>0;
-						uInfo['xu'] = tien;         // Cập nhật Số dư XU trong tài khoản
-						uInfo['xuPlay'] = mini_users['betXu'] = bet;     // Cập nhật Số XU đã chơi
-						if (thuong > 0){
-							uInfo['red'] = uInfo['thuong'] = mini_users['thuong'] = thuong;  // Cập nhật Số dư Red trong tài khoản // Cập nhật Số Red được thưởng do chơi XU
-						}
-						if (tien > 0){
-							uInfo['xuWin'] = mini_users['winXu'] = tien;    // Cập nhật Số Red đã Thắng
-						}
-						if (tien < 0){
-							uInfo['xuLost'] = mini_users['lostXu'] = tien*(-1); // Cập nhật Số Red đã Thua
-						}
-						if (code == 9){
-							uInfo['huXu'] = mini_users['huXu'] = 1;      // Cập nhật Số Hũ Xu đã Trúng
-						}
-
-						miniPokerXu.create({'name': client.profile.name, 'win': an, 'bet': bet, 'type': code, 'kq': ketqua, 'time': new Date()}, function (err, small) {
-							if (err){
-								client.send(JSON.stringify({mini:{poker:{status:0, notice: 'Có lỗi sảy ra, vui lòng thử lại.!!'}}}));
-							}else{
-								client.send(JSON.stringify({mini:{poker:{status:1, card:ketqua, phien: small.id, win: an, thuong: thuong, text: text, code: code}}, user:{red: user.red, xu: user.xu-bet}}));
+					setTimeout(function(){
+						if (red) {
+							uInfo['red'] = tien;         // Cập nhật Số dư Red trong tài khoản
+							uInfo['redPlay'] = mini_users['bet'] = bet;     // Cập nhật Số Red đã chơi
+							if (tien > 0){
+								uInfo['redWin'] = mini_users['win'] = tien;    // Cập nhật Số Red đã Thắng
 							}
-						});
-					}
-					UserInfo.findOneAndUpdate({id:client.UID}, {$inc: uInfo}, function(err,cat){});
-					miniPokerUsers.findOneAndUpdate({'uid': client.UID}, {$inc: mini_users}, function(err,cat){});
+							if (tien < 0){
+								uInfo['redLost'] = mini_users['lost'] = tien*(-1); // Cập nhật Số Red đã Thua
+							}
+							if (code == 9){
+								uInfo['hu'] = mini_users['hu'] = 1;         // Cập nhật Số Hũ Red đã Trúng
+							}
+							miniPokerRed.create({'name': client.profile.name, 'win': an, 'bet': bet, 'type': code, 'kq': ketqua, 'time': new Date()}, function (err, small) {
+								if (err){
+									client.send(JSON.stringify({mini:{poker:{status:0, notice: 'Có lỗi sảy ra, vui lòng thử lại.!!'}}}));
+								}else{
+									client.send(JSON.stringify({mini:{poker:{status:1, card:ketqua, phien: small.id, win: an, text: text, code: code}}, user:{red: user.red-bet, xu: user.xu}}));
+								 }
+							});
+							//UserInfo.findOneAndUpdate({id:client.UID}, {$inc:{red:tien}}, function(err,cat){});
+						}else{
+							thuong = (an*0.039589)>>0;
+							uInfo['xu'] = tien;         // Cập nhật Số dư XU trong tài khoản
+							uInfo['xuPlay'] = mini_users['betXu'] = bet;     // Cập nhật Số XU đã chơi
+							if (thuong > 0){
+								uInfo['red'] = uInfo['thuong'] = mini_users['thuong'] = thuong;  // Cập nhật Số dư Red trong tài khoản // Cập nhật Số Red được thưởng do chơi XU
+							}
+							if (tien > 0){
+								uInfo['xuWin'] = mini_users['winXu'] = tien;    // Cập nhật Số Red đã Thắng
+							}
+							if (tien < 0){
+								uInfo['xuLost'] = mini_users['lostXu'] = tien*(-1); // Cập nhật Số Red đã Thua
+							}
+							if (code == 9){
+								uInfo['huXu'] = mini_users['huXu'] = 1;      // Cập nhật Số Hũ Xu đã Trúng
+							}
+
+							miniPokerXu.create({'name': client.profile.name, 'win': an, 'bet': bet, 'type': code, 'kq': ketqua, 'time': new Date()}, function (err, small) {
+								if (err){
+									client.send(JSON.stringify({mini:{poker:{status:0, notice: 'Có lỗi sảy ra, vui lòng thử lại.!!'}}}));
+								}else{
+									client.send(JSON.stringify({mini:{poker:{status:1, card:ketqua, phien: small.id, win: an, thuong: thuong, text: text, code: code}}, user:{red: user.red, xu: user.xu-bet}}));
+								}
+							});
+						}
+						UserInfo.findOneAndUpdate({id:client.UID}, {$inc: uInfo}, function(err,cat){});
+						miniPokerUsers.findOneAndUpdate({'uid': client.UID}, {$inc: mini_users}, function(err,cat){});
+					}, 10);
 				});
 			}
 		});
@@ -250,43 +263,39 @@ function log(client, data){
 }
 
 function top(client, data){
-	var page = data.page>>0; // trang
-	var hu   = !!data.hu;
-	var red  = !!data.red;                    // Loại tiền (Red: true, Xu: false)
-	if (page < 1) {
-		client.send(JSON.stringify({notice:{text: "DỮ LIỆU KHÔNG ĐÚNG...", title: "MINI POKER"}}));
-	}else{
-		var kmess = 10;
-
-		var search = (hu ? {type: 9} : {$or:[{type: 8}, {type: 7}]});
-
-		if (red) {
-			miniPokerRed.countDocuments(search).exec(function(err, total){
-				miniPokerRed.find(search, 'name win bet time', {sort:{'_id':-1}, skip: (page-1)*kmess, limit: kmess}).exec(function(err, result){
-					Promise.all(result.map(function(obj){
-						obj = obj._doc;
-						delete obj._id;
-						return obj;
-					}))
-					.then(resultArr => {
-						client.send(JSON.stringify({mini:{poker:{top:{data:resultArr, page:page, kmess:kmess, total:total}}}}));
-					})
-				})
-			});
-		}else{
-			miniPokerXu.countDocuments(search).exec(function(err, total){
-				miniPokerXu.find(search, 'name win bet time', {sort:{'_id':-1}, skip: (page-1)*kmess, limit: kmess}).exec(function(err, result){
-					Promise.all(result.map(function(obj){
-						obj = obj._doc;
-						delete obj._id;
-						return obj;
-					}))
-					.then(resultArr => {
-						client.send(JSON.stringify({mini:{poker:{top:{data:resultArr, page:page, kmess:kmess, total:total}}}}));
-					})
-				})
+	var red  = !!data; // Loại tiền (Red: true, Xu: false)
+	if (red) {
+		miniPokerRed.find({$or:[
+			{type:9},
+			{type:8},
+			{type:7}
+		]}, 'name win bet time type', {sort:{'_id':-1}, limit: 50}, function(err, result) {
+			Promise.all(result.map(function(obj){
+				obj = obj._doc;
+				delete obj.__v;
+				delete obj._id;
+				return obj;
+			}))
+			.then(function(arrayOfResults) {
+				client.send(JSON.stringify({mini:{poker:{top:arrayOfResults}}}));
 			})
-		}
+		});
+	}else{
+		miniPokerXu.find({$or:[
+			{type:9},
+			{type:8},
+			{type:7}
+		]}, 'name win bet time type', {sort:{'_id':-1}, limit: 50}, function(err, result) {
+			Promise.all(result.map(function(obj){
+				obj = obj._doc;
+				delete obj.__v;
+				delete obj._id;
+				return obj;
+			}))
+			.then(function(arrayOfResults) {
+				client.send(JSON.stringify({mini:{poker:{top:arrayOfResults}}}));
+			})
+		});
 	}
 }
 

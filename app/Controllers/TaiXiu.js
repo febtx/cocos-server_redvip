@@ -1,5 +1,6 @@
 
-const TaiXiu = require('./taixiu/index.js');
+const TaiXiu     = require('./taixiu/index.js');
+const getLogChat = require('./taixiu/getLogChat');
 
 module.exports = function(client, data){
 	if (void 0 !== data.view) {
@@ -27,4 +28,8 @@ module.exports = function(client, data){
 	if (void 0 !== data.get_new) {
 		TaiXiu.getNew(client);
 	}
+	if (void 0 !== data.getLogChat) {
+		getLogChat(client);
+	}
+	
 }

@@ -36,6 +36,7 @@ const authenticate = async function(client, data, callback) {
 };
 
 module.exports = function(ws, redT){
+	ws.admin = true;
 	ws.auth = false;
 	ws.UID  = null;
 	var timeAuth = setTimeout(function() {
@@ -43,6 +44,12 @@ module.exports = function(ws, redT){
 			ws.close();
 		}
 	}, 6e5);
+
+	ws.red = function(data){
+		try {
+			this.readyState == 1 && this.send(JSON.stringify(data));
+		} catch(err) {}
+	}
 
 	ws.on('message', function(message) {
 		console.log(message)
