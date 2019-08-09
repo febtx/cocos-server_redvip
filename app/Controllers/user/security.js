@@ -63,7 +63,7 @@ function regOTP(client, data){
 										client.red({notice:{title:'LỖI', text:'Số điện thoại đã tồn tại trên hệ thống.!'}});
 									}else{
 										// Xác thực thành công
-										OTP.findOneAndUpdate({'_id': data_otp._id}, {$set:{'active':true}}, function(err, cat){});
+										OTP.findOneAndUpdate({'_id': data_otp._id.toString()}, {$set:{'active':true}}, function(err, cat){});
 										UserInfo.findOneAndUpdate({id:client.UID},{$set:{phone:data.phone, email:data.email, cmt:data.cmt}, $inc:{red:3000, xu:10000}}, function(err, user){
 											client.red({notice:{title:'THÀNH CÔNG', text: 'Xác thực thành công.!' + "\n" + 'Bạn nhận được 3.000Red vào 10.000Xu, chúc bạn vui vẻ...'}, user: {red: user.red*1+3000, xu: user.xu*1+10000, phone: helper.cutPhone(data.phone), email: helper.cutEmail(data.email), cmt: data.cmt}});
 										});

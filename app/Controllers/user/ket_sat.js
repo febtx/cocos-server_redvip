@@ -4,21 +4,74 @@ const OTP      = require('../../Models/OTP');
 
 const Helper   = require('../../Helpers/Helpers');
 
+
+/** OTP
 function gui(client, red){
 	red = red>>0;
 	if (red < 10000) {
-		client.send(JSON.stringify({notice:{title: "GỬI RED", text: "Số tiền gửi phải lớn hơn 10.000"}}));
+		client.red({notice:{title: "GỬI RED", text: "Số tiền gửi phải lớn hơn 10.000"}});
 	}else{
 		UserInfo.findOne({id: client.UID}, 'red phone', function(err, user){
 			if(Helper.isEmpty(user.phone)){
-				client.send(JSON.stringify({notice:{title: "THÔNG BÁO", text: "Chức năng chỉ dành cho tài khoản đã kích hoạt."}}));
+				client.red({notice:{title: "THÔNG BÁO", text: "Chức năng chỉ dành cho tài khoản đã kích hoạt."}});
 				return void 0;
 			}
 			if (user.red < red) {
-				client.send(JSON.stringify({notice:{title: "THÔNG BÁO", text: "Số dư không khả dụng."}}));
+				client.red({notice:{title: "THÔNG BÁO", text: "Số dư không khả dụng."}});
 			}else{
 				UserInfo.findOneAndUpdate({id: client.UID}, {$inc:{red: -red, ketSat: red}}, function(err, cat){
-					client.send(JSON.stringify({notice:{title:'THÀNH CÔNG', text: 'Đã gửi ' + Helper.numberWithCommas(red) + ' RED vào két sắt thành công.!!'}, user:{red:cat.red-red, ketSat: cat.ketSat*1+red}}));
+					client.red({notice:{title:'THÀNH CÔNG', text: 'Đã gửi ' + Helper.numberWithCommas(red) + ' RED vào két sắt thành công.!!'}, user:{red:cat.red-red, ketSat: cat.ketSat*1+red}});
+				});
+			}
+		});
+	}
+	//return void 0;
+}
+function rut(client, data){
+	var red = data.red>>0;
+
+	if (red < 10000) {
+		client.red({notice:{title: "RÚT RED", text: "Số tiền rút phải lớn hơn 10.000"}});
+	}else{
+		UserInfo.findOne({id: client.UID}, 'ketSat phone', function(err, user){
+			if(Helper.isEmpty(user.phone)){
+				client.red({notice:{title: "THÔNG BÁO", text: "Chức năng chỉ dành cho tài khoản đã kích hoạt."}});
+				return void 0;
+			}
+			OTP.findOne({'uid': client.UID}, {}, {sort:{'_id':-1}}, function(err, data_otp){
+				if (data_otp && data.otp == data_otp.code) {
+					if (((new Date()-Date.parse(data_otp.date))/1000) > 180 || data_otp.active) {
+						client.red({notice:{title:'LỖI', text:'Mã OTP đã hết hạn.!'}});
+					}else{
+						if (user.ketSat < red) {
+							client.red({notice:{title: "THẤT BẠI", text: "Số tiền trong két nhỏ hơn số tiền giao dịch."}});
+						}else{
+							OTP.findOneAndUpdate({'_id': data_otp._id.toString()}, {$set:{'active':true}}, function(err, cat){});
+							UserInfo.findOneAndUpdate({id: client.UID}, {$inc:{red: red, ketSat: -red}}, function(err, cat){
+								client.red({notice:{title:'THÀNH CÔNG', text: 'Rút thành công ' + Helper.numberWithCommas(red) + ' RED từ két sắt.!!'}, user:{red: cat.red*1+red, ketSat: cat.ketSat-red}});
+							});
+						}
+					}
+				}else{
+					client.red({notice:{title:'LỖI', text:'Mã OTP Không đúng.!'}});
+				}
+			});
+		});
+	}
+}
+*/
+
+function gui(client, red){
+	red = red>>0;
+	if (red < 10000) {
+		client.red({notice:{title: "GỬI RED", text: "Số tiền gửi phải lớn hơn 10.000"}});
+	}else{
+		UserInfo.findOne({id: client.UID}, 'red', function(err, user){
+			if (user.red < red) {
+				client.red({notice:{title: "THÔNG BÁO", text: "Số dư không khả dụng."}});
+			}else{
+				UserInfo.findOneAndUpdate({id: client.UID}, {$inc:{red: -red, ketSat: red}}, function(err, cat){
+					client.red({notice:{title:'THÀNH CÔNG', text: 'Đã gửi ' + Helper.numberWithCommas(red) + ' RED vào két sắt thành công.!!'}, user:{red:cat.red-red, ketSat: cat.ketSat*1+red}});
 				});
 			}
 		});
@@ -30,31 +83,16 @@ function rut(client, data){
 	var red = data.red>>0;
 
 	if (red < 10000) {
-		client.send(JSON.stringify({notice:{title: "RÚT RED", text: "Số tiền rút phải lớn hơn 10.000"}}));
+		client.red({notice:{title: "RÚT RED", text: "Số tiền rút phải lớn hơn 10.000"}});
 	}else{
-		UserInfo.findOne({id: client.UID}, 'ketSat phone', function(err, user){
-			if(Helper.isEmpty(user.phone)){
-				client.send(JSON.stringify({notice:{title: "THÔNG BÁO", text: "Chức năng chỉ dành cho tài khoản đã kích hoạt."}}));
-				return void 0;
+		UserInfo.findOne({id: client.UID}, 'ketSat', function(err, user){
+			if (user.ketSat < red) {
+				client.red({notice:{title: "THẤT BẠI", text: "Số tiền trong két nhỏ hơn số tiền giao dịch."}});
+			}else{
+				UserInfo.findOneAndUpdate({id: client.UID}, {$inc:{red: red, ketSat: -red}}, function(err, cat){
+					client.red({notice:{title:'THÀNH CÔNG', text: 'Rút thành công ' + Helper.numberWithCommas(red) + ' RED từ két sắt.!!'}, user:{red: cat.red*1+red, ketSat: cat.ketSat-red}});
+				});
 			}
-			OTP.findOne({'uid': client.UID}, {}, {sort:{'_id':-1}}, function(err, data_otp){
-				if (data_otp && data.otp == data_otp.code) {
-					if (((new Date()-Date.parse(data_otp.date))/1000) > 180 || data_otp.active) {
-						client.red({notice:{title:'LỖI', text:'Mã OTP đã hết hạn.!'}});
-					}else{
-						if (user.ketSat < red) {
-							client.send(JSON.stringify({notice:{title: "THẤT BẠI", text: "Số tiền trong két nhỏ hơn số tiền gian dịch."}}));
-						}else{
-							OTP.findOneAndUpdate({'_id': data_otp._id}, {$set:{'active':true}}, function(err, cat){});
-							UserInfo.findOneAndUpdate({id: client.UID}, {$inc:{red: red, ketSat: -red}}, function(err, cat){
-								client.send(JSON.stringify({notice:{title:'THÀNH CÔNG', text: 'Rút thành công ' + Helper.numberWithCommas(red) + ' RED từ két sắt.!!'}, user:{red: cat.red*1+red, ketSat: cat.ketSat-red}}));
-							});
-						}
-					}
-				}else{
-					client.red({notice:{title:'LỖI', text:'Mã OTP Không đúng.!'}});
-				}
-			});
 		});
 	}
 }

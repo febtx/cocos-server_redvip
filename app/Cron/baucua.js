@@ -45,7 +45,7 @@ function thongtin_thanhtoan(dice = null){
 				}
 			}
 			var phien = io.BauCua_phien-1;
-			BauCua_temp.findOneAndUpdate({'_id': temp._id}, {$inc: updateLog, $set:{'red.0': 0, 'red.1': 0, 'red.2': 0, 'red.3': 0, 'red.4': 0, 'red.5': 0, 'xu.0': 0, 'xu.1': 0, 'xu.2': 0, 'xu.3': 0, 'xu.4': 0, 'xu.5': 0}}, function(err,cat){});
+			BauCua_temp.findOneAndUpdate({'_id': temp._id.toString()}, {$inc: updateLog, $set:{'red.0': 0, 'red.1': 0, 'red.2': 0, 'red.3': 0, 'red.4': 0, 'red.5': 0, 'xu.0': 0, 'xu.1': 0, 'xu.2': 0, 'xu.3': 0, 'xu.4': 0, 'xu.5': 0}}, function(err,cat){});
 			BauCua_cuoc.find({phien: phien}, {}, function(err, list) {
 				if (list.length) {
 					Promise.all(list.map(function(cuoc){
@@ -144,7 +144,7 @@ function thongtin_thanhtoan(dice = null){
 							}
 
 							var active1 = UserInfo.findOneAndUpdate({id:cuoc.uid}, {$inc:update}).exec();
-							var active2 = BauCua_cuoc.findOneAndUpdate({_id:cuoc._id}, {$set:{thanhtoan: true, betwin:TongThang}}).exec();
+							var active2 = BauCua_cuoc.findOneAndUpdate({_id: cuoc._id.toString()}, {$set:{thanhtoan: true, betwin:TongThang}}).exec();
 							var active3 = BauCua_user.findOneAndUpdate({uid: cuoc.uid}, {$inc:updateGame}).exec();
 						}else{
 							//XU
@@ -161,7 +161,7 @@ function thongtin_thanhtoan(dice = null){
 							}
 
 							var active1 = UserInfo.findOneAndUpdate({id:cuoc.uid}, {$inc:update}).exec();
-							var active2 = BauCua_cuoc.findOneAndUpdate({_id:cuoc._id}, {$set:{thanhtoan: true, betwin:TongThang}}).exec();
+							var active2 = BauCua_cuoc.findOneAndUpdate({_id: cuoc._id.toString()}, {$set:{thanhtoan: true, betwin:TongThang}}).exec();
 							var active3 = BauCua_user.findOneAndUpdate({uid: cuoc.uid}, {$inc:updateGame}).exec();
 						}
 						if(void 0 !== io.users[cuoc.uid]){

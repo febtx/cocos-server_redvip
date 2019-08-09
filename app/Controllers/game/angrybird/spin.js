@@ -142,15 +142,15 @@ module.exports = function(client, data){
 						uInfo['huXu'] = mini_users['huXu'] = 0; // Khởi tạo
 					}
 
-					var nohu      = false;
-					var isBigWin  = false;
-					var quyHu     = dataHu.bet;
-					var quyMin    = dataHu.min;
+					var nohu     = false;
+					var isBigWin = false;
+					var quyHu    = dataHu.bet;
+					var quyMin   = dataHu.min;
 
 					// Tạo kết quả 3 Hàng đầu
 					var celSS = [
-						random_cel3(), random_cel2(), random_cel2(),
-						random_cel2(), 3,             2,
+						random_cel2(), random_cel2(), random_cel2(),
+						random_cel2(), 2,             1,
 						1,             0,             0,
 					]; // Super
 
@@ -163,8 +163,8 @@ module.exports = function(client, data){
 
 					// Tạo kết quả 2 Hàng sau
 					var celSR = [
-						random_celR1(), random_celR(),  random_celR(),
-						random_celR2(), random_celR2(), random_celR3(),
+						random_celR(), random_celR(),  random_celR3(),
+						random_celR3(), 0,   0,
 					]; // Super
 
 					celSR = shuffle(celSR); // tráo bài lần 1
@@ -480,7 +480,7 @@ module.exports = function(client, data){
 							return (line_win.type != null);
 						}))
 						.then(result2 => {
-							bet_win  = bet_win*heso;                            // Tổng tiền ăn đc (chưa cắt phế)
+							bet_win  = nohu ? bet_win : bet_win*heso;           // Tổng tiền ăn đc (chưa cắt phế)
 							bet_win  = (bet_win-Math.ceil(bet_win*phe/100))>>0; // Cắt phế 2% - 4% ăn được
 							var tien = bet_win-bet;
 							if (!nohu && bet_win >= bet*17) {

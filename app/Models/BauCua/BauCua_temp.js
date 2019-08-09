@@ -33,4 +33,4 @@ const Schema = new mongoose.Schema({
 	minHuXu:  {type: Number,  default: 0}, // Hũ Xu
 });
 
-module.exports = mongoose.model("BauCua_temp", Schema);;
+module.exports = mongoose.model("BauCua_temp", Schema);

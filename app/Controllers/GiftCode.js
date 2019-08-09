@@ -7,7 +7,7 @@ module.exports = function(client, data){
 	var checkCaptcha = new RegExp("^" + data.captcha + "$", 'i').test(client.captcha);
 	if (checkCaptcha) {
 		if (void 0 === data.code || data.code.trim().length < 4) {
-			client.send(JSON.stringify({notice:{title:'THẤT BẠI',text:'GiftCode không tồn tại.'}}));
+			client.red({notice:{title:'THẤT BẠI',text:'GiftCode không tồn tại.'}});
 		}else{
 			var code = data.code.trim();
 			    code = new RegExp("^" + code + "$", 'i');
@@ -17,36 +17,36 @@ module.exports = function(client, data){
 					var d2 = Date.parse(check.todate);
 					if (d2 > d1) {
 						if (void 0 !== check.uid) {
-							client.send(JSON.stringify({notice:{title:'THẤT BẠI',text:'Mã Gift Code đã qua sử dụng.' + "\n" + ' Hãy thử một mã khác...'}}));
+							client.red({notice:{title:'THẤT BẠI',text:'Mã Gift Code đã qua sử dụng.' + "\n" + ' Hãy thử một mã khác...'}});
 						}else{
 							if (Helpers.isEmpty(check.type)) {
-								GiftCode.findOneAndUpdate({'_id': check._id}, {$set:{uid: client.UID}}).exec();
+								GiftCode.findOneAndUpdate({'_id': check._id.toString()}, {$set:{uid: client.UID}}).exec();
 								UserInfo.findOneAndUpdate({id: client.UID}, {$inc:{red:check.red, xu:check.xu}}).exec(function(err, user){
-									client.send(JSON.stringify({notice:{title:'THÀNH CÔNG',text:'Bạn nhận được: ' + (check.red > 0 ? Helpers.numberWithCommas(check.red) + ' RED' : '') + (check.xu > 0 ? (check.red > 0 ? ' và ' : '') + Helpers.numberWithCommas(check.xu) + ' XU' : '')}, user:{red:user.red*1+check.red, xu:user.xu*1+check.xu}}));
+									client.red({notice:{title:'THÀNH CÔNG',text:'Bạn nhận được: ' + (check.red > 0 ? Helpers.numberWithCommas(check.red) + ' RED' : '') + (check.xu > 0 ? (check.red > 0 ? ' và ' : '') + Helpers.numberWithCommas(check.xu) + ' XU' : '')}, user:{red:user.red*1+check.red, xu:user.xu*1+check.xu}});
 								});
 							}else{
 								GiftCode.findOne({'uid': client.UID, 'type': check.type}, 'code', function(err, check2) {
 									if (!!check2) {
-										client.send(JSON.stringify({notice:{title:'THẤT BẠI',text:'Bạn đã từng sử dụng họ Gift Code này trước đây...!!'}}));
+										client.red({notice:{title:'THẤT BẠI',text:'Bạn đã từng sử dụng họ Gift Code này trước đây...!!'}});
 									}else{
-										GiftCode.findOneAndUpdate({'_id': check._id}, {$set:{uid: client.UID}}).exec();
+										GiftCode.findOneAndUpdate({'_id': check._id.toString()}, {$set:{uid: client.UID}}).exec();
 										UserInfo.findOneAndUpdate({id: client.UID}, {$inc:{red:check.red, xu:check.xu}}).exec(function(err, user){
-											client.send(JSON.stringify({notice:{title:'THÀNH CÔNG',text:'Bạn nhận được: ' + (check.red > 0 ? Helpers.numberWithCommas(check.red) + ' RED' : '') + (check.xu > 0 ? (check.red > 0 ? ' và ' : '') + Helpers.numberWithCommas(check.xu) + ' XU' : '')}, user:{red:user.red*1+check.red, xu:user.xu*1+check.xu}}));
+											client.red({notice:{title:'THÀNH CÔNG',text:'Bạn nhận được: ' + (check.red > 0 ? Helpers.numberWithCommas(check.red) + ' RED' : '') + (check.xu > 0 ? (check.red > 0 ? ' và ' : '') + Helpers.numberWithCommas(check.xu) + ' XU' : '')}, user:{red:user.red*1+check.red, xu:user.xu*1+check.xu}});
 										});
 									}
 								})
 							}
 						}
 					}else{
-						client.send(JSON.stringify({notice:{title:'THẤT BẠI',text:'Mã Gift Code Đã hết hạn...!!'}}));
+						client.red({notice:{title:'THẤT BẠI',text:'Mã Gift Code Đã hết hạn...!!'}});
 					}
 				}else{
-					client.send(JSON.stringify({notice:{title:'THẤT BẠI',text:'Mã Gift Code không tồn tại...!!'}}));
+					client.red({notice:{title:'THẤT BẠI',text:'Mã Gift Code không tồn tại...!!'}});
 				}
 			});
 		}
 	}else{
-		client.send(JSON.stringify({notice:{title:'THẤT BẠI',text:'Captcha không đúng.'}}));
+		client.red({notice:{title:'THẤT BẠI',text:'Captcha không đúng.'}});
 	}
 	client.c_captcha('giftcode');
 }

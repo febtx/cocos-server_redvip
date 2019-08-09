@@ -20,4 +20,4 @@ const Schema = new mongoose.Schema({
 	time:      {type: Date},                       // thời gian cược
 });
 
-module.exports = mongoose.model("BauCua_cuoc", Schema);;
+module.exports = mongoose.model("BauCua_cuoc", Schema);

@@ -1,4 +1,5 @@
-const User = require('../Models/Users');
+/**
+const User     = require('../Models/Users');
 const UserInfo = require('../Models/UserInfo');
 
 const Image = require('jimp');
@@ -90,3 +91,4 @@ function getBase64Image(imgData) {
 
 
 module.exports.upload = upload;
+*/

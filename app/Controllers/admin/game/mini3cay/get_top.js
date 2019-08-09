@@ -35,6 +35,11 @@ module.exports = function(client, data) {
 		}else if (data.sort == '8') {
 			sort.profit = 1;
 
+		}else if (data.sort == '9') {
+			sort._id = -1;
+		}else if (data.sort == '10') {
+			sort._id = 1;
+
 
 		}else{
 			sort.profit = -1;

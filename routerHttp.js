@@ -5,22 +5,25 @@ const mobile = require('is-mobile');
 module.exports = function(app, redT) {
 	// Home
 	app.get('/', function(req, res) {
-		if (mobile({ua:req}))
+		if (mobile({ua:req})){
 			res.redirect('/mobile/');
-		else
+		} else {
 			res.redirect('/web/');
+		}
 	});
 	app.get('/web/', function(req, res) {
-		if (mobile({ua:req}))
+		if (mobile({ua:req})){
 			res.redirect('/mobile/');
-		else
+		} else {
 			res.render('index');
+		}
 	});
 	app.get('/mobile/', function(req, res) {
-		if (mobile({ua:req}))
+		if (mobile({ua:req})){
 			res.render('index_mobile');
-		else
+		} else {
 			res.redirect('/web/');
+		}
 	});
 
 	// Admin

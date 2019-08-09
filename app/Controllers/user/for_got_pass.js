@@ -20,7 +20,8 @@ function sendOTP(client, name){
 					client.red({notice: {title: "LỖI", text: "Bạn đã đạt giới hạn lấy mã OTP, liên hệ Admin để được trợ giúp..."}});
 					return void 0;
 				}
-				UserInfo.findOne({'id': check._id}, 'phone red').exec(function(err, user){
+				var cID = check._id.toString();
+				UserInfo.findOne({'id': cID}, 'phone red').exec(function(err, user){
 					if (!!user) {
 						if (Helper.isEmpty(user.phone)) {
 							client.red({notice: {title: "LỖI", text: "Tài khoản này chưa xác thực..."}});
@@ -29,14 +30,14 @@ function sendOTP(client, name){
 								// Red không đủ để lấy OTP
 								client.red({notice:{title:'THẤT BẠI', text:'Không thể lấy mã OTP vui lòng liên hệ admin.'}});
 							}else{
-								OTP.findOne({'uid': check._id}, {}, {sort:{'_id':-1}}, function(err, data_otp){
+								OTP.findOne({'uid': cID}, {}, {sort:{'_id':-1}}, function(err, data_otp){
 									if (!data_otp || (new Date()-Date.parse(data_otp.date))/1000 > 180 || data_otp.active) {
 										var otp = (Math.random()*(9999-1000+1)+1000)>>0; // OTP từ 1000 đến 9999
 										// Lấy SMS OTP
 										smsOTP(user.phone, otp);
-										OTP.create({'uid': check._id, 'code': otp, 'date': new Date()});
-										User.findOneAndUpdate({'_id': check._id}, {$inc:{'local.ban_pass':1}}, function(err, cat){});
-										UserInfo.findOneAndUpdate({'id': check._id}, {$inc:{red:-1000}}, function(err, cat){});
+										OTP.create({'uid': cID, 'code': otp, 'date': new Date()});
+										User.findOneAndUpdate({'_id': cID}, {$inc:{'local.ban_pass':1}}, function(err, cat){});
+										UserInfo.findOneAndUpdate({'id': cID}, {$inc:{red:-1000}}, function(err, cat){});
 										client.red({notice: {title: "THÔNG BÁO", text: "Mã OTP đã được gửi vào số điện thoại của bạn..."}});
 									}else{
 										client.red({notice:{title:'OTP', text:'Vui lòng kiểm tra hòm thư đến.!'}});
@@ -79,18 +80,19 @@ function iForGot(client, data){
 						client.red({notice: {title: "LỖI", text: "Tài khoản này bị khóa lấy lại mật khẩu, liên hệ admin để được trợ giúp..."}});
 						return void 0;
 					}
-					UserInfo.findOne({'id': check._id}, 'phone').exec(function(err, user){
+					var cID = check._id.toString();
+					UserInfo.findOne({'id': cID}, 'phone').exec(function(err, user){
 						if (!!user) {
 							if (Helper.isEmpty(user.phone)) {
 								client.red({notice: {title: "LỖI", text: "Tài khoản này chưa xác thực..."}});
 							}else{
-								OTP.findOne({'uid': check._id}, {}, {sort:{'_id':-1}}, function(err, data_otp){
+								OTP.findOne({'uid': cID}, {}, {sort:{'_id':-1}}, function(err, data_otp){
 									if (data_otp && data.otp == data_otp.code) {
 										if ((new Date()-Date.parse(data_otp.date))/1000 > 180 || data_otp.active) {
 											client.red({notice:{title:'OTP', text:'Mã OTP đã hết hạn.!'}});
 										}else{
 											OTP.findOneAndUpdate({'_id': data_otp._id}, {$set:{'active':true}}, function(err, cat){});
-											User.findOneAndUpdate({'_id': check._id}, {$set:{'local.ban_pass':0, 'local.password': Helper.generateHash(data.pass)}}, function(err, cat){});
+											User.findOneAndUpdate({'_id': cID}, {$set:{'local.ban_pass':0, 'local.password': Helper.generateHash(data.pass)}}, function(err, cat){});
 											client.red({notice: {title: "THÀNH CÔNG", text: "Bạn vừa lấy lại mật khẩu thành công."}});
 										}
 									}else{

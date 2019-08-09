@@ -1,5 +1,6 @@
 
 //const TaiXiu = require('./game/taixiu.js')
+var path     = require('path');
 var fs       = require('fs');
 var fileName = '../../../../../data/taixiu.json';
 
@@ -11,12 +12,11 @@ module.exports = function(client, data) {
 		file.dice3  = data.dice3;
 		file.uid    = client.UID;
 		file.rights = client.rights;
-		fs.writeFile(fileName, JSON.stringify(file), function(err){
-			console.log(err);
+		fs.writeFile(path.dirname(path.dirname(path.dirname(path.dirname(path.dirname(__dirname))))) + "/data/taixiu.json", JSON.stringify(file), function(err){
 			if (!!err) {
-				client.send(JSON.stringify({notice:{title:'THẤT BẠI', text:'Đặt kết quả thất bại...'}}));
+				client.red({notice:{title:'THẤT BẠI', text:'Đặt kết quả thất bại...'}});
 			}else{
-				client.send(JSON.stringify({notice:{title:'THÀNH CÔNG', text:'Đặt kết quả thành công...'}}));
+				client.red({notice:{title:'THÀNH CÔNG', text:'Đặt kết quả thành công...'}});
 			}
 		});
 

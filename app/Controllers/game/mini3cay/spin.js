@@ -100,7 +100,7 @@ module.exports = function(client, spin) {
 							card = Helpers.shuffle(card); // tráo bài lần 1
 							card = Helpers.shuffle(card); // tráo bài lần 2
 							card = Helpers.shuffle(card); // tráo bài lần 3
-							ketqua = card.slice(0, 3);;
+							ketqua = card.slice(0, 3);
 						}
 						nohu = true;
 						an   = quyHu;

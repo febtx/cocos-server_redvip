@@ -1,28 +1,30 @@
 
-const User        = require('../Models/Users');
-const UserInfo    = require('../Models/UserInfo');
+var User        = require('../Models/Users');
+var UserInfo    = require('../Models/UserInfo');
+
 // Game User
-const TaiXiu_User    = require('../Models/TaiXiu_user');
-const MiniPoker_User = require('../Models/miniPoker/miniPoker_users');
-const Bigbabol_User  = require('../Models/BigBabol/BigBabol_users');
-const VQRed_User     = require('../Models/VuongQuocRed/VuongQuocRed_users');
-const BauCua_User    = require('../Models/BauCua/BauCua_user');
-const Mini3Cay_User  = require('../Models/Mini3Cay/Mini3Cay_user');
-const CaoThap_User   = require('../Models/CaoThap/CaoThap_user');
+var TaiXiu_User     = require('../Models/TaiXiu_user');
+var MiniPoker_User  = require('../Models/miniPoker/miniPoker_users');
+var Bigbabol_User   = require('../Models/BigBabol/BigBabol_users');
+var VQRed_User      = require('../Models/VuongQuocRed/VuongQuocRed_users');
+var BauCua_User     = require('../Models/BauCua/BauCua_user');
+var Mini3Cay_User   = require('../Models/Mini3Cay/Mini3Cay_user');
+var CaoThap_User    = require('../Models/CaoThap/CaoThap_user');
+var AngryBirds_user = require('../Models/AngryBirds/AngryBirds_user');
 
+var validator   = require('validator');
+var Helper      = require('../Helpers/Helpers');
+var onHistory   = require('./user/onHistory');
+var ket_sat     = require('./user/ket_sat');
 
-const Helper      = require('../Helpers/Helpers');
-const onHistory   = require('./user/onHistory');
-const ket_sat     = require('./user/ket_sat');
+var next_scene  = require('./user/next_scene');
+var security    = require('./user/security');
 
-const next_scene  = require('./user/next_scene');
-const security    = require('./user/security');
+var nhanthuong  = require('./user/nhanthuong');
 
-const nhanthuong  = require('./user/nhanthuong');
+var GameState = require('./GameState.js')
 
-const GameState = require('./GameState.js')
-
-const first = function(client, select){
+var first = function(client){
 	UserInfo.findOne({id: client.UID}, 'name lastVip redPlay red xu ketSat UID phone cmt email security joinedOn', function(err, user) {
 		if (!!user) {
 			user = user._doc;
@@ -88,125 +90,130 @@ const first = function(client, select){
 				Authorized: true,
 				user:       user,
 			};
-			client.send(JSON.stringify(data));
+			client.red(data);
 			GameState(client);
 		}else{
-			client.send(JSON.stringify({Authorized: false}));
+			client.red({Authorized: false});
 		}
 	});
 }
 
-const updateCoint = function(client){
+var updateCoint = function(client){
 	UserInfo.findOne({id:client.UID}, 'red xu', function(err, user){
-		client.send(JSON.stringify({user: user}));
+		if (!!user) {
+			client.red({user: {red: user.red, xu: user.xu}});
+		}
 	});
 }
 
-const signName = function(client, name){
-	var userName = name.trim();
-	var error = null;
-	if (userName.length > 14 || userName.length < 3){
-		error = 'Độ dài từ 3 đến 14 ký tự !!';
-	}else if (userName.match(new RegExp("^[a-zA-Z0-9]+$")) === null){
-		error = 'Tên không chứa ký tự đặc biệt !!';
-	};
-	if (error) {
-		client.send(JSON.stringify({notice: {title: "TÊN NHÂN VẬT", text: error}}));
-		return;
-	}
-	UserInfo.findOne({id: client.UID}, 'name red xu ketSat UID phone email cmt security joinedOn', function(err, d){
-		if (d == null) {
-			var regex = new RegExp("^" + name + "$", 'i');
-			User.findOne({'_id': client.UID}, function(err, base){
-				var testBase = regex.test(base.local.username);
-				if (testBase) {
-					client.send(JSON.stringify({notice: {title: "TÊN NHÂN VẬT", text: "Tên nhân vật không được trùng với tên đăng nhập..."}}));
-				}else{
-					UserInfo.findOne({'name': {$regex: regex}}, 'name', function(err, check){
-						if (!!check) {
-							client.send(JSON.stringify({notice: {title: "TÊN NHÂN VẬT", text: "Tên nhân vật đã tồn tại..."}}));
+var signName = function(client, name){
+	if (!!name) {
+		var az09     = new RegExp("^[a-zA-Z0-9]+$");
+		var testName = az09.test(name);
+
+		if (validator.isLength(name, {min: 3, max: 14})) {
+			client.red({notice: {title: "TÊN NHÂN VẬT", text: 'Độ dài từ 3 đến 14 ký tự !!'}});
+		}else if (!testName) {
+			client.red({notice: {title: "TÊN NHÂN VẬT", text: 'Tên không chứa ký tự đặc biệt !!'}});
+		} else{
+			UserInfo.findOne({id: client.UID}, 'name red xu ketSat UID phone email cmt security joinedOn', function(err, d){
+				if (d == null) {
+					var regex = new RegExp("^" + name + "$", 'i');
+					User.findOne({'_id': client.UID}, function(err, base){
+						var testBase = regex.test(base.local.username);
+						if (testBase) {
+							client.red({notice: {title: "TÊN NHÂN VẬT", text: "Tên nhân vật không được trùng với tên đăng nhập..."}});
 						}else{
-							UserInfo.create({'id':client.UID, 'name':name, 'joinedOn':new Date()}, function(errC, user){
-								if (!!errC) {
-									client.send(JSON.stringify({notice:{load: 0, title: 'LỖI', text: 'Tên nhân vật đã tồn tại.'}}));
+							UserInfo.findOne({'name': {$regex: regex}}, 'name', function(err, check){
+								if (!!check) {
+									client.red({notice: {title: "TÊN NHÂN VẬT", text: "Tên nhân vật đã tồn tại..."}});
 								}else{
-									user = user._doc;
-									user.level   = 1;
-									user.vipNext = 100;
-									user.vipHT   = 0;
+									try {
+										UserInfo.create({'id':client.UID, 'name':name, 'joinedOn':new Date()}, function(errC, user){
+											if (!!errC) {
+												client.red({notice:{load: 0, title: 'LỖI', text: 'Tên nhân vật đã tồn tại.'}});
+											}else{
+												user = user._doc;
+												user.level   = 1;
+												user.vipNext = 100;
+												user.vipHT   = 0;
 
-									delete user._id;
-									delete user.redWin;
-									delete user.redLost;
-									delete user.redPlay;
-									delete user.xuWin;
-									delete user.xuLost;
-									delete user.xuPlay;
-									delete user.thuong;
-									delete user.vip;
-									delete user.hu;
-									delete user.huXu;
+												delete user._id;
+												delete user.redWin;
+												delete user.redLost;
+												delete user.redPlay;
+												delete user.xuWin;
+												delete user.xuLost;
+												delete user.xuPlay;
+												delete user.thuong;
+												delete user.vip;
+												delete user.hu;
+												delete user.huXu;
 
-									addToListOnline(client);
+												addToListOnline(client);
 
-									var data = {
-										Authorized: true,
-										user: user,
-									};
-									client.profile = {name: user.name};
-									TaiXiu_User.create({'uid': client.UID});
-									MiniPoker_User.create({'uid': client.UID});
-									Bigbabol_User.create({'uid': client.UID});
-									VQRed_User.create({'uid': client.UID});
-									BauCua_User.create({'uid': client.UID});
-									Mini3Cay_User.create({'uid': client.UID});
-									CaoThap_User.create({'uid': client.UID});
-									GameState(client);
-									client.send(JSON.stringify(data));
+												var data = {
+													Authorized: true,
+													user: user,
+												};
+												client.profile = {name: user.name};
+												
+												TaiXiu_User.create({'uid': client.UID});
+												MiniPoker_User.create({'uid': client.UID});
+												Bigbabol_User.create({'uid': client.UID});
+												VQRed_User.create({'uid': client.UID});
+												BauCua_User.create({'uid': client.UID});
+												Mini3Cay_User.create({'uid': client.UID});
+												CaoThap_User.create({'uid': client.UID});
+												AngryBirds_user.create({'uid': client.UID});
+
+												GameState(client);
+												client.red(data);
+											}
+										});
+									} catch (error) {
+										client.red({notice: {title: "TÊN NHÂN VẬT", text: "Tên nhân vật đã tồn tại..."}});
+									}
 								}
-							});
+							})
 						}
-					})
+					});
+				}else{
+					first(client);
 				}
 			});
-		}else{
-			d = d._doc;
-			delete d._id;
-			client.send(JSON.stringify({user: d}));
 		}
-	});
+	}
 }
 
 function changePassword(client, data){
-	var error = null;
-	if (data.passOld.length > 32 ||
-		data.passOld.length < 6 ||
-		data.passNew.length > 32 ||
-		data.passNew.length < 6 ||
-		data.passNew2.length > 32 ||
-		data.passNew2.length < 6)
-	{
-		error = 'Mật khẩu từ 6 - 32 kí tự.';
-	} else if (data.passOld == data.passNew){
-		error = 'Mật khẩu mới không trùng với mật khẩu cũ.!!';
-	} else if (data.passNew != data.passNew2){
-		error = 'Nhập lại mật khẩu không đúng!!';
-	}
+	if (!!data && !!data.passOld && !!data.passNew && !!data.passNew2) {
+		var az09     = new RegExp("^[a-zA-Z0-9]+$");
+		var testName = az09.test(name);
 
-	if (error) {
-		client.send(JSON.stringify({notice:{load: 0, title: 'LỖI', text: error}}));
-	}else{
-		User.findOne({'_id': client.UID}, function(err, user){
-			if (user !== null) {
-				if (Helper.validPassword(data.passOld, user.local.password)) {
-					User.findOneAndUpdate({'_id': client.UID}, {'local.password':Helper.generateHash(data.passNew)}, function(err, cat){
-						client.send(JSON.stringify({notice:{load: 0, title: 'THÀNH CÔNG', text:'Đổi mật khẩu thành công.'}}));
-					});
-				}else{
-					client.send(JSON.stringify({notice:{load: 0, title: 'THẤT BẠI', text:'Mật khẩu cũ không đúng.'}}));
+		if (validator.isLength(data.passOld, {min: 6, max: 32})) {
+			client.red({notice: {title: "LỖI", text: 'Độ dài mật khẩu từ 6 đến 32 ký tự !!'}});
+		}else if (validator.isLength(data.passNew, {min: 6, max: 32})) {
+			client.red({notice: {title: "LỖI", text: 'Độ dài mật khẩu từ 6 đến 32 ký tự !!'}});
+		}else if (validator.isLength(data.passNew2, {min: 6, max: 32})) {
+			client.red({notice: {title: "LỖI", text: 'Độ dài mật khẩu từ 6 đến 32 ký tự !!'}});
+		} else if (data.passOld == data.passNew){
+			error = 'Mật khẩu mới không trùng với mật khẩu cũ.!!';
+		} else if (data.passNew != data.passNew2){
+			error = 'Nhập lại mật khẩu không đúng!!';
+		} else {
+			User.findOne({'_id': client.UID}, function(err, user){
+				if (!!user) {
+					if (Helper.validPassword(data.passOld, user.local.password)) {
+						User.findOneAndUpdate({'_id': client.UID}, {$set:{'local.password': Helper.generateHash(data.passNew)}}, function(err, cat){
+							client.red({notice:{load: 0, title: 'THÀNH CÔNG', text:'Đổi mật khẩu thành công.'}});
+						});
+					}else{
+						client.red({notice:{load: 0, title: 'THẤT BẠI', text:'Mật khẩu cũ không đúng.'}});
+					}
 				}
-			}
-		});
+			});
+		}
 	}
 }
 
@@ -251,7 +258,7 @@ function getLevel(client){
 			vipNext  = 500;
 		}
 
-		client.send(JSON.stringify({profile:{level: {level: vipLevel, vipNext: vipNext, vipPre: vipPre, vipTL: user.vip, vipHT: vipHT}}}));
+		client.red({profile:{level: {level: vipLevel, vipNext: vipNext, vipPre: vipPre, vipTL: user.vip, vipHT: vipHT}}});
 	});
 }
 
@@ -264,26 +271,28 @@ function addToListOnline(client){
 }
 
 function onData(client, data) {
-	if (void 0 !== data.doi_pass) {
-		changePassword(client, data.doi_pass)
-	}
-	if (void 0 !== data.history) {
-		onHistory(client, data.history)
-	}
-	if (void 0 !== data.ket_sat) {
-		ket_sat(client, data.ket_sat)
-	}
-	if (void 0 !== data.updateCoint) {
-		updateCoint(client);
-	}
-	if (void 0 !== data.getLevel) {
-		getLevel(client);
-	}
-	if (void 0 !== data.nhanthuong) {
-		nhanthuong(client);
-	}
-	if (void 0 !== data.security) {
-		security(client, data.security);
+	if (!!data) {
+		if (!!data.doi_pass) {
+			changePassword(client, data.doi_pass)
+		}
+		if (!!data.history) {
+			onHistory(client, data.history)
+		}
+		if (!!data.ket_sat) {
+			ket_sat(client, data.ket_sat)
+		}
+		if (!!data.updateCoint) {
+			updateCoint(client);
+		}
+		if (!!data.getLevel) {
+			getLevel(client);
+		}
+		if (!!data.nhanthuong) {
+			nhanthuong(client);
+		}
+		if (!!data.security) {
+			security(client, data.security);
+		}
 	}
 }
 

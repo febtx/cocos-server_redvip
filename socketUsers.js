@@ -1,93 +1,90 @@
 
-const User    = require('./app/Models/Users');
-const helpers = require('./app/Helpers/Helpers');
-const socket  = require('./app/socket.js');
-const captcha = require('./captcha');
-
-const forgotpass = require('./app/Controllers/user/for_got_pass');
+var validator = require('validator');
+var User      = require('./app/Models/Users');
+var helpers   = require('./app/Helpers/Helpers');
+var socket    = require('./app/socket.js');
+var captcha   = require('./captcha');
+var forgotpass = require('./app/Controllers/user/for_got_pass');
 
 // Authenticate!
-const authenticate = async function(client, data, callback) {
-	var { username, password, register} = data;
-	username = username.trim();
-	password = password.trim();
-	if (username.length > 32 || username.length < 3 || password.length > 32 || password.length < 6){
-		client.c_captcha('signUp');
-		callback({title: 'ĐĂNG KÝ', text: 'Thông tin Sai! (6-32 kí tự)'}, false);
-	}else if (username.match(new RegExp("^[a-zA-Z0-9]+$")) === null) {
-		client.c_captcha('signUp');
-		callback({title: 'ĐĂNG KÝ', text: 'Tên chỉ gồm kí tự và số !!'}, false);
-	}else if (username == password) {
-		client.c_captcha('signUp');
-		callback({title: 'ĐĂNG KÝ', text: 'Tài khoản không được trùng với mật khẩu!!'}, false);
-	}else{
-		try {
-			var regex = new RegExp("^" + username + "$", 'i');
-			// Đăng Ký
-			if (register) {
-				if (username == password){
-					client.c_captcha('signUp');
-					callback({title: 'ĐĂNG KÝ', text: 'Mật khẩu không được trùng với tài khoản !!'}, false);
-					return void 0;;
-				}else if (void 0 == data.captcha || void 0 == client.c_captcha) {
-					client.c_captcha('signUp');
-					callback({title: 'ĐĂNG KÝ', text: 'Captcha không tồn tại.'}, false);
-					return void 0;;
-				}else{
-					var checkCaptcha = new RegExp("^" + data.captcha + "$", 'i');
-					checkCaptcha     = checkCaptcha.test(client.captcha);
-					if (checkCaptcha) {
-						User.findOne({'local.username': {$regex: regex}}).exec(async function(err, check){
-							if (!!check){
-								client.c_captcha('signUp');
-								callback({title: 'ĐĂNG KÝ', text: 'Tên tài khoản đã tồn tại !!'}, false);
-								return void 0;
-							}else{
-								var user = await User.create({'local.username':username, 'local.password':helpers.generateHash(password), 'local.regDate': new Date()});
-								if (!!user){
-									client.UID = user._id;
-									callback(false, true);
-									return void 0;
-								}else{
+var authenticate = async function(client, data, callback) {
+	if (!!data && !!data.username && !!data.password) {
+		var username = data.username;
+		var password = data.password;
+		var register = !!data.register;
+		var az09     = new RegExp("^[a-zA-Z0-9]+$");
+		var testName = az09.test(username);
+
+		if (validator.isLength(username, {min: 3, max: 32})) {
+			register && client.c_captcha('signUp');
+			callback({title: register ? 'ĐĂNG KÝ' : 'ĐĂNG NHẬP', text: 'Tài khoản (3-32 kí tự).'}, false);
+		}else if (validator.isLength(password, {min: 6, max: 32})) {
+			register && client.c_captcha('signUp');
+			callback({title: register ? 'ĐĂNG KÝ' : 'ĐĂNG NHẬP', text: 'Mật khẩu (6-32 kí tự)'}, false);
+		}else if (!testName) {
+			register && client.c_captcha('signUp');
+			callback({title: register ? 'ĐĂNG KÝ' : 'ĐĂNG NHẬP', text: 'Tên đăng nhập chỉ gồm kí tự và số !!'}, false);
+		}else if (username == password) {
+			register && client.c_captcha('signUp');
+			callback({title: register ? 'ĐĂNG KÝ' : 'ĐĂNG NHẬP', text: 'Tài khoản không được trùng với mật khẩu!!'}, false);
+		}else{
+			try {
+				var regex = new RegExp("^" + username + "$", 'i');
+				// Đăng Ký
+				if (register) {
+					if (!data.captcha || !client.c_captcha || !validator.isLength(data.captcha, {min: 4, max: 4})) {
+						client.c_captcha('signUp');
+						callback({title: 'ĐĂNG KÝ', text: 'Captcha không tồn tại.'}, false);	
+					}else{
+						var checkCaptcha = new RegExp("^" + data.captcha + "$", 'i');
+						checkCaptcha     = checkCaptcha.test(client.captcha);
+						if (checkCaptcha) {
+							User.findOne({'local.username': {$regex: regex}}).exec(async function(err, check){
+								if (!!check){
 									client.c_captcha('signUp');
 									callback({title: 'ĐĂNG KÝ', text: 'Tên tài khoản đã tồn tại !!'}, false);
-									return void 0;
+								}else{
+									var user = await User.create({'local.username':username, 'local.password':helpers.generateHash(password), 'local.regDate': new Date()});
+									if (!!user){
+										client.UID = user._id.toString();
+										callback(false, true);
+									}else{
+										client.c_captcha('signUp');
+										callback({title: 'ĐĂNG KÝ', text: 'Tên tài khoản đã tồn tại !!'}, false);
+									}
 								}
-							}
-						});
+							});
+						}else{
+							client.c_captcha('signUp');
+							callback({title: 'ĐĂNG KÝ', text: 'Captcha không đúng.'}, false);
+						}
+					}
+				} else {
+				// Đăng Nhập
+					var user = await User.findOne({'local.username': {$regex: regex}});
+					if (user){
+						if (user.validPassword(password)){
+							client.UID = user._id.toString();
+							callback(false, true);
+						}else{
+							callback({title: 'ĐĂNG NHẬP', text: 'Sai mật khẩu!!'}, false);
+						}
 					}else{
-						client.c_captcha('signUp');
-						callback({title: 'ĐĂNG KÝ', text: 'Captcha không đúng.'}, false);
-						return void 0;
+						callback({title: 'ĐĂNG NHẬP', text: 'Tài khoản không tồn tại!!'}, false);
+	
 					}
 				}
-			} else {
-			// Đăng Nhập
-				var user = await User.findOne({'local.username': {$regex: regex}});
-				if (user){
-					if (user.validPassword(password)){
-						client.UID = user._id;
-						callback(false, true);
-						return void 0;
-					}else{
-						callback({title: 'ĐĂNG NHẬP', text: 'Sai mật khẩu!!'}, false);
-						return void 0;
-					}
-				}else{
-					callback({title: 'ĐĂNG NHẬP', text: 'Tài khoản không tồn tại!!'}, false);
-					return void 0;
-				}
+			} catch (error) {
+				callback({title: 'THÔNG BÁO', text: 'Có lỗi sảy ra, vui lòng kiểm tra lại!!'}, false);
 			}
-		} catch (error) {
-			callback({title: 'THÔNG BÁO', text: 'Có lỗi sảy ra, vui lòng kiểm tra lại!!'});
 		}
 	}
 };
 
 module.exports = function(ws, redT){
-	ws.auth = false;
-	ws.UID  = null;
-	ws.captcha = {};
+	ws.auth      = false;
+	ws.UID       = null;
+	ws.captcha   = {};
 	ws.c_captcha = captcha;
 	ws.red = function(data){
 		try {
@@ -98,36 +95,33 @@ module.exports = function(ws, redT){
 	ws.on('message', function(message) {
 		console.log("socketUser", message);
 		try {
-			message = JSON.parse(message);
-
-			if (void 0 !== message.captcha) {
-				this.c_captcha(message.captcha);
-			}
-
-			if (void 0 !== message.forgotpass) {
-				forgotpass(this, message.forgotpass);
-			}
-
-			if (this.auth == false && void 0 !== message.authentication) {
-				authenticate(this, message.authentication, function(err, success) {
-					if (success) {
-						ws.auth = true;
-						ws.redT = redT;
-						socket.auth(ws);
-					} else if (!!err) {
-						var data = JSON.stringify({unauth: err});
-						ws.send(data);
-					} else {
-						ws.send(JSON.stringify({unauth: {message: 'Authentication failure'}}));
-					}
-				});
-			}else if(!!this.auth){
-				socket.message(this, message);
+			if (!!message) {
+				message = JSON.parse(message);
+				if (!!message.captcha) {
+					this.c_captcha(message.captcha);
+				}
+				if (!!message.forgotpass) {
+					forgotpass(this, message.forgotpass);
+				}
+				if (this.auth == false && !!message.authentication) {
+					authenticate(this, message.authentication, function(err, success){
+						if (success) {
+							this.auth = true;
+							this.redT = redT;
+							socket.auth(this);
+						} else if (!!err) {
+							this.red({unauth: err});
+						} else {
+							this.red({unauth: {message: 'Authentication failure'}});
+						}
+					}.bind(this));
+				}else if(!!this.auth){
+					socket.message(this, message);
+				}
 			}
 		} catch (error) {
 		}
 	});
-
 	ws.on('close', function(message) {
 		if (this.UID !== null && void 0 !== this.redT.users[this.UID]) {
 			if (this.redT.users[this.UID].length == 1) {

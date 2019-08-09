@@ -80,11 +80,11 @@ function newGame(client, data) {
 					}
 					if (red) {
 						CaoThap_red.create(create, function (err, small) {
-							client.caothap.id = small._id;
+							client.caothap.id = small._id.toString();
 						});
 					}else{
 						CaoThap_xu.create(create, function (err, small) {
-							client.caothap.id = small._id;
+							client.caothap.id = small._id.toString();
 						});
 					}
 
@@ -344,16 +344,16 @@ function reconnect(client){
 		CaoThap_red.findOne({'uid': client.UID}, {}, {sort:{'_id':-1}}, function(err, redLast) {
 			if (!!redLast && redLast.play){
 				client.caothap = client.caothap || {};
-				client.caothap.id  = redLast._id;
+				client.caothap.id  = redLast._id.toString();
 				client.caothap.red = true;
-				ketqua(redLast);
+				ketqua(redLast._doc);
 			}else{
 				CaoThap_xu.findOne({'uid': client.UID}, {}, {sort:{'_id':-1}}, function(err, xuLast) {
 					if (!!xuLast && xuLast.play){
 						client.caothap = client.caothap || {};
-						client.caothap.id  = xuLast._id;
+						client.caothap.id  = xuLast._id.toString();
 						client.caothap.red = false;
-						ketqua(xuLast);
+						ketqua(xuLast._doc);
 					}else{
 						ketqua(null);
 					}
