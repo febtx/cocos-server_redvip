@@ -1,8 +1,8 @@
 
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+const AutoIncrement = require('mongoose-auto-increment-reworked').MongooseAutoIncrementID;
+const mongoose      = require("mongoose");
 
-const ChuyenRedSchema = new Schema({
+const Schema = new mongoose.Schema({
 	from:    {type: String, required: true}, // Tên người gủi
 	to:      {type: String, required: true}, // Tên người nhận
 	red:     {type: Number, required: true}, // Số red gửi
@@ -11,4 +11,6 @@ const ChuyenRedSchema = new Schema({
 	time:    Date,                           // Thời gian gửi
 });
 
-module.exports = mongoose.model("ChuyenRed", ChuyenRedSchema);
+Schema.plugin(AutoIncrement.plugin, {modelName: 'ChuyenRed', field:'id'});
+
+module.exports = mongoose.model("ChuyenRed", Schema);

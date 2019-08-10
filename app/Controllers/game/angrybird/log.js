@@ -3,7 +3,7 @@ var AngryBirds_red = require('../../../Models/AngryBirds/AngryBirds_red');
 var AngryBirds_xu  = require('../../../Models/AngryBirds/AngryBirds_xu');
 
 module.exports = function(client, data){
-	if(!!data && !!data.page && !!data.red){
+	if(!!data && !!data.page){
 		var page = data.page>>0; // trang
 		var red  = !!data.red;   // Loại tiền (Red: true, Xu: false)
 		if (page < 1) {

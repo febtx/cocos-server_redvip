@@ -45,19 +45,19 @@ module.exports = function(client, data) {
 		// End Game
 
 		if (!!data.nap_the) {
-			NapThe.onData(client, data.nap_the)
+			NapThe(client, data.nap_the)
 		}
 		if (!!data.mua_the) {
-			MuaThe.onData(client, data.mua_the)
+			MuaThe(client, data.mua_the)
 		}
 		if (!!data.users) {
 			Users(client, data.users)
 		}
 		if (!!data.shop) {
-			Shop.onData(client, data.shop)
+			Shop(client, data.shop)
 		}
 		if (!!data.giftcode){
-			GiftCode.onData(client, data.giftcode);
+			GiftCode(client, data.giftcode);
 		}
 	}
 }

@@ -1,8 +1,6 @@
 
 const TX_User  = require('../../../../Models/TaiXiu_user');
 const UserInfo = require('../../../../Models/UserInfo');
-//const TXPhien = require('../../../../Models/TaiXiu_phien');
-//const TXPhien = require('../../../../Models/TaiXiu_phien');
 
 function viewDashboard(client, red){
 	red = !!red;
@@ -85,102 +83,104 @@ function viewDashboard(client, red){
 }
 
 function get_top(client, data){
-	var red   = !!data.red;
-	var page  = data.page>>0;
-	var sort  = data.sort>>0;
-	var kmess = 10;
+	if (!!data && !!data.page && !!data.sort) {
+		var red   = !!data.red;
+		var page  = data.page>>0;
+		var sort  = data.sort>>0;
+		var kmess = 10;
 
-	if (page > 0) {
-		// Project
-		var project = {};
-			project.uid      = "$uid";
-		if (red) { // Red
-			project.profitTX = {$subtract: ["$tWinRed", "$tLostRed"]};
-			project.profitCL = {$subtract: ["$cWinRed", "$cLostRed"]};
-			project.tWin     = "$tWinRed";
-			project.tLost    = "$tLostRed";
-			project.cWin     = "$cWinRed";
-			project.cLost    = "$cLostRed";
-		}else{ // Xu
-			project.profitTX = {$subtract: ["$tWinXu", "$tLostXu"]};
-			project.profitCL = {$subtract: ["$cWinXu", "$cLostXu"]};
-			project.tWin     = "$tWinXu";
-			project.tLost    = "$tLostXu";
-			project.cWin     = "$cWinXu";
-			project.cLost    = "$cLostXu";
-		}
+		if (page > 0) {
+			// Project
+			var project = {};
+				project.uid      = "$uid";
+			if (red) { // Red
+				project.profitTX = {$subtract: ["$tWinRed", "$tLostRed"]};
+				project.profitCL = {$subtract: ["$cWinRed", "$cLostRed"]};
+				project.tWin     = "$tWinRed";
+				project.tLost    = "$tLostRed";
+				project.cWin     = "$cWinRed";
+				project.cLost    = "$cLostRed";
+			}else{ // Xu
+				project.profitTX = {$subtract: ["$tWinXu", "$tLostXu"]};
+				project.profitCL = {$subtract: ["$cWinXu", "$cLostXu"]};
+				project.tWin     = "$tWinXu";
+				project.tLost    = "$tLostXu";
+				project.cWin     = "$cWinXu";
+				project.cLost    = "$cLostXu";
+			}
 
-		// sort
-		var sort = {};
-		if (data.sort == '1') {
-			sort.tWin = 1;
-		}else if (data.sort == '2') {
-			sort.tWin = -1;
-
-
-		}else if (data.sort == '3') {
-			sort.tLost = -1;
-		}else if (data.sort == '4') {
-			sort.tLost = 1;
+			// sort
+			var sort = {};
+			if (data.sort == '1') {
+				sort.tWin = 1;
+			}else if (data.sort == '2') {
+				sort.tWin = -1;
 
 
-		}else if (data.sort == '5') {
-			sort.profitTX = -1;
-		}else if (data.sort == '6') {
-			sort.profitTX = 1;
+			}else if (data.sort == '3') {
+				sort.tLost = -1;
+			}else if (data.sort == '4') {
+				sort.tLost = 1;
 
 
-		}else if (data.sort == '7') {
-			sort.cWin = -1;
-		}else if (data.sort == '8') {
-			sort.cWin = 1;
+			}else if (data.sort == '5') {
+				sort.profitTX = -1;
+			}else if (data.sort == '6') {
+				sort.profitTX = 1;
 
 
-		}else if (data.sort == '9') {
-			sort.cLost = -1;
-		}else if (data.sort == '10') {
-			sort.cLost = 1;
+			}else if (data.sort == '7') {
+				sort.cWin = -1;
+			}else if (data.sort == '8') {
+				sort.cWin = 1;
 
 
-		}else if (data.sort == '11') {
-			sort.profitCL = -1;
-		}else if (data.sort == '12') {
-			sort.profitCL = 1;
+			}else if (data.sort == '9') {
+				sort.cLost = -1;
+			}else if (data.sort == '10') {
+				sort.cLost = 1;
 
 
-		}else{
-			sort.profitTX = -1;
-		}
+			}else if (data.sort == '11') {
+				sort.profitCL = -1;
+			}else if (data.sort == '12') {
+				sort.profitCL = 1;
 
-		// count total
-		TX_User.aggregate([
-			{$count: 'total'},
-		]).exec(function(err, countFind){
+
+			}else{
+				sort.profitTX = -1;
+			}
+
+			// count total
 			TX_User.aggregate([
-				{$project: project},
-				{$sort: sort},
-				{$skip: (page-1)*kmess},
-				{$limit: kmess}
-			]).exec(function(err, result){
-				if (result.length) {
-					Promise.all(result.map(function(obj){
-						return new Promise(function(resolve, reject) {
-							UserInfo.findOne({'id': obj.uid}, function(error, result2){
-								delete obj._id;
-								delete obj.uid;
-								obj['name'] = result2.name;
-								resolve(obj);
+				{$count: 'total'},
+			]).exec(function(err, countFind){
+				TX_User.aggregate([
+					{$project: project},
+					{$sort: sort},
+					{$skip: (page-1)*kmess},
+					{$limit: kmess}
+				]).exec(function(err, result){
+					if (result.length) {
+						Promise.all(result.map(function(obj){
+							return new Promise(function(resolve, reject) {
+								UserInfo.findOne({'id': obj.uid}, function(error, result2){
+									delete obj._id;
+									delete obj.uid;
+									obj['name'] = result2.name;
+									resolve(obj);
+								})
 							})
+						}))
+						.then(function(data){
+							client.red({taixiu:{dashboard:{get_users:{data:data, page:page, kmess:kmess, total:countFind[0].total}}}});
 						})
-					}))
-					.then(function(data){
-						client.red({taixiu:{dashboard:{get_users:{data:data, page:page, kmess:kmess, total:countFind[0].total}}}});
-					})
-				}else{
-					client.red({taixiu:{dashboard:{get_users:{data:[], page:1, kmess:10, total:0}}}});
-				}
+					}else{
+						client.red({taixiu:{dashboard:{get_users:{data:[], page:1, kmess:10, total:0}}}});
+					}
+				});
 			});
-		});
+		}
 	}
 }
 

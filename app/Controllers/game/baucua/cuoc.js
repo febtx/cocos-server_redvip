@@ -5,7 +5,7 @@ var BauCua_temp = require('../../../Models/BauCua/BauCua_temp');
 var UserInfo    = require('../../../Models/UserInfo');
 
 module.exports = function(client, data){
-	if (!!data && !!data.cuoc && !!data.red && !!data.linhVat) {
+	if (!!data && !!data.cuoc) {
 		var cuoc    = data.cuoc>>0;
 		var red     = !!data.red;
 		var linhVat = data.linhVat>>0;

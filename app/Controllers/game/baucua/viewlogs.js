@@ -3,7 +3,7 @@ var BauCua_cuoc  = require('../../../Models/BauCua/BauCua_cuoc');
 var BauCua_phien = require('../../../Models/BauCua/BauCua_phien');
 
 module.exports = function(client, data){
-	if (!!data && !!data.page && !!data.red) {
+	if (!!data && !!data.page) {
 		var page = data.page>>0; // trang
 		var red  = !!data.red;   // Loại tiền (Red: true, Xu: false)
 		if (page < 1) {

@@ -3,7 +3,7 @@ var VuongQuocRed_red = require('../../../Models/VuongQuocRed/VuongQuocRed_red');
 var VuongQuocRed_xu  = require('../../../Models/VuongQuocRed/VuongQuocRed_xu');
 
 module.exports = function(client, data){
-	if (!!data && !!data.page && !!data.red) {
+	if (!!data && !!data.page) {
 		var page = data.page>>0; // trang
 		var red  = !!data.red;   // Loại tiền (Red: true, Xu: false)
 		if (page < 1) {

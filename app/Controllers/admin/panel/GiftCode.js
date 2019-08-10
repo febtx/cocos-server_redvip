@@ -23,9 +23,6 @@ function get_gift(client){
 
 function create_gift(client, data){
 	if (!!data && !!data.giftcode &&
-		!!data.red &&
-		!!data.xu &&
-		!!data.chung &&
 		!!data.ngay &&
 		!!data.thang &&
 		!!data.nam)

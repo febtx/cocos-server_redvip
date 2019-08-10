@@ -3,7 +3,7 @@ var CaoThap_red = require('../../../Models/CaoThap/CaoThap_redbuoc');
 var CaoThap_xu  = require('../../../Models/CaoThap/CaoThap_xubuoc');
 
 module.exports = function(client, data){
-	if (!!data && !!data.red && !!data.page) {
+	if (!!data && !!data.page) {
 		var red  = !!data.red;
 		var page = data.page>>0;
 		if (page < 1) {

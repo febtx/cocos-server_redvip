@@ -18,9 +18,10 @@ function get_data(client, data){
 								obj = obj._doc;
 								var user = UserInfo.findOne({id: obj.uid}, 'name').exec();
 								return Promise.all([user]).then(values => {
-									Object.assign(obj, values[0]._doc);
+									var dataOJ = values[0]._doc;
+									delete dataOJ._id;
+									Object.assign(obj, dataOJ);
 									delete obj.__v;
-									delete obj._id;
 									delete obj.uid;
 									return obj;
 								});
@@ -42,9 +43,10 @@ function get_data(client, data){
 								obj = obj._doc;
 								var user = UserInfo.findOne({id: obj.uid}, 'name').exec();
 								return Promise.all([user]).then(values => {
-									Object.assign(obj, values[0]._doc);
+									var dataOJ = values[0]._doc;
+									delete dataOJ._id;
+									Object.assign(obj, dataOJ);
 									delete obj.__v;
-									delete obj._id;
 									delete obj.uid;
 									return obj;
 								});

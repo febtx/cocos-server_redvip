@@ -3,7 +3,7 @@ var Mini3Cay_red = require('../../../Models/Mini3Cay/Mini3Cay_red');
 var Mini3Cay_xu  = require('../../../Models/Mini3Cay/Mini3Cay_xu');
 
 module.exports = function(client, data){
-	if (!!data && !!data.page && !!data.red) {
+	if (!!data && !!data.page) {
 		var page = data.page>>0; // trang
 		var red  = !!data.red;   // Loại tiền (Red: true, Xu: false)
 		if (page < 1) {

@@ -10,7 +10,7 @@ const Helpers   = require('../../Helpers/Helpers');
 const base_card = require('../../../data/card');
 
 function spin(client, data){
-	if (!!data && !!data.cuoc && !!data.red) {
+	if (!!data && !!data.cuoc) {
 		var bet = data.cuoc>>0; // Mức cược
 		var red = !!data.red; // Loại tiền (Red: true, Xu: false)
 		if (!(bet == 100 || bet == 1000 || bet == 10000)) {
@@ -127,7 +127,7 @@ function spin(client, data){
 							an   = (bet*1000);
 							text = 'Thắng Lớn';
 							code = 8;
-						}else if (tuQuy) {
+						}else if (tuQuy != null) {
 							// x150     TỨ QUÝ (TỨ QUÝ)
 							an   = (bet*150);
 							text = 'Tứ Quý';
@@ -225,7 +225,7 @@ function spin(client, data){
 }
 
 function log(client, data){
-	if (!!data && !!data.page && !!data.red) {
+	if (!!data && !!data.page) {
 		var page = data.page>>0; // trang
 		var red  = !!data.red;   // Loại tiền (Red: true, Xu: false)
 		if (page < 1) {

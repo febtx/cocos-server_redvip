@@ -201,12 +201,16 @@ function changePassword(client, data){
 		} else {
 			User.findOne({'_id': client.UID}, function(err, user){
 				if (!!user) {
-					if (Helper.validPassword(data.passOld, user.local.password)) {
-						User.findOneAndUpdate({'_id': client.UID}, {$set:{'local.password': Helper.generateHash(data.passNew)}}, function(err, cat){
-							client.red({notice:{load: 0, title: 'THÀNH CÔNG', text:'Đổi mật khẩu thành công.'}});
-						});
+					if (user.local.username == data.passNew) {
+						client.red({notice: {title: "LỖI", text: 'Mật khẩu không được trùng với tên đăng nhập.!!'}});
 					}else{
-						client.red({notice:{load: 0, title: 'THẤT BẠI', text:'Mật khẩu cũ không đúng.'}});
+						if (Helper.validPassword(data.passOld, user.local.password)) {
+							User.findOneAndUpdate({'_id': client.UID}, {$set:{'local.password': Helper.generateHash(data.passNew)}}, function(err, cat){
+								client.red({notice:{load: 0, title: 'THÀNH CÔNG', text:'Đổi mật khẩu thành công.'}});
+							});
+						}else{
+							client.red({notice:{load: 0, title: 'THẤT BẠI', text:'Mật khẩu cũ không đúng.'}});
+						}
 					}
 				}
 			});

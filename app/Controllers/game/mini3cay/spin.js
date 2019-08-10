@@ -11,7 +11,7 @@ var Helpers       = require('../../../Helpers/Helpers');
 var base_card     = require('../../../../data/card');
 
 module.exports = function(client, spin) {
-	if (!!spin && !!spin.cuoc && !!spin.red) {
+	if (!!spin && !!spin.cuoc) {
 		var cuoc = spin.cuoc>>0;  // Tiền cược
 		var red  = !!spin.red;	  // Loại tiền đang chơi
 		if (!(cuoc == 100 || cuoc == 1000 || cuoc == 10000)) {

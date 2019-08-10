@@ -89,7 +89,7 @@ function check_win(data, line){
 }
 
 module.exports = function(client, data){
-	if (!!data && !!data.cuoc && !!data.red && Array.isArray(data.line)) {
+	if (!!data && !!data.cuoc && Array.isArray(data.line)) {
 		var bet  = data.cuoc>>0;                   // Mức cược
 		var red  = !!data.red;                     // Loại tiền (Red: true, Xu: false)
 		var line = Array.from(new Set(data.line)); // Dòng cược // fix trùng lặp

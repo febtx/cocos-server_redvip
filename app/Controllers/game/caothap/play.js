@@ -17,7 +17,7 @@ var base_card    = require('../../../../data/card');
 var HeSo         = require('./heso');
 
 function newGame(client, data) {
-	if (!!data && !!data.cuoc && !!data.red) {
+	if (!!data && !!data.cuoc) {
 		var cuoc = data.cuoc>>0;  // Tiền cược
 		var red  = !!data.red;	  // Loại tiền đang chơi
 		if (!(cuoc == 1000 || cuoc == 10000 || cuoc == 50000 || cuoc == 100000 || cuoc == 500000)) {

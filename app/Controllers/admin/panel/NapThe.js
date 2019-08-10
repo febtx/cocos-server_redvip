@@ -97,7 +97,7 @@ function update(client, data){
 	}
 }
 
-function onData(client, data) {
+module.exports = function(client, data) {
 	if (!!data) {
 		if (!!data.get_data) {
 			get_data(client, data.get_data)
@@ -106,8 +106,4 @@ function onData(client, data) {
 			update(client, data.update)
 		}
 	}
-}
-
-module.exports = {
-	onData: onData,
 }

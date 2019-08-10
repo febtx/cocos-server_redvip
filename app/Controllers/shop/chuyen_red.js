@@ -9,7 +9,7 @@ var Helper    = require('../../Helpers/Helpers');
 
 /** OTP
 module.exports = function(client, data){
-	if (!!data && !!data.red && !!data.name && !!data.otp) {
+	if (!!data && !!data.name && !!data.otp) {
 		if (!validator.isLength(data.name, {min: 3, max: 17})) {
 			client.red({notice: {title: "LỖI", text: 'Tên nhân vật không hợp lệ.!'}});
 		}else if (!validator.isLength(data.otp, {min: 4, max: 6})) {
@@ -84,7 +84,7 @@ module.exports = function(client, data){
 
 
 module.exports = function(client, data){
-	if (!!data && !!data.red && !!data.name) {
+	if (!!data && !!data.name) {
 		if (!validator.isLength(data.name, {min: 3, max: 17})) {
 			client.red({notice: {title: "LỖI", text: 'Tên nhân vật không hợp lệ.!'}});
 		}else{

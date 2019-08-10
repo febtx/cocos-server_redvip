@@ -114,7 +114,7 @@ function check_win(data, line){
 }
 
 module.exports = function(client, data){
-	if (!!data && !!data.cuoc && !!data.red) {
+	if (!!data && !!data.cuoc) {
 		var bet  = data.cuoc>>0;                   // Mức cược
 		var red  = !!data.red;                     // Loại tiền (Red: true, Xu: false)
 
