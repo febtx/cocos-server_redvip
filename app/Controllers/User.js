@@ -188,9 +188,6 @@ var signName = function(client, name){
 
 function changePassword(client, data){
 	if (!!data && !!data.passOld && !!data.passNew && !!data.passNew2) {
-		var az09     = new RegExp("^[a-zA-Z0-9]+$");
-		var testName = az09.test(name);
-
 		if (!validator.isLength(data.passOld, {min: 6, max: 32})) {
 			client.red({notice: {title: "LỖI", text: 'Độ dài mật khẩu từ 6 đến 32 ký tự !!'}});
 		}else if (!validator.isLength(data.passNew, {min: 6, max: 32})) {
@@ -198,9 +195,9 @@ function changePassword(client, data){
 		}else if (!validator.isLength(data.passNew2, {min: 6, max: 32})) {
 			client.red({notice: {title: "LỖI", text: 'Độ dài mật khẩu từ 6 đến 32 ký tự !!'}});
 		} else if (data.passOld == data.passNew){
-			error = 'Mật khẩu mới không trùng với mật khẩu cũ.!!';
+			client.red({notice: {title: "LỖI", text: 'Mật khẩu mới không trùng với mật khẩu cũ.!!'}});
 		} else if (data.passNew != data.passNew2){
-			error = 'Nhập lại mật khẩu không đúng!!';
+			client.red({notice: {title: "LỖI", text: 'Mật khẩu mới không trùng với mật khẩu cũ.!!'}});
 		} else {
 			User.findOne({'_id': client.UID}, function(err, user){
 				if (!!user) {

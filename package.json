@@ -1,6 +1,6 @@
 {
 	"name": "RedVip",
-	"version": "0.17.02",
+	"version": "1.17.02",
 	"description": "Server game By MrT98 (Red T)",
 	"main": "server.js",
 	"scripts": {

@@ -14,9 +14,8 @@ const VuongQuocRed = require('./game/vq_red')
 const mini3cay     = require('./game/mini3cay')
 const angrybirds   = require('./game/angrybirds')
 
-
 module.exports = function(client, data) {
-	if (client.auth && client.UID) {
+	if (!!data) {
 		if (void 0 !== data.admin) {
 			Admin.onData(client, data.admin)
 		}

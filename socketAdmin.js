@@ -1,10 +1,10 @@
 
 var validator = require('validator');
-var User    = require('./app/Models/Admin');
-var socket  = require('./app/Controllers/admin/socket.js');
+var User      = require('./app/Models/Admin');
+var socket    = require('./app/Controllers/admin/socket.js');
 
 // Authenticate!
-var authenticate = async function(client, data, callback) {
+var authenticate = function(client, data, callback) {
 	if (!!data && !!data.username && !!data.password) {
 		var username = data.username;
 		var password = data.password;
@@ -19,18 +19,19 @@ var authenticate = async function(client, data, callback) {
 			callback({title: 'ĐĂNG NHẬP', text: 'Tên đăng nhập chỉ gồm kí tự và số !!'}, false);
 		} else {
 			try {
-				var regex = new RegExp("^" + username + "$", 'i')
-				var user = await User.findOne({'username': {$regex: regex}});
-				if (user){
-					if (user.validPassword(password)){
-						client.UID = user._id.toString();
-						callback(false, true);
+				var regex = new RegExp("^" + username + "$", 'i');
+				User.findOne({'username': {$regex: regex}}, function(err, user){
+					if (user){
+						if (user.validPassword(password)){
+							client.UID = user._id.toString();
+							callback(false, true);
+						}else{
+							callback({title: 'ĐĂNG NHẬP', text: 'Sai mật khẩu!!'}, false);
+						}
 					}else{
-						callback({title: 'ĐĂNG NHẬP', text: 'Sai mật khẩu!!'}, false);
+						callback({title: 'ĐĂNG NHẬP', text: 'Tài khoản không tồn tại!!'}, false);
 					}
-				}else{
-					callback({title: 'ĐĂNG NHẬP', text: 'Tài khoản không tồn tại!!'}, false);
-				}
+				});
 			} catch (error) {
 				callback({title: 'THÔNG BÁO', text: 'Có lỗi sảy ra, vui lòng kiểm tra lại!!'}, false);
 			}
@@ -40,8 +41,8 @@ var authenticate = async function(client, data, callback) {
 
 module.exports = function(ws, redT){
 	ws.admin = true;
-	ws.auth = false;
-	ws.UID  = null;
+	ws.auth  = false;
+	ws.UID   = null;
 
 	ws.red = function(data){
 		try {
@@ -50,7 +51,7 @@ module.exports = function(ws, redT){
 	}
 
 	ws.on('message', function(message) {
-		console.log(message)
+		console.log(message);
 		try {
 			if (!!message) {
 				message = JSON.parse(message);

@@ -1,13 +1,14 @@
 
-const Admin  = require('../../Models/Admin');
+const Admin   = require('../../Models/Admin');
 
-const Helper = require('../../Helpers/Helpers');
+var validator = require('validator');
+const Helper  = require('../../Helpers/Helpers');
 
 function first(client) {
 	var data = {
 		Authorized: true,
 	};
-	client.send(JSON.stringify(data));
+	client.red(data);
 	/**
 	Admin.findOne({_id: client.UID}, function (err, d) {
 		client.emit('p', {
@@ -19,6 +20,20 @@ function first(client) {
 }
 
 function changePassword(client, data){
+	if (!!data && !!data.password && !!data.newPassword && !!data.newPassword2) {
+		if (!validator.isLength(data.password, {min: 6, max: 32})) {
+			client.red({notice: {title: "LỖI", text: 'Độ dài mật khẩu từ 6 đến 32 ký tự !!'}});
+		}else if (!validator.isLength(data.newPassword, {min: 6, max: 32})) {
+			client.red({notice: {title: "LỖI", text: 'Độ dài mật khẩu từ 6 đến 32 ký tự !!'}});
+		}else if (!validator.isLength(data.newPassword2, {min: 6, max: 32})) {
+			client.red({notice: {title: "LỖI", text: 'Độ dài mật khẩu từ 6 đến 32 ký tự !!'}});
+		} else if (data.password == data.newPassword){
+			client.red({notice: {title: "LỖI", text: 'Mật khẩu mới không trùng với mật khẩu cũ.!!'}});
+		} else if (data.newPassword != data.newPassword2){
+			client.red({notice: {title: "LỖI", text: 'Nhập lại mật khẩu không đúng!!'}});
+		} else {
+		}
+	}
 	var error = null;
 	if (data.password.length > 32 || data.password.length < 5 || data.newPassword.length > 32 || data.newPassword.length < 5 || data.newPassword2.length > 32 || data.newPassword2.length < 5)
 		error = 'Mật khẩu từ 5 - 32 kí tự...';
@@ -28,7 +43,7 @@ function changePassword(client, data){
 		error = 'Mật Khẩu mới không được trùng với mật khẩu cũ...';
 
 	if (error) {
-		client.send(JSON.stringify({notice:{title:'ĐỔI MẬT KHẨU',text:error}}));
+		client.red({notice:{title:'ĐỔI MẬT KHẨU',text:error}});
 		return;
 	}
 
@@ -36,10 +51,10 @@ function changePassword(client, data){
 		if (user !== null) {
 			if (Helper.validPassword(data.password, user.password)) {
 				Admin.findOneAndUpdate({'_id': client.UID}, {'password':Helper.generateHash(data.newPassword)}, function(err, cat){
-					client.send(JSON.stringify({notice:{title:'ĐỔI MẬT KHẨU',text:'Đổi mật khẩu thành công.'}}));
+					client.red({notice:{title:'ĐỔI MẬT KHẨU',text:'Đổi mật khẩu thành công.'}});
 				});
 			}else{
-				client.send(JSON.stringify({notice:{title:'ĐỔI MẬT KHẨU',text:'Mật khẩu cũ không đúng.'}}));
+				client.red({notice:{title:'ĐỔI MẬT KHẨU',text:'Mật khẩu cũ không đúng.'}});
 			}
 		}
 	});

@@ -7,7 +7,7 @@ var captcha   = require('./captcha');
 var forgotpass = require('./app/Controllers/user/for_got_pass');
 
 // Authenticate!
-var authenticate = async function(client, data, callback) {
+var authenticate = function(client, data, callback) {
 	if (!!data && !!data.username && !!data.password) {
 		var username = data.username;
 		var password = data.password;
@@ -44,14 +44,15 @@ var authenticate = async function(client, data, callback) {
 									client.c_captcha('signUp');
 									callback({title: 'ĐĂNG KÝ', text: 'Tên tài khoản đã tồn tại !!'}, false);
 								}else{
-									var user = await User.create({'local.username':username, 'local.password':helpers.generateHash(password), 'local.regDate': new Date()});
-									if (!!user){
-										client.UID = user._id.toString();
-										callback(false, true);
-									}else{
-										client.c_captcha('signUp');
-										callback({title: 'ĐĂNG KÝ', text: 'Tên tài khoản đã tồn tại !!'}, false);
-									}
+									User.create({'local.username':username, 'local.password':helpers.generateHash(password), 'local.regDate': new Date()}, function(err, user){
+										if (!!user){
+											client.UID = user._id.toString();
+											callback(false, true);
+										}else{
+											client.c_captcha('signUp');
+											callback({title: 'ĐĂNG KÝ', text: 'Tên tài khoản đã tồn tại !!'}, false);
+										}
+									});
 								}
 							});
 						}else{
@@ -60,19 +61,19 @@ var authenticate = async function(client, data, callback) {
 						}
 					}
 				} else {
-				// Đăng Nhập
-					var user = await User.findOne({'local.username': {$regex: regex}});
-					if (user){
-						if (user.validPassword(password)){
-							client.UID = user._id.toString();
-							callback(false, true);
+					// Đăng Nhập
+					User.findOne({'local.username': {$regex: regex}}, function(err, user){
+						if (user){
+							if (user.validPassword(password)){
+								client.UID = user._id.toString();
+								callback(false, true);
+							}else{
+								callback({title: 'ĐĂNG NHẬP', text: 'Sai mật khẩu!!'}, false);
+							}
 						}else{
-							callback({title: 'ĐĂNG NHẬP', text: 'Sai mật khẩu!!'}, false);
+							callback({title: 'ĐĂNG NHẬP', text: 'Tài khoản không tồn tại!!'}, false);
 						}
-					}else{
-						callback({title: 'ĐĂNG NHẬP', text: 'Tài khoản không tồn tại!!'}, false);
-	
-					}
+					});
 				}
 			} catch (error) {
 				callback({title: 'THÔNG BÁO', text: 'Có lỗi sảy ra, vui lòng kiểm tra lại!!'}, false);
