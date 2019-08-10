@@ -1,59 +1,64 @@
 
-const tabDaiLy   = require('../../../Models/DaiLy');
-const tabNhaMang = require('../../../Models/NhaMang');
-const tabMenhGia = require('../../../Models/MenhGia');
+var tabDaiLy   = require('../../../Models/DaiLy');
+var tabNhaMang = require('../../../Models/NhaMang');
+var tabMenhGia = require('../../../Models/MenhGia');
 
-const Helper     = require('../../../Helpers/Helpers');
+var Helper     = require('../../../Helpers/Helpers');
 
-async function DaiLy_add(client, data){
-	var name     = data.name;
-	var nickname = data.nickname;
-	var phone    = data.phone;
-	var fb       = data.fb;
-	if (Helper.isEmpty(name) || Helper.isEmpty(nickname) || Helper.isEmpty(phone) || Helper.isEmpty(fb)) {
-		client.send(JSON.stringify({notice:{title:'ĐẠI LÝ',text:'Không bỏ trống các thông tin...'}}));
-	}else{
-		var regexNick = new RegExp("^" + nickname + "$", 'i');
-		tabDaiLy.findOne({'nickname': {$regex: regexNick}} , async function(err, check){
-			if (!!check) {
-				client.send(JSON.stringify({notice:{title:'ĐẠI LÝ',text:'NICKNAME đã tồn tại...'}}));
-			}else{
-				try {
-					const create = await tabDaiLy.create({'name':name, 'nickname':nickname, 'phone':phone, 'fb':fb});
-					if (!!create) {
-						tabDaiLy.find({}, {}, {sort:{'_id':-1}}, function(err, data){
-							client.send(JSON.stringify({daily:{data:data}, notice:{title:'ĐẠI LÝ',text:'Thêm đại lý thành công...'}}));
+function DaiLy_add(client, data){
+	if (!!data && !!data.name && !!data.nickname && !!data.phone && !!data.fb) {
+		var name     = data.name;
+		var nickname = data.nickname;
+		var phone    = data.phone;
+		var fb       = data.fb;
+		if (Helper.isEmpty(name) || Helper.isEmpty(nickname) || Helper.isEmpty(phone) || Helper.isEmpty(fb)) {
+			client.red({notice:{title:'ĐẠI LÝ',text:'Không bỏ trống các thông tin...'}});
+		}else{
+			var regexNick = new RegExp("^" + nickname + "$", 'i');
+			tabDaiLy.findOne({'nickname': {$regex: regexNick}}, function(err, check){
+				if (!!check) {
+					client.red({notice:{title:'ĐẠI LÝ',text:'NICKNAME đã tồn tại...'}});
+				}else{
+					try {
+						tabDaiLy.create({'name':name, 'nickname':nickname, 'phone':phone, 'fb':fb}, function(errC, dataC) {
+							if (!!dataC) {
+								tabDaiLy.find({}, {}, {sort:{'_id':-1}}, function(err, data){
+									client.red({daily:{data:data}, notice:{title:'ĐẠI LÝ',text:'Thêm đại lý thành công...'}});
+								});
+							}
 						});
+					} catch (err) {
+						client.red({notice:{title:'ĐẠI LÝ',text:'Có lỗi sảy ra, xin vui lòng thử lại.'}});
 					}
-				} catch (err) {
-					client.send(JSON.stringify({notice:{title:'ĐẠI LÝ',text:'Có lỗi sảy ra, xin vui lòng thử lại.'}}));
 				}
+			});
+		}
+	}
+}
+
+function DaiLy_remove(client, id){
+	if (!!id) {
+		tabDaiLy.findOne({'_id': id}, function(err, data){
+			if (data) {
+				var active = tabDaiLy.findOneAndRemove({'_id': id}).exec();
+				Promise.all([active])
+				.then(values => {
+					tabDaiLy.find({}, {}, {sort:{'_id':-1}}, function(err, data){
+						client.red({daily:{data:data, remove:true}, notice:{title:'ĐẠI LÝ',text:'Xoá thành công...'}});
+					});
+				})
+			}else{
+				tabDaiLy.find({}, {}, {sort:{'_id':-1}}, function(err, data){
+					client.red({daily:{data:data, remove:true}, notice:{title:'ĐẠI LÝ',text:'Đại lý không tồn tại...'}});
+				});
 			}
 		});
 	}
 }
 
-function DaiLy_remove(client, id){
-	tabDaiLy.findOne({'_id': id}, function(err, data){
-		if (data) {
-			var active = tabDaiLy.findOneAndRemove({'_id': id}).exec();
-			Promise.all([active])
-			.then(values => {
-				tabDaiLy.find({}, {}, {sort:{'_id':-1}}, function(err, data){
-					client.send(JSON.stringify({daily:{data:data, remove:true}, notice:{title:'ĐẠI LÝ',text:'Xoá thành công...'}}));
-				});
-			})
-		}else{
-			tabDaiLy.find({}, {}, {sort:{'_id':-1}}, function(err, data){
-				client.send(JSON.stringify({daily:{data:data, remove:true}, notice:{title:'ĐẠI LÝ',text:'Đại lý không tồn tại...'}}));
-			});
-		}
-	});
-}
-
 function DaiLy_get(client){
 	tabDaiLy.find({}, {}, {sort:{'_id':-1}}, function(err, data){
-		client.send(JSON.stringify({daily:{data:data}}));
+		client.red({daily:{data:data}});
 	});
 }
 
@@ -72,30 +77,33 @@ function DaiLy(client, data){
 
 
 function NhaMang_add(client, data){
-	var name = data.name;
-	var code = data.value;
-	var nap  = !!data.nap;
-	var mua  = !!data.mua;
-	if (Helper.isEmpty(name) || (!nap && !mua)) {
-		client.send(JSON.stringify({notice:{title:'THÊM NHÀ MẠNG',text:'Không bỏ trống các thông tin...'}}));
-	}else{
-		var regex = new RegExp("^" + name + "$", 'i');
-		tabNhaMang.findOne({'name': {$regex: regex}, 'nap': nap, 'mua': mua} , async function(err, check){
-			if (!!check) {
-				client.send(JSON.stringify({notice:{title:'THÊM NHÀ MẠNG',text:'Nhà mạng đã tồn tại...'}}));
-			}else{
-				try {
-					const create = await tabNhaMang.create({'name':name, 'value':code, 'nap':nap, 'mua':mua});
-					if (!!create) {
-						tabNhaMang.find({}, function(err, data){
-							client.send(JSON.stringify({thecao:{nhamang:data}, notice:{title:'THÊM NHÀ MẠNG',text:'Thêm NHÀ MẠNG thành công...'}}));
+	if (!!data && !!data.name && !!data.value) {
+		var name = data.name;
+		var code = data.value;
+		var nap  = !!data.nap;
+		var mua  = !!data.mua;
+		if (Helper.isEmpty(name) || (!nap && !mua)) {
+			client.red({notice:{title:'THÊM NHÀ MẠNG',text:'Không bỏ trống các thông tin...'}});
+		}else{
+			var regex = new RegExp("^" + name + "$", 'i');
+			tabNhaMang.findOne({'name': {$regex: regex}, 'nap': nap, 'mua': mua}, function(err, check){
+				if (!!check) {
+					client.red({notice:{title:'THÊM NHÀ MẠNG',text:'Nhà mạng đã tồn tại...'}});
+				}else{
+					try {
+						tabNhaMang.create({'name':name, 'value':code, 'nap':nap, 'mua':mua}, function(errC, create){
+							if (!!create) {
+								tabNhaMang.find({}, function(err, data){
+									client.red({thecao:{nhamang:data}, notice:{title:'THÊM NHÀ MẠNG',text:'Thêm NHÀ MẠNG thành công...'}});
+								});
+							}
 						});
+					} catch (err) {
+						client.red({notice:{title:'THÊM NHÀ MẠNG',text:'Có lỗi sảy ra, xin vui lòng thử lại.'}});
 					}
-				} catch (err) {
-					client.send(JSON.stringify({notice:{title:'THÊM NHÀ MẠNG',text:'Có lỗi sảy ra, xin vui lòng thử lại.'}}));
 				}
-			}
-		});
+			});
+		}
 	}
 }
 function NhaMang_remove(client, id){
@@ -105,12 +113,12 @@ function NhaMang_remove(client, id){
 			Promise.all([active])
 			.then(values => {
 				tabNhaMang.find({}, function(err, data){
-					client.send(JSON.stringify({thecao:{nhamang:data, remove: true}, notice:{title:'XOÁ NHÀ MẠNG',text:'Xoá thành công...'}}));
+					client.red({thecao:{nhamang:data, remove: true}, notice:{title:'XOÁ NHÀ MẠNG',text:'Xoá thành công...'}});
 				});
 			})
 		}else{
 			tabNhaMang.find({}, function(err, data){
-				client.send(JSON.stringify({thecao:{nhamang:data, remove: true}, notice:{title:'XOÁ NHÀ MẠNG',text:'Nhà mạng không tồn tại...'}}));
+				client.red({thecao:{nhamang:data, remove: true}, notice:{title:'XOÁ NHÀ MẠNG',text:'Nhà mạng không tồn tại...'}});
 			});
 		}
 	});
@@ -131,22 +139,22 @@ async function MenhGia_add(client, data){
 	var nap    = !!data.nap;
 	var mua    = !!data.mua;
 	if (Helper.isEmpty(name) || Helper.isEmpty(values) || (!nap && !mua)) {
-		client.send(JSON.stringify({notice:{title:'THÊM MỆNH GIÁ',text:'Không bỏ trống các thông tin...'}}));
+		client.red({notice:{title:'THÊM MỆNH GIÁ',text:'Không bỏ trống các thông tin...'}});
 	}else{
 		var regex = new RegExp("^" + name + "$", 'i');
 		tabMenhGia.findOne({'name': {$regex: regex}, 'values': values, 'nap': nap, 'mua': mua} , async function(err, check){
 			if (!!check) {
-				client.send(JSON.stringify({notice:{title:'THÊM MỆNH GIÁ',text:'Mệnh giá đã tồn tại...'}}));
+				client.red({notice:{title:'THÊM MỆNH GIÁ',text:'Mệnh giá đã tồn tại...'}});
 			}else{
 				try {
-					const create = await tabMenhGia.create({'name':name, 'values':values, 'nap':nap, 'mua':mua});
+					var create = await tabMenhGia.create({'name':name, 'values':values, 'nap':nap, 'mua':mua});
 					if (!!create) {
 						tabMenhGia.find({}, function(err, data){
-							client.send(JSON.stringify({thecao:{menhgia:data}, notice:{title:'THÊM MỆNH GIÁ',text:'Thêm MỆNH GIÁ thành công...'}}));
+							client.red({thecao:{menhgia:data}, notice:{title:'THÊM MỆNH GIÁ',text:'Thêm MỆNH GIÁ thành công...'}});
 						});
 					}
 				} catch (err) {
-					client.send(JSON.stringify({notice:{title:'THÊM MỆNH GIÁ',text:'Có lỗi sảy ra, xin vui lòng thử lại.'}}));
+					client.red({notice:{title:'THÊM MỆNH GIÁ',text:'Có lỗi sảy ra, xin vui lòng thử lại.'}});
 				}
 			}
 		});
@@ -159,12 +167,12 @@ function MenhGia_remove(client, id){
 			Promise.all([active])
 			.then(values => {
 				tabMenhGia.find({}, function(err, data){
-					client.send(JSON.stringify({thecao:{menhgia:data, remove: true}, notice:{title:'XOÁ MỆNH GIÁ',text:'Xoá thành công...'}}));
+					client.red({thecao:{menhgia:data, remove: true}, notice:{title:'XOÁ MỆNH GIÁ',text:'Xoá thành công...'}});
 				});
 			})
 		}else{
 			tabMenhGia.find({}, function(err, data){
-				client.send(JSON.stringify({thecao:{menhgia:data, remove: true}, notice:{title:'XOÁ MỆNH GIÁ',text:'Mệnh giá không tồn tại...'}}));
+				client.red({thecao:{menhgia:data, remove: true}, notice:{title:'XOÁ MỆNH GIÁ',text:'Mệnh giá không tồn tại...'}});
 			});
 		}
 	});
@@ -205,23 +213,25 @@ function thecao_get(client, data){
 			df = Object.assign(df, obj);
 			return true;
 		})).then(resulf => {
-			client.send(JSON.stringify({thecao: df}));
+			client.red({thecao: df});
 		})
 	})
 }
 
 function onData(client, data) {
-	if (void 0 !== data.daily) {
-		DaiLy(client, data.daily)
-	}
-	if (void 0 !== data.nhamang) {
-		NhaMang(client, data.nhamang)
-	}
-	if (void 0 !== data.menhgia) {
-		MenhGia(client, data.menhgia)
-	}
-	if (void 0 !== data.thecao_get) {
-		thecao_get(client, data.thecao_get)
+	if (!!data) {
+		if (void 0 !== data.daily) {
+			DaiLy(client, data.daily)
+		}
+		if (void 0 !== data.nhamang) {
+			NhaMang(client, data.nhamang)
+		}
+		if (void 0 !== data.menhgia) {
+			MenhGia(client, data.menhgia)
+		}
+		if (void 0 !== data.thecao_get) {
+			thecao_get(client, data.thecao_get)
+		}
 	}
 }
 

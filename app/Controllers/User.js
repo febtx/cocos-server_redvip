@@ -197,7 +197,7 @@ function changePassword(client, data){
 		} else if (data.passOld == data.passNew){
 			client.red({notice: {title: "LỖI", text: 'Mật khẩu mới không trùng với mật khẩu cũ.!!'}});
 		} else if (data.passNew != data.passNew2){
-			client.red({notice: {title: "LỖI", text: 'Mật khẩu mới không trùng với mật khẩu cũ.!!'}});
+			client.red({notice: {title: "LỖI", text: 'Nhập lại mật khẩu không đúng.!!'}});
 		} else {
 			User.findOne({'_id': client.UID}, function(err, user){
 				if (!!user) {

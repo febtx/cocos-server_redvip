@@ -1,22 +1,22 @@
 
-const Admin    = require('./Admin')
-const Users    = require('./panel/Users')
-const NapThe   = require('./panel/NapThe')
-const MuaThe   = require('./panel/MuaThe')
-const Shop     = require('./panel/Shop')
-const GiftCode = require('./panel/GiftCode')
+var Admin    = require('./Admin')
+var Users    = require('./panel/Users')
+var NapThe   = require('./panel/NapThe')
+var MuaThe   = require('./panel/MuaThe')
+var Shop     = require('./panel/Shop')
+var GiftCode = require('./panel/GiftCode')
 
-const TaiXiu       = require('./game/taixiu')
-const BauCua       = require('./game/baucua')
-const MiniPoker    = require('./game/mini_poker')
-const BigBabol     = require('./game/big_babol')
-const VuongQuocRed = require('./game/vq_red')
-const mini3cay     = require('./game/mini3cay')
-const angrybirds   = require('./game/angrybirds')
+var TaiXiu       = require('./game/taixiu')
+var BauCua       = require('./game/baucua')
+var MiniPoker    = require('./game/mini_poker')
+var BigBabol     = require('./game/big_babol')
+var VuongQuocRed = require('./game/vq_red')
+var mini3cay     = require('./game/mini3cay')
+var angrybirds   = require('./game/angrybirds')
 
 module.exports = function(client, data) {
 	if (!!data) {
-		if (void 0 !== data.admin) {
+		if (!!data.admin) {
 			Admin.onData(client, data.admin)
 		}
 
