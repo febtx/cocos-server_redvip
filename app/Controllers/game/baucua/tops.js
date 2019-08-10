@@ -1,7 +1,7 @@
 
-const BauCua_user = require('../../../Models/BauCua/BauCua_user');
+var BauCua_user = require('../../../Models/BauCua/BauCua_user');
 
-const UserInfo   = require('../../../Models/UserInfo');
+var UserInfo   = require('../../../Models/UserInfo');
 
 module.exports = function(client, data){
 	var red  = !!data;   // Loại tiền (Red: true, Xu: false)
@@ -21,7 +21,7 @@ module.exports = function(client, data){
 			});
 		}))
 		.then(function(arrayOfResults) {
-			client.send(JSON.stringify({mini:{baucua:{tops:arrayOfResults}}}));
+			client.red({mini:{baucua:{tops:arrayOfResults}}});
 		})
 	});
 };

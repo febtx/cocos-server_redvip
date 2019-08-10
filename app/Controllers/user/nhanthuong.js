@@ -2,11 +2,10 @@
 const UserInfo = require('../../Models/UserInfo');
 const helper   = require('../../Helpers/Helpers');
 
-
 module.exports = function(client){
 	UserInfo.findOne({id:client.UID}, 'red lastVip redPlay vip', function(err, user){
 		var vipHT = ((user.redPlay-user.lastVip)/100000)>>0; // Điểm vip Hiện Tại
-		var red      = 0; // Giá điểm vip
+		var red   = 0; // Giá điểm vip
 
 		if (vipHT >= 120000) {
 			red = 1050;
@@ -28,10 +27,10 @@ module.exports = function(client){
 
 		var tien = vipHT*red; // Tiền thưởng
 		if (tien > 0) {
-			client.send(JSON.stringify({profile:{level: {level: 1, vipNext: 100, vipPre: 0, vipTL: user.vip+vipHT, vipHT: 0}}, notice:{text: "Bạn nhận được " + helper.numberWithCommas(tien) + " RED", title: "THÀNH CÔNG"}, user:{red: user.red*1+tien}}));
+			client.red({profile:{level: {level: 1, vipNext: 100, vipPre: 0, vipTL: user.vip+vipHT, vipHT: 0}}, notice:{text: "Bạn nhận được " + helper.numberWithCommas(tien) + " RED", title: "THÀNH CÔNG"}, user:{red: user.red*1+tien}});
 			UserInfo.findOneAndUpdate({id: client.UID}, {$set:{lastVip: user.redPlay}, $inc: {red: tien, vip: vipHT}}, function(err,cat){});
 		}else{
-			client.send(JSON.stringify({notice:{text: "Bạn chưa đủ cấp VIP để đổi thưởng...", title: "THẤT BẠI"}}));
+			client.red({notice:{text: "Bạn chưa đủ cấp VIP để đổi thưởng...", title: "THẤT BẠI"}});
 		}
 	});
 }

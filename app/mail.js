@@ -20,7 +20,7 @@ function sendOTP(email, otp){
 			  }
 			});
 		    var mainOptions = {
-		        from: 'Vip Red',
+		        from: 'RedVip',
 		        to: email,
 		        subject: 'OTP ' + otp + ' - RedVip.club',
 		        html: data

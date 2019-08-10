@@ -1,6 +1,6 @@
 
-const BigBabol_red = require('../../../Models/BigBabol/BigBabol_red');
-const BigBabol_xu  = require('../../../Models/BigBabol/BigBabol_xu');
+var BigBabol_red = require('../../../Models/BigBabol/BigBabol_red');
+var BigBabol_xu  = require('../../../Models/BigBabol/BigBabol_xu');
 
 module.exports = function(client, data){
 	var red    = !!data;   // Loại tiền (Red: true, Xu: false)

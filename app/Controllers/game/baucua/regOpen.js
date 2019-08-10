@@ -1,9 +1,9 @@
 
-const BauCua_phien = require('../../../Models/BauCua/BauCua_phien');
-const BauCua_cuoc  = require('../../../Models/BauCua/BauCua_cuoc');
-const BauCua_temp  = require('../../../Models/BauCua/BauCua_temp');
+var BauCua_phien = require('../../../Models/BauCua/BauCua_phien');
+var BauCua_cuoc  = require('../../../Models/BauCua/BauCua_cuoc');
+var BauCua_temp  = require('../../../Models/BauCua/BauCua_temp');
 
-const UserInfo    = require('../../../Models/UserInfo');
+var UserInfo    = require('../../../Models/UserInfo');
 
 module.exports = function(client){
 	var LinhVat = {};
@@ -88,7 +88,7 @@ module.exports = function(client){
 		});
 		Promise.all([TTActive1, TTActive2, TTActive3])
 		.then(ofResults => {
-			client.send(JSON.stringify({mini:{baucua:{regOpen: true, data: data, logLV: LinhVat, logs: ofResults[2]}}}));
+			client.red({mini:{baucua:{regOpen: true, data: data, logLV: LinhVat, logs: ofResults[2]}}});
 		})
 	})
 }

@@ -1,6 +1,6 @@
 
-const AngryBirds_red = require('../../../Models/AngryBirds/AngryBirds_red');
-const AngryBirds_xu  = require('../../../Models/AngryBirds/AngryBirds_xu');
+var AngryBirds_red = require('../../../Models/AngryBirds/AngryBirds_red');
+var AngryBirds_xu  = require('../../../Models/AngryBirds/AngryBirds_xu');
 
 module.exports = function(client, data){
 	var red    = !!data;   // Loại tiền (Red: true, Xu: false)

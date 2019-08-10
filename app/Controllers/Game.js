@@ -21,25 +21,27 @@ const caothap    = require('./game/caothap');
 const angrybird  = require('./game/angrybird');
 
 module.exports = function(client, data){
-	if (void 0 !== data.mini_poker) {
-		mini_poker(client, data.mini_poker);
-	}
-	if (void 0 !== data.big_babol) {
-		big_babol(client, data.big_babol);
-	}
-	if (void 0 !== data.vq_red) {
-		vq_red(client, data.vq_red);
-	}
-	if (void 0 !== data.baucua) {
-		baucua(client, data.baucua);
-	}
-	if (void 0 !== data.mini3cay) {
-		mini3cay(client, data.mini3cay);
-	}
-	if (void 0 !== data.caothap) {
-		caothap(client, data.caothap);
-	}
-	if (void 0 !== data.angrybird) {
-		angrybird(client, data.angrybird);
+	if (!!data) {
+		if (!!data.mini_poker) {
+			mini_poker(client, data.mini_poker);
+		}
+		if (!!data.big_babol) {
+			big_babol(client, data.big_babol);
+		}
+		if (!!data.vq_red) {
+			vq_red(client, data.vq_red);
+		}
+		if (!!data.baucua) {
+			baucua(client, data.baucua);
+		}
+		if (!!data.mini3cay) {
+			mini3cay(client, data.mini3cay);
+		}
+		if (!!data.caothap) {
+			caothap(client, data.caothap);
+		}
+		if (!!data.angrybird) {
+			angrybird(client, data.angrybird);
+		}
 	}
 }

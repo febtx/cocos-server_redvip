@@ -1,8 +1,8 @@
 
-const VuongQuocRed_red = require('../../../Models/VuongQuocRed/VuongQuocRed_red');
-const VuongQuocRed_xu  = require('../../../Models/VuongQuocRed/VuongQuocRed_xu');
+var VuongQuocRed_red = require('../../../Models/VuongQuocRed/VuongQuocRed_red');
+var VuongQuocRed_xu  = require('../../../Models/VuongQuocRed/VuongQuocRed_xu');
 
-const UserInfo     = require('../../../Models/UserInfo');
+var UserInfo     = require('../../../Models/UserInfo');
 
 module.exports = function(client, data){
 	var red    = !!data;   // Loại tiền (Red: true, Xu: false)
@@ -18,7 +18,7 @@ module.exports = function(client, data){
 				return obj;
 			}))
 			.then(function(arrayOfResults) {
-				client.send(JSON.stringify({VuongQuocRed:{top:arrayOfResults}}));
+				client.red({VuongQuocRed:{top:arrayOfResults}});
 			})
 		});
 	}else{
@@ -33,7 +33,7 @@ module.exports = function(client, data){
 				return obj;
 			}))
 			.then(function(arrayOfResults) {
-				client.send(JSON.stringify({VuongQuocRed:{top:arrayOfResults}}));
+				client.red({VuongQuocRed:{top:arrayOfResults}});
 			})
 		});
 	}

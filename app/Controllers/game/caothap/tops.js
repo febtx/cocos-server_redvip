@@ -5,7 +5,7 @@ const CaoThap_xu  = require('../../../Models/CaoThap/CaoThap_xu');
 const UserInfo     = require('../../../Models/UserInfo');
 
 module.exports = function(client, data){
-	var red  = !!data;   // Loại tiền (Red: true, Xu: false)
+	var red    = !!data;   // Loại tiền (Red: true, Xu: false)
 	if (red) {
 		CaoThap_red.find({play: false, $or:[
 			{goc:1000, bet:{$gt:1000}},
@@ -27,7 +27,7 @@ module.exports = function(client, data){
 				});
 			}))
 			.then(function(arrayOfResults) {
-				client.send(JSON.stringify({mini:{caothap:{tops:arrayOfResults}}}));
+				client.red({mini:{caothap:{tops:arrayOfResults}}});
 			})
 		});
 	}else{
@@ -51,7 +51,7 @@ module.exports = function(client, data){
 					});
 				}))
 				.then(function(arrayOfResults) {
-					client.send(JSON.stringify({mini:{caothap:{tops:arrayOfResults}}}));
+					client.red({mini:{caothap:{tops:arrayOfResults}}});
 				})
 		});
 	}

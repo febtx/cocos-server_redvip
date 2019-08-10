@@ -1,16 +1,13 @@
 
-const spin = require('./angrybird/spin');
-const log  = require('./angrybird/log');
-const top  = require('./angrybird/top');
+var spin = require('./angrybird/spin');
+var log  = require('./angrybird/log');
+var top  = require('./angrybird/top');
 
 module.exports = function(client, data){
-	if (void 0 !== data.info) {
-		//info(client, data.info)
-	}
-	if (void 0 !== data.spin) {
+	if (!!data.spin) {
 		spin(client, data.spin);
 	}
-	if (void 0 !== data.log) {
+	if (!!data.log) {
 		log(client, data.log)
 	}
 	if (void 0 !== data.top) {

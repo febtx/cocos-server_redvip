@@ -1,27 +1,26 @@
 
-const fs          = require('fs');
+var path        = require('path');
+var fs          = require('fs');
 
-const Helpers     = require('../Helpers/Helpers');
+var Helpers     = require('../Helpers/Helpers');
 
-const UserInfo    = require('../Models/UserInfo')
-const TXPhien     = require('../Models/TaiXiu_phien')
-const TXCuoc      = require('../Models/TaiXiu_cuoc')
-const TaiXiu_User = require('../Models/TaiXiu_user');
-const TXCuocOne   = require('../Models/TaiXiu_one');
+var UserInfo    = require('../Models/UserInfo')
+var TXPhien     = require('../Models/TaiXiu_phien')
+var TXCuoc      = require('../Models/TaiXiu_cuoc')
+var TaiXiu_User = require('../Models/TaiXiu_user');
+var TXCuocOne   = require('../Models/TaiXiu_one');
 
 // Hũ game
-const miniPokerHu     = require('../Models/miniPoker/miniPokerHu');
-const BigBabol_hu     = require('../Models/BigBabol/BigBabol_hu');
-const Mini3Cay_hu     = require('../Models/Mini3Cay/Mini3Cay_hu');
-const HU_game         = require('../Models/HU');
+var miniPokerHu     = require('../Models/miniPoker/miniPokerHu');
+var BigBabol_hu     = require('../Models/BigBabol/BigBabol_hu');
+var Mini3Cay_hu     = require('../Models/Mini3Cay/Mini3Cay_hu');
+var HU_game         = require('../Models/HU');
 
-const VuongQuocRed_hu = require('../Models/VuongQuocRed/VuongQuocRed_hu');
+var VuongQuocRed_hu = require('../Models/VuongQuocRed/VuongQuocRed_hu');
 
-
-const dataTaiXiu = '../../data/taixiu.json';
-var io       = null
-var phien    = 1
-var gameLoop = null
+var dataTaiXiu = '../../data/taixiu.json';
+var io       = null;
+var gameLoop = null;
 
 function init(obj){
 	io = obj;
@@ -30,7 +29,7 @@ function init(obj){
 
 TXPhien.findOne({}, 'id', {sort:{'id':-1}}, function(err, last) {
 	if (!!last){
-		phien = last.id+1;
+		io.TaiXiu_phien = last.id+1;
 	}
 })
 
@@ -39,10 +38,10 @@ function truChietKhau(bet, phe){
 }
 // Dữ liệu Hũ
 function TopHu(){
-	var active1   = miniPokerHu.find({}, 'type red bet').exec();
-	var active2   = BigBabol_hu.find({}, 'type red bet').exec();
-	var active3   = VuongQuocRed_hu.find({}, 'type red bet').exec();
-	var active4   = Mini3Cay_hu.find({}, 'type red bet').exec();
+	var active1 = miniPokerHu.find({}, 'type red bet').exec();
+	var active2 = BigBabol_hu.find({}, 'type red bet').exec();
+	var active3 = VuongQuocRed_hu.find({}, 'type red bet').exec();
+	var active4 = Mini3Cay_hu.find({}, 'type red bet').exec();
 
 	var huH = HU_game.find({}, 'game type red bet').exec();
 
@@ -784,7 +783,7 @@ function playGame(){
 	//io.TaiXiu_time = 82;
 	//io.TaiXiu_time = 10
 
-	gameLoop = setInterval(async function(){
+	gameLoop = setInterval(function(){
 		if (!(io.TaiXiu_time%5)) {
 			// Hũ
 			TopHu();
@@ -807,26 +806,23 @@ function playGame(){
 				file.uid    = "";
 				file.rights = 2;
 
-				fs.writeFile(dataTaiXiu, JSON.stringify(file), function(err){});
+				fs.writeFile(path.dirname(path.dirname(__dirname)) + "/data/taixiu.json", JSON.stringify(file), function(err){});
 
-				try {
-					const create = await TXPhien.create({'dice1':dice1, 'dice2':dice2, 'dice3':dice3, 'time':new Date()})
+				TXPhien.create({'dice1':dice1, 'dice2':dice2, 'dice3':dice3, 'time':new Date()}, function(err, create){
 					if (!!create) {
-						phien = create.id+1
-						var chothanhtoan = await thongtin_thanhtoan(create.id, dice1+dice2+dice3);
-
+						console.log(create.id);
+						io.TaiXiu_phien  = create.id+1;
+						var chothanhtoan = thongtin_thanhtoan(create.id, dice1+dice2+dice3);
 						io.sendAllUser({taixiu: {finish:{dices:[create.dice1, create.dice2, create.dice3], phien:create.id}}});
-
 						Promise.all(Object.values(io.admins).map(function(admin){
 							Promise.all(admin.map(function(client){
 								client.red({taixiu: {finish:{dices:[create.dice1, create.dice2, create.dice3], phien:create.id}}});
 							}));
 						}));
 					}
-				} catch (err) {
-				}
+				});
 			}else
-				thongtin_thanhtoan(phien)
+				thongtin_thanhtoan(io.TaiXiu_phien)
 		}
 	}, 1000)
 	return gameLoop

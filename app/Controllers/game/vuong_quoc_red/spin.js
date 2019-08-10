@@ -1,12 +1,12 @@
 
-const VuongQuocRed_hu    = require('../../../Models/VuongQuocRed/VuongQuocRed_hu');
-const VuongQuocRed_red   = require('../../../Models/VuongQuocRed/VuongQuocRed_red');
-const VuongQuocRed_xu    = require('../../../Models/VuongQuocRed/VuongQuocRed_xu');
-const VuongQuocRed_users = require('../../../Models/VuongQuocRed/VuongQuocRed_users');
+var VuongQuocRed_hu    = require('../../../Models/VuongQuocRed/VuongQuocRed_hu');
+var VuongQuocRed_red   = require('../../../Models/VuongQuocRed/VuongQuocRed_red');
+var VuongQuocRed_xu    = require('../../../Models/VuongQuocRed/VuongQuocRed_xu');
+var VuongQuocRed_users = require('../../../Models/VuongQuocRed/VuongQuocRed_users');
 
 
-const UserInfo  = require('../../../Models/UserInfo');
-const Helpers   = require('../../../Helpers/Helpers');
+var UserInfo  = require('../../../Models/UserInfo');
+var Helpers   = require('../../../Helpers/Helpers');
 
 function random_cel3(){
 	return (Math.random()*7)>>0;
@@ -114,464 +114,466 @@ function gameBonus(client, bet){
 }
 
 module.exports = function(client, data){
-	var bet  = data.cuoc>>0;  // Mức cược
-	var red  = !!data.red;                     // Loại tiền (Red: true, Xu: false)
-	var line = Array.from(new Set(data.line)); // Dòng cược // fix trùng lặp
-	if (!(bet == 100 || bet == 1000 || bet == 10000) || line.length < 1) {
-		client.send(JSON.stringify({VuongQuocRed:{status:0}, notice:{text: "DỮ LIỆU KHÔNG ĐÚNG...", title: "THẤT BẠI"}}));
-	}else{
-		client.VuongQuocRed = void 0 === client.VuongQuocRed ? {id: "", red: red, bonus: null, bonusX: 0, bonusL: 0, bonusWin: 0, free: 0} : client.VuongQuocRed;
-		client.VuongQuocRed.red = red;
-		var tongCuoc = bet*line.length;
-		UserInfo.findOne({id:client.UID}, red ? 'red name':'xu name', function(err, user){
-			if (client.VuongQuocRed.free === 0 && ((red && user.red < tongCuoc) || (!red && user.xu < tongCuoc))) {
-				client.send(JSON.stringify({VuongQuocRed:{status:0, notice: 'Bạn không đủ ' + (red ? 'RED':'XU') + ' để quay.!!'}}));
-			}else{
-				var phe = red ? 2 : 4;    // Phế
-				var addQuy = (tongCuoc*0.01)>>0;
-				VuongQuocRed_hu.findOneAndUpdate({type:bet, red:red}, {$inc:{bet:addQuy}}, function(err1,cat){});
-				var line_nohu = 0;
-				var bet_win  = 0;
-				var free     = 0;
-				var bonusX   = 0;
-				var type     = 0;   // Loại được ăn lớn nhất trong phiên
-				var isFree   = false;
-				var nohu     = false;
-				var isBigWin = false;
-				// tạo kết quả
-				VuongQuocRed_hu.findOne({type:bet, red:red}, {}, function(err2, dataHu){
+	if (!!data && !!data.cuoc && !!data.red && Array.isArray(data.line)) {
+		var bet  = data.cuoc>>0;                   // Mức cược
+		var red  = !!data.red;                     // Loại tiền (Red: true, Xu: false)
+		var line = Array.from(new Set(data.line)); // Dòng cược // fix trùng lặp
+		if (!(bet == 100 || bet == 1000 || bet == 10000) || line.length < 1) {
+			client.send(JSON.stringify({VuongQuocRed:{status:0}, notice:{text: "DỮ LIỆU KHÔNG ĐÚNG...", title: "THẤT BẠI"}}));
+		}else{
+			client.VuongQuocRed = void 0 === client.VuongQuocRed ? {id: "", red: red, bonus: null, bonusX: 0, bonusL: 0, bonusWin: 0, free: 0} : client.VuongQuocRed;
+			client.VuongQuocRed.red = red;
+			var tongCuoc = bet*line.length;
+			UserInfo.findOne({id:client.UID}, red ? 'red name':'xu name', function(err, user){
+				if (client.VuongQuocRed.free === 0 && ((red && user.red < tongCuoc) || (!red && user.xu < tongCuoc))) {
+					client.send(JSON.stringify({VuongQuocRed:{status:0, notice: 'Bạn không đủ ' + (red ? 'RED':'XU') + ' để quay.!!'}}));
+				}else{
+					var phe = red ? 2 : 4;    // Phế
+					var addQuy = (tongCuoc*0.01)>>0;
+					VuongQuocRed_hu.findOneAndUpdate({type:bet, red:red}, {$inc:{bet:addQuy}}, function(err1,cat){});
+					var line_nohu = 0;
+					var bet_win  = 0;
+					var free     = 0;
+					var bonusX   = 0;
+					var type     = 0;   // Loại được ăn lớn nhất trong phiên
+					var isFree   = false;
+					var nohu     = false;
+					var isBigWin = false;
+					// tạo kết quả
+					VuongQuocRed_hu.findOne({type:bet, red:red}, {}, function(err2, dataHu){
 
-					var celSS = [
-						random_cel3(), random_cel3(), random_cel2(),
-						random_cel2(), random_cel2(), random_cel2(),
-						random_cel2(), 3,             2,
-						2,             1,             1,
-						0,             0,             0,
-					]; // Super
+						var celSS = [
+							random_cel3(), random_cel3(), random_cel2(),
+							random_cel2(), random_cel2(), random_cel2(),
+							random_cel2(), 3,             2,
+							2,             1,             1,
+							0,             0,             0,
+						]; // Super
 
-					celSS = Helpers.shuffle(celSS); // tráo bài lần 1
-					celSS = Helpers.shuffle(celSS); // tráo bài lần 2
-					celSS = Helpers.shuffle(celSS); // tráo bài lần 3
+						celSS = Helpers.shuffle(celSS); // tráo bài lần 1
+						celSS = Helpers.shuffle(celSS); // tráo bài lần 2
+						celSS = Helpers.shuffle(celSS); // tráo bài lần 3
 
-					var cel1 = [celSS[0],  celSS[1],  celSS[2]];  // Cột 1
-					var cel2 = [celSS[3],  celSS[4],  celSS[5]];  // Cột 2
-					var cel3 = [celSS[6],  celSS[7],  celSS[8]];  // Cột 3
-					var cel4 = [celSS[9],  celSS[10], celSS[11]]; // Cột 4
-					var cel5 = [celSS[12], celSS[13], celSS[14]]; // Cột 5
+						var cel1 = [celSS[0],  celSS[1],  celSS[2]];  // Cột 1
+						var cel2 = [celSS[3],  celSS[4],  celSS[5]];  // Cột 2
+						var cel3 = [celSS[6],  celSS[7],  celSS[8]];  // Cột 3
+						var cel4 = [celSS[9],  celSS[10], celSS[11]]; // Cột 4
+						var cel5 = [celSS[12], celSS[13], celSS[14]]; // Cột 5
 
-					var quyHu     = dataHu.bet;
-					var checkName = new RegExp("^" + client.profile.name + "$", 'i');
-					checkName     = checkName.test(dataHu.name);
-					if (checkName) {
-						line_nohu = ((Math.random()*line.length)>>0);
-						line_nohu = line[line_nohu];
-					}
-
-					// kiểm tra kết quả
-					Promise.all(line.map(function(selectLine){
-						switch(selectLine){
-							case 1:
-								if (!!line_nohu && line_nohu == selectLine) {
-									cel1[1] = 5;
-									cel2[1] = 5;
-									cel3[1] = 5;
-									cel4[1] = 5;
-									cel5[1] = 5;
-								}
-								return check_win([cel1[1], cel2[1], cel3[1], cel4[1], cel5[1]], selectLine);
-								break;
-
-							case 2:
-								if (!!line_nohu && line_nohu == selectLine) {
-									cel1[0] = 5;
-									cel2[0] = 5;
-									cel3[0] = 5;
-									cel4[0] = 5;
-									cel5[0] = 5;
-								}
-								return check_win([cel1[0], cel2[0], cel3[0], cel4[0], cel5[0]], selectLine);
-								break;
-
-							case 3:
-								if (!!line_nohu && line_nohu == selectLine) {
-									cel1[2] = 5;
-									cel2[2] = 5;
-									cel3[2] = 5;
-									cel4[2] = 5;
-									cel5[2] = 5;
-								}
-								return check_win([cel1[2], cel2[2], cel3[2], cel4[2], cel5[2]], selectLine);
-								break;
-
-							case 4:
-								if (!!line_nohu && line_nohu == selectLine) {
-									cel1[1] = 5;
-									cel2[1] = 5;
-									cel3[0] = 5;
-									cel4[1] = 5;
-									cel5[1] = 5;
-								}
-								return check_win([cel1[1], cel2[1], cel3[0], cel4[1], cel5[1]], selectLine);
-								break;
-
-							case 5:
-								if (!!line_nohu && line_nohu == selectLine) {
-									cel1[1] = 5;
-									cel2[1] = 5;
-									cel3[2] = 5;
-									cel4[1] = 5;
-									cel5[1] = 5;
-								}
-								return check_win([cel1[1], cel2[1], cel3[2], cel4[1], cel5[1]], selectLine);
-								break;
-
-							case 6:
-								if (!!line_nohu && line_nohu == selectLine) {
-									cel1[0] = 5;
-									cel2[0] = 5;
-									cel3[1] = 5;
-									cel4[0] = 5;
-									cel5[0] = 5;
-								}
-								return check_win([cel1[0], cel2[0], cel3[1], cel4[0], cel5[0]], selectLine);
-								break;
-
-							case 7:
-								if (!!line_nohu && line_nohu == selectLine) {
-									cel1[2] = 5;
-									cel2[2] = 5;
-									cel3[1] = 5;
-									cel4[2] = 5;
-									cel5[2] = 5;
-								}
-								return check_win([cel1[2], cel2[2], cel3[1], cel4[2], cel5[2]], selectLine);
-								break;
-
-							case 8:
-								if (!!line_nohu && line_nohu == selectLine) {
-									cel1[0] = 5;
-									cel2[2] = 5;
-									cel3[0] = 5;
-									cel4[2] = 5;
-									cel5[0] = 5;
-								}
-								return check_win([cel1[0], cel2[2], cel3[0], cel4[2], cel5[0]], selectLine);
-								break;
-
-							case 9:
-								if (!!line_nohu && line_nohu == selectLine) {
-									cel1[2] = 5;
-									cel2[0] = 5;
-									cel3[2] = 5;
-									cel4[0] = 5;
-									cel5[2] = 5;
-								}
-								return check_win([cel1[2], cel2[0], cel3[2], cel4[0], cel5[2]], selectLine);
-								break;
-
-							case 10:
-								if (!!line_nohu && line_nohu == selectLine) {
-									cel1[1] = 5;
-									cel2[0] = 5;
-									cel3[2] = 5;
-									cel4[0] = 5;
-									cel5[1] = 5;
-								}
-								return check_win([cel1[1], cel2[0], cel3[2], cel4[0], cel5[1]], selectLine);
-								break;
-
-							case 11:
-								if (!!line_nohu && line_nohu == selectLine) {
-									cel1[2] = 5;
-									cel2[1] = 5;
-									cel3[0] = 5;
-									cel4[1] = 5;
-									cel5[2] = 5;
-								}
-								return check_win([cel1[2], cel2[1], cel3[0], cel4[1], cel5[2]], selectLine);
-								break;
-
-							case 12:
-								if (!!line_nohu && line_nohu == selectLine) {
-									cel1[0] = 5;
-									cel2[1] = 5;
-									cel3[2] = 5;
-									cel4[1] = 5;
-									cel5[0] = 5;
-								}
-								return check_win([cel1[0], cel2[1], cel3[2], cel4[1], cel5[0]], selectLine);
-								break;
-
-							case 13:
-								if (!!line_nohu && line_nohu == selectLine) {
-									cel1[1] = 5;
-									cel2[2] = 5;
-									cel3[1] = 5;
-									cel4[0] = 5;
-									cel5[1] = 5;
-								}
-								return check_win([cel1[1], cel2[2], cel3[1], cel4[0], cel5[1]], selectLine);
-								break;
-
-							case 14:
-								if (!!line_nohu && line_nohu == selectLine) {
-									cel1[1] = 5;
-									cel2[0] = 5;
-									cel3[1] = 5;
-									cel4[2] = 5;
-									cel5[1] = 5;
-								}
-								return check_win([cel1[1], cel2[0], cel3[1], cel4[2], cel5[1]], selectLine);
-								break;
-
-							case 15:
-								if (!!line_nohu && line_nohu == selectLine) {
-									cel1[2] = 5;
-									cel2[1] = 5;
-									cel3[1] = 5;
-									cel4[1] = 5;
-									cel5[2] = 5;
-								}
-								return check_win([cel1[2], cel2[1], cel3[1], cel4[1], cel5[2]], selectLine);
-								break;
-
-							case 16:
-								if (!!line_nohu && line_nohu == selectLine) {
-									cel1[0] = 5;
-									cel2[1] = 5;
-									cel3[1] = 5;
-									cel4[1] = 5;
-									cel5[0] = 5;
-								}
-								return check_win([cel1[0], cel2[1], cel3[1], cel4[1], cel5[0]], selectLine);
-								break;
-
-							case 17:
-								if (!!line_nohu && line_nohu == selectLine) {
-									cel1[1] = 5;
-									cel2[2] = 5;
-									cel3[2] = 5;
-									cel4[2] = 5;
-									cel5[1] = 5;
-								}
-								return check_win([cel1[1], cel2[2], cel3[2], cel4[2], cel5[1]], selectLine);
-								break;
-
-							case 18:
-								if (!!line_nohu && line_nohu == selectLine) {
-									cel1[1] = 5;
-									cel2[0] = 5;
-									cel3[0] = 5;
-									cel4[0] = 5;
-									cel5[1] = 5;
-								}
-								return check_win([cel1[1], cel2[0], cel3[0], cel4[0], cel5[1]], selectLine);
-								break;
-
-							case 19:
-								if (!!line_nohu && line_nohu == selectLine) {
-									cel1[2] = 5;
-									cel2[2] = 5;
-									cel3[1] = 5;
-									cel4[0] = 5;
-									cel5[0] = 5;
-								}
-								return check_win([cel1[2], cel2[2], cel3[1], cel4[0], cel5[0]], selectLine);
-								break;
-
-							case 20:
-								if (!!line_nohu && line_nohu == selectLine) {
-									cel1[0] = 5;
-									cel2[0] = 5;
-									cel3[1] = 5;
-									cel4[2] = 5;
-									cel5[2] = 5;
-								}
-								return check_win([cel1[0], cel2[0], cel3[1], cel4[2], cel5[2]], selectLine);
-								break;
+						var quyHu     = dataHu.bet;
+						var checkName = new RegExp("^" + client.profile.name + "$", 'i');
+						checkName     = checkName.test(dataHu.name);
+						if (checkName) {
+							line_nohu = ((Math.random()*line.length)>>0);
+							line_nohu = line[line_nohu];
 						}
-					}))
-					.then(result => {
-						Promise.all(result.filter(function(line_win){
-							var checkWin = false;
-							if (line_win.win == 6) {
-								if (line_win.type === 5) {
-									checkWin = true;
-									// x8000
-									bet_win += bet*8000;
-								}else if (line_win.type === 4){
-									// Bonus x5
-									checkWin = true;
-									bonusX += 5;
-								}else if (line_win.type === 3){
-									// Bonus x1
-									checkWin = true;
-									bonusX += 1;
-								}
-							}else if(line_win.win == 5) {
-								if (line_win.type === 5) {
-									checkWin = true;
-									// Nổ Hũ
-									type = 2;
-									if (!nohu) {
-										bet_win += quyHu;
-										VuongQuocRed_hu.findOneAndUpdate({type:bet, red:red}, {$set:{name:"", bet:dataHu.min}}, function(err3,cat){});
-										red && Helpers.ThongBaoNoHu(client, {title: "VƯƠNG QUỐC RED", name: client.profile.name, bet: quyHu});
-									}else{
-										bet_win += dataHu.min;
-										red && Helpers.ThongBaoNoHu(client, {title: "VƯƠNG QUỐC RED", name: client.profile.name, bet: dataHu.min});
+
+						// kiểm tra kết quả
+						Promise.all(line.map(function(selectLine){
+							switch(selectLine){
+								case 1:
+									if (!!line_nohu && line_nohu == selectLine) {
+										cel1[1] = 5;
+										cel2[1] = 5;
+										cel3[1] = 5;
+										cel4[1] = 5;
+										cel5[1] = 5;
 									}
-									nohu = true;
-								}else if (!nohu && line_win.type === 4){
-									// x30
-									checkWin = true;
-									bet_win += bet*30;
-								}else if (!nohu && line_win.type === 3){
-									// x5
-									checkWin = true;
-									bet_win += bet*5;
-								}
-							}else if(line_win.win == 4) {
-								if (line_win.type === 5) {
-									checkWin = true;
-									// free x15
-									free += 15;
-									isFree = true;
-								}else if (line_win.type === 4){
-									// free x5
-									checkWin = true;
-									free += 5;
-									isFree = true;
-								}else if (line_win.type === 3){
-									// free x1
-									checkWin = true;
-									free += 1;
-									isFree = true;
-								}
-							}else if(!nohu && line_win.win == 3) {
-								if (line_win.type === 5) {
-									checkWin = true;
-									// x500
-									bet_win += bet*500;
-								}else if (line_win.type === 4){
-									// x20
-									checkWin = true;
-									bet_win += bet*20;
-								}else if (line_win.type === 3){
-									// x4
-									checkWin = true;
-									bet_win += bet*4;
-								}
-							}else if(!nohu && line_win.win == 2) {
-								if (line_win.type === 5) {
-									checkWin = true;
-									// x200
-									bet_win += bet*200;
-								}else if (line_win.type === 4){
-									// x15
-									checkWin = true;
-									bet_win += bet*15;
-								}else if (line_win.type === 3){
-									// x3
-									checkWin = true;
-									bet_win += bet*3;
-								}
-							}else if(!nohu && line_win.win == 1) {
-								if (line_win.type === 5) {
-									checkWin = true;
-									// x75
-									bet_win += bet*75;
-								}else if (line_win.type === 4){
-									// x10
-									checkWin = true;
-									bet_win += bet*10;
-								}else if (line_win.type === 3){
-									// x2
-									checkWin = true;
-									bet_win += bet*2;
-								}
-							}else if(!nohu && line_win.win == 0) {
-								if (line_win.type === 5) {
-									checkWin = true;
-									// x30
-									bet_win += bet*30;
-								}else if (line_win.type === 4){
-									// x6
-									checkWin = true;
-									bet_win += bet*6;
-								}
+									return check_win([cel1[1], cel2[1], cel3[1], cel4[1], cel5[1]], selectLine);
+									break;
+
+								case 2:
+									if (!!line_nohu && line_nohu == selectLine) {
+										cel1[0] = 5;
+										cel2[0] = 5;
+										cel3[0] = 5;
+										cel4[0] = 5;
+										cel5[0] = 5;
+									}
+									return check_win([cel1[0], cel2[0], cel3[0], cel4[0], cel5[0]], selectLine);
+									break;
+
+								case 3:
+									if (!!line_nohu && line_nohu == selectLine) {
+										cel1[2] = 5;
+										cel2[2] = 5;
+										cel3[2] = 5;
+										cel4[2] = 5;
+										cel5[2] = 5;
+									}
+									return check_win([cel1[2], cel2[2], cel3[2], cel4[2], cel5[2]], selectLine);
+									break;
+
+								case 4:
+									if (!!line_nohu && line_nohu == selectLine) {
+										cel1[1] = 5;
+										cel2[1] = 5;
+										cel3[0] = 5;
+										cel4[1] = 5;
+										cel5[1] = 5;
+									}
+									return check_win([cel1[1], cel2[1], cel3[0], cel4[1], cel5[1]], selectLine);
+									break;
+
+								case 5:
+									if (!!line_nohu && line_nohu == selectLine) {
+										cel1[1] = 5;
+										cel2[1] = 5;
+										cel3[2] = 5;
+										cel4[1] = 5;
+										cel5[1] = 5;
+									}
+									return check_win([cel1[1], cel2[1], cel3[2], cel4[1], cel5[1]], selectLine);
+									break;
+
+								case 6:
+									if (!!line_nohu && line_nohu == selectLine) {
+										cel1[0] = 5;
+										cel2[0] = 5;
+										cel3[1] = 5;
+										cel4[0] = 5;
+										cel5[0] = 5;
+									}
+									return check_win([cel1[0], cel2[0], cel3[1], cel4[0], cel5[0]], selectLine);
+									break;
+
+								case 7:
+									if (!!line_nohu && line_nohu == selectLine) {
+										cel1[2] = 5;
+										cel2[2] = 5;
+										cel3[1] = 5;
+										cel4[2] = 5;
+										cel5[2] = 5;
+									}
+									return check_win([cel1[2], cel2[2], cel3[1], cel4[2], cel5[2]], selectLine);
+									break;
+
+								case 8:
+									if (!!line_nohu && line_nohu == selectLine) {
+										cel1[0] = 5;
+										cel2[2] = 5;
+										cel3[0] = 5;
+										cel4[2] = 5;
+										cel5[0] = 5;
+									}
+									return check_win([cel1[0], cel2[2], cel3[0], cel4[2], cel5[0]], selectLine);
+									break;
+
+								case 9:
+									if (!!line_nohu && line_nohu == selectLine) {
+										cel1[2] = 5;
+										cel2[0] = 5;
+										cel3[2] = 5;
+										cel4[0] = 5;
+										cel5[2] = 5;
+									}
+									return check_win([cel1[2], cel2[0], cel3[2], cel4[0], cel5[2]], selectLine);
+									break;
+
+								case 10:
+									if (!!line_nohu && line_nohu == selectLine) {
+										cel1[1] = 5;
+										cel2[0] = 5;
+										cel3[2] = 5;
+										cel4[0] = 5;
+										cel5[1] = 5;
+									}
+									return check_win([cel1[1], cel2[0], cel3[2], cel4[0], cel5[1]], selectLine);
+									break;
+
+								case 11:
+									if (!!line_nohu && line_nohu == selectLine) {
+										cel1[2] = 5;
+										cel2[1] = 5;
+										cel3[0] = 5;
+										cel4[1] = 5;
+										cel5[2] = 5;
+									}
+									return check_win([cel1[2], cel2[1], cel3[0], cel4[1], cel5[2]], selectLine);
+									break;
+
+								case 12:
+									if (!!line_nohu && line_nohu == selectLine) {
+										cel1[0] = 5;
+										cel2[1] = 5;
+										cel3[2] = 5;
+										cel4[1] = 5;
+										cel5[0] = 5;
+									}
+									return check_win([cel1[0], cel2[1], cel3[2], cel4[1], cel5[0]], selectLine);
+									break;
+
+								case 13:
+									if (!!line_nohu && line_nohu == selectLine) {
+										cel1[1] = 5;
+										cel2[2] = 5;
+										cel3[1] = 5;
+										cel4[0] = 5;
+										cel5[1] = 5;
+									}
+									return check_win([cel1[1], cel2[2], cel3[1], cel4[0], cel5[1]], selectLine);
+									break;
+
+								case 14:
+									if (!!line_nohu && line_nohu == selectLine) {
+										cel1[1] = 5;
+										cel2[0] = 5;
+										cel3[1] = 5;
+										cel4[2] = 5;
+										cel5[1] = 5;
+									}
+									return check_win([cel1[1], cel2[0], cel3[1], cel4[2], cel5[1]], selectLine);
+									break;
+
+								case 15:
+									if (!!line_nohu && line_nohu == selectLine) {
+										cel1[2] = 5;
+										cel2[1] = 5;
+										cel3[1] = 5;
+										cel4[1] = 5;
+										cel5[2] = 5;
+									}
+									return check_win([cel1[2], cel2[1], cel3[1], cel4[1], cel5[2]], selectLine);
+									break;
+
+								case 16:
+									if (!!line_nohu && line_nohu == selectLine) {
+										cel1[0] = 5;
+										cel2[1] = 5;
+										cel3[1] = 5;
+										cel4[1] = 5;
+										cel5[0] = 5;
+									}
+									return check_win([cel1[0], cel2[1], cel3[1], cel4[1], cel5[0]], selectLine);
+									break;
+
+								case 17:
+									if (!!line_nohu && line_nohu == selectLine) {
+										cel1[1] = 5;
+										cel2[2] = 5;
+										cel3[2] = 5;
+										cel4[2] = 5;
+										cel5[1] = 5;
+									}
+									return check_win([cel1[1], cel2[2], cel3[2], cel4[2], cel5[1]], selectLine);
+									break;
+
+								case 18:
+									if (!!line_nohu && line_nohu == selectLine) {
+										cel1[1] = 5;
+										cel2[0] = 5;
+										cel3[0] = 5;
+										cel4[0] = 5;
+										cel5[1] = 5;
+									}
+									return check_win([cel1[1], cel2[0], cel3[0], cel4[0], cel5[1]], selectLine);
+									break;
+
+								case 19:
+									if (!!line_nohu && line_nohu == selectLine) {
+										cel1[2] = 5;
+										cel2[2] = 5;
+										cel3[1] = 5;
+										cel4[0] = 5;
+										cel5[0] = 5;
+									}
+									return check_win([cel1[2], cel2[2], cel3[1], cel4[0], cel5[0]], selectLine);
+									break;
+
+								case 20:
+									if (!!line_nohu && line_nohu == selectLine) {
+										cel1[0] = 5;
+										cel2[0] = 5;
+										cel3[1] = 5;
+										cel4[2] = 5;
+										cel5[2] = 5;
+									}
+									return check_win([cel1[0], cel2[0], cel3[1], cel4[2], cel5[2]], selectLine);
+									break;
 							}
-							return checkWin;
 						}))
-						.then(result2 => {
-							bet_win = (bet_win-Math.ceil(bet_win*phe/100))>>0; // Cắt phế 2% - 4% ăn được
-							var tien = 0;
-							if (client.VuongQuocRed.free > 0) {
-								tien = bet_win;
-								client.VuongQuocRed.free -= 1;
-							}else{
-								tien = bet_win - tongCuoc;
-							}
-							if (!nohu && bet_win >= tongCuoc*3.5) {
-								isBigWin = true;
-								type = 1;
-							}
-							if (free > 0) {
-								client.VuongQuocRed.free += free;
-							}
-							if (!!bonusX) {
-								client.VuongQuocRed.bonusX += bonusX;
-								client.VuongQuocRed.bonusL = 10;
-								gameBonus(client, bet);
-							}
+						.then(result => {
+							Promise.all(result.filter(function(line_win){
+								var checkWin = false;
+								if (line_win.win == 6) {
+									if (line_win.type === 5) {
+										checkWin = true;
+										// x8000
+										bet_win += bet*8000;
+									}else if (line_win.type === 4){
+										// Bonus x5
+										checkWin = true;
+										bonusX += 5;
+									}else if (line_win.type === 3){
+										// Bonus x1
+										checkWin = true;
+										bonusX += 1;
+									}
+								}else if(line_win.win == 5) {
+									if (line_win.type === 5) {
+										checkWin = true;
+										// Nổ Hũ
+										type = 2;
+										if (!nohu) {
+											bet_win += quyHu;
+											VuongQuocRed_hu.findOneAndUpdate({type:bet, red:red}, {$set:{name:"", bet:dataHu.min}}, function(err3,cat){});
+											red && Helpers.ThongBaoNoHu(client, {title: "VƯƠNG QUỐC RED", name: client.profile.name, bet: quyHu});
+										}else{
+											bet_win += dataHu.min;
+											red && Helpers.ThongBaoNoHu(client, {title: "VƯƠNG QUỐC RED", name: client.profile.name, bet: dataHu.min});
+										}
+										nohu = true;
+									}else if (!nohu && line_win.type === 4){
+										// x30
+										checkWin = true;
+										bet_win += bet*30;
+									}else if (!nohu && line_win.type === 3){
+										// x5
+										checkWin = true;
+										bet_win += bet*5;
+									}
+								}else if(line_win.win == 4) {
+									if (line_win.type === 5) {
+										checkWin = true;
+										// free x15
+										free += 15;
+										isFree = true;
+									}else if (line_win.type === 4){
+										// free x5
+										checkWin = true;
+										free += 5;
+										isFree = true;
+									}else if (line_win.type === 3){
+										// free x1
+										checkWin = true;
+										free += 1;
+										isFree = true;
+									}
+								}else if(!nohu && line_win.win == 3) {
+									if (line_win.type === 5) {
+										checkWin = true;
+										// x500
+										bet_win += bet*500;
+									}else if (line_win.type === 4){
+										// x20
+										checkWin = true;
+										bet_win += bet*20;
+									}else if (line_win.type === 3){
+										// x4
+										checkWin = true;
+										bet_win += bet*4;
+									}
+								}else if(!nohu && line_win.win == 2) {
+									if (line_win.type === 5) {
+										checkWin = true;
+										// x200
+										bet_win += bet*200;
+									}else if (line_win.type === 4){
+										// x15
+										checkWin = true;
+										bet_win += bet*15;
+									}else if (line_win.type === 3){
+										// x3
+										checkWin = true;
+										bet_win += bet*3;
+									}
+								}else if(!nohu && line_win.win == 1) {
+									if (line_win.type === 5) {
+										checkWin = true;
+										// x75
+										bet_win += bet*75;
+									}else if (line_win.type === 4){
+										// x10
+										checkWin = true;
+										bet_win += bet*10;
+									}else if (line_win.type === 3){
+										// x2
+										checkWin = true;
+										bet_win += bet*2;
+									}
+								}else if(!nohu && line_win.win == 0) {
+									if (line_win.type === 5) {
+										checkWin = true;
+										// x30
+										bet_win += bet*30;
+									}else if (line_win.type === 4){
+										// x6
+										checkWin = true;
+										bet_win += bet*6;
+									}
+								}
+								return checkWin;
+							}))
+							.then(result2 => {
+								bet_win = (bet_win-Math.ceil(bet_win*phe/100))>>0; // Cắt phế 2% - 4% ăn được
+								var tien = 0;
+								if (client.VuongQuocRed.free > 0) {
+									tien = bet_win;
+									client.VuongQuocRed.free -= 1;
+								}else{
+									tien = bet_win - tongCuoc;
+								}
+								if (!nohu && bet_win >= tongCuoc*3.5) {
+									isBigWin = true;
+									type = 1;
+								}
+								if (free > 0) {
+									client.VuongQuocRed.free += free;
+								}
+								if (!!bonusX) {
+									client.VuongQuocRed.bonusX += bonusX;
+									client.VuongQuocRed.bonusL = 10;
+									gameBonus(client, bet);
+								}
 
-							var uInfo      = {};
-							var mini_users = {};
-							var thuong = 0;
-							if (red) {
-								uInfo['red'] = tien;         // Cập nhật Số dư Red trong tài khoản
-								uInfo['redPlay'] = mini_users['bet'] = tongCuoc;     // Cập nhật Số Red đã chơi
-								if (tien > 0){
-									uInfo['redWin'] = mini_users['win'] = tien;    // Cập nhật Số Red đã Thắng
-								}
-								if (tien < 0){
-									uInfo['redLost'] = mini_users['lost'] = tien*(-1); // Cập nhật Số Red đã Thua
-								}
-								if (nohu){
-									uInfo['hu'] = mini_users['hu'] = 1;         // Cập nhật Số Hũ Red đã Trúng
-								}
+								var uInfo      = {};
+								var mini_users = {};
+								var thuong = 0;
+								if (red) {
+									uInfo['red'] = tien;         // Cập nhật Số dư Red trong tài khoản
+									uInfo['redPlay'] = mini_users['bet'] = tongCuoc;     // Cập nhật Số Red đã chơi
+									if (tien > 0){
+										uInfo['redWin'] = mini_users['win'] = tien;    // Cập nhật Số Red đã Thắng
+									}
+									if (tien < 0){
+										uInfo['redLost'] = mini_users['lost'] = tien*(-1); // Cập nhật Số Red đã Thua
+									}
+									if (nohu){
+										uInfo['hu'] = mini_users['hu'] = 1;         // Cập nhật Số Hũ Red đã Trúng
+									}
 
-								client.send(JSON.stringify({VuongQuocRed:{status:1, cel:[cel1, cel2, cel3, cel4, cel5], line_win: result2, win: bet_win, free: client.VuongQuocRed.free, isFree: isFree, isBonus: !!client.VuongQuocRed.bonusX, isNoHu: nohu, isBigWin: isBigWin}, user:{red:user.red-tongCuoc}}));
-								VuongQuocRed_red.create({'name': client.profile.name, 'type': type, 'win': bet_win, 'bet': bet, 'kq': result2.length, 'line': line.length, 'time': new Date()}, function (err4, small) {
-									client.VuongQuocRed.id = small._id.toString();
-								});
-							}else{
-								thuong = (bet_win*0.039589)>>0;
-								uInfo['xu'] = tien;         // Cập nhật Số dư XU trong tài khoản
-								uInfo['xuPlay'] = mini_users['betXu'] = tongCuoc;     // Cập nhật Số XU đã chơi
-								if (thuong > 0){
-									uInfo['red'] = uInfo['thuong'] = mini_users['thuong'] = thuong;  // Cập nhật Số dư Xu trong tài khoản // Cập nhật Số Red được thưởng do chơi XU
+									client.send(JSON.stringify({VuongQuocRed:{status:1, cel:[cel1, cel2, cel3, cel4, cel5], line_win: result2, win: bet_win, free: client.VuongQuocRed.free, isFree: isFree, isBonus: !!client.VuongQuocRed.bonusX, isNoHu: nohu, isBigWin: isBigWin}, user:{red:user.red-tongCuoc}}));
+									VuongQuocRed_red.create({'name': client.profile.name, 'type': type, 'win': bet_win, 'bet': bet, 'kq': result2.length, 'line': line.length, 'time': new Date()}, function (err4, small) {
+										client.VuongQuocRed.id = small._id.toString();
+									});
+								}else{
+									thuong = (bet_win*0.039589)>>0;
+									uInfo['xu'] = tien;         // Cập nhật Số dư XU trong tài khoản
+									uInfo['xuPlay'] = mini_users['betXu'] = tongCuoc;     // Cập nhật Số XU đã chơi
+									if (thuong > 0){
+										uInfo['red'] = uInfo['thuong'] = mini_users['thuong'] = thuong;  // Cập nhật Số dư Xu trong tài khoản // Cập nhật Số Red được thưởng do chơi XU
+									}
+									if (tien > 0){
+										uInfo['xuWin'] = mini_users['winXu'] = tien;    // Cập nhật Số Xu đã Thắng
+									}
+									if (tien < 0){
+										uInfo['xuLost'] = mini_users['lostXu'] = tien*(-1); // Cập nhật Số Xu đã Thua
+									}
+									if (nohu){
+										uInfo['huXu'] = mini_users['huXu'] = 1;      // Cập nhật Số Hũ Xu đã Trúng
+									}
+									client.send(JSON.stringify({VuongQuocRed:{status:1, cel:[cel1, cel2, cel3, cel4, cel5], line_win: result2, win: bet_win, free: client.VuongQuocRed.free, isFree: isFree, isBonus: !!client.VuongQuocRed.bonusX, isNoHu: nohu, isBigWin: isBigWin, thuong:thuong}, user:{xu:user.xu-tongCuoc}}));
+									VuongQuocRed_xu.create({'name': client.profile.name, 'type': type, 'win': bet_win, 'bet': bet, 'kq': result2.length, 'line': line.length, 'time': new Date()}, function (err4, small) {
+										client.VuongQuocRed.id = small._id.toString();
+									});
 								}
-								if (tien > 0){
-									uInfo['xuWin'] = mini_users['winXu'] = tien;    // Cập nhật Số Xu đã Thắng
-								}
-								if (tien < 0){
-									uInfo['xuLost'] = mini_users['lostXu'] = tien*(-1); // Cập nhật Số Xu đã Thua
-								}
-								if (nohu){
-									uInfo['huXu'] = mini_users['huXu'] = 1;      // Cập nhật Số Hũ Xu đã Trúng
-								}
-								client.send(JSON.stringify({VuongQuocRed:{status:1, cel:[cel1, cel2, cel3, cel4, cel5], line_win: result2, win: bet_win, free: client.VuongQuocRed.free, isFree: isFree, isBonus: !!client.VuongQuocRed.bonusX, isNoHu: nohu, isBigWin: isBigWin, thuong:thuong}, user:{xu:user.xu-tongCuoc}}));
-								VuongQuocRed_xu.create({'name': client.profile.name, 'type': type, 'win': bet_win, 'bet': bet, 'kq': result2.length, 'line': line.length, 'time': new Date()}, function (err4, small) {
-									client.VuongQuocRed.id = small._id.toString();
-								});
-							}
-							UserInfo.findOneAndUpdate({id:client.UID},{$inc:uInfo}, function(err,cat){});
-							VuongQuocRed_users.findOneAndUpdate({'uid':client.UID}, {$inc:mini_users}, function(err,cat){});
+								UserInfo.findOneAndUpdate({id:client.UID},{$inc:uInfo}, function(err,cat){});
+								VuongQuocRed_users.findOneAndUpdate({'uid':client.UID}, {$inc:mini_users}, function(err,cat){});
+							})
 						})
 					})
-				})
-			}
-		});
+				}
+			});
+		}
 	}
 };

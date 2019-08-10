@@ -1,5 +1,5 @@
 
-const TXChat  = require('../../Models/TaiXiu_chat');
+var TXChat  = require('../../Models/TaiXiu_chat');
 
 module.exports = function(client){
 	TXChat.find({},'name value', {sort:{'_id':-1}, limit: 20}, function(err, post) {

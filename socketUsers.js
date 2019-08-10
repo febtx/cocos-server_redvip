@@ -15,10 +15,10 @@ var authenticate = async function(client, data, callback) {
 		var az09     = new RegExp("^[a-zA-Z0-9]+$");
 		var testName = az09.test(username);
 
-		if (validator.isLength(username, {min: 3, max: 32})) {
+		if (!validator.isLength(username, {min: 3, max: 32})) {
 			register && client.c_captcha('signUp');
 			callback({title: register ? 'ĐĂNG KÝ' : 'ĐĂNG NHẬP', text: 'Tài khoản (3-32 kí tự).'}, false);
-		}else if (validator.isLength(password, {min: 6, max: 32})) {
+		}else if (!validator.isLength(password, {min: 6, max: 32})) {
 			register && client.c_captcha('signUp');
 			callback({title: register ? 'ĐĂNG KÝ' : 'ĐĂNG NHẬP', text: 'Mật khẩu (6-32 kí tự)'}, false);
 		}else if (!testName) {

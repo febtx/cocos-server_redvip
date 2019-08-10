@@ -1,6 +1,6 @@
 
-const NhaMang = require('../../Models/NhaMang');
-const MenhGia = require('../../Models/MenhGia');
+var NhaMang = require('../../Models/NhaMang');
+var MenhGia = require('../../Models/MenhGia');
 
 module.exports = function(client, nap = false){
 	if (!!nap) {
@@ -15,9 +15,9 @@ module.exports = function(client, nap = false){
 	.then(function(values){
 		var data = {nhamang: values[0], menhgia: values[1]}
 		if (!!nap) {
-			client.send(JSON.stringify({shop:{nap_red: {info:data}}}));
+			client.red({shop:{nap_red: {info:data}}});
 		}else{
-			client.send(JSON.stringify({shop:{mua_the_nap: {info:data}}}));
+			client.red({shop:{mua_the_nap: {info:data}}});
 		}
 	})
 }

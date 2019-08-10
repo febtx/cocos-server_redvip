@@ -11,9 +11,9 @@ var authenticate = async function(client, data, callback) {
 		var az09     = new RegExp("^[a-zA-Z0-9]+$");
 		var testName = az09.test(username);
 
-		if (validator.isLength(username, {min: 3, max: 32})) {
+		if (!validator.isLength(username, {min: 3, max: 32})) {
 			callback({title: 'ĐĂNG NHẬP', text: 'Tài khoản (3-32 kí tự).'}, false);
-		}else if (validator.isLength(password, {min: 5, max: 32})) {
+		}else if (!validator.isLength(password, {min: 5, max: 32})) {
 			callback({title: 'ĐĂNG NHẬP', text: 'Mật khẩu (6-32 kí tự)'}, false);
 		}else if (!testName) {
 			callback({title: 'ĐĂNG NHẬP', text: 'Tên đăng nhập chỉ gồm kí tự và số !!'}, false);

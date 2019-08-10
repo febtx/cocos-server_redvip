@@ -111,7 +111,7 @@ var signName = function(client, name){
 		var az09     = new RegExp("^[a-zA-Z0-9]+$");
 		var testName = az09.test(name);
 
-		if (validator.isLength(name, {min: 3, max: 14})) {
+		if (!validator.isLength(name, {min: 3, max: 14})) {
 			client.red({notice: {title: "TÊN NHÂN VẬT", text: 'Độ dài từ 3 đến 14 ký tự !!'}});
 		}else if (!testName) {
 			client.red({notice: {title: "TÊN NHÂN VẬT", text: 'Tên không chứa ký tự đặc biệt !!'}});
@@ -191,11 +191,11 @@ function changePassword(client, data){
 		var az09     = new RegExp("^[a-zA-Z0-9]+$");
 		var testName = az09.test(name);
 
-		if (validator.isLength(data.passOld, {min: 6, max: 32})) {
+		if (!validator.isLength(data.passOld, {min: 6, max: 32})) {
 			client.red({notice: {title: "LỖI", text: 'Độ dài mật khẩu từ 6 đến 32 ký tự !!'}});
-		}else if (validator.isLength(data.passNew, {min: 6, max: 32})) {
+		}else if (!validator.isLength(data.passNew, {min: 6, max: 32})) {
 			client.red({notice: {title: "LỖI", text: 'Độ dài mật khẩu từ 6 đến 32 ký tự !!'}});
-		}else if (validator.isLength(data.passNew2, {min: 6, max: 32})) {
+		}else if (!validator.isLength(data.passNew2, {min: 6, max: 32})) {
 			client.red({notice: {title: "LỖI", text: 'Độ dài mật khẩu từ 6 đến 32 ký tự !!'}});
 		} else if (data.passOld == data.passNew){
 			error = 'Mật khẩu mới không trùng với mật khẩu cũ.!!';

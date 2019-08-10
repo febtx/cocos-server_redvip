@@ -21,7 +21,7 @@ module.exports = function(client, data){
 				});
 			}))
 			.then(function(arrayOfResults) {
-				client.send(JSON.stringify({mini:{bacay:{tops:arrayOfResults}}}));
+				client.red({mini:{bacay:{tops:arrayOfResults}}});
 			})
 		});
 	}else{
@@ -39,7 +39,7 @@ module.exports = function(client, data){
 				});
 			}))
 			.then(function(arrayOfResults) {
-				client.send(JSON.stringify({mini:{bacay:{tops:arrayOfResults}}}));
+				client.red({mini:{bacay:{tops:arrayOfResults}}});
 			})
 		});
 	}

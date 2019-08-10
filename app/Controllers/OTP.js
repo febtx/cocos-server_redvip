@@ -1,12 +1,13 @@
 
-const UserInfo = require('../Models/UserInfo');
-const OTP      = require('../Models/OTP');
+var UserInfo = require('../Models/UserInfo');
+var OTP      = require('../Models/OTP');
 
 var helper     = require('../Helpers/Helpers');
 var mailOTP    = require('../mail').sendOTP;
 var smsOTP     = require('../sms').sendOTP;
 
 function createOTP(client, type){
+	type = type>>0;
 	OTP.findOne({'uid': client.UID}, {}, {sort:{'_id':-1}}, function(err, data){
 		if (!data || ((new Date()-Date.parse(data.date))/1000) > 180 || data.active) {
 			// Tạo mã OTP mới
@@ -44,7 +45,7 @@ function createOTP(client, type){
 }
 
 module.exports = function(client, data){
-	if (void 0 !== data.type){
+	if (!!data.type){
 		createOTP(client, data.type);
 	}
 }

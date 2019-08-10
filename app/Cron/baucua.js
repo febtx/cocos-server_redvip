@@ -1,15 +1,16 @@
 
-const fs          = require('fs');
+var path         = require('path');
+var fs           = require('fs');
 
-const Helpers     = require('../Helpers/Helpers');
+var Helpers      = require('../Helpers/Helpers');
 
-const UserInfo     = require('../Models/UserInfo');
-const BauCua_phien = require('../Models/BauCua/BauCua_phien');
-const BauCua_cuoc  = require('../Models/BauCua/BauCua_cuoc');
-const BauCua_user  = require('../Models/BauCua/BauCua_user');
-const BauCua_temp  = require('../Models/BauCua/BauCua_temp');
+var UserInfo     = require('../Models/UserInfo');
+var BauCua_phien = require('../Models/BauCua/BauCua_phien');
+var BauCua_cuoc  = require('../Models/BauCua/BauCua_cuoc');
+var BauCua_user  = require('../Models/BauCua/BauCua_user');
+var BauCua_temp  = require('../Models/BauCua/BauCua_temp');
 
-const dataBauCua = '../../data/baucua.json';
+var dataBauCua = '../../data/baucua.json';
 
 var io       = null;
 var gameLoop = null;
@@ -274,7 +275,7 @@ function playGame(){
 	io.BauCua_time = 71;
 	//io.BauCua_time = 15;
 
-	gameLoop = setInterval(async function(){
+	gameLoop = setInterval(function(){
 		io.BauCua_time--;
 		if (io.BauCua_time <= 60) {
 			if (io.BauCua_time < 0) {
@@ -293,14 +294,12 @@ function playGame(){
 				file.uid    = "";
 				file.rights = 2;
 
-				fs.writeFile(dataBauCua, JSON.stringify(file), function(err){});
-
-				try {
-					const create = await BauCua_phien.create({'dice1':dice1, 'dice2':dice2, 'dice3':dice3, 'time':new Date()})
+				fs.writeFile(path.dirname(path.dirname(__dirname)) + "/data/baucua.json", JSON.stringify(file), function(err){});
+				BauCua_phien.create({'dice1':dice1, 'dice2':dice2, 'dice3':dice3, 'time':new Date()}, function(err, create){
 					if (!!create) {
 						io.BauCua_phien = create.id+1;
 
-						var chothanhtoan = await thongtin_thanhtoan([dice1, dice2, dice3]);
+						var chothanhtoan = thongtin_thanhtoan([dice1, dice2, dice3]);
 
 						Promise.all(Object.values(io.users).map(function(users){
 							Promise.all(users.map(function(client){
@@ -314,8 +313,7 @@ function playGame(){
 							}));
 						}));
 					}
-				} catch (err) {
-				}
+				})
 			}else
 				thongtin_thanhtoan()
 		}

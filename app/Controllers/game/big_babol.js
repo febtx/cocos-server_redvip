@@ -1,16 +1,13 @@
 
-const spin = require('./big_babol/spin');
-const log  = require('./big_babol/log');
-const top  = require('./big_babol/top');
+var spin = require('./big_babol/spin');
+var log  = require('./big_babol/log');
+var top  = require('./big_babol/top');
 
 module.exports = function(client, data){
-	if (void 0 !== data.info) {
-		//info(client, data.info)
-	}
-	if (void 0 !== data.spin) {
+	if (!!data.spin) {
 		spin(client, data.spin)
 	}
-	if (void 0 !== data.log) {
+	if (!!data.log) {
 		log(client, data.log)
 	}
 	if (void 0 !== data.top) {
