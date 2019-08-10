@@ -107,21 +107,23 @@ function NhaMang_add(client, data){
 	}
 }
 function NhaMang_remove(client, id){
-	tabNhaMang.findOne({'_id': id}, function(err, check){
-		if (check) {
-			var active = tabNhaMang.findOneAndRemove({'_id': id}).exec();
-			Promise.all([active])
-			.then(values => {
+	if (!!id) {
+		tabNhaMang.findOne({'_id': id}, function(err, check){
+			if (check) {
+				var active = tabNhaMang.findOneAndRemove({'_id': id}).exec();
+				Promise.all([active])
+				.then(values => {
+					tabNhaMang.find({}, function(err, data){
+						client.red({thecao:{nhamang:data, remove: true}, notice:{title:'XOÁ NHÀ MẠNG',text:'Xoá thành công...'}});
+					});
+				})
+			}else{
 				tabNhaMang.find({}, function(err, data){
-					client.red({thecao:{nhamang:data, remove: true}, notice:{title:'XOÁ NHÀ MẠNG',text:'Xoá thành công...'}});
+					client.red({thecao:{nhamang:data, remove: true}, notice:{title:'XOÁ NHÀ MẠNG',text:'Nhà mạng không tồn tại...'}});
 				});
-			})
-		}else{
-			tabNhaMang.find({}, function(err, data){
-				client.red({thecao:{nhamang:data, remove: true}, notice:{title:'XOÁ NHÀ MẠNG',text:'Nhà mạng không tồn tại...'}});
-			});
-		}
-	});
+			}
+		});
+	}
 }
 
 function NhaMang(client, data){
@@ -133,49 +135,55 @@ function NhaMang(client, data){
 	}
 }
 
-async function MenhGia_add(client, data){
-	var name   = data.name;
-	var values = data.values;
-	var nap    = !!data.nap;
-	var mua    = !!data.mua;
-	if (Helper.isEmpty(name) || Helper.isEmpty(values) || (!nap && !mua)) {
-		client.red({notice:{title:'THÊM MỆNH GIÁ',text:'Không bỏ trống các thông tin...'}});
-	}else{
-		var regex = new RegExp("^" + name + "$", 'i');
-		tabMenhGia.findOne({'name': {$regex: regex}, 'values': values, 'nap': nap, 'mua': mua} , async function(err, check){
-			if (!!check) {
-				client.red({notice:{title:'THÊM MỆNH GIÁ',text:'Mệnh giá đã tồn tại...'}});
-			}else{
-				try {
-					var create = await tabMenhGia.create({'name':name, 'values':values, 'nap':nap, 'mua':mua});
-					if (!!create) {
-						tabMenhGia.find({}, function(err, data){
-							client.red({thecao:{menhgia:data}, notice:{title:'THÊM MỆNH GIÁ',text:'Thêm MỆNH GIÁ thành công...'}});
+function MenhGia_add(client, data){
+	if (!!data && !!data.name && !!data.values) {
+		var name   = data.name;
+		var values = data.values;
+		var nap    = !!data.nap;
+		var mua    = !!data.mua;
+		if (Helper.isEmpty(name) || Helper.isEmpty(values) || (!nap && !mua)) {
+			client.red({notice:{title:'THÊM MỆNH GIÁ',text:'Không bỏ trống các thông tin...'}});
+		}else{
+			var regex = new RegExp("^" + name + "$", 'i');
+			tabMenhGia.findOne({'name': {$regex: regex}, 'values': values, 'nap': nap, 'mua': mua} , async function(err, check){
+				if (!!check) {
+					client.red({notice:{title:'THÊM MỆNH GIÁ',text:'Mệnh giá đã tồn tại...'}});
+				}else{
+					try {
+						tabMenhGia.create({'name':name, 'values':values, 'nap':nap, 'mua':mua}, function(errC, create){
+							if (!!create) {
+								tabMenhGia.find({}, function(err, data){
+									client.red({thecao:{menhgia:data}, notice:{title:'THÊM MỆNH GIÁ',text:'Thêm MỆNH GIÁ thành công...'}});
+								});
+							}
 						});
+					} catch (err) {
+						client.red({notice:{title:'THÊM MỆNH GIÁ',text:'Có lỗi sảy ra, xin vui lòng thử lại.'}});
 					}
-				} catch (err) {
-					client.red({notice:{title:'THÊM MỆNH GIÁ',text:'Có lỗi sảy ra, xin vui lòng thử lại.'}});
 				}
+			});
+		}
+	}
+}
+
+function MenhGia_remove(client, id){
+	if (!!id) {
+		tabMenhGia.findOne({'_id': id}, function(err, check){
+			if (check) {
+				var active = tabMenhGia.findOneAndRemove({'_id': id}).exec();
+				Promise.all([active])
+				.then(values => {
+					tabMenhGia.find({}, function(err, data){
+						client.red({thecao:{menhgia:data, remove: true}, notice:{title:'XOÁ MỆNH GIÁ',text:'Xoá thành công...'}});
+					});
+				})
+			}else{
+				tabMenhGia.find({}, function(err, data){
+					client.red({thecao:{menhgia:data, remove: true}, notice:{title:'XOÁ MỆNH GIÁ',text:'Mệnh giá không tồn tại...'}});
+				});
 			}
 		});
 	}
-}
-function MenhGia_remove(client, id){
-	tabMenhGia.findOne({'_id': id}, function(err, check){
-		if (check) {
-			var active = tabMenhGia.findOneAndRemove({'_id': id}).exec();
-			Promise.all([active])
-			.then(values => {
-				tabMenhGia.find({}, function(err, data){
-					client.red({thecao:{menhgia:data, remove: true}, notice:{title:'XOÁ MỆNH GIÁ',text:'Xoá thành công...'}});
-				});
-			})
-		}else{
-			tabMenhGia.find({}, function(err, data){
-				client.red({thecao:{menhgia:data, remove: true}, notice:{title:'XOÁ MỆNH GIÁ',text:'Mệnh giá không tồn tại...'}});
-			});
-		}
-	});
 }
 
 function MenhGia(client, data){
@@ -188,37 +196,37 @@ function MenhGia(client, data){
 }
 
 function thecao_get(client, data){
-	var active = [];
-	if (void 0 !== data.nhamang) {
-		var active1 = new Promise((ketqua, loi)=>{
-			tabNhaMang.find({}, function(err, data){
-				ketqua({nhamang:data})
-				//client.emit('p', {thecao:{nhamang:data}});
+	if (!!data && !!data.nhamang && !!data.menhgia) {
+		var active = [];
+		if (void 0 !== data.nhamang) {
+			var active1 = new Promise((ketqua, loi)=>{
+				tabNhaMang.find({}, function(err, data){
+					ketqua({nhamang:data})
+				});
 			});
-		});
-		active = [active1, ...active];
-	}
-	if (void 0 !== data.menhgia) {
-		var active2 = new Promise((ketqua, loi)=>{
-			tabMenhGia.find({}, function(err, data){
-				ketqua({menhgia:data})
-				//client.emit('p', {thecao:{menhgia:data}});
+			active = [active1, ...active];
+		}
+		if (void 0 !== data.menhgia) {
+			var active2 = new Promise((ketqua, loi)=>{
+				tabMenhGia.find({}, function(err, data){
+					ketqua({menhgia:data})
+				});
 			});
-		});
-		active = [active2, ...active];
-	}
-	Promise.all(active).then(resulf => {
-		var df = {};
-		Promise.all(resulf.map(function(obj){
-			df = Object.assign(df, obj);
-			return true;
-		})).then(resulf => {
-			client.red({thecao: df});
+			active = [active2, ...active];
+		}
+		Promise.all(active).then(resulf => {
+			var df = {};
+			Promise.all(resulf.map(function(obj){
+				df = Object.assign(df, obj);
+				return true;
+			})).then(resulf => {
+				client.red({thecao: df});
+			})
 		})
-	})
+	}
 }
 
-function onData(client, data) {
+module.exports = function (client, data) {
 	if (!!data) {
 		if (void 0 !== data.daily) {
 			DaiLy(client, data.daily)
@@ -233,8 +241,4 @@ function onData(client, data) {
 			thecao_get(client, data.thecao_get)
 		}
 	}
-}
-
-module.exports = {
-	onData: onData,
 }

@@ -1,8 +1,9 @@
 
-const MuaXu    = require('../../Models/MuaXu');
-const UserInfo = require('../../Models/UserInfo');
+var MuaXu     = require('../../Models/MuaXu');
+var UserInfo  = require('../../Models/UserInfo');
 
-const Helper   = require('../../Helpers/Helpers');
+var validator = require('validator');
+var Helper    = require('../../Helpers/Helpers');
 
 module.exports = function(client, data){
 	if (!!data && !!data.red && !!data.captcha) {

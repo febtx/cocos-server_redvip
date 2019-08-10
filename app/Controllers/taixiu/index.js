@@ -180,28 +180,34 @@ function getNew(client){
 
 var chat = function(client, str){
 	if (!!str) {
-		if (!validator.isLength(str, {min: 1, max: 250})) {
-			client.red({taixiu:{err: 'Số lượng kí tự từ 1 - 250.'}});
-		}else{
-			str = validator.trim(str);
-			if (!validator.isLength(str, {min: 1, max: 250})) {
-				client.red({taixiu:{err: 'Số lượng kí tự từ 1 - 250.'}});
+		UserInfo.findOne({id: client.UID}, 'red', function(err, user){
+			if (!user || user.red < 1000) {
+				client.red({taixiu:{err: 'Tài khoản phải có ít nhất 1.000 Red để chat.!!'}});
 			}else{
-				TXChat.findOne({}, 'uid value', {sort:{'id':-1}}, function(err, post) {
-					if (!post || (post.uid != client.UID && post.value != str)) {
-						TXChat.create({'uid':client.UID, 'name':client.profile.name, 'value':str});
-						var content = {taixiu:{chat:{message:{user:client.profile.name, value:str}}}};
-						Promise.all(Object.values(client.redT.users).map(function(users){
-							Promise.all(users.map(function(member){
-								if (member != client){
-									member.red(content);
-								}
-							});
+				if (!validator.isLength(str, {min: 1, max: 250})) {
+					client.red({taixiu:{err: 'Số lượng kí tự từ 1 - 250.'}});
+				}else{
+					str = validator.trim(str);
+					if (!validator.isLength(str, {min: 1, max: 250})) {
+						client.red({taixiu:{err: 'Số lượng kí tự từ 1 - 250.'}});
+					}else{
+						TXChat.findOne({}, 'uid value', {sort:{'id':-1}}, function(err, post) {
+							if (!post || post.uid != client.UID || (post.uid == client.UID && post.value != str)) {
+								TXChat.create({'uid':client.UID, 'name':client.profile.name, 'value':str});
+								var content = {taixiu:{chat:{message:{user:client.profile.name, value:str}}}};
+								Promise.all(Object.values(client.redT.users).map(function(users){
+									Promise.all(users.map(function(member){
+										if (member != client){
+											member.red(content);
+										}
+									}));
+								}));
+							}
 						});
 					}
-				});
+				}
 			}
-		}
+		});
 	}
 }
 
@@ -274,7 +280,7 @@ var get_phien = function(client, data){
 		var red    = !!data.red;
 
 		var getPhien = TXPhien.findOne({id: phien}).exec();
-		var getCuoc  = TXCuocOne.find({phien: phien, taixiu:taixiu, red:red}).exec();
+		var getCuoc  = TXCuoc.find({phien: phien, taixiu:taixiu, red:red}).exec();
 
 		var tong_L        = 0;
 		var tong_R        = 0;
@@ -282,7 +288,8 @@ var get_phien = function(client, data){
 		var tong_tralai_R = 0;
 
 		Promise.all([getPhien, getCuoc]).then(values => {
-			if (!!values[0] && values[1].length > 0) {
+			console.log(values[0], values[1]);
+			if (!!values[0]) {
 				var infoPhienCuoc = values[0];
 				var phienCuoc     = values[1];
 

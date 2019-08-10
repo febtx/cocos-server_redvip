@@ -484,7 +484,7 @@ module.exports = function(client, data){
 								bet_win  = nohu ? bet_win : bet_win*heso;           // Tổng tiền ăn đc (chưa cắt phế)
 								bet_win  = (bet_win-Math.ceil(bet_win*phe/100))>>0; // Cắt phế 2% - 4% ăn được
 								var tien = bet_win-bet;
-								if (!nohu && bet_win >= bet*17) {
+								if (!nohu && bet_win >= bet*11) {
 									isBigWin = true;          // Là thắng lớn
 									type = 1;
 								}

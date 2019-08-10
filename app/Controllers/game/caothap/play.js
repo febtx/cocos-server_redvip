@@ -201,7 +201,9 @@ function playGame(client, select) {
 									if (!hoa) {
 										bet = bet+(bet*hesoAn)>>0;           // Cắt phế thắng
 									}else{
-										bet = (bet-Math.ceil(bet*10/100))>>0; // Hoà , trừ 10% vốn
+										var addQuy = (Math.ceil(bet*10/100))>>0;
+										bet = (bet-addQuy)>>0; // Hoà , trừ 10% vốn
+										HU.findOneAndUpdate({game: "caothap", type:result.goc, red:client.caothap.red}, {$inc:{bet:addQuy}}, function(herr, hcaothap){});
 									}
 
 									up   = card.card != 0;
@@ -342,7 +344,6 @@ function annon(client) {
 	}
 }
 
-
 function reconnect(client){
 	var action = new Promise((ketqua, loi)=>{
 		CaoThap_red.findOne({'uid': client.UID}, {}, {sort:{'_id':-1}}, function(err, redLast) {
@@ -367,7 +368,6 @@ function reconnect(client){
 	})
 	action.then(result =>{
 		if (!!result) {
-			result = result._doc;
 			var time_remain = ((result.time-(new Date-120000))/1000)>>0;
 			if (time_remain >= 0) {
 				var up   = result.card.card != 0;

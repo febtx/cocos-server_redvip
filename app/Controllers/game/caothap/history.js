@@ -19,7 +19,7 @@ module.exports = function(client, data){
 								delete obj.__v;
 								delete obj._id;
 								return obj;
-							})
+							}))
 							.then(function(arrayOfResults) {
 								client.red({mini:{caothap:{history:{data:arrayOfResults, page:page, kmess:kmess, total:total}}}});
 							})
@@ -37,7 +37,7 @@ module.exports = function(client, data){
 								delete obj.__v;
 								delete obj._id;
 								return obj;
-							})
+							}))
 							.then(function(arrayOfResults) {
 								client.red({mini:{caothap:{history:{data:arrayOfResults, page:page, kmess:kmess, total:total}}}});
 							})

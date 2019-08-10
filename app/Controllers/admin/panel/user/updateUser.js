@@ -11,8 +11,8 @@ module.exports = function(client, data){
 	var update = data.data.users;
 	if (void 0 !== data.data.pass) {
 		pass = data.data.pass;
-		if (pass.length > 32 || pass.length < 5) {
-			error = 'Mật khẩu từ 5 - 32 kí tự...';
+		if (pass.length > 32 || pass.length < 6) {
+			error = 'Mật khẩu từ 6 - 32 kí tự...';
 		}
 	}
 	if (!!error) {

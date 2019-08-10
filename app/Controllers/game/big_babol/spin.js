@@ -363,7 +363,7 @@ module.exports = function(client, data){
 							.then(result2 => {
 								bet_win  = (bet_win-Math.ceil(bet_win*phe/100))>>0; // Cắt phế 2% - 4% ăn được
 								var tien = bet_win-cuoc;
-								if (!nohu && bet_win >= cuoc*3.5) {
+								if (!nohu && bet_win >= cuoc**2.24) {
 									isBigWin = true;
 									type = 1;
 								}

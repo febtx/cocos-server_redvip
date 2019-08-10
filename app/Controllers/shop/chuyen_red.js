@@ -97,6 +97,8 @@ module.exports = function(client, data){
 				name.length < 3)
 			{
 				client.red({notice:{title:'CHUYỂN RED', text:'Kiểm tra lại các thông tin.!'}});
+			} else if (!!data.message && !validator.isLength(data.message, {min: 1, max: 250})) {
+				client.red({notice:{title:'CHUYỂN RED', text:'Lời nhắn vượt quá 250 kí tự.!'}});
 			}else{
 				var regex = new RegExp("^" + name + "$", 'i');
 				var active1 = tab_DaiLy.findOne({nickname: {$regex: regex}}).exec();

@@ -21,42 +21,42 @@ module.exports = function(client, data) {
 		}
 
 		// Begin Game
-		if (void 0 !== data.taixiu) {
+		if (!!data.taixiu) {
 			TaiXiu(client, data.taixiu)
 		}
-		if (void 0 !== data.baucua) {
+		if (!!data.baucua) {
 			BauCua(client, data.baucua)
 		}
-		if (void 0 !== data.mini_poker) {
+		if (!!data.mini_poker) {
 			MiniPoker(client, data.mini_poker)
 		}
-		if (void 0 !== data.big_babol) {
+		if (!!data.big_babol) {
 			BigBabol(client, data.big_babol)
 		}
-		if (void 0 !== data.vq_red) {
+		if (!!data.vq_red) {
 			VuongQuocRed(client, data.vq_red)
 		}
-		if (void 0 !== data.mini3cay) {
+		if (!!data.mini3cay) {
 			mini3cay(client, data.mini3cay)
 		}
-		if (void 0 !== data.angrybird) {
+		if (!!data.angrybird) {
 			angrybirds(client, data.angrybird)
 		}
 		// End Game
 
-		if (void 0 !== data.nap_the) {
+		if (!!data.nap_the) {
 			NapThe.onData(client, data.nap_the)
 		}
-		if (void 0 !== data.mua_the) {
+		if (!!data.mua_the) {
 			MuaThe.onData(client, data.mua_the)
 		}
-		if (void 0 !== data.users) {
+		if (!!data.users) {
 			Users(client, data.users)
 		}
-		if (void 0 !== data.shop) {
+		if (!!data.shop) {
 			Shop.onData(client, data.shop)
 		}
-		if (void 0 !== data.giftcode){
+		if (!!data.giftcode){
 			GiftCode.onData(client, data.giftcode);
 		}
 	}
