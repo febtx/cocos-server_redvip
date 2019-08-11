@@ -38,6 +38,9 @@ function random_cel2(){
 	}
 }
 
+function random_cel11(){
+	return (Math.random()*5)>>0;
+}
 function random_cel1(){
 	var a = (Math.random()*15)>>0;
 	if (a == 14) {
@@ -58,6 +61,9 @@ function random_cel1(){
 	}
 }
 
+function random_cel01(){
+	return (Math.random()*4)>>0;
+}
 function random_cel0(){
 	var a = (Math.random()*10)>>0;
 	if (a == 9) {
@@ -165,6 +171,7 @@ module.exports = function(client, data){
 				if (client.VuongQuocRed.free === 0 && ((red && user.red < tongCuoc) || (!red && user.xu < tongCuoc))) {
 					client.red({VuongQuocRed:{status:0, notice: 'Bạn không đủ ' + (red ? 'RED':'XU') + ' để quay.!!'}});
 				}else{
+					var config = require('../../../../config/vqred.json');
 					var phe = red ? 2 : 4;    // Phế
 					var addQuy = (tongCuoc*0.01)>>0;
 					VuongQuocRed_hu.findOneAndUpdate({type:bet, red:red}, {$inc:{bet:addQuy}}, function(err1,cat){});
@@ -178,14 +185,53 @@ module.exports = function(client, data){
 					var isBigWin = false;
 					// tạo kết quả
 					VuongQuocRed_hu.findOne({type:bet, red:red}, {}, function(err2, dataHu){
+						if (config.chedo == 2) {
+							// chế độ khó
+							var celSS = [
+								random_cel3(), random_cel3(), random_cel2(),
+								random_cel2(), random_cel2(), random_cel2(),
+								random_cel2(), 3,             2,
+								2,             1,             1,
+								0,             0,             0,
+							];
+						}else if(config.chedo == 1){
+							/**
+							// chế độ trung bình
+							var celSS = [
+								random_cel2(), random_cel2(), random_cel2(),
+								random_cel2(), random_cel2(), random_cel2(),
+								random_cel1(), random_cel1(), random_cel0(),
+								2,             2,             1,
+								1,             0,             3,
+							];
+							*/
+							/**
+							var celSS = [
+								random_cel3(), random_cel2(),  random_cel2(),
+								random_cel2(), random_cel2(),  random_cel2(),
+								random_cel1(), random_cel01(), random_cel0(),
+								2,             1,              1,
+								0,             0,              0,
+							]; // ok
+							*/
+							var celSS = [
+								random_cel3(), random_cel2(), random_cel2(),
+								random_cel2(), random_cel2(), random_cel2(),
+								random_cel1(), random_cel0(),  random_cel0(),
+								2,             1,             1,
+								0,             0,             3,
+							];
 
-						var celSS = [
-							random_cel3(), random_cel2(), random_cel2(),
-							random_cel2(), random_cel2(), random_cel2(),
-							random_cel1(), random_cel0(),  random_cel0(),
-							2,             1,             1,
-							0,             0,             0,
-						]; // Super
+						}else{
+							// chế độ dễ
+							var celSS = [
+								random_cel3(), random_cel2(), random_cel2(),
+								random_cel2(), random_cel2(), random_cel2(),
+								random_cel1(), random_cel0(),  random_cel0(),
+								2,             1,             1,
+								0,             0,             0,
+							];
+						}
 
 						celSS = Helpers.shuffle(celSS); // tráo bài lần 1
 						celSS = Helpers.shuffle(celSS); // tráo bài lần 2

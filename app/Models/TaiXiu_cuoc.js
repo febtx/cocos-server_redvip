@@ -15,6 +15,8 @@ const Schema = new mongoose.Schema({
 	win:       {type: Boolean, default: false},	   // Thắng hoặc thua
 	betwin:    {type: Number,  default: 0},	       // Tiền thắng được
 	time:      {type: Date},                       // thời gian cược
+
+	type:      {type: Boolean, default: false},    // Bot = true | Users = false
 });
 
 Schema.plugin(AutoIncrement.plugin, {modelName:'TaiXiu_cuoc', field:'id'});

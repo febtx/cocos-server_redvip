@@ -2,8 +2,6 @@
 const AutoIncrement = require('mongoose-auto-increment-reworked').MongooseAutoIncrementID;
 const mongoose      = require('mongoose');
 
-//MongooseAutoIncrementID.initialise('UserInfo');
-
 const Schema = new mongoose.Schema({
 	uid:      {type: String,  required: true},    // ID Người cược
 	phien:    {type: Number,  required: true},    // phiên cược
@@ -15,9 +13,10 @@ const Schema = new mongoose.Schema({
 	thuong:   {type: Number,  default: 0},        // Thưởng Red khi chơi bằng xu
 	win:      {type: Boolean, default: false},	  // Thắng hoặc thua
 	betwin:   {type: Number,  default: 0},	      // Tiền thắng được
+
+	type:     {type: Boolean, default: false},    // Bot = true | Users = false
 });
 
 Schema.plugin(AutoIncrement.plugin, {modelName:'TaiXiu_one', field:'id'});
 
-const TaiXiu_one = mongoose.model("TaiXiu_one", Schema);
-module.exports = TaiXiu_one;
+module.exports = mongoose.model("TaiXiu_one", Schema);

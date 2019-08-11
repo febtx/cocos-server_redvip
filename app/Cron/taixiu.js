@@ -4,9 +4,9 @@ var fs          = require('fs');
 
 var Helpers     = require('../Helpers/Helpers');
 
-var UserInfo    = require('../Models/UserInfo')
-var TXPhien     = require('../Models/TaiXiu_phien')
-var TXCuoc      = require('../Models/TaiXiu_cuoc')
+var UserInfo    = require('../Models/UserInfo');
+var TXPhien     = require('../Models/TaiXiu_phien');
+var TXCuoc      = require('../Models/TaiXiu_cuoc');
 var TaiXiu_User = require('../Models/TaiXiu_user');
 var TXCuocOne   = require('../Models/TaiXiu_one');
 
@@ -18,9 +18,15 @@ var HU_game         = require('../Models/HU');
 
 var VuongQuocRed_hu = require('../Models/VuongQuocRed/VuongQuocRed_hu');
 
+var adminSee        = require('./taixiu/admin');
+var bot             = require('./taixiu/bot');
+var botList         = [];
+//var botCuoc         = 1;
+//var config        = require('./taixiu/config');
+
 var dataTaiXiu = '../../data/taixiu.json';
-var io       = null;
-var gameLoop = null;
+var io         = null;
+var gameLoop   = null;
 
 function init(obj){
 	io = obj;
@@ -80,45 +86,38 @@ function setTaiXiu_user(phien, dice){
 					TaiXiu_User.findOne({uid: obj.uid}, function(error, data) {
 						var bet_thua = obj.bet-obj.tralai;
 						var bet = obj.win ? obj.betwin+obj.bet : bet_thua;
-						if (obj.taixiu == true && obj.red == true){          // Red Tài Xỉu
-							var update = {
+						var update = {};
+						if (obj.taixiu == true && obj.red == true && bet_thua >= 10000) {          // Red Tài Xỉu
+							update = {
 								tLineWinRed:   obj.win && data.tLineWinRed < data.tLineWinRedH+1 ? data.tLineWinRedH+1 : data.tLineWinRed,
 								tLineLostRed:  !obj.win && data.tLineLostRed < data.tLineLostRedH+1 ? data.tLineLostRedH+1 : data.tLineLostRed,
 								tLineWinRedH:  obj.win ? data.tLineWinRedH+1 : 0,
 								tLineLostRedH: obj.win ? 0 : data.tLineLostRedH+1,
-								tBigWinRed:    obj.win && data.tBigWinRed < obj.betwin ? obj.betwin : data.tBigWinRed,
-								tBigLostRed:   !obj.win && data.tBigLostRed < bet_thua ? bet_thua : data.tBigLostRed
 							};
-						} else if (obj.taixiu == true && obj.red == false) { // Xu Tài Xỉu
-							var update = {
+						} else if (obj.taixiu == true && obj.red == false && bet_thua >= 10000) { // Xu Tài Xỉu
+							update = {
 								tLineWinXu:   obj.win && data.tLineWinXu < data.tLineWinXuH+1 ? data.tLineWinXuH+1 : data.tLineWinXu,
 								tLineLostXu:  !obj.win && data.tLineLostXu < data.tLineLostXuH+1 ? data.tLineLostXuH+1 : data.tLineLostXu,
 								tLineWinXuH:  obj.win ? data.tLineWinXuH+1 : 0,
 								tLineLostXuH: obj.win ? 0 : data.tLineLostXuH+1,
-								tBigWinXu:    obj.win && data.tBigWinXu < obj.betwin ? obj.betwin : data.tBigWinXu,
-								tBigLostXu:   !obj.win && data.tBigLostXu < bet_thua ? bet_thua : data.tBigLostXu
 							}
-						} else if (obj.taixiu == false && obj.red == true) { // Red Chẵn Lẻ
-							var update = {
+						} else if (obj.taixiu == false && obj.red == true && bet_thua >= 10000) { // Red Chẵn Lẻ
+							update = {
 								cLineWinRed:   obj.win && data.cLineWinRed < data.cLineWinRedH+1 ? data.cLineWinRedH+1 : data.cLineWinRed,
 								cLineLostRed:  !obj.win && data.cLineLostRed < data.cLineLostRedH+1 ? data.cLineLostRedH+1 : data.cLineLostRed,
 								cLineWinRedH:  obj.win ? data.cLineWinRedH+1 : 0,
 								cLineLostRedH: obj.win ? 0 : data.cLineLostRedH+1,
-								cBigWinRed:    obj.win && data.cBigWinRed < obj.betwin ? obj.betwin : data.cBigWinRed,
-								cBigLostRed:   !obj.win && data.cBigLostRed < bet_thua ? bet_thua : data.cBigLostRed,
 							}
-						} else if (obj.taixiu == false && obj.red == false) { // Xu Chẵn Lẻ
-							var update = {
+						} else if (obj.taixiu == false && obj.red == false && bet_thua >= 10000) { // Xu Chẵn Lẻ
+							update = {
 								cLineWinXu:   obj.win && data.cLineWinXu < data.cLineWinXuH+1 ? data.cLineWinXuH+1 : data.cLineWinXu,
 								cLineLostXu:  !obj.win && data.cLineLostXu < data.cLineLostXuH+1 ? data.cLineLostXuH+1 : data.cLineLostXu,
 								cLineWinXuH:  obj.win ? data.cLineWinXuH+1 : 0,
 								cLineLostXuH: obj.win ? 0 : data.cLineLostXuH+1,
-								cBigWinXu:    obj.win && data.cBigWinXu < obj.betwin ? obj.betwin : data.cBigWinXu,
-								cBigLostXu:   !obj.win && data.cBigLostXu < bet_thua ? bet_thua : data.cBigLostXu
 							}
 						}
 
-						TaiXiu_User.findOneAndUpdate({uid: obj.uid}, {$set:update}).exec();
+						!!Object.entries(update).length && TaiXiu_User.findOneAndUpdate({uid: obj.uid}, {$set:update}).exec();
 
 						if(void 0 !== io.users[obj.uid]){
 							Promise.all(io.users[obj.uid].map(function(client){
@@ -226,8 +225,8 @@ function thongtin_thanhtoan(game_id, dice = false){
 	chanle_xu_player_le_temp   = [];
 
 	TXCuoc.find({phien:game_id}, null, {sort:{'id':-1}}, function(err, list) {
-		//if(list.length>0){
 		if(list.length){
+			adminSee(io, list);
 			Promise.all(list.map(function(obj){
 				if (obj.taixiu == true && obj.red == true && obj.select == true){           // Tổng Red Tài
 					TaiXiu_red_tong_tai += obj.bet;
@@ -737,8 +736,8 @@ function thongtin_thanhtoan(game_id, dice = false){
 					}))
 					.then(function(arrayOfResults) {
 						//Promise.all(arrayOfResults).then(function(data){
-							playGame()
-							setTaiXiu_user(game_id, dice)
+							playGame();
+							setTaiXiu_user(game_id, dice);
 						//})
 					});
 				}else{
@@ -755,6 +754,7 @@ function thongtin_thanhtoan(game_id, dice = false){
 						}));
 					}));
 
+					/**
 					var temp_dataA = {taixiu:{taixiu:{red_tai: TaiXiu_red_tong_tai,red_xiu: TaiXiu_red_tong_xiu,xu_tai: TaiXiu_xu_tong_tai,xu_xiu: TaiXiu_xu_tong_xiu,red_player_tai: Object.keys(taixiu_red_player_tai_temp).length,red_player_xiu: Object.keys(taixiu_red_player_xiu_temp).length,xu_player_tai: Object.keys(taixiu_xu_player_tai_temp).length,xu_player_xiu: Object.keys(taixiu_xu_player_xiu_temp).length,},chanle:{red_chan: ChanLe_red_tong_chan,red_le: ChanLe_red_tong_le,xu_chan: ChanLe_xu_tong_chan,xu_le: ChanLe_xu_tong_le,red_player_chan: Object.keys(chanle_red_player_chan_temp).length,red_player_le: Object.keys(chanle_red_player_le_temp).length,xu_player_chan: Object.keys(chanle_xu_player_chan_temp).length,xu_player_le: Object.keys(chanle_xu_player_le_temp).length}, list:list}};
 
 					Promise.all(Object.values(io.admins).map(function(admin){
@@ -763,6 +763,7 @@ function thongtin_thanhtoan(game_id, dice = false){
 								client.red(temp_dataA); // list
 						}));
 					}));
+					*/
 
 					if (!(io.TaiXiu_time%10)) {
 						// Khách
@@ -788,6 +789,7 @@ function playGame(){
 			// Hũ
 			TopHu();
 		}
+
 		io.TaiXiu_time--;
 		if (io.TaiXiu_time <= 60) {
 			if (io.TaiXiu_time < 0) {
@@ -810,7 +812,6 @@ function playGame(){
 
 				TXPhien.create({'dice1':dice1, 'dice2':dice2, 'dice3':dice3, 'time':new Date()}, function(err, create){
 					if (!!create) {
-						console.log(create.id);
 						io.TaiXiu_phien  = create.id+1;
 						var chothanhtoan = thongtin_thanhtoan(create.id, dice1+dice2+dice3);
 						io.sendAllUser({taixiu: {finish:{dices:[create.dice1, create.dice2, create.dice3], phien:create.id}}});
@@ -821,8 +822,26 @@ function playGame(){
 						}));
 					}
 				});
-			}else
-				thongtin_thanhtoan(io.TaiXiu_phien)
+
+				// lấy danh sách tài khoản bot
+				bot.list()
+				.then(resultBot => {
+					botList = Helpers.shuffle(resultBot); // tráo bot;
+				});
+
+			}else{
+				thongtin_thanhtoan(io.TaiXiu_phien);
+				if (!!botList.length && io.TaiXiu_time > 5) {
+					var userCuoc = (Math.random()*7)>>0;
+					for (var i = 0; i < userCuoc; i++) {
+						var dataT = botList[i];
+						if (!!dataT) {
+							bot.bet(dataT, io.TaiXiu_phien);
+							botList.splice(i, 1); // Xoá bot đã đặt tránh trùng lặp
+						}
+					}
+				}
+			}
 		}
 	}, 1000)
 	return gameLoop

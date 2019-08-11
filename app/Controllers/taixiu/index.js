@@ -67,7 +67,6 @@ function getLogs(client){
 				var phien = last.id+1;
 
 				TXCuoc.find({phien:phien}, async function(err, list) {
-					//console.log(list)
 					var cuoc_data = new Promise((resolve2, reject) => {
 						Promise.all(list.filter(function(obj){
 							if (obj.taixiu == true && obj.red == true && obj.select == true){           // Tổng Red Tài
@@ -171,7 +170,6 @@ function getNew(client){
 	});
 
 	Promise.all([active1, active2]).then(values => {
-		//console.log(values)
 		client.red({user: values[0], taixiu: {du_day: values[1]}});
 	}, reason => {
 		console.log(reason)
@@ -288,7 +286,6 @@ var get_phien = function(client, data){
 		var tong_tralai_R = 0;
 
 		Promise.all([getPhien, getCuoc]).then(values => {
-			console.log(values[0], values[1]);
 			if (!!values[0]) {
 				var infoPhienCuoc = values[0];
 				var phienCuoc     = values[1];

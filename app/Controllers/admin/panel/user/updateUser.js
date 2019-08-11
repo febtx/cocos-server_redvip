@@ -1,36 +1,52 @@
 
-const Users    = require('../../../../Models/Users');
-const UserInfo = require('../../../../Models/UserInfo');
+var Users     = require('../../../../Models/Users');
+var UserInfo  = require('../../../../Models/UserInfo');
 
-const get_info = require('./get_info');
+var get_info  = require('./get_info');
+var validator = require('validator');
+
+var Helper    = require('../../../../Helpers/Helpers');
 
 module.exports = function(client, data){
-	if (!!data && !!data.id) {
-		var id = data.id;
-		var pass = null;
-		var error = null;
-		var update = data.data.users;
-		if (void 0 !== data.data.pass) {
-			pass = data.data.pass;
-			if (pass.length > 32 || pass.length < 6) {
-				error = 'Mật khẩu từ 6 - 32 kí tự...';
-			}
+	if (!!data && !!data.id && !!data.data) {
+		var uData = data.data;
+		var update = {};
+		var password = null;
+		if (!!uData.phone && Helper.checkPhoneValid(uData.phone)) {
+			update['phone'] = uData.phone;
 		}
-		if (!!error) {
-			client.red({notice:{title:'ĐỔI MẬT KHẨU', text:error}});
-			return void 0;
-		}else{
-			UserInfo.findOne({'id': id}, function(err, check) {
+		if (!!uData.email && Helper.validateEmail(uData.email)) {
+			update['email'] = uData.email;
+		}
+		if (!!uData.cmt && validator.isLength(uData.cmt, {min:9, max: 12})) {
+			update['cmt'] = uData.cmt;
+		}
+		if (!!uData.red && !validator.isEmpty(uData.red)) {
+			update['red'] = Helper.getOnlyNumberInString(uData.red);
+		}
+		if (!!uData.xu && !validator.isEmpty(uData.xu)) {
+			update['xu'] = Helper.getOnlyNumberInString(uData.xu);
+		}
+		if (!!uData.type && uData.type != "0") {
+			update['type'] = uData.type == "1" ? true : false;
+		}
+
+		if (!!Object.entries(update).length) {
+			UserInfo.findOne({'id': data.id}, function(err, check) {
 				if (check) {
-					!!pass && Users.findOneAndUpdate({'_id': id}, {$set:{'local.password':Helper.generateHash(pass)}}, function(err, cart){});
-					UserInfo.findOneAndUpdate({'id': id}, {$set:update}, function(err, cart){
-						get_info(client, id);
+					UserInfo.findOneAndUpdate({'id': data.id}, {$set:update}, function(err, cart){
+						get_info(client, data.id);
 						client.red({notice:{title:'NGƯỜI DÙNG', text:'Thay đổi Thành Công...'}});
 					});
 				}else{
 					client.red({notice:{title:'NGƯỜI DÙNG', text:'Người dùng không tồn tại...'}});
 				}
 			})
+		}
+		if (!!uData.pass && validator.isLength(uData.pass, {min:6, max: 32})) {
+			password = Helper.generateHash(uData.pass);
+			Users.findOneAndUpdate({'_id': data.id}, {$set:{'local.password':password}}, function(err, cart){});
+			client.red({notice:{title:'NGƯỜI DÙNG', text:'Thay đổi Thành Công...'}});
 		}
 	}
 }

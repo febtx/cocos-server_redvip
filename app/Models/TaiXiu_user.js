@@ -1,58 +1,52 @@
 
 const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
 
-const TaiXiu_userSchema = new Schema({
-	uid: {type: String, required: true, unique: true},  // ID Người chơi
+const Schema = new mongoose.Schema({
+	uid:           {type: String, required: true, unique: true},  // ID Người chơi
 
-	tBigWinRed:   {type: Number,  default: 0}, // Red Thắng lớn nhất
-	tBigLostRed:    {type: Number,  default: 0}, // Red Thua lớn nhất
+	tRedPlay:      {type: Number,  default: 0}, // Red Tài Xỉu đã chơi
 
-	tWinRed:  {type: Number,  default: 0}, // Tổng red thắng
-	tLostRed:   {type: Number,  default: 0}, // Tổng red thua
+	tWinRed:       {type: Number,  default: 0}, // Tổng red thắng
+	tLostRed:      {type: Number,  default: 0}, // Tổng red thua
 
 	tLineWinRed:   {type: Number,  default: 0}, // Dây thắng Red
-	tLineLostRed:    {type: Number,  default: 0}, // Dây thua Red
+	tLineLostRed:  {type: Number,  default: 0}, // Dây thua Red
 
-	tLineWinRedH:{type: Number,  default: 0}, // Dây thắng Red hiện tại
+	tLineWinRedH:  {type: Number,  default: 0}, // Dây thắng Red hiện tại
 	tLineLostRedH: {type: Number,  default: 0}, // Dây thua Red hiện tại
 
-	tBigWinXu:    {type: Number,  default: 0}, // Xu Thắng lớn nhất
-	tBigLostXu:     {type: Number,  default: 0}, // Xu Thua lớn nhất
+	tXuPlay:       {type: Number,  default: 0}, // Xu Tài Xỉu đã chơi
 
-	tWinXu:   {type: Number,  default: 0}, // Tổng xu thắng
-	tLostXu:    {type: Number,  default: 0}, // Tổng xu thua
+	tWinXu:        {type: Number,  default: 0}, // Tổng xu thắng
+	tLostXu:       {type: Number,  default: 0}, // Tổng xu thua
 
 	tLineWinXu:    {type: Number,  default: 0}, // Dây thắng xu
-	tLineLostXu:     {type: Number,  default: 0}, // Dây thua xu
+	tLineLostXu:   {type: Number,  default: 0}, // Dây thua xu
 
-	tLineWinXuH: {type: Number,  default: 0}, // Dây thắng xu hiện tại
+	tLineWinXuH:   {type: Number,  default: 0}, // Dây thắng xu hiện tại
 	tLineLostXuH:  {type: Number,  default: 0}, // Dây thua xu hiện tại
 
-	cBigWinRed:   {type: Number,  default: 0}, // Red Thắng lớn nhất
-	cBigLostRed:    {type: Number,  default: 0}, // Red Thua lớn nhất
+	cRedPlay:      {type: Number,  default: 0}, // Red chẵn lẻ đã chơi
 
-	cWinRed:  {type: Number,  default: 0}, // Tổng red thắng
-	cLostRed:   {type: Number,  default: 0}, // Tổng red thua
+	cWinRed:       {type: Number,  default: 0}, // Tổng red thắng
+	cLostRed:      {type: Number,  default: 0}, // Tổng red thua
 
 	cLineWinRed:   {type: Number,  default: 0}, // Dây thắng Red
-	cLineLostRed:    {type: Number,  default: 0}, // Dây thua Red
+	cLineLostRed:  {type: Number,  default: 0}, // Dây thua Red
 
-	cLineWinRedH:{type: Number,  default: 0}, // Dây thắng Red hiện tại
+	cLineWinRedH:  {type: Number,  default: 0}, // Dây thắng Red hiện tại
 	cLineLostRedH: {type: Number,  default: 0}, // Dây thua Red hiện tại
 
-	cBigWinXu:    {type: Number,  default: 0}, // Xu Thắng lớn nhất
-	cBigLostXu:     {type: Number,  default: 0}, // Xu Thua lớn nhất
+	cXuPlay:       {type: Number,  default: 0}, // Xu chẵn lẻ đã chơi
 
-	cWinXu:   {type: Number,  default: 0}, // Tổng xu thắng
-	cLostXu:    {type: Number,  default: 0}, // Tổng xu thua
+	cWinXu:        {type: Number,  default: 0}, // Tổng xu thắng
+	cLostXu:       {type: Number,  default: 0}, // Tổng xu thua
 
 	cLineWinXu:    {type: Number,  default: 0}, // Dây thắng xu
-	cLineLostXu:     {type: Number,  default: 0}, // Dây thua xu
+	cLineLostXu:   {type: Number,  default: 0}, // Dây thua xu
 
-	cLineWinXuH: {type: Number,  default: 0}, // Dây thắng xu hiện tại
+	cLineWinXuH:   {type: Number,  default: 0}, // Dây thắng xu hiện tại
 	cLineLostXuH:  {type: Number,  default: 0}, // Dây thua xu hiện tại
 });
 
-const TaiXiu_user = mongoose.model("TaiXiu_user", TaiXiu_userSchema);
-module.exports = TaiXiu_user;
+module.exports = mongoose.model("TaiXiu_user", Schema);
