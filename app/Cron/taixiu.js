@@ -21,8 +21,6 @@ var VuongQuocRed_hu = require('../Models/VuongQuocRed/VuongQuocRed_hu');
 var adminSee        = require('./taixiu/admin');
 var bot             = require('./taixiu/bot');
 var botList         = [];
-//var botCuoc         = 1;
-//var config        = require('./taixiu/config');
 
 var dataTaiXiu = '../../data/taixiu.json';
 var io         = null;
@@ -822,13 +820,16 @@ function playGame(){
 						}));
 					}
 				});
-
-				// lấy danh sách tài khoản bot
-				bot.list()
-				.then(resultBot => {
-					botList = Helpers.shuffle(resultBot); // tráo bot;
-				});
-
+				var config = require('../../config/taixiu.json');
+				if (config.bot) {
+					// lấy danh sách tài khoản bot
+					bot.list()
+					.then(resultBot => {
+						botList = Helpers.shuffle(resultBot); // tráo bot;
+					});
+				}else{
+					botList = [];
+				}
 			}else{
 				thongtin_thanhtoan(io.TaiXiu_phien);
 				if (!!botList.length && io.TaiXiu_time > 5) {

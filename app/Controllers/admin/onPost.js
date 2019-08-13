@@ -1,18 +1,19 @@
 
-var Admin    = require('./Admin')
-var Users    = require('./panel/Users')
-var NapThe   = require('./panel/NapThe')
-var MuaThe   = require('./panel/MuaThe')
-var Shop     = require('./panel/Shop')
-var GiftCode = require('./panel/GiftCode')
+var Admin    = require('./Admin');
+var Users    = require('./panel/Users');
+var NapThe   = require('./panel/NapThe');
+var MuaThe   = require('./panel/MuaThe');
+var Shop     = require('./panel/Shop');
+var GiftCode = require('./panel/GiftCode');
+var HeThong  = require('./panel/HeThong');
 
-var TaiXiu       = require('./game/taixiu')
-var BauCua       = require('./game/baucua')
-var MiniPoker    = require('./game/mini_poker')
-var BigBabol     = require('./game/big_babol')
-var VuongQuocRed = require('./game/vq_red')
-var mini3cay     = require('./game/mini3cay')
-var angrybirds   = require('./game/angrybirds')
+var TaiXiu       = require('./game/taixiu');
+var BauCua       = require('./game/baucua');
+var MiniPoker    = require('./game/mini_poker');
+var BigBabol     = require('./game/big_babol');
+var VuongQuocRed = require('./game/vq_red');
+var mini3cay     = require('./game/mini3cay');
+var angrybirds   = require('./game/angrybirds');
 
 module.exports = function(client, data) {
 	if (!!data) {
@@ -58,6 +59,9 @@ module.exports = function(client, data) {
 		}
 		if (!!data.giftcode){
 			GiftCode(client, data.giftcode);
+		}
+		if (!!data.sys){
+			HeThong(client, data.sys);
 		}
 	}
 }
