@@ -140,9 +140,9 @@ function setTaiXiu_user(phien, dice){
 							var action = new Promise((resolve, reject) => {
 								UserInfo.findOne({id: obj.uid}, 'name', function(err, users){
 									if (obj.taixiu) {
-										resolve('<color=#FFFF00>' + users.name + '</color><color=#FFFFFF> thắng </color><color=#FFFF00>' + Helpers.numberWithCommas(obj.betwin+obj.bet) + '</color><color=#FFFFFF> game </color><color=#52FF00>Tài Xỉu</color>');
+										resolve({users: users.name, bet: Helpers.numberWithCommas(obj.betwin+obj.bet), game: 'Tài Xỉu'});
 									}else{
-										resolve('<color=#FFFF00>' + users.name + '</color><color=#FFFFFF> thắng </color><color=#FFFF00>' + Helpers.numberWithCommas(obj.betwin+obj.bet) + '</color><color=#FFFFFF> game </color><color=#52FF00>Chẵn Lẻ</color>');
+										resolve({users: users.name, bet: Helpers.numberWithCommas(obj.betwin+obj.bet), game: 'Chẵn Lẻ'});
 									}
 								});
 							});
@@ -224,7 +224,7 @@ function thongtin_thanhtoan(game_id, dice = false){
 	chanle_xu_player_chan_temp = [];
 	chanle_xu_player_le_temp   = [];
 
-	TXCuoc.find({phien:game_id}, null, {sort:{'id':-1}}, function(err, list) {
+	TXCuoc.find({phien:game_id}, null, {sort:{'_id':-1}}, function(err, list) {
 		if(list.length){
 			adminSee(io, list);
 			Promise.all(list.map(function(obj){

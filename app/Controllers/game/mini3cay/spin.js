@@ -113,11 +113,13 @@ module.exports = function(client, spin) {
 							an   = cuoc*30;
 							text = 'Suốt';
 							code = 5;
+							red && Helpers.ThongBaoBigWin(client, {game: "MINI 3 CÂY", users: client.profile.name, bet: (an-Math.ceil(an*phe/100))>>0, status: 2});
 						}else if (bo3) {
 							// x20      Sáp
 							an   = cuoc*20;
 							text = 'Sáp ' + (bo3_a+1);
 							code = 4;
+							red && Helpers.ThongBaoBigWin(client, {game: "MINI 3 CÂY", users: client.profile.name, bet: (an-Math.ceil(an*phe/100))>>0, status: 2});
 						}else if (ADiamond && TongDiem == 10) {
 							// x10		Tổng 3 lá = 10, có Át rô
 							an   = cuoc*10;

@@ -17,17 +17,28 @@ module.exports = function(client, data){
 				sort._id = 1;
 			}else if (data.sort == '2') {
 				sort._id = -1;
+
 			}else if (data.sort == '3') {
 				sort.profit = -1;
 			}else if (data.sort == '4') {
 				sort.profit = 1;
+
+			}else if (data.sort == '5') {
+				sort.red = -1;
+			}else if (data.sort == '6') {
+				sort.red = 1;
+
+			}else if (data.sort == '7') {
+				sort.xu = -1;
+			}else if (data.sort == '8') {
+				sort.xu = 1;
+
 			}else{
 				sort.profit = -1;
 			}
 
 			// match
 			var match     = {};
-			var matchNick = {};
 
 			if (!isEmpty(data.uid)) {
 				match.UID = data.uid>>0;
@@ -43,9 +54,14 @@ module.exports = function(client, data){
 				var regexEmail = new RegExp("^" + data.email.trim() + "$", 'i');
 				match.email = {$regex: regexEmail};
 			}
+			if (data.macth == 1) {
+				match.type = false;
+			}else if (data.macth == 2) {
+				match.type = true;
+			}
 
 			if (!isEmpty(data.nick)) {
-				var regexNick = new RegExp("^" + data.nick.trim() + "$", 'i');
+				var regexNick = new RegExp("^" + data.nick + "$", 'i');
 				Users.findOne({'local.username': {$regex: regexNick}}, function(error, result){
 					if (!!result) {
 						match.id = result._id.toString();
@@ -61,6 +77,7 @@ module.exports = function(client, data){
 									xu:       "$xu",
 									joinedOn: "$joinedOn",
 									phone:    "$phone",
+									type:     "$type",
 								}
 							},
 						]).exec(function(err, result2){
@@ -99,6 +116,7 @@ module.exports = function(client, data){
 								xu:       "$xu",
 								joinedOn: "$joinedOn",
 								phone:    "$phone",
+								type:     "$type",
 							}
 						},
 						{$sort: sort},

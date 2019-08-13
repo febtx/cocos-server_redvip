@@ -127,11 +127,13 @@ function spin(client, data){
 							an   = (bet*1000);
 							text = 'Thắng Lớn';
 							code = 8;
+							red && Helpers.ThongBaoBigWin(client, {game: "MINI POKER", users: client.profile.name, bet: (an-Math.ceil(an*phe/100))>>0, status: 2});
 						}else if (tuQuy != null) {
 							// x150     TỨ QUÝ (TỨ QUÝ)
 							an   = (bet*150);
 							text = 'Tứ Quý';
 							code = 7;
+							red && Helpers.ThongBaoBigWin(client, {game: "MINI POKER", users: client.profile.name, bet: (an-Math.ceil(an*phe/100))>>0, status: 2});
 						}else if (bo3 && bo2 > 0) {
 							// x50      CÙ LŨ (1 BỘ 3 VÀ 1 BỘ 2)
 							an   = (bet*50);

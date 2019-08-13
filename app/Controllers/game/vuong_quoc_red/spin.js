@@ -185,7 +185,7 @@ module.exports = function(client, data){
 					var isBigWin = false;
 					// tạo kết quả
 					VuongQuocRed_hu.findOne({type:bet, red:red}, {}, function(err2, dataHu){
-						if (config.chedo == 2) {
+						if (config.chedo == 0) {
 							// chế độ khó
 							var celSS = [
 								random_cel3(), random_cel3(), random_cel2(),
@@ -195,33 +195,14 @@ module.exports = function(client, data){
 								0,             0,             0,
 							];
 						}else if(config.chedo == 1){
-							/**
-							// chế độ trung bình
+							// trung bình
 							var celSS = [
 								random_cel2(), random_cel2(), random_cel2(),
-								random_cel2(), random_cel2(), random_cel2(),
-								random_cel1(), random_cel1(), random_cel0(),
-								2,             2,             1,
-								1,             0,             3,
-							];
-							*/
-							/**
-							var celSS = [
-								random_cel3(), random_cel2(),  random_cel2(),
-								random_cel2(), random_cel2(),  random_cel2(),
-								random_cel1(), random_cel01(), random_cel0(),
-								2,             1,              1,
-								0,             0,              0,
-							]; // ok
-							*/
-							var celSS = [
-								random_cel3(), random_cel2(), random_cel2(),
 								random_cel2(), random_cel2(), random_cel2(),
 								random_cel1(), random_cel0(),  random_cel0(),
 								2,             1,             1,
 								0,             0,             3,
 							];
-
 						}else{
 							// chế độ dễ
 							var celSS = [
@@ -599,6 +580,7 @@ module.exports = function(client, data){
 								if (!nohu && bet_win >= tongCuoc*2.24) {
 									isBigWin = true;
 									type = 1;
+									red && Helpers.ThongBaoBigWin(client, {game: "VƯƠNG QUỐC RED", users: client.profile.name, bet: bet_win, status: 2});
 								}
 								if (free > 0) {
 									client.VuongQuocRed.free += free;

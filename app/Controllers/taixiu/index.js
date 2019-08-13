@@ -278,7 +278,7 @@ var get_phien = function(client, data){
 		var red    = !!data.red;
 
 		var getPhien = TXPhien.findOne({id: phien}).exec();
-		var getCuoc  = TXCuoc.find({phien: phien, taixiu:taixiu, red:red}).exec();
+		var getCuoc  = TXCuoc.find({phien: phien, taixiu:taixiu, red:red}, null, {sort:{'_id': 1}}).exec();
 
 		var tong_L        = 0;
 		var tong_R        = 0;

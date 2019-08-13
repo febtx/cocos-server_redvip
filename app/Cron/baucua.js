@@ -178,14 +178,14 @@ function thongtin_thanhtoan(dice = null){
 						return Promise.all([active1, active2, active3])
 							.then(values => {
 								if (values[1].red && TongThang > 0) {
-									return '<color=#FFFF00>' + values[0].name + '</color><color=#FFFFFF> thắng </color><color=#FFFF00>' + Helpers.numberWithCommas(TongThang) + '</color><color=#FFFFFF> game </color><color=#52FF00>Bầu Cua</color>';
+									return {users: values[0].name, bet: Helpers.numberWithCommas(TongThang), game: 'Bầu Cua'};
 								}
 								return void 0;
 							});
 					}))
 					.then(function(arrayOfResults) {
 							Promise.all(arrayOfResults.filter(function(st){
-								return st !== void 0
+								return st !== void 0;
 							}))
 							.then(result => {
 								if (result.length>0) {

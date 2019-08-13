@@ -122,6 +122,17 @@ function ThongBaoNoHu(io, data){
 	io.redT.sendAllClient({pushnohu:data});
 }
 
+function ThongBaoBigWin(io, data){
+	Promise.all(Object.values(io.redT.users).map(function(users){
+		Promise.all(users.map(function(client){
+			if(client.scene == "home" && io.UID != client.UID){
+				client.red({news:{t:data}});
+			}
+		}));
+	}));
+	io.redT.sendAllClient({news:{t:data}});
+}
+
 module.exports = {
 	generateHash:  generateHash,
 	validPassword: validPassword,
@@ -135,6 +146,7 @@ module.exports = {
 	checkPhoneValid: checkPhoneValid,
 	nFormatter:      nFormatter,
 	ThongBaoNoHu:    ThongBaoNoHu,
+	ThongBaoBigWin:  ThongBaoBigWin,
 	cutEmail:        cutEmail,
 	cutPhone:        cutPhone,
 }

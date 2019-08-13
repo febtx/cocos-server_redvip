@@ -487,6 +487,7 @@ module.exports = function(client, data){
 								if (!nohu && bet_win >= bet*11) {
 									isBigWin = true;          // Là thắng lớn
 									type = 1;
+									red && Helpers.ThongBaoBigWin(client, {game: "AngryBirds", users: client.profile.name, bet: bet_win, status: 2});
 								}
 
 								var thuong     = 0;

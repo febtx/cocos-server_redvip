@@ -363,9 +363,10 @@ module.exports = function(client, data){
 							.then(result2 => {
 								bet_win  = (bet_win-Math.ceil(bet_win*phe/100))>>0; // Cắt phế 2% - 4% ăn được
 								var tien = bet_win-cuoc;
-								if (!nohu && bet_win >= cuoc**2.24) {
+								if (!nohu && bet_win >= cuoc*2.24) {
 									isBigWin = true;
 									type = 1;
+									red && Helpers.ThongBaoBigWin(client, {game: "BigBabol", users: client.profile.name, bet: bet_win, status: 2});
 								}
 								var uInfo      = {};
 								var mini_users = {};

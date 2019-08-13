@@ -53,7 +53,7 @@ module.exports = function(client, data){
 											});
 											var thanhTien = !!daily ? red : Helper.anPhanTram(red, 1, 2);
 											var create = {'from':client.profile.name, 'to':to.name, 'red':red, 'red_c':thanhTien, 'time': new Date()};
-											if (void 0 !== data.message && !Helper.isEmpty(data.message.trim())) {
+											if (void 0 !== data.message && !validator.isEmpty(data.message.trim())) {
 												create = Object.assign(create, {message: data.message});
 											}
 											ChuyenRed.create(create);
@@ -100,8 +100,15 @@ module.exports = function(client, data){
 			} else if (!!data.message && !validator.isLength(data.message, {min: 1, max: 250})) {
 				client.red({notice:{title:'CHUYỂN RED', text:'Lời nhắn vượt quá 250 kí tự.!'}});
 			}else{
-				var regex = new RegExp("^" + name + "$", 'i');
-				var active1 = tab_DaiLy.findOne({nickname: {$regex: regex}}).exec();
+				var regex      = new RegExp("^" + name + "$", 'i');
+				var regexUsers = new RegExp("^" + client.profile.name + "$", 'i');
+				//var active1 = tab_DaiLy.findOne({nickname: {$regex: regex}}).exec();
+
+				var active1 = tab_DaiLy.findOne({$or:[
+					{nickname: {$regex: regex}},
+					{nickname: {$regex: regexUsers}}
+				]}).exec();
+
 				var active2 = UserInfo.findOne({name: {$regex: regex}}, 'id name').exec();
 				var active3 = UserInfo.findOne({id: client.UID}, 'red').exec();
 				Promise.all([active1, active2, active3])
@@ -121,14 +128,14 @@ module.exports = function(client, data){
 								});
 								var thanhTien = !!daily ? red : Helper.anPhanTram(red, 1, 2);
 								var create = {'from':client.profile.name, 'to':to.name, 'red':red, 'red_c':thanhTien, 'time': new Date()};
-								if (void 0 !== data.message && !Helper.isEmpty(data.message.trim())) {
+								if (!!data.message && !validator.isEmpty(data.message)) {
 									create = Object.assign(create, {message: data.message});
 								}
 								ChuyenRed.create(create);
 								UserInfo.findOneAndUpdate({name: {$regex: regex}}, {$inc:{red:thanhTien}}, function(err,cat){
 									if (void 0 !== client.redT.users[cat.id]) {
 										Promise.all(client.redT.users[cat.id].map(function(obj){
-											obj.red({notice:{title:'CHUYỂN RED', text:'Bạn nhận được ' + Helper.numberWithCommas(thanhTien) + ' Red.' + "\n" + 'Từ người chơi: ' + client.profile.name}, user:{red: cat.red*1+thanhTien}});
+											obj.red({notice:{title:'NHẬN RED', text:'Bạn nhận được ' + Helper.numberWithCommas(thanhTien) + ' RED.' + "\n" + 'Từ người chơi: ' + client.profile.name}, user:{red: cat.red*1+thanhTien}});
 										}));
 									}
 								});
