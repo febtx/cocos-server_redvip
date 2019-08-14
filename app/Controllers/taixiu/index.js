@@ -370,18 +370,47 @@ var get_top = async function(client, data){
 	if (!!data) {
 		var taixiu = !!data.taixiu;
 		var red    = !!data.red;
-		var query  = 'uid ' + (taixiu ? (red ? 'tWinRed' : 'tWinXu') : (red ? 'cWinRed' : 'cWinXu'));
-		var sort   = taixiu ? (red ? {'tWinRed':-1} : {'tWinXu':-1}) : (red ? {'cWinRed':-1} : {'cWinXu':-1});
-		TaiXiu_User.find({}, query, {sort: sort, limit: 50}, function(err, result){
+
+		var project = {
+			uid: "$uid",
+		}
+
+		if (taixiu) {
+			if (red) {
+				project.profit =  {$subtract: ["$tWinRed", "$tLostRed"]};
+			}else{
+				project.profit =  {$subtract: ["$tWinXu", "$tLostXu"]};
+			}
+		}else{
+			if (red) {
+				project.profit =  {$subtract: ["$cWinRed", "$cLostRed"]};
+			}else{
+				project.profit =  {$subtract: ["$cWinXu", "$cLostXu"]};
+			}
+		}
+
+		TaiXiu_User.aggregate([
+			{
+				$project: project,
+			},
+			{$sort: {'profit': -1}},
+			{$limit: 100}
+		]).exec(function(err, result){
 			if (result.length) {
 				Promise.all(result.map(function(obj){
-					var getUser = UserInfo.findOne({id: obj.uid}, 'name').exec();
-					return Promise.all([getUser]).then(values => {
-						return values[0] ? {name: values[0].name, bet: (taixiu ? (red ? obj.tWinRed : obj.tWinXu) : (red ? obj.cWinRed : obj.cWinXu))} : [];
-					});
+					return new Promise(function(resolve, reject) {
+						UserInfo.findOne({'id': obj.uid}, 'name', function(error, result2){
+							resolve({name: result2.name, bet: obj.profit});
+						})
+					})
 				}))
-				.then(function(arrayOfResults) {
-					client.red({taixiu:{get_top:arrayOfResults}});
+				.then(function(data){
+					Promise.all(data.filter(function(obj){
+						return obj.profit > 0;
+					}))
+					.then(function(result3){
+						client.red({taixiu:{get_top:result3}});
+					});
 				})
 			}
 		});

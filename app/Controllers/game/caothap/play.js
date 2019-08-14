@@ -74,8 +74,7 @@ function newGame(client, data) {
 							var winUp   = cuoc;    // Hệ số ăn Cao
 							var winDown = 0;  // Hệ số ăn Thấp
 						}else{
-							var phe  = red ? 2 : 4;    // Phế
-							var hesoPhien = HeSo.getT(create['card'].card, phe, 1);
+							var hesoPhien = HeSo.getT(create['card'].card, 1);
 							var winUp   = cuoc+(cuoc*hesoPhien.up)>>0;    // Hệ số ăn Cao
 							var winDown = cuoc+(cuoc*hesoPhien.down)>>0;  // Hệ số ăn Thấp
 						}
@@ -173,7 +172,7 @@ function playGame(client, select) {
 									result.a.push(card);
 								}
 
-								var hientai = HeSo.getT(result.card.card, phe, result.buoc+1);
+								var hientai = HeSo.getT(result.card.card, result.buoc+1);
 
 								if (select && (card.card > result.card.card || (card.card == 0))) {
 									// Đánh cao
@@ -215,7 +214,7 @@ function playGame(client, select) {
 										winUp   = bet;   // Hệ số ăn Cao
 										winDown = 0; // Hệ số ăn Thấp
 									}else{
-										var tuonglai = HeSo.getT(card.card, phe, result.buoc+2);
+										var tuonglai = HeSo.getT(card.card, result.buoc+2);
 										winUp   = bet+(bet*tuonglai.up)>>0;   // Hệ số ăn Cao
 										winDown = bet+(bet*tuonglai.down)>>0; // Hệ số ăn Thấp
 									}

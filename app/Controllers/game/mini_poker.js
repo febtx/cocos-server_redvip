@@ -1,5 +1,5 @@
 
-const miniPokerHu    = require('../../Models/miniPoker/miniPokerHu');
+const HU             = require('../../Models/HU');
 const miniPokerUsers = require('../../Models/miniPoker/miniPoker_users');
 
 const miniPokerRed = require('../../Models/miniPoker/miniPokerRed');
@@ -20,9 +20,8 @@ function spin(client, data){
 				if (!user || (red && user.red < bet) || (!red && user.xu < bet)) {
 					client.red({mini:{poker:{status:0, notice: 'Bạn không đủ ' + (red ? 'RED':'XU') + ' để quay.!!'}}});
 				}else{
-					var phe = red ? 2 : 4;    // Phế
-					var addQuy = (bet*0.01)>>0;
-					miniPokerHu.findOneAndUpdate({type:bet, red:red}, {$inc:{bet:addQuy}}, function(err,cat){});
+					var phe     = red ? 2 : 4;    // Phế
+					var addQuy  = (bet*0.01)>>0;
 					var an      = 0;
 					var code    = 0;
 					var text    = '';
@@ -93,7 +92,11 @@ function spin(client, data){
 						DAKj = KA[3].card == 12 && KA[0].card == 9 ? true : false;
 					}
 
-					miniPokerHu.findOne({type:bet, red:red}, {}, function(err, data){
+					HU.findOne({game: "minipoker", type:bet, red:red}, {}, function(err, data){
+						var uInfo      = {};
+						var mini_users = {};
+						var huUpdate   = {bet:addQuy};
+
 						var quyHu     = data.bet;
 						var quyMin    = data.min;
 						var checkName = new RegExp("^" + client.profile.name + "$", 'i');
@@ -101,7 +104,7 @@ function spin(client, data){
 
 						if (checkName || (dongChat && (DAKj || (DAK && AK[4] > 9)))) {
 							// NỔ HŨ (DÂY ĐỒNG CHẤT CỦA DÂY ĐẾN J TRỞ LÊN) Hoặc được xác định là nổ hũ
-							miniPokerHu.findOneAndUpdate({type:bet, red:red}, {$set:{name:"", bet:quyMin}}, function(err,cat){});
+							HU.findOneAndUpdate({game: "minipoker", type:bet, red:red}, {$set:{name:"", bet:quyMin}}, function(err,cat){});
 							if (checkName){
 								// đặt kết quả thành nổ hũ nếu người chơi được xác định thủ công
 								var randomType = (Math.random()*4)>>0;           // Ngẫu nhiên chất bài
@@ -118,22 +121,30 @@ function spin(client, data){
 									ketqua = Helpers.shuffle(resultCard); // tráo bài
 								})
 							}
-							an   = quyHu;
+
+							an   = (quyHu-Math.ceil(quyHu*phe/100))>>0;
+
+							if (red){
+								Helpers.ThongBaoNoHu(client, {title: "MINI POKER", name: client.profile.name, bet: an});
+								huUpdate['hu']   = uInfo['hu']   = mini_users['hu']   = 1; // Cập nhật Số Hũ Red đã Trúng
+							}else{
+								huUpdate['huXu'] = uInfo['huXu'] = mini_users['huXu'] = 1; // Cập nhật Số Hũ Xu đã Trúng
+							}
+
 							text = 'Nổ Hũ';
 							code = 9;
-							red && Helpers.ThongBaoNoHu(client, {title: "MINI POKER", name: client.profile.name, bet: quyHu});
 						}else if ((DAK && dongChat) || (DAKj && !dongChat)) {
 							// x1000    THÙNG PHÁ SẢNH (DÂY ĐỒNG CHẤT HOẶC DÂY ĐẾN A)
 							an   = (bet*1000);
 							text = 'Thắng Lớn';
 							code = 8;
-							red && Helpers.ThongBaoBigWin(client, {game: "MINI POKER", users: client.profile.name, bet: (an-Math.ceil(an*phe/100))>>0, status: 2});
+							red && Helpers.ThongBaoBigWin(client, {game: "MINI POKER", users: client.profile.name, bet: an, status: 2});
 						}else if (tuQuy != null) {
 							// x150     TỨ QUÝ (TỨ QUÝ)
 							an   = (bet*150);
 							text = 'Tứ Quý';
 							code = 7;
-							red && Helpers.ThongBaoBigWin(client, {game: "MINI POKER", users: client.profile.name, bet: (an-Math.ceil(an*phe/100))>>0, status: 2});
+							red && Helpers.ThongBaoBigWin(client, {game: "MINI POKER", users: client.profile.name, bet: an, status: 2});
 						}else if (bo3 && bo2 > 0) {
 							// x50      CÙ LŨ (1 BỘ 3 VÀ 1 BỘ 2)
 							an   = (bet*50);
@@ -166,20 +177,16 @@ function spin(client, data){
 							code = 1;
 						}
 
-						an = (an-Math.ceil(an*phe/100))>>0; // Cắt phế 2% - 4% ăn được
-
 						var tien = an-bet;
-						var uInfo      = {};
-						var mini_users = {};
 						setTimeout(function(){
 							if (red) {
 								uInfo['red'] = tien;         // Cập nhật Số dư Red trong tài khoản
-								uInfo['redPlay'] = mini_users['bet'] = bet;     // Cập nhật Số Red đã chơi
+								huUpdate['redPlay'] = uInfo['redPlay'] = mini_users['bet'] = bet;       // Cập nhật Số Red đã chơi
 								if (tien > 0){
-									uInfo['redWin'] = mini_users['win'] = tien;    // Cập nhật Số Red đã Thắng
+									huUpdate['redWin'] = uInfo['redWin'] = mini_users['win'] = tien;    // Cập nhật Số Red đã Thắng
 								}
 								if (tien < 0){
-									uInfo['redLost'] = mini_users['lost'] = tien*(-1); // Cập nhật Số Red đã Thua
+									huUpdate['redLost'] = uInfo['redLost'] = mini_users['lost'] = tien*(-1); // Cập nhật Số Red đã Thua
 								}
 								if (code == 9){
 									uInfo['hu'] = mini_users['hu'] = 1;         // Cập nhật Số Hũ Red đã Trúng
@@ -194,15 +201,15 @@ function spin(client, data){
 							}else{
 								thuong = (an*0.039589)>>0;
 								uInfo['xu'] = tien;         // Cập nhật Số dư XU trong tài khoản
-								uInfo['xuPlay'] = mini_users['betXu'] = bet;     // Cập nhật Số XU đã chơi
+								huUpdate['xuPlay'] = uInfo['xuPlay'] = mini_users['betXu'] = bet;    // Cập nhật Số XU đã chơi
 								if (thuong > 0){
 									uInfo['red'] = uInfo['thuong'] = mini_users['thuong'] = thuong;  // Cập nhật Số dư xu trong tài khoản // Cập nhật Số Red được thưởng do chơi XU
 								}
 								if (tien > 0){
-									uInfo['xuWin'] = mini_users['winXu'] = tien;    // Cập nhật Số xu đã Thắng
+									huUpdate['xuWin'] = uInfo['xuWin'] = mini_users['winXu'] = tien; // Cập nhật Số xu đã Thắng
 								}
 								if (tien < 0){
-									uInfo['xuLost'] = mini_users['lostXu'] = tien*(-1); // Cập nhật Số xu đã Thua
+									huUpdate['xuLost'] = uInfo['xuLost'] = mini_users['lostXu'] = tien*(-1); // Cập nhật Số xu đã Thua
 								}
 								if (code == 9){
 									uInfo['huXu'] = mini_users['huXu'] = 1;      // Cập nhật Số Hũ Xu đã Trúng
@@ -216,8 +223,9 @@ function spin(client, data){
 									}
 								});
 							}
+							HU.findOneAndUpdate({game: "minipoker", type:bet, red:red}, {$inc:huUpdate}, function(err,cat){});
 							UserInfo.findOneAndUpdate({id:client.UID}, {$inc: uInfo}, function(err,cat){});
-							miniPokerUsers.findOneAndUpdate({'uid': client.UID}, {$inc: mini_users}, function(err,cat){});
+							miniPokerUsers.findOneAndUpdate({'uid': client.UID}, {$set:{time: new Date()}, $inc: mini_users}, function(err,cat){});
 						}, 10);
 					});
 				}

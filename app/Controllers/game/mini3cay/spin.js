@@ -3,7 +3,7 @@ var Mini3Cay_red  = require('../../../Models/Mini3Cay/Mini3Cay_red');
 var Mini3Cay_xu   = require('../../../Models/Mini3Cay/Mini3Cay_xu');
 
 var Mini3Cay_user = require('../../../Models/Mini3Cay/Mini3Cay_user');
-var Mini3Cay_hu   = require('../../../Models/Mini3Cay/Mini3Cay_hu');
+var HU            = require('../../../Models/HU');
 
 var UserInfo      = require('../../../Models/UserInfo');
 
@@ -23,6 +23,7 @@ module.exports = function(client, spin) {
 				if (!user || (red && user.red < cuoc) || (!red && user.xu < cuoc)) {
 					client.red({mini:{bacay:{status:0, notice: 'Bạn không đủ ' + (red ? 'RED':'XU') + ' để quay.!!'}}});
 				}else{
+					var config = require('../../../../config/mini3cay.json');
 					var phe = red ? 2 : 4;    // Phế
 					var addQuy = (cuoc*0.01)>>0;
 					// Sử lý bài
@@ -35,24 +36,21 @@ module.exports = function(client, spin) {
 						.slice(0, 36);
 					// card.slice(0, 36)
 					// tráo bài
+					if (config.chedo == 1) {
+						card.splice((Math.random()*4)>>0, 1);
+						card.splice((Math.random()*3)>>0, 1);
+					}
 					card = Helpers.shuffle(card); // tráo bài lần 1
 					card = Helpers.shuffle(card); // tráo bài lần 2
 					card = Helpers.shuffle(card); // tráo bài lần 3
-					//var lengthC = card.length;  // dùng bốc ngẫu nhiên
 
-					//var ketqua  = [];            // bốc nhẫu nhiên
 					var ketqua = card.slice(0, 3); // bốc 3 thẻ đầu tiên
 
 					var ADiamond = false;       // Có Át rô trong bài?
 
 					var arrT   = [];           // Mảng lọc các bộ 2 trong bài
 					for (var i = 0; i < 3; i++) {
-						//var max = lengthC-(i+1);
-						//var random_card = Math.round(Math.random()*max);         // Chuẩn:       làm chòn đến giá trị gần nhất
-						//var random_card = Math.floor(Math.random()*(lengthC-i)); // Không chuẩn: làm chòn về giá trị nhỏ nhất
-						//ketqua[i] = card[random_card]; // bốc ngẫu nhiên
 						var dataT = ketqua[i];
-						//card.splice(random_card, 1); // Xoá thẻ - dùng cho bốc ngẫu nhiên, tránh trùng lặp
 						if (void 0 === arrT[dataT.card]) {
 							arrT[dataT.card] = 1;
 						}else{
@@ -84,7 +82,11 @@ module.exports = function(client, spin) {
 					// Kết thúc Sử lý bài
 
 					// Kiểm tra kết quả
-					Mini3Cay_hu.findOne({type:cuoc, red:red}, {}, function(err, data){
+					HU.findOne({type:cuoc, red:red}, {}, function(err, data){
+						var uInfo      = {};
+						var mini_users = {};
+						var huUpdate   = {bet:addQuy};
+
 						var quyHu     = data.bet;
 						var quyMin    = data.min+addQuy;
 						var checkName = new RegExp("^" + client.profile.name + "$", 'i');
@@ -92,7 +94,7 @@ module.exports = function(client, spin) {
 
 						if (checkName || (bo3 && bo3_a === 0)) {
 							// NỔ HŨ (Bộ 3 Át Hoặc được xác định là nổ hũ)
-							Mini3Cay_hu.findOneAndUpdate({type:cuoc, red:red}, {$set:{name:"", bet:quyMin}}, function(err,cat){});
+							HU.findOneAndUpdate({game:'mini3cay', type:cuoc, red:red}, {$set:{name:"", bet:quyMin}}, function(err,cat){});
 							if (checkName){
 								// đặt kết quả thành nổ hũ nếu người chơi được xác định thủ công
 								card = [...base_card.card]
@@ -100,26 +102,26 @@ module.exports = function(client, spin) {
 								// tráo bài
 								card = Helpers.shuffle(card); // tráo bài lần 1
 								card = Helpers.shuffle(card); // tráo bài lần 2
-								card = Helpers.shuffle(card); // tráo bài lần 3
+								//card = Helpers.shuffle(card); // tráo bài lần 3
 								ketqua = card.slice(0, 3);
 							}
 							nohu = true;
-							an   = quyHu;
+							an   = (quyHu-Math.ceil(quyHu*phe/100))>>0;
 							text = 'Nổ Hũ';
 							code = 6;
-							red && Helpers.ThongBaoNoHu(client, {title: "MINI 3 CÂY", name: client.profile.name, bet: quyHu});
+							red && Helpers.ThongBaoNoHu(client, {title: "MINI 3 CÂY", name: client.profile.name, bet: an});
 						}else if (Day && dongChat) {
 							// x30    3 lá liên tiếp đồng chất
 							an   = cuoc*30;
 							text = 'Suốt';
 							code = 5;
-							red && Helpers.ThongBaoBigWin(client, {game: "MINI 3 CÂY", users: client.profile.name, bet: (an-Math.ceil(an*phe/100))>>0, status: 2});
+							red && Helpers.ThongBaoBigWin(client, {game: "MINI 3 CÂY", users: client.profile.name, bet: an, status: 2});
 						}else if (bo3) {
 							// x20      Sáp
 							an   = cuoc*20;
 							text = 'Sáp ' + (bo3_a+1);
 							code = 4;
-							red && Helpers.ThongBaoBigWin(client, {game: "MINI 3 CÂY", users: client.profile.name, bet: (an-Math.ceil(an*phe/100))>>0, status: 2});
+							red && Helpers.ThongBaoBigWin(client, {game: "MINI 3 CÂY", users: client.profile.name, bet: an, status: 2});
 						}else if (ADiamond && TongDiem == 10) {
 							// x10		Tổng 3 lá = 10, có Át rô
 							an   = cuoc*10;
@@ -137,52 +139,45 @@ module.exports = function(client, spin) {
 							code = 1;
 						}
 						if (!nohu) {
-							Mini3Cay_hu.findOneAndUpdate({type:cuoc, red:red}, {$inc:{bet:addQuy}}, function(err,cat){});
+							if (red){
+								huUpdate['hu'] = uInfo['hu'] = mini_users['hu']     = 1; // Khởi tạo
+							}else{
+								huUpdate['huXu'] = uInfo['huXu'] = mini_users['huXu'] = 1; // Khởi tạo
+							}
 						}
-
-						an = (an-Math.ceil(an*phe/100))>>0; // Cắt phế 2% - 4% ăn được
 
 						var tien = an-cuoc;
 
-						var uInfo      = {};
-						var mini_users = {};
-
 						if (red){
 							uInfo['red'] = tien;         // Cập nhật Số dư Red trong tài khoản
-							uInfo['redPlay'] = mini_users['bet'] = cuoc;     // Cập nhật Số Red đã chơi
+							huUpdate['redPlay'] = uInfo['redPlay'] = mini_users['bet'] = cuoc;     // Cập nhật Số Red đã chơi
 							if (tien > 0){
-								uInfo['redWin'] = mini_users['win'] = tien;    // Cập nhật Số Red đã Thắng
+								huUpdate['redWin'] = uInfo['redWin'] = mini_users['win'] = tien;    // Cập nhật Số Red đã Thắng
 							}
 							if (tien < 0){
-								uInfo['redLost'] = mini_users['lost'] = tien*(-1); // Cập nhật Số Red đã Thua
-							}
-							if (!!nohu){
-								uInfo['hu'] = mini_users['hu'] = 1;         // Cập nhật Số Hũ Red đã Trúng
+								huUpdate['redLost'] = uInfo['redLost'] = mini_users['lost'] = tien*(-1); // Cập nhật Số Red đã Thua
 							}
 							Mini3Cay_red.create({'uid': client.UID, 'win': an, 'bet': cuoc, 'type': code, 'kq': ketqua, 'time': new Date()}, function (err, small) {});
 							client.red({mini:{bacay:{status:1, card:ketqua, win: an, text: text, code: code}}, user:{red: user.red-cuoc, xu: user.xu}});
 						} else{
 							thuong = (an*0.039589)>>0;
 							uInfo['xu'] = tien;         // Cập nhật Số dư XU trong tài khoản
-							uInfo['xuPlay'] = mini_users['betXu'] = cuoc;     // Cập nhật Số XU đã chơi
+							huUpdate['xuPlay'] = uInfo['xuPlay'] = mini_users['betXu'] = cuoc;     // Cập nhật Số XU đã chơi
 							if (thuong > 0){
 								uInfo['red'] = uInfo['thuong'] = mini_users['thuong'] = thuong;  // Cập nhật Số dư Red trong tài khoản // Cập nhật Số Red được thưởng do chơi XU
 							}
 							if (tien > 0){
-								uInfo['xuWin'] = mini_users['winXu'] = tien;    // Cập nhật Số Red đã Thắng
+								huUpdate['xuWin'] = uInfo['xuWin'] = mini_users['winXu'] = tien;    // Cập nhật Số Red đã Thắng
 							}
 							if (tien < 0){
-								uInfo['xuLost'] = mini_users['lostXu'] = tien*(-1); // Cập nhật Số Red đã Thua
-							}
-							if (!!nohu){
-								uInfo['huXu'] = mini_users['huXu'] = 1;      // Cập nhật Số Hũ Xu đã Trúng
+								huUpdate['xuLost'] = uInfo['xuLost'] = mini_users['lostXu'] = tien*(-1); // Cập nhật Số Red đã Thua
 							}
 							Mini3Cay_xu.create({'uid': client.UID, 'win': an, 'bet': cuoc, 'type': code, 'kq': ketqua, 'time': new Date()}, function (err, small) {});
 							client.red({mini:{bacay:{status:1, card:ketqua, win: an, thuong: thuong, text: text, code: code}}, user:{red: user.red, xu: user.xu-cuoc}});
 						}
-
+						HU.findOneAndUpdate({game:'mini3cay', type:bet, red:red}, {$inc:huUpdate}, function(err,cat){});
 						UserInfo.findOneAndUpdate({id:client.UID}, {$inc: uInfo}, function(err,cat){});
-						Mini3Cay_user.findOneAndUpdate({'uid': client.UID}, {$inc: mini_users}, function(err,cat){});
+						Mini3Cay_user.findOneAndUpdate({'uid': client.UID}, {$set:{time: new Date()}, $inc: mini_users}, function(err,cat){});
 					});
 				}
 			});

@@ -17,6 +17,4 @@ const Schema = new mongoose.Schema({
 	type:     {type: Boolean, default: false},    // Bot = true | Users = false
 });
 
-Schema.plugin(AutoIncrement.plugin, {modelName:'TaiXiu_one', field:'id'});
-
 module.exports = mongoose.model("TaiXiu_one", Schema);

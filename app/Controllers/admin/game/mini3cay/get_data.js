@@ -1,8 +1,8 @@
 
-const Mini3Cay_hu = require('../../../../Models/Mini3Cay/Mini3Cay_hu');
+const HU = require('../../../../Models/HU');
 
 module.exports = function(client) {
-	Mini3Cay_hu.find({red:true}, 'name type', function(err, cat){
+	HU.find({game: "mini3cay", red:true}, 'name type', function(err, cat){
 		var data = {};
 		Promise.all(cat.map(function(obj){
 			if (obj.type == 100) {

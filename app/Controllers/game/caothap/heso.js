@@ -28,7 +28,7 @@ module.exports = {
 		"11": 462,
 		"12": 1020,
 	},
-	getT: function(card, phe, buoc){
+	getT: function(card, buoc){
 		//card   Thẻ bài 0=>12
 		//phe    Phế game
 		//buoc   Số bước hiện tại
@@ -38,8 +38,8 @@ module.exports = {
 		//var up   = (this.data[card]-(phe/100));
 		//var down = (this.data[14-card]-(phe/100));
 
-		var up   = ((this.data[card]-phe)/100)*(8/(8+buoc));
-		var down = ((this.data[14-card]-phe)/100)*(8/(8+buoc));
+		var up   = ((this.data[card])/100)*(6/(5+buoc));
+		var down = ((this.data[14-card])/100)*(6/(5+buoc));
 
 		return {up:up, down:down};
 	},

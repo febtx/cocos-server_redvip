@@ -50,7 +50,6 @@ function thongtin_thanhtoan(dice = null){
 			BauCua_cuoc.find({phien: phien}, {}, function(err, list) {
 				if (list.length) {
 					Promise.all(list.map(function(cuoc){
-						var phe = cuoc.red ? 2 : 4; // Phế
 						var TienThang = 0; // Số tiền thắng (chưa tính gốc)
 						var TongThua  = 0; // Số tiền thua
 						var TongThang = 0; // Tổng tiền thắng (đã tính gốc)
@@ -66,7 +65,6 @@ function thongtin_thanhtoan(dice = null){
 						if (cuoc[0] > 0) {
 							if (void 0 !== heSo[0]) {
 								huou = (cuoc[0]*heSo[0]);
-								huou = huou-Math.ceil(huou*phe/100);
 								TienThang += huou;
 								TongThang += cuoc[0]+huou;
 							}else{
@@ -77,7 +75,6 @@ function thongtin_thanhtoan(dice = null){
 						if (cuoc[1] > 0) {
 							if (void 0 !== heSo[1]) {
 								bau = (cuoc[1]*heSo[1]);
-								bau = bau-Math.ceil(bau*phe/100);
 								TienThang += bau;
 								TongThang += cuoc[1]+bau;
 							}else{
@@ -88,7 +85,6 @@ function thongtin_thanhtoan(dice = null){
 						if (cuoc[2] > 0) {
 							if (void 0 !== heSo[2]) {
 								ga = (cuoc[2]*heSo[2]);
-								ga = ga-Math.ceil(ga*phe/100);
 								TienThang += ga;
 								TongThang += cuoc[2]+ga;
 							}else{
@@ -99,7 +95,6 @@ function thongtin_thanhtoan(dice = null){
 						if (cuoc[3] > 0) {
 							if (void 0 !== heSo[3]) {
 								ca = (cuoc[3]*heSo[3]);
-								ca = ca-Math.ceil(ca*phe/100);
 								TienThang += ca;
 								TongThang += cuoc[3]+ca;
 							}else{
@@ -110,7 +105,6 @@ function thongtin_thanhtoan(dice = null){
 						if (cuoc[4] > 0) {
 							if (void 0 !== heSo[4]) {
 								cua = (cuoc[4]*heSo[4]);
-								cua = cua-Math.ceil(cua*phe/100);
 								TienThang += cua;
 								TongThang += cuoc[4]+cua;
 							}else{
@@ -121,13 +115,14 @@ function thongtin_thanhtoan(dice = null){
 						if (cuoc[5] > 0) {
 							if (void 0 !== heSo[5]) {
 								tom = (cuoc[5]*heSo[5]);
-								tom = tom-Math.ceil(tom*phe/100);
 								TienThang += tom;
 								TongThang += cuoc[5]+tom;
 							}else{
 								TongThua  += cuoc[5];
 							}
 						}
+
+						var tongDat    = cuoc[0]+cuoc[1]+cuoc[2]+cuoc[3]+cuoc[4]+cuoc[5];
 
 						var update     = {};
 						var updateGame = {};
@@ -143,6 +138,8 @@ function thongtin_thanhtoan(dice = null){
 							if (TongThua > 0) {
 								update['redLost'] = updateGame['red_lost'] = TongThua;
 							}
+
+							update['redPlay'] = updateGame['redPlay'] = tongDat;
 
 							var active1 = UserInfo.findOneAndUpdate({id:cuoc.uid}, {$inc:update}).exec();
 							var active2 = BauCua_cuoc.findOneAndUpdate({_id: cuoc._id.toString()}, {$set:{thanhtoan: true, betwin:TongThang}}).exec();
@@ -161,6 +158,8 @@ function thongtin_thanhtoan(dice = null){
 								update['xuLost'] = updateGame['xu_lost'] = TongThua;
 							}
 
+							update['xuPlay'] = updateGame['xuPlay'] = tongDat;
+
 							var active1 = UserInfo.findOneAndUpdate({id:cuoc.uid}, {$inc:update}).exec();
 							var active2 = BauCua_cuoc.findOneAndUpdate({_id: cuoc._id.toString()}, {$set:{thanhtoan: true, betwin:TongThang}}).exec();
 							var active3 = BauCua_user.findOneAndUpdate({uid: cuoc.uid}, {$inc:updateGame}).exec();
@@ -177,29 +176,39 @@ function thongtin_thanhtoan(dice = null){
 						}
 						return Promise.all([active1, active2, active3])
 							.then(values => {
-								if (values[1].red && TongThang > 0) {
-									return {users: values[0].name, bet: Helpers.numberWithCommas(TongThang), game: 'Bầu Cua'};
+								if (values[1].red && TienThang > 0) {
+									return {users: values[0].name, bet: TienThang};
+									//return {users: values[0].name, bet: Helpers.numberWithCommas(TongThang), game: 'Bầu Cua'};
 								}
 								return void 0;
 							});
 					}))
 					.then(function(arrayOfResults) {
-							Promise.all(arrayOfResults.filter(function(st){
-								return st !== void 0;
-							}))
-							.then(result => {
-								if (result.length>0) {
-									result = {news:{a:result}};
+						Promise.all(arrayOfResults.filter(function(st){
+							return !!st;
+						}))
+						.then(result => {
+							if (result.length) {
+								result.sort(function(a, b){
+									return b.bet-a.bet;
+								});
+								result = result.slice(0, 10);
+								Promise.all(result.map(function(obj){
+									return {users: obj.name, bet: Helpers.numberWithCommas(obj.bet), game: 'Bầu Cua'};
+								}))
+								.then(results => {
+									results = {news:{a:results}};
 									Promise.all(Object.values(io.users).map(function(users){
 										Promise.all(users.map(function(client){
 											if(client.scene == "home"){
-												client.red(result);
+												client.red(results);
 											}
 										}));
 									}));
-									io.sendAllClient(result);
-								}
-							})
+									io.sendAllClient(results);
+								});
+							}
+						})
 						playGame();
 					});
 				}else{

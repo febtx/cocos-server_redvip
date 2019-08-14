@@ -1,8 +1,8 @@
 
-const miniPokerHu = require('../../../../Models/miniPoker/miniPokerHu');
+const HU = require('../../../../Models/HU');
 
 module.exports = function(client) {
-	miniPokerHu.find({red:true}, 'name type', function(err, cat){
+	HU.find({game: "minipoker", red:true}, 'name type', function(err, cat){
 		var data = {mini_poker: {}};
 		Promise.all(cat.map(function(obj){
 			if (obj.type == 100) {

@@ -1,8 +1,8 @@
 
-const BigBabol_hu = require('../../../../Models/BigBabol/BigBabol_hu');
+const HU = require('../../../../Models/HU');
 
 module.exports = function(client) {
-	BigBabol_hu.find({red:true}, 'name type', function(err, cat){
+	HU.find({game: "bigbabol", red:true}, 'name type', function(err, cat){
 		var data = {big_babol: {}};
 		Promise.all(cat.map(function(obj){
 			if (obj.type == 100) {

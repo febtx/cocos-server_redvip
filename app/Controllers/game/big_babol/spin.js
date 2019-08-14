@@ -1,12 +1,11 @@
 
-var BigBabol_hu    = require('../../../Models/BigBabol/BigBabol_hu');
+var HU             = require('../../../Models/HU');
 var BigBabol_red   = require('../../../Models/BigBabol/BigBabol_red');
 var BigBabol_xu    = require('../../../Models/BigBabol/BigBabol_xu');
 var BigBabol_users = require('../../../Models/BigBabol/BigBabol_users');
 
 var UserInfo     = require('../../../Models/UserInfo');
-var ThongBaoNoHu = require('../../../Helpers/Helpers').ThongBaoNoHu;
-var shuffle      = require('../../../Helpers/Helpers').shuffle;
+var Helpers      = require('../../../Helpers/Helpers');
 
 function random_cel3(){
 	return (Math.random()*6)>>0;
@@ -31,6 +30,26 @@ function random_cel2(){
 		return 1;
 	}else{
 		// 0 1 2 3 4 5
+		return 0;
+	}
+}
+
+function random_cel1(){
+	var a = (Math.random()*15)>>0;
+	if (a == 14) {
+		// 14
+		return 4;
+	}else if (a >= 12 && a < 14) {
+		// 12 13
+		return 3;
+	}else if (a >= 9 && a < 12) {
+		// 9 10 11
+		return 2;
+	}else if (a >= 5 && a < 9) {
+		// 5 6 7 8
+		return 1;
+	}else{
+		// 0 1 2 3 4
 		return 0;
 	}
 }
@@ -101,25 +120,41 @@ module.exports = function(client, data){
 				if (!user || (red && user.red < cuoc) || (!red && user.xu < cuoc)) {
 					client.red({mini:{big_babol:{status:0, notice: 'Bạn không đủ ' + (red ? 'RED':'XU') + ' để quay.!!'}}});
 				}else{
+					var config = require('../../../../config/bigbabol.json');
 					var phe = red ? 2 : 4;    // Phế
 					var addQuy = (cuoc*0.01)>>0;
-					BigBabol_hu.findOneAndUpdate({type:bet, red:red}, {$inc:{bet:addQuy}}, function(err,cat){});
 
 					var line_nohu = 0;
 					var win_arr   = null;
 					var bet_win   = 0;
 					var type      = 0;   // Loại được ăn lớn nhất trong phiên
 					// tạo kết quả
-					BigBabol_hu.findOne({type:bet, red:red}, {}, function(err, dataHu){
+					HU.findOne({game:'bigbabol', type:bet, red:red}, {}, function(err, dataHu){
+						var uInfo      = {};
+						var mini_users = {};
+						var huUpdate   = {bet:addQuy};
+						if (red){
+							huUpdate['hu'] = uInfo['hu'] = mini_users['hu']     = 0; // Khởi tạo
+						}else{
+							huUpdate['huXu'] = uInfo['huXu'] = mini_users['huXu'] = 0; // Khởi tạo
+						}
 
-						var celSS = [
-							random_cel3(), random_cel2(), random_cel2(),
-							random_cel2(), 2,             1,
-							1,             0,             0,
-						]; // Super
+						if (config.chedo == 1) {
+							var celSS = [
+								random_cel2(), random_cel2(), random_cel2(),
+								random_cel1(), 2,             1,
+								1,             0,             0,
+							]; // Super
+						}else{
+							var celSS = [
+								random_cel2(), random_cel2(), random_cel2(),
+								random_cel2(), 2,             1,
+								1,             0,             0,
+							]; // Super
+						}
 
-						celSS = shuffle(celSS); // tráo bài lần 1
-						celSS = shuffle(celSS); // tráo bài lần 2
+						celSS = Helpers.shuffle(celSS); // tráo bài lần 1
+						celSS = Helpers.shuffle(celSS); // tráo bài lần 2
 
 						var cel1 = [celSS[0], celSS[1], celSS[2]]; // Cột 1
 						var cel2 = [celSS[3], celSS[4], celSS[5]]; // Cột 2
@@ -132,7 +167,7 @@ module.exports = function(client, data){
 						var checkName = new RegExp("^" + client.profile.name + "$", 'i');
 						checkName     = checkName.test(dataHu.name);
 						if (checkName) {
-							BigBabol_hu.findOneAndUpdate({type:bet, red:red}, {$set:{name:"", bet:dataHu.min}}, function(err,cat){});
+							HU.findOneAndUpdate({game:'bigbabol', type:bet, red:red}, {$set:{name:"", bet:dataHu.min}}, function(err,cat){});
 
 							line_nohu = ((Math.random()*line.length)>>0);
 							line_nohu = line[line_nohu];
@@ -327,11 +362,18 @@ module.exports = function(client, data){
 									if(line_win.win == 5) {
 										// Nổ hũ
 										if (!nohu) {
-											bet_win += quyHu;
-											red && ThongBaoNoHu(client, {title: "BigBabol", name: client.profile.name, bet: quyHu-Math.ceil(quyHu*phe/100)});
+											var okHu = (quyHu-Math.ceil(quyHu*phe/100))>>0;
+											bet_win += okHu;
+											red && Helpers.ThongBaoNoHu(client, {title: "BigBabol", name: client.profile.name, bet: okHu});
 										}else{
-											bet_win += quyMin;
-											red && ThongBaoNoHu(client, {title: "BigBabol", name: client.profile.name, bet: quyMin-Math.ceil(quyMin*phe/100)});
+											var okHu = (quyMin-Math.ceil(quyMin*phe/100))>>0;
+											bet_win += okHu;
+											red && Helpers.ThongBaoNoHu(client, {title: "BigBabol", name: client.profile.name, bet: okHu});
+										}
+										if (red){
+											huUpdate['hu'] = uInfo['hu'] = mini_users['hu']     += 1;
+										}else{
+											huUpdate['huXu'] = uInfo['huXu'] = mini_users['huXu'] += 1;
 										}
 										nohu = true;
 										type = 2;
@@ -361,27 +403,22 @@ module.exports = function(client, data){
 								return (line_win.type != null);
 							}))
 							.then(result2 => {
-								bet_win  = (bet_win-Math.ceil(bet_win*phe/100))>>0; // Cắt phế 2% - 4% ăn được
 								var tien = bet_win-cuoc;
 								if (!nohu && bet_win >= cuoc*2.24) {
 									isBigWin = true;
 									type = 1;
 									red && Helpers.ThongBaoBigWin(client, {game: "BigBabol", users: client.profile.name, bet: bet_win, status: 2});
 								}
-								var uInfo      = {};
-								var mini_users = {};
+
 								var thuong     = 0;
 								if (red) {
-									uInfo['red'] = tien;                                   // Cập nhật Số dư Red trong tài khoản
-									uInfo['redPlay'] = mini_users['bet'] = cuoc;           // Cập nhật Số Red đã chơi
+									uInfo['red'] = tien;                                                 // Cập nhật Số dư Red trong tài khoản
+									huUpdate['redPlay'] = uInfo['redPlay'] = mini_users['bet'] = cuoc;   // Cập nhật Số Red đã chơi
 									if (tien > 0){
-										uInfo['redWin'] = mini_users['win'] = tien;        // Cập nhật Số Red đã Thắng
+										huUpdate['redWin'] = uInfo['redWin'] = mini_users['win'] = tien; // Cập nhật Số Red đã Thắng
 									}
 									if (tien < 0){
-										uInfo['redLost'] = mini_users['lost'] = tien*(-1); // Cập nhật Số Red đã Thua
-									}
-									if (!!nohu){
-										uInfo['hu'] = mini_users['hu'] = 1;                // Cập nhật Số Hũ Red đã Trúng
+										huUpdate['redLost'] = uInfo['redLost'] = mini_users['lost'] = tien*(-1); // Cập nhật Số Red đã Thua
 									}
 									BigBabol_red.create({'name': client.profile.name, 'type': type, 'win': bet_win, 'bet': bet, 'kq': result2.length, 'line': line.length, 'time': new Date()}, function (err, small) {
 									  if (err){
@@ -392,19 +429,16 @@ module.exports = function(client, data){
 									});
 								}else{
 									thuong = (bet_win*0.039589)>>0;
-									uInfo['xu'] = tien;                               // Cập nhật Số dư XU trong tài khoản
-									uInfo['xuPlay'] = mini_users['betXu'] = cuoc;     // Cập nhật Số XU đã chơi
+									uInfo['xu'] = tien;                                                 // Cập nhật Số dư XU trong tài khoản
+									huUpdate['xuPlay'] = uInfo['xuPlay'] = mini_users['betXu'] = cuoc;  // Cập nhật Số XU đã chơi
 									if (thuong > 0){
-										uInfo['red'] = uInfo['thuong'] = mini_users['thuong'] = thuong;  // Cập nhật Số dư Red trong tài khoản // Cập nhật Số Red được thưởng do chơi XU
+										uInfo['red'] = uInfo['thuong'] = mini_users['thuong'] = thuong; // Cập nhật Số dư Red trong tài khoản // Cập nhật Số Red được thưởng do chơi XU
 									}
 									if (tien > 0){
-										uInfo['xuWin'] = mini_users['winXu'] = tien;         // Cập nhật Số Red đã Thắng
+										huUpdate['xuWin'] = uInfo['xuWin'] = mini_users['winXu'] = tien;         // Cập nhật Số Red đã Thắng
 									}
 									if (tien < 0){
-										uInfo['xuLost'] = mini_users['lostXu'] = tien*(-1); // Cập nhật Số Red đã Thua
-									}
-									if (!!nohu){
-										uInfo['huXu'] = mini_users['huXu'] = 1;             // Cập nhật Số Hũ Xu đã Trúng
+										huUpdate['xuLost'] = uInfo['xuLost'] = mini_users['lostXu'] = tien*(-1); // Cập nhật Số Red đã Thua
 									}
 									BigBabol_xu.create({'name': client.profile.name, 'type': type, 'win': bet_win, 'bet': bet, 'kq': result2.length, 'line': line.length, 'time': new Date()}, function (err, small) {
 									  if (err){
@@ -414,8 +448,9 @@ module.exports = function(client, data){
 									  }
 									});
 								}
+								HU.findOneAndUpdate({game:'bigbabol', type:bet, red:red}, {$inc:huUpdate}, function(err,cat){});
 								UserInfo.findOneAndUpdate({id:client.UID}, {$inc:uInfo}, function(err,cat){});
-								BigBabol_users.findOneAndUpdate({'uid':client.UID}, {$inc:mini_users}, function(err,cat){});
+								BigBabol_users.findOneAndUpdate({'uid':client.UID}, {$set:{time: new Date()}, $inc:mini_users}, function(err,cat){});
 							})
 						})
 					})

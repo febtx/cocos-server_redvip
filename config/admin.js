@@ -4,148 +4,13 @@
 // Admin
 const Admin   = require('../app/Models/Admin');
 const helpers = require('../app/Helpers/Helpers');
+const HU      = require('../app/Models/HU');
 
 Admin.estimatedDocumentCount().exec(function(err, total){
 	if (total == 0) {
 		Admin.create({'username': 'admin', 'password': helpers.generateHash('12345'), 'rights': 9, 'regDate': new Date()});
 	}
 })
-
-// thiết lập game miniPoker
-const miniPokerHu = require('../app/Models/miniPoker/miniPokerHu');
-// red
-miniPokerHu.findOne({type:100, red: true}, {}, function(err, data){
-	if (!data) {
-		miniPokerHu.create({'type': 100, red: true, 'bet': 400000, 'min': 400000});
-	}
-})
-
-miniPokerHu.findOne({type:1000, red: true}, {}, function(err, data){
-	if (!data) {
-		miniPokerHu.create({'type': 1000, red: true, 'bet': 4000000, 'min': 4000000});
-	}
-})
-
-miniPokerHu.findOne({type:10000, red: true}, {}, function(err, data){
-	if (!data) {
-		miniPokerHu.create({'type': 10000, red: true, 'bet': 40000000, 'min': 40000000});
-	}
-})
-
-// xu
-miniPokerHu.findOne({type:100, red: false}, {}, function(err, data){
-	if (!data) {
-		miniPokerHu.create({'type': 100, red: false, 'bet': 400000, 'min': 400000});
-	}
-})
-
-miniPokerHu.findOne({type:1000, red: false}, {}, function(err, data){
-	if (!data) {
-		miniPokerHu.create({'type': 1000, red: false, 'bet': 4000000, 'min': 4000000});
-	}
-})
-
-miniPokerHu.findOne({type:10000, red: false}, {}, function(err, data){
-	if (!data) {
-		miniPokerHu.create({'type': 10000, red: false, 'bet': 40000000, 'min': 40000000});
-	}
-})
-
-
-
-
-
-
-
-// thiết lập game BigBabol
-const BigBabol_hu = require('../app/Models/BigBabol/BigBabol_hu');
-// red
-BigBabol_hu.findOne({type:100, red: true}, {}, function(err, data){
-	if (!data) {
-		BigBabol_hu.create({'type': 100, red: true, 'bet': 500000, 'min': 500000});
-	}
-})
-
-BigBabol_hu.findOne({type:1000, red: true}, {}, function(err, data){
-	if (!data) {
-		BigBabol_hu.create({'type': 1000, red: true, 'bet': 5000000, 'min': 5000000});
-	}
-})
-
-BigBabol_hu.findOne({type:10000, red: true}, {}, function(err, data){
-	if (!data) {
-		BigBabol_hu.create({'type': 10000, red: true, 'bet': 50000000, 'min': 50000000});
-	}
-})
-
-// xu
-BigBabol_hu.findOne({type:100, red: false}, {}, function(err, data){
-	if (!data) {
-		BigBabol_hu.create({'type': 100, red: false, 'bet': 500000, 'min': 500000});
-	}
-})
-
-BigBabol_hu.findOne({type:1000, red: false}, {}, function(err, data){
-	if (!data) {
-		BigBabol_hu.create({'type': 1000, red: false, 'bet': 5000000, 'min': 5000000});
-	}
-})
-
-BigBabol_hu.findOne({type:10000, red: false}, {}, function(err, data){
-	if (!data) {
-		BigBabol_hu.create({'type': 10000, red: false, 'bet': 50000000, 'min': 50000000});
-	}
-})
-
-
-
-
-
-
-
-
-
-const VuongQuocRed_hu  = require('../app/Models/VuongQuocRed/VuongQuocRed_hu');
-// thiết lập game VuongQuocRed
-// red
-VuongQuocRed_hu.findOne({type:100, red: true}, {}, function(err, data){
-	if (!data) {
-		VuongQuocRed_hu.create({'type': 100, red: true, 'bet': 500000, 'min': 500000});
-	}
-})
-
-VuongQuocRed_hu.findOne({type:1000, red: true}, {}, function(err, data){
-	if (!data) {
-		VuongQuocRed_hu.create({'type': 1000, red: true, 'bet': 5000000, 'min': 5000000});
-	}
-})
-
-VuongQuocRed_hu.findOne({type:10000, red: true}, {}, function(err, data){
-	if (!data) {
-		VuongQuocRed_hu.create({'type': 10000, red: true, 'bet': 50000000, 'min': 50000000});
-	}
-})
-
-// xu
-VuongQuocRed_hu.findOne({type:100, red: false}, {}, function(err, data){
-	if (!data) {
-		VuongQuocRed_hu.create({'type': 100, red: false, 'bet': 500000, 'min': 500000});
-	}
-})
-
-VuongQuocRed_hu.findOne({type:1000, red: false}, {}, function(err, data){
-	if (!data) {
-		VuongQuocRed_hu.create({'type': 1000, red: false, 'bet': 5000000, 'min': 5000000});
-	}
-})
-
-VuongQuocRed_hu.findOne({type:10000, red: false}, {}, function(err, data){
-	if (!data) {
-		VuongQuocRed_hu.create({'type': 10000, red: false, 'bet': 50000000, 'min': 50000000});
-	}
-})
-
-
 
 // Bầu Cua
 const BauCua = require('../app/Models/BauCua/BauCua_temp');
@@ -156,57 +21,166 @@ BauCua.findOne({}, {}, function(err, data){
 })
 
 
-
-
-
-
-
-
-
-
-
-const Mini3Cay_hu  = require('../app/Models/Mini3Cay/Mini3Cay_hu');
-// thiết lập game Mini3Cay
+// thiết lập Hũ Mini Poker
 // red
-Mini3Cay_hu.findOne({type:100, red: true}, {}, function(err, data){
+HU.findOne({game:'minipoker', type:100, red: true}, {}, function(err, data){
 	if (!data) {
-		Mini3Cay_hu.create({'type': 100, red: true, 'bet': 250000, 'min': 250000});
+		HU.create({'game':'minipoker', 'type': 100, red: true, 'bet': 400000, 'min': 400000});
 	}
 })
 
-Mini3Cay_hu.findOne({type:1000, red: true}, {}, function(err, data){
+HU.findOne({game:'minipoker', type:1000, red: true}, {}, function(err, data){
 	if (!data) {
-		Mini3Cay_hu.create({'type': 1000, red: true, 'bet': 2500000, 'min': 2500000});
+		HU.create({'game':'minipoker', 'type': 1000, red: true, 'bet': 4000000, 'min': 4000000});
 	}
 })
 
-Mini3Cay_hu.findOne({type:10000, red: true}, {}, function(err, data){
+HU.findOne({game:'minipoker', type:10000, red: true}, {}, function(err, data){
 	if (!data) {
-		Mini3Cay_hu.create({'type': 10000, red: true, 'bet': 25000000, 'min': 25000000});
+		HU.create({'game':'minipoker', 'type': 10000, red: true, 'bet': 40000000, 'min': 40000000});
 	}
 })
 
 // xu
-Mini3Cay_hu.findOne({type:100, red: false}, {}, function(err, data){
+HU.findOne({game:'minipoker', type:100, red: false}, {}, function(err, data){
 	if (!data) {
-		Mini3Cay_hu.create({'type': 100, red: false, 'bet': 250000, 'min': 250000});
+		HU.create({'game':'minipoker', 'type': 100, red: false, 'bet': 400000, 'min': 400000});
 	}
 })
 
-Mini3Cay_hu.findOne({type:1000, red: false}, {}, function(err, data){
+HU.findOne({game:'minipoker', type:1000, red: false}, {}, function(err, data){
 	if (!data) {
-		Mini3Cay_hu.create({'type': 1000, red: false, 'bet': 2500000, 'min': 2500000});
+		HU.create({'game':'minipoker', 'type': 1000, red: false, 'bet': 4000000, 'min': 4000000});
 	}
 })
 
-Mini3Cay_hu.findOne({type:10000, red: false}, {}, function(err, data){
+HU.findOne({game:'minipoker', type:10000, red: false}, {}, function(err, data){
 	if (!data) {
-		Mini3Cay_hu.create({'type': 10000, red: false, 'bet': 25000000, 'min': 25000000});
+		HU.create({'game':'minipoker', 'type': 10000, red: false, 'bet': 40000000, 'min': 40000000});
 	}
 })
 
 
-const HU = require('../app/Models/HU');
+// thiết lập Hũ BigBabol
+// red
+HU.findOne({game:'bigbabol', type:100, red: true}, {}, function(err, data){
+	if (!data) {
+		HU.create({'game':'bigbabol', 'type': 100, red: true, 'bet': 500000, 'min': 500000});
+	}
+})
+
+HU.findOne({game:'bigbabol', type:1000, red: true}, {}, function(err, data){
+	if (!data) {
+		HU.create({'game':'bigbabol', 'type': 1000, red: true, 'bet': 5000000, 'min': 5000000});
+	}
+})
+
+HU.findOne({game:'bigbabol', type:10000, red: true}, {}, function(err, data){
+	if (!data) {
+		HU.create({'game':'bigbabol', 'type': 10000, red: true, 'bet': 50000000, 'min': 50000000});
+	}
+})
+
+// xu
+HU.findOne({game:'bigbabol', type:100, red: false}, {}, function(err, data){
+	if (!data) {
+		HU.create({'game':'bigbabol', 'type': 100, red: false, 'bet': 500000, 'min': 500000});
+	}
+})
+
+HU.findOne({game:'bigbabol', type:1000, red: false}, {}, function(err, data){
+	if (!data) {
+		HU.create({'game':'bigbabol', 'type': 1000, red: false, 'bet': 5000000, 'min': 5000000});
+	}
+})
+
+HU.findOne({game:'bigbabol', type:10000, red: false}, {}, function(err, data){
+	if (!data) {
+		HU.create({'game':'bigbabol', 'type': 10000, red: false, 'bet': 50000000, 'min': 50000000});
+	}
+})
+
+
+// thiết lập Hũ Vương Quốc Red
+// red
+HU.findOne({game:'vuongquocred', type:100, red: true}, {}, function(err, data){
+	if (!data) {
+		HU.create({'game':'vuongquocred', 'type': 100, red: true, 'bet': 500000, 'min': 500000});
+	}
+})
+
+HU.findOne({game:'vuongquocred', type:1000, red: true}, {}, function(err, data){
+	if (!data) {
+		HU.create({'game':'vuongquocred', 'type': 1000, red: true, 'bet': 5000000, 'min': 5000000});
+	}
+})
+
+HU.findOne({game:'vuongquocred', type:10000, red: true}, {}, function(err, data){
+	if (!data) {
+		HU.create({'game':'vuongquocred', 'type': 10000, red: true, 'bet': 50000000, 'min': 50000000});
+	}
+})
+
+// xu
+HU.findOne({game:'vuongquocred', type:100, red: false}, {}, function(err, data){
+	if (!data) {
+		HU.create({'game':'vuongquocred', 'type': 100, red: false, 'bet': 500000, 'min': 500000});
+	}
+})
+
+HU.findOne({game:'vuongquocred', type:1000, red: false}, {}, function(err, data){
+	if (!data) {
+		HU.create({'game':'vuongquocred', 'type': 1000, red: false, 'bet': 5000000, 'min': 5000000});
+	}
+})
+
+HU.findOne({game:'vuongquocred', type:10000, red: false}, {}, function(err, data){
+	if (!data) {
+		HU.create({'game':'vuongquocred', 'type': 10000, red: false, 'bet': 50000000, 'min': 50000000});
+	}
+})
+
+
+
+// thiết lập Hũ Mini 3Cây
+// red
+HU.findOne({game:'mini3cay', type:100, red: true}, {}, function(err, data){
+	if (!data) {
+		HU.create({'game':'mini3cay', 'type': 100, red: true, 'bet': 500000, 'min': 500000});
+	}
+})
+
+HU.findOne({game:'mini3cay', type:1000, red: true}, {}, function(err, data){
+	if (!data) {
+		HU.create({'game':'mini3cay', 'type': 1000, red: true, 'bet': 5000000, 'min': 5000000});
+	}
+})
+
+HU.findOne({game:'mini3cay', type:10000, red: true}, {}, function(err, data){
+	if (!data) {
+		HU.create({'game':'mini3cay', 'type': 10000, red: true, 'bet': 50000000, 'min': 50000000});
+	}
+})
+
+// xu
+HU.findOne({game:'mini3cay', type:100, red: false}, {}, function(err, data){
+	if (!data) {
+		HU.create({'game':'mini3cay', 'type': 100, red: false, 'bet': 500000, 'min': 500000});
+	}
+})
+
+HU.findOne({game:'mini3cay', type:1000, red: false}, {}, function(err, data){
+	if (!data) {
+		HU.create({'game':'mini3cay', 'type': 1000, red: false, 'bet': 5000000, 'min': 5000000});
+	}
+})
+
+HU.findOne({game:'mini3cay', type:10000, red: false}, {}, function(err, data){
+	if (!data) {
+		HU.create({'game':'mini3cay', 'type': 10000, red: false, 'bet': 50000000, 'min': 50000000});
+	}
+})
+
 
 // thiết lập Hũ Cao Thấp
 // red

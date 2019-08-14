@@ -1,14 +1,15 @@
 
-const Users_TX           = require('../../../../Models/TaiXiu_user');
-const Users_BauCua       = require('../../../../Models/BauCua/BauCua_user');
-const Users_BigBabol     = require('../../../../Models/BigBabol/BigBabol_users');
-const Users_CaoThap      = require('../../../../Models/CaoThap/CaoThap_user');
-const Users_Mini3Cay     = require('../../../../Models/Mini3Cay/Mini3Cay_user');
-const Users_miniPoker    = require('../../../../Models/miniPoker/miniPoker_users');
-const Users_VuongQuocRed = require('../../../../Models/VuongQuocRed/VuongQuocRed_users');
+var Users_TX           = require('../../../../Models/TaiXiu_user');
+var Users_BauCua       = require('../../../../Models/BauCua/BauCua_user');
+var Users_BigBabol     = require('../../../../Models/BigBabol/BigBabol_users');
+var Users_CaoThap      = require('../../../../Models/CaoThap/CaoThap_user');
+var Users_Mini3Cay     = require('../../../../Models/Mini3Cay/Mini3Cay_user');
+var Users_miniPoker    = require('../../../../Models/miniPoker/miniPoker_users');
+var Users_VuongQuocRed = require('../../../../Models/VuongQuocRed/VuongQuocRed_users');
+var Users_AngryBirds   = require('../../../../Models/AngryBirds/AngryBirds_user');
 
-const Users    = require('../../../../Models/Users');
-const UserInfo = require('../../../../Models/UserInfo');
+var Users    = require('../../../../Models/Users');
+var UserInfo = require('../../../../Models/UserInfo');
 
 module.exports = function(client, id){
 	if (!!id) {
@@ -123,17 +124,33 @@ module.exports = function(client, id){
 			});
 		});
 
-		var active = [wait_user, wait_TX, wait_BauCua, wait_BigBabol, wait_CaoThap, wait_Mini3Cay, wait_miniPoker, wait_VuongQuocRed];
+		var wait_AngryBirds = new Promise((resolve, reject)=>{
+			Users_AngryBirds.findOne({'uid': id}, function(err, result) {
+				if (!!result) {
+					result = result._doc;
+					delete result._id;
+					delete result.uid;
+					delete result.__v;
+					resolve(result);
+				}else{
+					reject('RedT Err!!');
+				}
+			});
+		});
+
+		var active = [wait_user, wait_TX, wait_BauCua, wait_BigBabol, wait_CaoThap, wait_Mini3Cay, wait_miniPoker, wait_VuongQuocRed, wait_AngryBirds];
 		Promise.all(active).then(resulf => {
 			client.red({users:{get_info:{
-				profile:resulf[0],
-				taixiu: resulf[1],
-				baucua: resulf[2],
-				bigbabol: resulf[3],
-				caothap: resulf[4],
-				mini3cay: resulf[5],
+				profile:   resulf[0],
+				taixiu:    resulf[1],
+				baucua:    resulf[2],
+				bigbabol:  resulf[3],
+				caothap:   resulf[4],
+				mini3cay:  resulf[5],
 				minipoker: resulf[6],
-				vqred: resulf[7],
+				vqred:     resulf[7],
+				angrybird: resulf[8],
+
 			}}});
 		}, reason => {
 			console.log(reason);

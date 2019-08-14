@@ -38,10 +38,9 @@ module.exports = function(client, data) {
 
 
 			}else if (data.sort == '9') {
-				sort._id = -1;
+				sort.time = -1;
 			}else if (data.sort == '10') {
-				sort._id = 1;
-
+				sort.time = 1;
 
 			}else{
 				sort.profit = -1;

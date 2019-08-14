@@ -5,23 +5,40 @@ var UserInfo   = require('../../../Models/UserInfo');
 
 module.exports = function(client, data){
 	var red  = !!data;   // Loại tiền (Red: true, Xu: false)
-	var query = 'uid ' + (red ? 'red' : 'xu');
-	var sort = red ? {'red':-1} : {'xu':-1};
-	var find = red ? {red:{$gt:0}} : {xu:{$gt:0}};
-	BauCua_user.find(find, query, {sort: sort, limit: 50}, function(err, result) {
-		Promise.all(result.map(function(obj){
-			obj = obj._doc;
-			var getPhien = UserInfo.findOne({id: obj.uid}, 'name').exec();
-			return Promise.all([getPhien]).then(values => {
-				Object.assign(obj, values[0]._doc);
-				delete obj.__v;
-				delete obj._id;
-				delete obj.uid;
-				return obj;
-			});
-		}))
-		.then(function(arrayOfResults) {
-			client.red({mini:{baucua:{tops:arrayOfResults}}});
-		})
+
+	var project = {
+		uid: "$uid",
+	}
+
+	if (red) {
+		project.profit =  {$subtract: ["$red", "$red_lost"]};
+	}else{
+		project.profit =  {$subtract: ["$xu", "$xu_lost"]};
+	}
+
+	BauCua_user.aggregate([
+		{
+			$project: project,
+		},
+		{$sort: {'profit': -1}},
+		{$limit: 100}
+	]).exec(function(err, result){
+		if (result.length) {
+			Promise.all(result.map(function(obj){
+				return new Promise(function(resolve, reject) {
+					UserInfo.findOne({'id': obj.uid}, 'name', function(error, result2){
+						resolve({name: result2.name, bet: obj.profit});
+					})
+				})
+			}))
+			.then(function(data){
+				Promise.all(data.filter(function(obj){
+					return obj.profit > 0;
+				}))
+				.then(function(result3){
+					client.red({mini:{baucua:{tops:result3}}});
+				});
+			})
+		}
 	});
 };
