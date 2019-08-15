@@ -2,20 +2,14 @@
 const HU = require('../../../../Models/HU');
 
 module.exports = function(client) {
-	HU.find({game: "minipoker", red:true}, 'name type', function(err, cat){
-		var data = {mini_poker: {}};
+	HU.find({game: "minipoker", red:true}, 'name type redPlay redWin redLost hu', function(err, cat){
 		Promise.all(cat.map(function(obj){
-			if (obj.type == 100) {
-				data.mini_poker.hu100 = {name: obj.name};
-			}else if (obj.type == 1000) {
-				data.mini_poker.hu1k = {name: obj.name};
-			}else{
-				data.mini_poker.hu10k = {name: obj.name};
-			}
-			return void 0;
+			obj = obj._doc;
+			delete obj._id;
+			return obj;
 		}))
 		.then(varT => {
-			client.red(data);
+			client.red({mini_poker:{hu:varT}});
 		})
 	});
 }

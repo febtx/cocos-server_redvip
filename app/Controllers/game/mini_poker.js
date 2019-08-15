@@ -95,15 +95,29 @@ function spin(client, data){
 					HU.findOne({game: "minipoker", type:bet, red:red}, {}, function(err, data){
 						var uInfo      = {};
 						var mini_users = {};
-						var huUpdate   = {bet:addQuy};
+						var huUpdate   = {bet:addQuy, toX6:0, X6:0};
 
 						var quyHu     = data.bet;
 						var quyMin    = data.min;
+
+						var toX6      = data.toX6;
+						var X6        = data.X6;
+
 						var checkName = new RegExp("^" + client.profile.name + "$", 'i');
 						checkName     = checkName.test(data.name);
 
 						if (checkName || (dongChat && (DAKj || (DAK && AK[4] > 9)))) {
 							// NỔ HŨ (DÂY ĐỒNG CHẤT CỦA DÂY ĐẾN J TRỞ LÊN) Hoặc được xác định là nổ hũ
+							if (toX6 > 0) {
+								toX6 -= 1;
+								huUpdate.toX6 -= 1;
+							}else if (X6 > 0) {
+								X6 -= 1;
+								huUpdate.X6 -= 1;
+							}
+							if (toX6 < 1 && X6 > 0) {
+								quyMin = quyMin*6;
+							}
 							HU.findOneAndUpdate({game: "minipoker", type:bet, red:red}, {$set:{name:"", bet:quyMin}}, function(err,cat){});
 							if (checkName){
 								// đặt kết quả thành nổ hũ nếu người chơi được xác định thủ công

@@ -35,9 +35,10 @@ TXPhien.findOne({}, 'id', {sort:{'id':-1}}, function(err, last) {
 function truChietKhau(bet, phe){
 	return bet-Math.ceil(bet*phe/100);
 }
+
 // Dữ liệu Hũ
 function TopHu(){
-	var huH = HU_game.find({}, 'game type red bet').exec(function(err, data){
+	var huH = HU_game.find({}, 'game type red bet toX6 X6').exec(function(err, data){
 		if (data.length) {
 			Promise.all(data.map(function(obj){
 				obj = obj._doc;

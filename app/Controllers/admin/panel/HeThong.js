@@ -14,5 +14,9 @@ module.exports = function(client, data) {
 		if (!!data.clear){
 			clear(client, data.clear);
 		}
+		if (!!data.event){
+			var config = require('../../../Cron/EventHu');
+			config();
+		}
 	}
 }

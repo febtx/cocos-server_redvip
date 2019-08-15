@@ -146,38 +146,38 @@ HU.findOne({game:'vuongquocred', type:10000, red: false}, {}, function(err, data
 // red
 HU.findOne({game:'mini3cay', type:100, red: true}, {}, function(err, data){
 	if (!data) {
-		HU.create({'game':'mini3cay', 'type': 100, red: true, 'bet': 500000, 'min': 500000});
+		HU.create({'game':'mini3cay', 'type': 100, red: true, 'bet': 250000, 'min': 250000});
 	}
 })
 
 HU.findOne({game:'mini3cay', type:1000, red: true}, {}, function(err, data){
 	if (!data) {
-		HU.create({'game':'mini3cay', 'type': 1000, red: true, 'bet': 5000000, 'min': 5000000});
+		HU.create({'game':'mini3cay', 'type': 1000, red: true, 'bet': 2500000, 'min': 2500000});
 	}
 })
 
 HU.findOne({game:'mini3cay', type:10000, red: true}, {}, function(err, data){
 	if (!data) {
-		HU.create({'game':'mini3cay', 'type': 10000, red: true, 'bet': 50000000, 'min': 50000000});
+		HU.create({'game':'mini3cay', 'type': 10000, red: true, 'bet': 25000000, 'min': 25000000});
 	}
 })
 
 // xu
 HU.findOne({game:'mini3cay', type:100, red: false}, {}, function(err, data){
 	if (!data) {
-		HU.create({'game':'mini3cay', 'type': 100, red: false, 'bet': 500000, 'min': 500000});
+		HU.create({'game':'mini3cay', 'type': 100, red: false, 'bet': 250000, 'min': 250000});
 	}
 })
 
 HU.findOne({game:'mini3cay', type:1000, red: false}, {}, function(err, data){
 	if (!data) {
-		HU.create({'game':'mini3cay', 'type': 1000, red: false, 'bet': 5000000, 'min': 5000000});
+		HU.create({'game':'mini3cay', 'type': 1000, red: false, 'bet': 2500000, 'min': 2500000});
 	}
 })
 
 HU.findOne({game:'mini3cay', type:10000, red: false}, {}, function(err, data){
 	if (!data) {
-		HU.create({'game':'mini3cay', 'type': 10000, red: false, 'bet': 50000000, 'min': 50000000});
+		HU.create({'game':'mini3cay', 'type': 10000, red: false, 'bet': 25000000, 'min': 25000000});
 	}
 })
 

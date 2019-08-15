@@ -132,7 +132,7 @@ module.exports = function(client, data){
 					HU.findOne({game:'bigbabol', type:bet, red:red}, {}, function(err, dataHu){
 						var uInfo      = {};
 						var mini_users = {};
-						var huUpdate   = {bet:addQuy};
+						var huUpdate   = {bet:addQuy, toX6:0, X6:0};
 						if (red){
 							huUpdate['hu'] = uInfo['hu'] = mini_users['hu']     = 0; // Khởi tạo
 						}else{
@@ -164,11 +164,13 @@ module.exports = function(client, data){
 						var isBigWin  = false;
 						var quyHu     = dataHu.bet;
 						var quyMin    = dataHu.min;
+
+						var toX6      = dataHu.toX6;
+						var X6        = dataHu.X6;
+
 						var checkName = new RegExp("^" + client.profile.name + "$", 'i');
 						checkName     = checkName.test(dataHu.name);
 						if (checkName) {
-							HU.findOneAndUpdate({game:'bigbabol', type:bet, red:red}, {$set:{name:"", bet:dataHu.min}}, function(err,cat){});
-
 							line_nohu = ((Math.random()*line.length)>>0);
 							line_nohu = line[line_nohu];
 						}
@@ -361,6 +363,16 @@ module.exports = function(client, data){
 								if (line_win.type != null) {
 									if(line_win.win == 5) {
 										// Nổ hũ
+										if (toX6 > 0) {
+											toX6 -= 1;
+											huUpdate.toX6 -= 1;
+										}else if (X6 > 0) {
+											X6 -= 1;
+											huUpdate.X6 -= 1;
+										}
+										if (toX6 < 1 && X6 > 0) {
+											quyMin = dataHu.min*6;
+										}
 										if (!nohu) {
 											var okHu = (quyHu-Math.ceil(quyHu*phe/100))>>0;
 											bet_win += okHu;
@@ -370,6 +382,8 @@ module.exports = function(client, data){
 											bet_win += okHu;
 											red && Helpers.ThongBaoNoHu(client, {title: "BigBabol", name: client.profile.name, bet: okHu});
 										}
+										HU.findOneAndUpdate({game:'bigbabol', type:bet, red:red}, {$set:{name:"", bet:quyMin}}, function(err,cat){});
+
 										if (red){
 											huUpdate['hu'] = uInfo['hu'] = mini_users['hu']     += 1;
 										}else{
@@ -422,9 +436,9 @@ module.exports = function(client, data){
 									}
 									BigBabol_red.create({'name': client.profile.name, 'type': type, 'win': bet_win, 'bet': bet, 'kq': result2.length, 'line': line.length, 'time': new Date()}, function (err, small) {
 									  if (err){
-									  	client.red({mini:{big_babol:{status:0, notice: 'Có lỗi sảy ra, vui lòng thử lại.!!'}}});
+										client.red({mini:{big_babol:{status:0, notice: 'Có lỗi sảy ra, vui lòng thử lại.!!'}}});
 									  }else{
-									  	client.red({mini:{big_babol:{status:1, cel:[cel1, cel2, cel3], line_win: result2, nohu: nohu, isBigWin: isBigWin, win: bet_win, phien: small.id}}, user:{red:user.red-cuoc}});
+										client.red({mini:{big_babol:{status:1, cel:[cel1, cel2, cel3], line_win: result2, nohu: nohu, isBigWin: isBigWin, win: bet_win, phien: small.id}}, user:{red:user.red-cuoc}});
 									  }
 									});
 								}else{
@@ -442,9 +456,9 @@ module.exports = function(client, data){
 									}
 									BigBabol_xu.create({'name': client.profile.name, 'type': type, 'win': bet_win, 'bet': bet, 'kq': result2.length, 'line': line.length, 'time': new Date()}, function (err, small) {
 									  if (err){
-									  	client.red({mini:{big_babol:{status:0, notice: 'Có lỗi sảy ra, vui lòng thử lại.!!'}}});
+										client.red({mini:{big_babol:{status:0, notice: 'Có lỗi sảy ra, vui lòng thử lại.!!'}}});
 									  }else{
-									  	client.red({mini:{big_babol:{status:1, cel:[cel1, cel2, cel3], line_win: result2, nohu: nohu, isBigWin: isBigWin, win: bet_win, phien: small.id, thuong:thuong}}, user:{xu:user.xu-cuoc}});
+										client.red({mini:{big_babol:{status:1, cel:[cel1, cel2, cel3], line_win: result2, nohu: nohu, isBigWin: isBigWin, win: bet_win, phien: small.id, thuong:thuong}}, user:{xu:user.xu-cuoc}});
 									  }
 									});
 								}

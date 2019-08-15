@@ -610,9 +610,9 @@ module.exports = function(client, data){
 								var thuong = 0;
 								if (red) {
 									uInfo['red'] = tien;         // Cập nhật Số dư Red trong tài khoản
-									huUpdate['redPlay'] = uInfo['redPlay'] = mini_users['bet'] = tongCuoc;     // Cập nhật Số Red đã chơi
+									huUpdate['redPlay'] = uInfo['redPlay'] = mini_users['bet'] = tongCuoc;       // Cập nhật Số Red đã chơi
 									if (tien > 0){
-										huUpdate['redWin'] = uInfo['redWin'] = mini_users['win'] = tien;    // Cập nhật Số Red đã Thắng
+										huUpdate['redWin'] = uInfo['redWin'] = mini_users['win'] = tien;         // Cập nhật Số Red đã Thắng
 									}
 									if (tien < 0){
 										huUpdate['redLost'] = uInfo['redLost'] = mini_users['lost'] = tien*(-1); // Cập nhật Số Red đã Thua
@@ -625,12 +625,12 @@ module.exports = function(client, data){
 								}else{
 									thuong = (bet_win*0.039589)>>0;
 									uInfo['xu'] = tien;         // Cập nhật Số dư XU trong tài khoản
-									huUpdate['xuPlay'] = uInfo['xuPlay'] = mini_users['betXu'] = tongCuoc;     // Cập nhật Số XU đã chơi
+									huUpdate['xuPlay'] = uInfo['xuPlay'] = mini_users['betXu'] = tongCuoc; // Cập nhật Số XU đã chơi
 									if (thuong > 0){
-										uInfo['red'] = uInfo['thuong'] = mini_users['thuong'] = thuong;  // Cập nhật Số dư Xu trong tài khoản // Cập nhật Số Red được thưởng do chơi XU
+										uInfo['red'] = uInfo['thuong'] = mini_users['thuong'] = thuong;    // Cập nhật Số dư Xu trong tài khoản // Cập nhật Số Red được thưởng do chơi XU
 									}
 									if (tien > 0){
-										huUpdate['xuWin'] = uInfo['xuWin'] = mini_users['winXu'] = tien;    // Cập nhật Số Xu đã Thắng
+										huUpdate['xuWin'] = uInfo['xuWin'] = mini_users['winXu'] = tien;   // Cập nhật Số Xu đã Thắng
 									}
 									if (tien < 0){
 										huUpdate['xuLost'] = uInfo['xuLost'] = mini_users['lostXu'] = tien*(-1); // Cập nhật Số Xu đã Thua

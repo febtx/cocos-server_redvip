@@ -135,7 +135,7 @@ module.exports = function(client, data){
 					HU.findOne({game: "arb", type:bet, red:red}, {}, function(err, dataHu){
 						var uInfo      = {};
 						var mini_users = {};
-						var huUpdate   = {bet:addQuy};
+						var huUpdate   = {bet:addQuy, toX6:0, X6:0};
 						if (red){
 							huUpdate['hu'] = uInfo['hu'] = mini_users['hu']     = 0; // Khởi tạo
 						}else{
@@ -146,6 +146,9 @@ module.exports = function(client, data){
 						var isBigWin = false;
 						var quyHu    = dataHu.bet;
 						var quyMin   = dataHu.min;
+
+						var toX6     = dataHu.toX6;
+						var X6       = dataHu.X6;
 
 						// Tạo kết quả 3 Hàng đầu
 						var celSS = [
@@ -176,7 +179,6 @@ module.exports = function(client, data){
 						var checkName = new RegExp("^" + client.profile.name + "$", 'i');
 						checkName     = checkName.test(dataHu.name);
 						if (checkName) {
-							HU.findOneAndUpdate({game: "arb", type:bet, red:red}, {$set:{name:"", bet:dataHu.min}}, function(err,cat){});
 							line_nohu = Math.floor(Math.random()*(27-1+1))+1;
 
 							celR1[1] = 3;
@@ -444,6 +446,18 @@ module.exports = function(client, data){
 										if (heso == 100) {
 											// nổ hũ
 											type = 2;
+
+											if (toX6 > 0) {
+												toX6 -= 1;
+												huUpdate.toX6 -= 1;
+											}else if (X6 > 0) {
+												X6 -= 1;
+												huUpdate.X6 -= 1;
+											}
+											if (toX6 < 1 && X6 > 0) {
+												quyMin = dataHu.min*6;
+											}
+
 											if (!nohu) {
 												nohu = true;
 												var okHu = (quyHu-Math.ceil(quyHu*phe/100))>>0;
@@ -464,6 +478,7 @@ module.exports = function(client, data){
 													huUpdate['huXu'] = uInfo['huXu'] = mini_users['huXu'] += 1; // Cập nhật Số Hũ Xu đã Trúng
 												}
 											}
+											HU.findOneAndUpdate({game: "arb", type:bet, red:red}, {$set:{name:"", bet:quyMin}}, function(err,cat){});
 										}else{
 											bet_win += bet*10;
 										}
