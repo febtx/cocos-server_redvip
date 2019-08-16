@@ -57,6 +57,7 @@ module.exports = function(client, data) {
 						bet:    "$bet",
 						win:    "$win",
 						lost:   "$lost",
+						time:   "$time",
 					}},
 					{$sort: sort},
 					{$skip: (page-1)*kmess},

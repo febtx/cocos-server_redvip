@@ -10,7 +10,7 @@ module.exports = function(client){
 			top: "$tLineWinHQ",
 			gift: "$tLineWinHQGift",
 		}},
-		{$sort: {'tLineWinHQ': -1, 'tLineWinHQGift': -1}},
+		{$sort: {'top': -1, 'gift': -1}},
 		{$limit: 20}
 	]).exec();
 
@@ -21,7 +21,7 @@ module.exports = function(client){
 			top: "$tLineLostHQ",
 			gift: "$tLineLostHQGift",
 		}},
-		{$sort: {'tLineLostHQ': -1, 'tLineLostHQGift': -1}},
+		{$sort: {'top': -1, 'gift': -1}},
 		{$limit: 20}
 	]).exec();
 

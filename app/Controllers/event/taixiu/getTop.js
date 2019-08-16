@@ -8,8 +8,9 @@ module.exports = function(client){
 		{$project: {
 			uid: "$uid",
 			top: "$tLineWinRedH",
+			time: "$time",
 		}},
-		{$sort: {'tLineWinRedH': -1, 'time': -1}},
+		{$sort: {'top': -1, 'time': -1}},
 		{$limit: 20}
 	]).exec();
 
@@ -18,8 +19,9 @@ module.exports = function(client){
 		{$project: {
 			uid: "$uid",
 			top: "$tLineLostRedH",
+			time: "$time",
 		}},
-		{$sort: {'tLineLostRedH': -1, 'time': -1}},
+		{$sort: {'top': -1, 'time': -1}},
 		{$limit: 20}
 	]).exec();
 

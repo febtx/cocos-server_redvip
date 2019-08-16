@@ -75,7 +75,6 @@ module.exports = function(client, data){
 									name:     "$name",
 									red:      "$red",
 									xu:       "$xu",
-									joinedOn: "$joinedOn",
 									phone:    "$phone",
 									type:     "$type",
 								}
@@ -114,7 +113,6 @@ module.exports = function(client, data){
 								name:     "$name",
 								red:      "$red",
 								xu:       "$xu",
-								joinedOn: "$joinedOn",
 								phone:    "$phone",
 								type:     "$type",
 							}
