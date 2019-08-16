@@ -853,8 +853,8 @@ function playGame(){
 				var config = require('../../config/taixiu.json');
 				if (config.bot) {
 					// lấy danh sách tài khoản bot
-					bot.list()
-					.then(resultBot => {
+					var TList = bot.list();
+					TList.then(resultBot => {
 						botList = Helpers.shuffle(resultBot); // tráo bot;
 					});
 				}else{

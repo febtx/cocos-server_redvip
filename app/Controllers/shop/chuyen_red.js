@@ -32,8 +32,14 @@ module.exports = function(client, data){
 						if (((new Date()-Date.parse(data_otp.date))/1000) > 180 || data_otp.active) {
 							client.red({notice:{title:'LỖI', text:'Mã OTP đã hết hạn.!'}});
 						}else{
-							var regex = new RegExp("^" + name + "$", 'i');
-							var active1 = tab_DaiLy.findOne({nickname: {$regex: regex}}).exec();
+							var regex      = new RegExp("^" + name + "$", 'i');
+							var regexUsers = new RegExp("^" + client.profile.name + "$", 'i');
+
+							var active1 = tab_DaiLy.findOne({$or:[
+								{nickname: {$regex: regex}},
+								{nickname: {$regex: regexUsers}}
+							]}).exec();
+
 							var active2 = UserInfo.findOne({name: {$regex: regex}}, 'id name').exec();
 							var active3 = UserInfo.findOne({id: client.UID}, 'red').exec();
 							Promise.all([active1, active2, active3])

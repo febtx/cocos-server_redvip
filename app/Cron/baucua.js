@@ -178,7 +178,6 @@ function thongtin_thanhtoan(dice = null){
 							.then(values => {
 								if (values[1].red && TienThang > 0) {
 									return {users: values[0].name, bet: TienThang};
-									//return {users: values[0].name, bet: Helpers.numberWithCommas(TongThang), game: 'Bầu Cua'};
 								}
 								return void 0;
 							});
@@ -194,7 +193,7 @@ function thongtin_thanhtoan(dice = null){
 								});
 								result = result.slice(0, 10);
 								Promise.all(result.map(function(obj){
-									return {users: obj.name, bet: Helpers.numberWithCommas(obj.bet), game: 'Bầu Cua'};
+									return {users: obj.users, bet: Helpers.numberWithCommas(obj.bet), game: 'Bầu Cua'};
 								}))
 								.then(results => {
 									results = {news:{a:results}};

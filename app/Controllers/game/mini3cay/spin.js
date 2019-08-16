@@ -109,7 +109,12 @@ module.exports = function(client, spin) {
 							an   = (quyHu-Math.ceil(quyHu*phe/100))>>0;
 							text = 'Nổ Hũ';
 							code = 6;
-							red && Helpers.ThongBaoNoHu(client, {title: "MINI 3 CÂY", name: client.profile.name, bet: an});
+							if (red){
+								huUpdate['hu'] = uInfo['hu'] = mini_users['hu']     = 1; // Khởi tạo
+								Helpers.ThongBaoNoHu(client, {title: "MINI 3 CÂY", name: client.profile.name, bet: an});
+							}else{
+								huUpdate['huXu'] = uInfo['huXu'] = mini_users['huXu'] = 1; // Khởi tạo
+							}
 						}else if (Day && dongChat) {
 							// x30    3 lá liên tiếp đồng chất
 							an   = cuoc*30;
@@ -137,13 +142,6 @@ module.exports = function(client, spin) {
 							an   = cuoc*2;
 							text = '9 Điểm';
 							code = 1;
-						}
-						if (!nohu) {
-							if (red){
-								huUpdate['hu'] = uInfo['hu'] = mini_users['hu']     = 1; // Khởi tạo
-							}else{
-								huUpdate['huXu'] = uInfo['huXu'] = mini_users['huXu'] = 1; // Khởi tạo
-							}
 						}
 
 						var tien = an-cuoc;
@@ -175,7 +173,7 @@ module.exports = function(client, spin) {
 							Mini3Cay_xu.create({'uid': client.UID, 'win': an, 'bet': cuoc, 'type': code, 'kq': ketqua, 'time': new Date()}, function (err, small) {});
 							client.red({mini:{bacay:{status:1, card:ketqua, win: an, thuong: thuong, text: text, code: code}}, user:{red: user.red, xu: user.xu-cuoc}});
 						}
-						HU.findOneAndUpdate({game:'mini3cay', type:bet, red:red}, {$inc:huUpdate}, function(err,cat){});
+						HU.findOneAndUpdate({game:'mini3cay', type:cuoc, red:red}, {$inc:huUpdate}, function(err,cat){});
 						UserInfo.findOneAndUpdate({id:client.UID}, {$inc: uInfo}, function(err,cat){});
 						Mini3Cay_user.findOneAndUpdate({'uid': client.UID}, {$set:{time: new Date()}, $inc: mini_users}, function(err,cat){});
 					});

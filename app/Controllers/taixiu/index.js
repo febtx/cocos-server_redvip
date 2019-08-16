@@ -371,9 +371,7 @@ var get_top = async function(client, data){
 		var taixiu = !!data.taixiu;
 		var red    = !!data.red;
 
-		var project = {
-			uid: "$uid",
-		}
+		var project = {uid: "$uid"};
 
 		if (taixiu) {
 			if (red) {
@@ -390,29 +388,21 @@ var get_top = async function(client, data){
 		}
 
 		TaiXiu_User.aggregate([
-			{
-				$project: project,
-			},
-			{$sort: {'profit': -1}},
+			{$project: project},
+			{$match:{"profit":{$gt:0}}},
+			{$sort: {"profit": -1}},
 			{$limit: 100}
 		]).exec(function(err, result){
-			if (result.length) {
-				Promise.all(result.map(function(obj){
-					return new Promise(function(resolve, reject) {
-						UserInfo.findOne({'id': obj.uid}, 'name', function(error, result2){
-							resolve({name: result2.name, bet: obj.profit});
-						})
+			Promise.all(result.map(function(obj){
+				return new Promise(function(resolve, reject) {
+					UserInfo.findOne({'id': obj.uid}, 'name', function(error, result2){
+						resolve({name: result2.name, bet: obj.profit});
 					})
-				}))
-				.then(function(data){
-					Promise.all(data.filter(function(obj){
-						return obj.profit > 0;
-					}))
-					.then(function(result3){
-						client.red({taixiu:{get_top:result3}});
-					});
 				})
-			}
+			}))
+			.then(function(data){
+				client.red({taixiu:{get_top:data}});
+			})
 		});
 	}
 }
