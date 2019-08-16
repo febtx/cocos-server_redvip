@@ -15,6 +15,11 @@ const Schema = new mongoose.Schema({
 	tLineWinRedH:  {type: Number,  default: 0},                     // Dây thắng Red hiện tại
 	tLineLostRedH: {type: Number,  default: 0},                     // Dây thua Red hiện tại
 
+	tLineWinHQ:    {type: Number,  default: 0},                     // Dây thắng Red Hôm Qua
+	tLineLostHQ:   {type: Number,  default: 0},                     // Dây thua  Red Hôm Qua
+	tLineWinHQGift:  {type: Number,  default: 0},                   // Phần quà thắng hôm qua
+	tLineLostHQGift: {type: Number,  default: 0},                   // Phần quà thua  hôm qua
+
 	tXuPlay:       {type: mongoose.Schema.Types.Long,  default: 0}, // Xu Tài Xỉu đã chơi
 
 	tWinXu:        {type: mongoose.Schema.Types.Long,  default: 0}, // Tổng xu thắng
@@ -47,6 +52,8 @@ const Schema = new mongoose.Schema({
 
 	cLineWinXuH:   {type: Number,  default: 0},                     // Dây thắng xu hiện tại
 	cLineLostXuH:  {type: Number,  default: 0},                     // Dây thua xu hiện tại
+
+	time:          {type: Date},                                    // Chơi gần đây
 });
 
 module.exports = mongoose.model("TaiXiu_user", Schema);

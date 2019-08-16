@@ -129,10 +129,10 @@ module.exports = function(client, data){
 					var bet_win   = 0;
 					var type      = 0;   // Loại được ăn lớn nhất trong phiên
 					// tạo kết quả
-					HU.findOne({game:'bigbabol', type:bet, red:red}, {}, function(err, dataHu){
+					HU.findOne({game:'bigbabol', type:bet, red:red}, 'name bet min toX balans x', function(err, dataHu){
 						var uInfo      = {};
 						var mini_users = {};
-						var huUpdate   = {bet:addQuy, toX6:0, X6:0};
+						var huUpdate   = {bet:addQuy, toX:0, balans:0};
 						if (red){
 							huUpdate['hu'] = uInfo['hu'] = mini_users['hu']     = 0; // Khởi tạo
 						}else{
@@ -165,8 +165,8 @@ module.exports = function(client, data){
 						var quyHu     = dataHu.bet;
 						var quyMin    = dataHu.min;
 
-						var toX6      = dataHu.toX6;
-						var X6        = dataHu.X6;
+						var toX      = dataHu.toX;
+						var balans   = dataHu.balans;
 
 						var checkName = new RegExp("^" + client.profile.name + "$", 'i');
 						checkName     = checkName.test(dataHu.name);
@@ -363,15 +363,15 @@ module.exports = function(client, data){
 								if (line_win.type != null) {
 									if(line_win.win == 5) {
 										// Nổ hũ
-										if (toX6 > 0) {
-											toX6 -= 1;
-											huUpdate.toX6 -= 1;
-										}else if (X6 > 0) {
-											X6 -= 1;
-											huUpdate.X6 -= 1;
+										if (toX > 0) {
+											toX -= 1;
+											huUpdate.toX -= 1;
+										}else if (balans > 0) {
+											balans -= 1;
+											huUpdate.balans -= 1;
 										}
-										if (toX6 < 1 && X6 > 0) {
-											quyMin = dataHu.min*6;
+										if (toX < 1 && balans > 0) {
+											quyMin = dataHu.min*dataHu.x;
 										}
 										if (!nohu) {
 											var okHu = (quyHu-Math.ceil(quyHu*phe/100))>>0;

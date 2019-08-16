@@ -1,10 +1,11 @@
 
-var User     = require('./User')
-var TaiXiu   = require('./TaiXiu')
-var Shop     = require('./Shop')
-var GiftCode = require('./GiftCode')
-var Game     = require('./Game')
-var OTP      = require('./OTP')
+var User     = require('./User');
+var TaiXiu   = require('./TaiXiu');
+var Shop     = require('./Shop');
+var GiftCode = require('./GiftCode');
+var Game     = require('./Game');
+var OTP      = require('./OTP');
+var Event    = require('./event/index')
 
 //var ControlAvatar  = require('./Avatar.js');
 
@@ -41,6 +42,10 @@ module.exports = function(client, p){
 
 		if (!!p.otp){
 			OTP(client, p.otp);
+		}
+
+		if (!!p.event){
+			Event(client, p.event);
 		}
 
 		//if (!!p.avatar)

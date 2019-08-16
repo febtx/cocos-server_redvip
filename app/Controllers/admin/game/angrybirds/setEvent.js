@@ -5,8 +5,17 @@ var fs       = require('fs');
 module.exports = function(client, data) {
 	var file = require('../../../../../config/angrybird.json');
 
-	file.toX6 = data.toX6>>0;
-	file.X6   = data.X6>>0;
+	file['100'].toX    = data.huD100>>0;
+	file['100'].balans = data.huP100>>0;
+	file['100'].x      = data.huX100>>0;
+
+	file['1000'].toX    = data.huD1000>>0;
+	file['1000'].balans = data.huP1000>>0;
+	file['1000'].x      = data.huX1000>>0;
+
+	file['10000'].toX    = data.huD10000>>0;
+	file['10000'].balans = data.huP10000>>0;
+	file['10000'].x      = data.huX10000>>0;
 
 	file["0"] = !!data["0"];
 	file["1"] = !!data["1"];

@@ -38,7 +38,7 @@ function truChietKhau(bet, phe){
 
 // Dữ liệu Hũ
 function TopHu(){
-	var huH = HU_game.find({}, 'game type red bet toX6 X6').exec(function(err, data){
+	var huH = HU_game.find({}, 'game type red bet toX balans x').exec(function(err, data){
 		if (data.length) {
 			Promise.all(data.map(function(obj){
 				obj = obj._doc;
@@ -87,6 +87,7 @@ function setTaiXiu_user(phien, dice){
 								tLineLostRed:  !obj.win && data.tLineLostRed < data.tLineLostRedH+1 ? data.tLineLostRedH+1 : data.tLineLostRed,
 								tLineWinRedH:  obj.win ? data.tLineWinRedH+1 : 0,
 								tLineLostRedH: obj.win ? 0 : data.tLineLostRedH+1,
+								time:          new Date(),
 							};
 						} else if (obj.taixiu == true && obj.red == false && bet_thua >= 10000) { // Xu Tài Xỉu
 							update = {
@@ -134,7 +135,7 @@ function setTaiXiu_user(phien, dice){
 							return !!objTopT.taixiu;
 						});
 						var topChanLe = results.filter(function(objTopC){
-							return !objTopT.taixiu;
+							return !objTopC.taixiu;
 						});
 						topTaiXiu.sort(function(a, b){
 							return b.betwin-a.betwin;
