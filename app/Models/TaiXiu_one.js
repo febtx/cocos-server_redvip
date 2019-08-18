@@ -1,5 +1,4 @@
 
-const AutoIncrement = require('mongoose-auto-increment-reworked').MongooseAutoIncrementID;
 const mongoose      = require('mongoose');
 
 const Schema = new mongoose.Schema({

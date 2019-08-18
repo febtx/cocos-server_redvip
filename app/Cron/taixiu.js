@@ -13,7 +13,6 @@ var TXCuocOne   = require('../Models/TaiXiu_one');
 // Hũ game
 var HU_game    = require('../Models/HU');
 
-var adminSee   = require('./taixiu/admin');
 var bot        = require('./taixiu/bot');
 var botList    = [];
 
@@ -23,6 +22,54 @@ var gameLoop   = null;
 
 function init(obj){
 	io = obj;
+
+	io.taixiu = {
+		chanle: {
+			red_chan: 0,
+			red_le: 0,
+			red_player_chan: 0,
+			red_player_le: 0,
+			xu_chan: 0,
+			xu_le: 0,
+			xu_player_chan: 0,
+			xu_player_le: 0,
+		},
+		taixiu: {
+			red_player_tai: 0,
+			red_player_xiu: 0,
+			red_tai: 0,
+			red_xiu: 0,
+			xu_player_tai: 0,
+			xu_player_xiu: 0,
+			xu_tai: 0,
+			xu_xiu: 0,
+		}
+	};
+
+	io.taixiuAdmin = {
+		chanle: {
+			red_chan: 0,
+			red_le: 0,
+			red_player_chan: 0,
+			red_player_le: 0,
+			xu_chan: 0,
+			xu_le: 0,
+			xu_player_chan: 0,
+			xu_player_le: 0,
+		},
+		taixiu: {
+			red_player_tai: 0,
+			red_player_xiu: 0,
+			red_tai: 0,
+			red_xiu: 0,
+			xu_player_tai: 0,
+			xu_player_xiu: 0,
+			xu_tai: 0,
+			xu_xiu: 0,
+		},
+		list: []
+	};
+
 	playGame();
 }
 
@@ -147,6 +194,8 @@ function setTaiXiu_user(phien, dice){
 						var top10CL = topChanLe.slice(0, 10);
 						results = [...top10TX, ...top10CL];
 
+						results = Helpers.shuffle(results);
+
 						Promise.all(results.map(function(obj){
 							var action = new Promise((resolve, reject) => {
 								UserInfo.findOne({id: obj.uid}, 'name', function(err, users){
@@ -206,76 +255,73 @@ var chanle_xu_player_chan_temp = new Array();
 var chanle_xu_player_le_temp   = new Array();
 
 function thongtin_thanhtoan(game_id, dice = false){
+	if (dice) {
+		TaiXiu_red_tong_tai   = 0;
+		TaiXiu_red_tong_xiu   = 0;
+		taixiu_red_player_tai = 0;
+		taixiu_red_player_xiu = 0;
+		taixiu_red_player_tai_temp = [];
+		taixiu_red_player_xiu_temp = [];
 
-	TaiXiu_red_tong_tai   = 0;
-	TaiXiu_red_tong_xiu   = 0;
-	taixiu_red_player_tai = 0;
-	taixiu_red_player_xiu = 0;
-	taixiu_red_player_tai_temp = [];
-	taixiu_red_player_xiu_temp = [];
+		TaiXiu_xu_tong_tai   = 0;
+		TaiXiu_xu_tong_xiu   = 0;
+		taixiu_xu_player_tai = 0;
+		taixiu_xu_player_xiu = 0;
+		taixiu_xu_player_tai_temp = [];
+		taixiu_xu_player_xiu_temp = [];
 
-	TaiXiu_xu_tong_tai   = 0;
-	TaiXiu_xu_tong_xiu   = 0;
-	taixiu_xu_player_tai = 0;
-	taixiu_xu_player_xiu = 0;
-	taixiu_xu_player_tai_temp = [];
-	taixiu_xu_player_xiu_temp = [];
+		ChanLe_red_tong_chan   = 0;
+		ChanLe_red_tong_le     = 0;
+		chanle_red_player_chan = 0;
+		chanle_red_player_le   = 0;
+		chanle_red_player_chan_temp = [];
+		chanle_red_player_le_temp   = [];
 
-	ChanLe_red_tong_chan   = 0;
-	ChanLe_red_tong_le     = 0;
-	chanle_red_player_chan = 0;
-	chanle_red_player_le   = 0;
-	chanle_red_player_chan_temp = [];
-	chanle_red_player_le_temp   = [];
-
-	ChanLe_xu_tong_chan   = 0;
-	ChanLe_xu_tong_le     = 0;
-	chanle_xu_player_chan = 0;
-	chanle_xu_player_le   = 0;
-	chanle_xu_player_chan_temp = [];
-	chanle_xu_player_le_temp   = [];
-
-	TXCuoc.find({phien:game_id}, null, {sort:{'_id':-1}}, function(err, list) {
-		if(list.length){
-			adminSee(io, list);
-			Promise.all(list.map(function(obj){
-				if (obj.taixiu == true && obj.red == true && obj.select == true){           // Tổng Red Tài
-					TaiXiu_red_tong_tai += obj.bet;
-					if(taixiu_red_player_tai_temp[obj.name] === void 0) taixiu_red_player_tai_temp[obj.name] = 1;
-					var test = "MrT"
-				} else if (obj.taixiu == true && obj.red == true && obj.select == false) {  // Tổng Red Xỉu
-					TaiXiu_red_tong_xiu += obj.bet;
-					if(taixiu_red_player_xiu_temp[obj.name] === void 0) taixiu_red_player_xiu_temp[obj.name] = 1;
-					var test = "MrT"
-				} else if (obj.taixiu == true && obj.red == false && obj.select == true) {  // Tổng Xu Tài
-					TaiXiu_xu_tong_tai += obj.bet;
-					if(taixiu_xu_player_tai_temp[obj.name] === void 0) taixiu_xu_player_tai_temp[obj.name] = 1;
-					var test = "MrT"
-				} else if (obj.taixiu == true && obj.red == false && obj.select == false) { // Tổng Xu Xỉu
-					TaiXiu_xu_tong_xiu += obj.bet;
-					if(taixiu_xu_player_xiu_temp[obj.name] === void 0) taixiu_xu_player_xiu_temp[obj.name] = 1;
-					var test = "MrT"
-				} else if (obj.taixiu == false && obj.red == true && obj.select == true) {  // Tổng Red Chẵn
-					ChanLe_red_tong_chan += obj.bet;
-					if(chanle_red_player_chan_temp[obj.name] === void 0) chanle_red_player_chan_temp[obj.name] = 1;
-					var test = "MrT"
-				} else if (obj.taixiu == false && obj.red == true && obj.select == false) {  // Tổng Red Lẻ
-					ChanLe_red_tong_le += obj.bet;
-					if(chanle_red_player_le_temp[obj.name] === void 0) chanle_red_player_le_temp[obj.name] = 1;
-					var test = "MrT"
-				} else if (obj.taixiu == false && obj.red == false && obj.select == true) {  // Tổng xu Chẵn
-					ChanLe_xu_tong_chan += obj.bet;
-					if(chanle_xu_player_chan_temp[obj.name] === void 0) chanle_xu_player_chan_temp[obj.name] = 1;
-					var test = "MrT"
-				} else if (obj.taixiu == false && obj.red == false && obj.select == false) { // Tổng xu Lẻ
-					ChanLe_xu_tong_le += obj.bet;
-					if(chanle_xu_player_le_temp[obj.name] === void 0) chanle_xu_player_le_temp[obj.name] = 1;
-					var test = "MrT"
-				}
-				return test
-			}))
-			.then(function(arrayOfResults) {
-				if (dice) {
+		ChanLe_xu_tong_chan   = 0;
+		ChanLe_xu_tong_le     = 0;
+		chanle_xu_player_chan = 0;
+		chanle_xu_player_le   = 0;
+		chanle_xu_player_chan_temp = [];
+		chanle_xu_player_le_temp   = [];
+		TXCuoc.find({phien:game_id}, null, {sort:{'_id':-1}}, function(err, list) {
+			if(list.length){
+				Promise.all(list.map(function(obj){
+					if (obj.taixiu == true && obj.red == true && obj.select == true){           // Tổng Red Tài
+						TaiXiu_red_tong_tai += obj.bet;
+						if(taixiu_red_player_tai_temp[obj.name] === void 0) taixiu_red_player_tai_temp[obj.name] = 1;
+						var test = "MrT"
+					} else if (obj.taixiu == true && obj.red == true && obj.select == false) {  // Tổng Red Xỉu
+						TaiXiu_red_tong_xiu += obj.bet;
+						if(taixiu_red_player_xiu_temp[obj.name] === void 0) taixiu_red_player_xiu_temp[obj.name] = 1;
+						var test = "MrT"
+					} else if (obj.taixiu == true && obj.red == false && obj.select == true) {  // Tổng Xu Tài
+						TaiXiu_xu_tong_tai += obj.bet;
+						if(taixiu_xu_player_tai_temp[obj.name] === void 0) taixiu_xu_player_tai_temp[obj.name] = 1;
+						var test = "MrT"
+					} else if (obj.taixiu == true && obj.red == false && obj.select == false) { // Tổng Xu Xỉu
+						TaiXiu_xu_tong_xiu += obj.bet;
+						if(taixiu_xu_player_xiu_temp[obj.name] === void 0) taixiu_xu_player_xiu_temp[obj.name] = 1;
+						var test = "MrT"
+					} else if (obj.taixiu == false && obj.red == true && obj.select == true) {  // Tổng Red Chẵn
+						ChanLe_red_tong_chan += obj.bet;
+						if(chanle_red_player_chan_temp[obj.name] === void 0) chanle_red_player_chan_temp[obj.name] = 1;
+						var test = "MrT"
+					} else if (obj.taixiu == false && obj.red == true && obj.select == false) {  // Tổng Red Lẻ
+						ChanLe_red_tong_le += obj.bet;
+						if(chanle_red_player_le_temp[obj.name] === void 0) chanle_red_player_le_temp[obj.name] = 1;
+						var test = "MrT"
+					} else if (obj.taixiu == false && obj.red == false && obj.select == true) {  // Tổng xu Chẵn
+						ChanLe_xu_tong_chan += obj.bet;
+						if(chanle_xu_player_chan_temp[obj.name] === void 0) chanle_xu_player_chan_temp[obj.name] = 1;
+						var test = "MrT"
+					} else if (obj.taixiu == false && obj.red == false && obj.select == false) { // Tổng xu Lẻ
+						ChanLe_xu_tong_le += obj.bet;
+						if(chanle_xu_player_le_temp[obj.name] === void 0) chanle_xu_player_le_temp[obj.name] = 1;
+						var test = "MrT"
+					}
+					return test
+				}))
+				.then(function(arrayOfResults) {
 					var TaiXiu_tong_red_lech = Math.abs(TaiXiu_red_tong_tai  - TaiXiu_red_tong_xiu);
 					var TaiXiu_tong_xu_lech  = Math.abs(TaiXiu_xu_tong_tai   - TaiXiu_xu_tong_xiu);
 					var ChanLe_tong_red_lech = Math.abs(ChanLe_red_tong_chan - ChanLe_red_tong_le);
@@ -768,42 +814,39 @@ function thongtin_thanhtoan(game_id, dice = false){
 							setTaiXiu_user(game_id, dice);
 						//})
 					});
-				}else{
-					var home = {taixiu:{taixiu:{red_tai: TaiXiu_red_tong_tai,red_xiu: TaiXiu_red_tong_xiu}}};
-					var temp_data = {taixiu:{taixiu:{red_tai: TaiXiu_red_tong_tai,red_xiu: TaiXiu_red_tong_xiu,xu_tai: TaiXiu_xu_tong_tai,xu_xiu: TaiXiu_xu_tong_xiu,red_player_tai: Object.keys(taixiu_red_player_tai_temp).length,red_player_xiu: Object.keys(taixiu_red_player_xiu_temp).length,xu_player_tai: Object.keys(taixiu_xu_player_tai_temp).length,xu_player_xiu: Object.keys(taixiu_xu_player_xiu_temp).length,},chanle:{red_chan: ChanLe_red_tong_chan,red_le: ChanLe_red_tong_le,xu_chan: ChanLe_xu_tong_chan,xu_le: ChanLe_xu_tong_le,red_player_chan: Object.keys(chanle_red_player_chan_temp).length,red_player_le: Object.keys(chanle_red_player_le_temp).length,xu_player_chan: Object.keys(chanle_xu_player_chan_temp).length,xu_player_le: Object.keys(chanle_xu_player_le_temp).length}}};
+				}, reason => {
+				});
+			}else if (dice) {
+				playGame();
+			}
+		});
+	}else{
 
-					Promise.all(Object.values(io.users).map(function(users){
-						Promise.all(users.map(function(client){
-							if (client.gameEvent !== void 0 && client.gameEvent.viewTaiXiu !== void 0 && client.gameEvent.viewTaiXiu){
-								client.red(temp_data);
-							}else if(client.scene == "home"){
-								client.red(home);
-							}
-						}));
-					}));
-
-					/**
-					var temp_dataA = {taixiu:{taixiu:{red_tai: TaiXiu_red_tong_tai,red_xiu: TaiXiu_red_tong_xiu,xu_tai: TaiXiu_xu_tong_tai,xu_xiu: TaiXiu_xu_tong_xiu,red_player_tai: Object.keys(taixiu_red_player_tai_temp).length,red_player_xiu: Object.keys(taixiu_red_player_xiu_temp).length,xu_player_tai: Object.keys(taixiu_xu_player_tai_temp).length,xu_player_xiu: Object.keys(taixiu_xu_player_xiu_temp).length,},chanle:{red_chan: ChanLe_red_tong_chan,red_le: ChanLe_red_tong_le,xu_chan: ChanLe_xu_tong_chan,xu_le: ChanLe_xu_tong_le,red_player_chan: Object.keys(chanle_red_player_chan_temp).length,red_player_le: Object.keys(chanle_red_player_le_temp).length,xu_player_chan: Object.keys(chanle_xu_player_chan_temp).length,xu_player_le: Object.keys(chanle_xu_player_le_temp).length}, list:list}};
-
-					Promise.all(Object.values(io.admins).map(function(admin){
-						Promise.all(admin.map(function(client){
-							if (client.gameEvent !== void 0 && client.gameEvent.viewTaiXiu !== void 0 && client.gameEvent.viewTaiXiu)
-								client.red(temp_dataA); // list
-						}));
-					}));
-					*/
-
-					if (!(io.TaiXiu_time%10)) {
-						// Khách
-						io.sendAllClient(home);
-					}
+		// Users
+		var home = {taixiu:{taixiu:{red_tai: io.taixiu.taixiu.red_tai, red_xiu: io.taixiu.taixiu.red_xiu}}};
+		Promise.all(Object.values(io.users).map(function(users){
+			Promise.all(users.map(function(client){
+				if (client.gameEvent !== void 0 && client.gameEvent.viewTaiXiu !== void 0 && client.gameEvent.viewTaiXiu){
+					client.red({taixiu: io.taixiu});
+				}else if(client.scene == "home"){
+					client.red(home);
 				}
-			}, reason => {
-			});
-		}else if (dice) {
-			playGame();
+			}));
+		}));
+
+		// Admin
+		Promise.all(Object.values(io.admins).map(function(admin){
+			Promise.all(admin.map(function(client){
+				if (client.gameEvent !== void 0 && client.gameEvent.viewTaiXiu !== void 0 && client.gameEvent.viewTaiXiu)
+					client.red({taixiu: io.taixiuAdmin});
+			}));
+		}));
+
+		// Khách
+		if (!(io.TaiXiu_time%10)) {
+			io.sendAllClient(home);
 		}
-	});
+	}
 }
 
 function playGame(){
@@ -850,6 +893,54 @@ function playGame(){
 						}));
 					}
 				});
+
+				io.taixiu = {
+					chanle: {
+						red_chan: 0,
+						red_le: 0,
+						red_player_chan: 0,
+						red_player_le: 0,
+						xu_chan: 0,
+						xu_le: 0,
+						xu_player_chan: 0,
+						xu_player_le: 0,
+					},
+					taixiu: {
+						red_player_tai: 0,
+						red_player_xiu: 0,
+						red_tai: 0,
+						red_xiu: 0,
+						xu_player_tai: 0,
+						xu_player_xiu: 0,
+						xu_tai: 0,
+						xu_xiu: 0,
+					}
+				};
+
+				io.taixiuAdmin = {
+					chanle: {
+						red_chan: 0,
+						red_le: 0,
+						red_player_chan: 0,
+						red_player_le: 0,
+						xu_chan: 0,
+						xu_le: 0,
+						xu_player_chan: 0,
+						xu_player_le: 0,
+					},
+					taixiu: {
+						red_player_tai: 0,
+						red_player_xiu: 0,
+						red_tai: 0,
+						red_xiu: 0,
+						xu_player_tai: 0,
+						xu_player_xiu: 0,
+						xu_tai: 0,
+						xu_xiu: 0,
+					},
+					list: []
+				};
+
 				var config = require('../../config/taixiu.json');
 				if (config.bot) {
 					// lấy danh sách tài khoản bot
@@ -867,7 +958,7 @@ function playGame(){
 					for (var i = 0; i < userCuoc; i++) {
 						var dataT = botList[i];
 						if (!!dataT) {
-							bot.bet(dataT, io.TaiXiu_phien);
+							bot.bet(dataT, io);
 							botList.splice(i, 1); // Xoá bot đã đặt tránh trùng lặp
 						}
 					}

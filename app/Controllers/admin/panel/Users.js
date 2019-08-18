@@ -1,7 +1,9 @@
 
-const get_users  = require('./user/get_users');
-const get_info   = require('./user/get_info');
-const updateUser = require('./user/updateUser');
+var get_users  = require('./user/get_users');
+var get_info   = require('./user/get_info');
+var updateUser = require('./user/updateUser');
+var remove     = require('./user/remove');
+var history    = require('./user/history');
 
 module.exports = function (client, data) {
 	if (void 0 !== data.get_info) {
@@ -12,5 +14,11 @@ module.exports = function (client, data) {
 	}
 	if (void 0 !== data.update) {
 		updateUser(client, data.update)
+	}
+	if (!!data.remove) {
+		remove(client, data.remove)
+	}
+	if (!!data.history) {
+		history(client, data.history)
 	}
 }

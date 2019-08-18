@@ -1,5 +1,6 @@
 
 module.exports = function(client) {
-	var config = require('../../../../../config/taixiu.json');
-	client.red({sys:{txBot: config.bot}});
+	var configTX = require('../../../../../config/taixiu.json');
+	var configBC = require('../../../../../config/baucua.json');
+	client.red({sys:{txbot: configTX.bot, bcbot: configBC.bot}});
 }

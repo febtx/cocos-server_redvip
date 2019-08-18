@@ -228,15 +228,21 @@ module.exports = function() {
 			*/
 			Promise.all(result[0].map(function(users, index){
 				if (index == 0) {
+					TaiXiu_User.findOneAndUpdate({'_id': users._id}, {$set:{'tLineWinHQ':users.top, 'tLineWinHQGift':500000}}, function(err, ok){});
+					UserInfo.findOneAndUpdate({'id': users.uid}, {$inc:{'red':500000}}, function(err, ok){});
+				}else if (index == 1) {
+					TaiXiu_User.findOneAndUpdate({'_id': users._id}, {$set:{'tLineWinHQ':users.top, 'tLineWinHQGift':400000}}, function(err, ok){});
+					UserInfo.findOneAndUpdate({'id': users.uid}, {$inc:{'red':400000}}, function(err, ok){});
+				}else if (index == 2) {
 					TaiXiu_User.findOneAndUpdate({'_id': users._id}, {$set:{'tLineWinHQ':users.top, 'tLineWinHQGift':300000}}, function(err, ok){});
 					UserInfo.findOneAndUpdate({'id': users.uid}, {$inc:{'red':300000}}, function(err, ok){});
-				}else if (index == 1) {
+				}else if (index == 3) {
 					TaiXiu_User.findOneAndUpdate({'_id': users._id}, {$set:{'tLineWinHQ':users.top, 'tLineWinHQGift':200000}}, function(err, ok){});
 					UserInfo.findOneAndUpdate({'id': users.uid}, {$inc:{'red':200000}}, function(err, ok){});
-				}else if (index == 2) {
+				}else if (index == 4) {
 					TaiXiu_User.findOneAndUpdate({'_id': users._id}, {$set:{'tLineWinHQ':users.top, 'tLineWinHQGift':100000}}, function(err, ok){});
 					UserInfo.findOneAndUpdate({'id': users.uid}, {$inc:{'red':100000}}, function(err, ok){});
-				}else if (index >= 3 && index < 10) {
+				}else if (index >= 5 && index < 10) {
 					TaiXiu_User.findOneAndUpdate({'_id': users._id}, {$set:{'tLineWinHQ':users.top, 'tLineWinHQGift':50000}}, function(err, ok){});
 					UserInfo.findOneAndUpdate({'id': users.uid}, {$inc:{'red':50000}}, function(err, ok){});
 				}else if (index >= 10 && index < 20) {
@@ -247,15 +253,21 @@ module.exports = function() {
 
 			Promise.all(result[1].map(function(usersL, indexL){
 				if (indexL == 0) {
+					TaiXiu_User.findOneAndUpdate({'_id': usersL._id}, {$set:{'tLineLostHQ':usersL.top, 'tLineLostHQGift':500000}}, function(err, ok){});
+					UserInfo.findOneAndUpdate({'id': usersL.uid}, {$inc:{'red':500000}}, function(err, ok){});
+				}else if (indexL == 1) {
+					TaiXiu_User.findOneAndUpdate({'_id': usersL._id}, {$set:{'tLineLostHQ':usersL.top, 'tLineLostHQGift':400000}}, function(err, ok){});
+					UserInfo.findOneAndUpdate({'id': usersL.uid}, {$inc:{'red':400000}}, function(err, ok){});
+				}else if (indexL == 2) {
 					TaiXiu_User.findOneAndUpdate({'_id': usersL._id}, {$set:{'tLineLostHQ':usersL.top, 'tLineLostHQGift':300000}}, function(err, ok){});
 					UserInfo.findOneAndUpdate({'id': usersL.uid}, {$inc:{'red':300000}}, function(err, ok){});
-				}else if (indexL == 1) {
+				}else if (indexL == 3) {
 					TaiXiu_User.findOneAndUpdate({'_id': usersL._id}, {$set:{'tLineLostHQ':usersL.top, 'tLineLostHQGift':200000}}, function(err, ok){});
 					UserInfo.findOneAndUpdate({'id': usersL.uid}, {$inc:{'red':200000}}, function(err, ok){});
-				}else if (indexL == 2) {
+				}else if (indexL == 4) {
 					TaiXiu_User.findOneAndUpdate({'_id': usersL._id}, {$set:{'tLineLostHQ':usersL.top, 'tLineLostHQGift':100000}}, function(err, ok){});
 					UserInfo.findOneAndUpdate({'id': usersL.uid}, {$inc:{'red':100000}}, function(err, ok){});
-				}else if (indexL >= 3 && indexL < 10) {
+				}else if (indexL >= 5 && indexL < 10) {
 					TaiXiu_User.findOneAndUpdate({'_id': usersL._id}, {$set:{'tLineLostHQ':usersL.top, 'tLineLostHQGift':50000}}, function(err, ok){});
 					UserInfo.findOneAndUpdate({'id': usersL.uid}, {$inc:{'red':50000}}, function(err, ok){});
 				}else if (indexL >= 10 && indexL < 20) {

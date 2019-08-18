@@ -149,11 +149,18 @@ module.exports = function(client, data){
 
 						var toX      = dataHu.toX;
 						var balans   = dataHu.balans;
-
+						/**
 						// Tạo kết quả 3 Hàng đầu
 						var celSS = [
 							random_cel3(), random_cel2(), random_cel2(),
 							random_cel2(), 2,             1,
+							1,             0,             0,
+						]; // Super
+						*/
+
+						var celSS = [
+							random_cel2(), random_cel2(), random_cel2(),
+							random_cel2(), 1,             1,
 							1,             0,             0,
 						]; // Super
 

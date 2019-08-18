@@ -1,6 +1,5 @@
 
 var BauCua_cuoc = require('../../../Models/BauCua/BauCua_cuoc');
-var BauCua_temp = require('../../../Models/BauCua/BauCua_temp');
 
 var UserInfo    = require('../../../Models/UserInfo');
 
@@ -42,6 +41,36 @@ module.exports = function(client, data){
 					var data = {};
 					UserInfo.findOneAndUpdate({id:client.UID}, red ? {$inc:{red:-cuoc}} : {$inc:{xu:-cuoc}}, function(err, cat){});
 					BauCua_cuoc.findOne({uid: client.UID, phien: client.redT.BauCua_phien, red:red}, function(err, checkOne) {
+						var io = client.redT;
+						if (red) {
+							if (linhVat == 0) {
+								io.baucua.info.redHuou += cuoc;
+							}else if (linhVat == 1) {
+								io.baucua.info.redBau += cuoc;
+							}else if (linhVat == 2) {
+								io.baucua.info.redGa += cuoc;
+							}else if (linhVat == 3) {
+								io.baucua.info.redCa += cuoc;
+							}else if (linhVat == 4) {
+								io.baucua.info.redCua += cuoc;
+							}else if (linhVat == 5) {
+								io.baucua.info.redTom += cuoc;
+							}
+						}else{
+							if (linhVat == 0) {
+								io.baucua.info.xuHuou += cuoc;
+							}else if (linhVat == 1) {
+								io.baucua.info.xuBau += cuoc;
+							}else if (linhVat == 2) {
+								io.baucua.info.xuGa += cuoc;
+							}else if (linhVat == 3) {
+								io.baucua.info.xuCa += cuoc;
+							}else if (linhVat == 4) {
+								io.baucua.info.xuCua += cuoc;
+							}else if (linhVat == 5) {
+								io.baucua.info.xuTom += cuoc;
+							}
+						}
 						if (checkOne){
 							var update = {};
 							update[linhVat] = cuoc;
@@ -57,6 +86,12 @@ module.exports = function(client, data){
 									}));
 								})
 							});
+
+							Promise.all(io.baucua.ingame.map(function(uOld){
+								if (uOld.uid == client.UID && uOld.red == red) {
+									uOld[linhVat] += cuoc;
+								}
+							}));
 						}else{
 							var create = {uid: client.UID, name: client.profile.name, phien: client.redT.BauCua_phien, red:red, time: new Date()};
 							create[linhVat] = cuoc;
@@ -66,13 +101,11 @@ module.exports = function(client, data){
 							Promise.all(client.redT.users[client.UID].map(function(obj){
 								obj.red(dataT);
 							}));
+
+							var addList = {uid:client.UID, name:client.profile.name, red:red, "0":0, "1":0, "2":0, "3":0, "4":0, "5":0};
+							addList[linhVat] = cuoc;
+							io.baucua.ingame.unshift(addList);
 						}
-					})
-					BauCua_temp.findOne({}, '_id', function(err, temp) {
-						var map = (red ? 'red' : 'xu') + '.' + linhVat;
-						var update = {};
-						update[map] = cuoc;
-						BauCua_temp.findOneAndUpdate({'_id': temp._id}, {$inc:update}, function (err, cat){});
 					})
 				}
 			});

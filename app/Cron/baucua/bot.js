@@ -2,6 +2,8 @@
 var TXCuoc      = require('../../Models/TaiXiu_cuoc');
 var TXCuocOne   = require('../../Models/TaiXiu_one');
 
+var BauCua_cuoc = require('../../Models/BauCua/BauCua_cuoc');
+
 var UserInfo    = require('../../Models/UserInfo');
 
 /**
@@ -60,19 +62,45 @@ var list = function(){
 /**
  * Cược
 */
-// Tài Xỉu RED
-var bet = function(bot, io, taixiu = true, red = true){
-	var cuoc   = random();
-	var select = !!((Math.random()*2)>>0);
-	if (select) {
-		io.taixiu.taixiu.red_tai        += cuoc;
-		io.taixiu.taixiu.red_player_tai += 1;
+
+// Bầu cua RED
+var bet = function(bot, io, red = true){
+	var cuoc = random();
+	var userCuoc = (Math.random()*6)>>0;
+
+	if (red) {
+		if (userCuoc == 0) {
+			io.baucua.info.redHuou += cuoc;
+		}else if (userCuoc == 1) {
+			io.baucua.info.redBau  += cuoc;
+		}else if (userCuoc == 2) {
+			io.baucua.info.redGa   += cuoc;
+		}else if (userCuoc == 3) {
+			io.baucua.info.redCa   += cuoc;
+		}else if (userCuoc == 4) {
+			io.baucua.info.redCua  += cuoc;
+		}else if (userCuoc == 5) {
+			io.baucua.info.redTom  += cuoc;
+		}
 	}else{
-		io.taixiu.taixiu.red_xiu        += cuoc;
-		io.taixiu.taixiu.red_player_xiu += 1;
+		if (userCuoc == 0) {
+			io.baucua.info.xuHuou += cuoc;
+		}else if (userCuoc == 1) {
+			io.baucua.info.xuBau  += cuoc;
+		}else if (userCuoc == 2) {
+			io.baucua.info.xuGa   += cuoc;
+		}else if (userCuoc == 3) {
+			io.baucua.info.xuCa   += cuoc;
+		}else if (userCuoc == 4) {
+			io.baucua.info.xuCua  += cuoc;
+		}else if (userCuoc == 5) {
+			io.baucua.info.xuTom  += cuoc;
+		}
 	}
-	TXCuocOne.create({uid: bot.id, phien: io.TaiXiu_phien, taixiu:taixiu, select:select, red:red, bet:cuoc, type: true});
-	TXCuoc.create({uid:bot.id, name:bot.name, phien: io.TaiXiu_phien, bet:cuoc, taixiu:taixiu, select:select, red:red, type: true, time:new Date()}, function(err, cat){});
+
+	var create = {uid: bot.id, name: bot.name, phien: io.BauCua_phien, red:red, time: new Date()};
+	create[userCuoc] = cuoc;
+	BauCua_cuoc.create(create);
 }
 
 module.exports = {
