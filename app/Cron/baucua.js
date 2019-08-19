@@ -193,11 +193,11 @@ function thongtin_thanhtoan(dice = null){
 							client.red(status);
 						}));
 					}
-					return {users: cuoc.name, bet: TienThang};
+					return {users: cuoc.name, bet: TienThang, red: cuoc.red};
 				}))
 				.then(function(arrayOfResults) {
 					Promise.all(arrayOfResults.filter(function(st){
-						return !!st;
+						return bet.red && bet.bet > 0;
 					}))
 					.then(result => {
 						if (result.length) {

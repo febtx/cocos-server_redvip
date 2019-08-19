@@ -93,7 +93,7 @@ function rut(client, data){
 				user.red     = user.red*1 + red;
 				user.ketSat -= red;
 				user.save();
-				client.red({notice:{title:'THÀNH CÔNG', text: 'Rút thành công ' + Helper.numberWithCommas(red) + ' RED từ két sắt.!!'}, user:{red: cat.red*1+red, ketSat: cat.ketSat-red}});
+				client.red({notice:{title:'THÀNH CÔNG', text: 'Rút thành công ' + Helper.numberWithCommas(red) + ' RED từ két sắt.!!'}, user:{red: user.red, ketSat: user.ketSat}});
 			}
 		});
 	}

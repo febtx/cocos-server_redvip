@@ -16,7 +16,7 @@ module.exports = function(client, data) {
 			get_data(client);
 		}
 		if (!!data.clear){
-			clear(client);
+			clear();
 		}
 	}
 }

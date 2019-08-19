@@ -56,16 +56,10 @@ var miniPokerXu        = require('../../../../Models/miniPoker/miniPokerXu');
 var VuongQuocRed_red   = require('../../../../Models/VuongQuocRed/VuongQuocRed_red');
 var VuongQuocRed_xu    = require('../../../../Models/VuongQuocRed/VuongQuocRed_xu');
 
-module.exports = function(client) {
+module.exports = function() {
 	// OTP
 	var otpTime = new Date()-180000;      // 3 phút
 	OTP.deleteMany({$or:[{'active':true}, {'date':{$lt: otpTime}}]}).exec();
-
-	/**
-	// Mua Xu
-	var MuaXuTime = new Date()-604800000; // 7 ngày
-	MuaXu.deleteMany({'time':{$lt: MuaXuTime}}).exec();
-	*/
 
 	// GiftCode
 	var GiftCodeTime = new Date();     // GiftCode hết hạn
@@ -75,15 +69,58 @@ module.exports = function(client) {
 	TaiXiu_phien.findOne({}, 'id', {sort:{'_id': -1}}, function(err, data){
 		if (!!data && data.id > 200) {
 			var phien = data.id-200;
+			TaiXiu_phien.deleteMany({'id':{$lt: phien}}).exec();
 			TaiXiu_one.deleteMany({'phien':{$lt: phien}}).exec();
 			TaiXiu_cuoc.deleteMany({'phien':{$lt: phien}}).exec();
 		}
 	});
 	TaiXiu_chat.deleteMany({}).exec();
 
-	/**
 	// AngryBirds
-	AngryBirds_red
-	AngryBirds_xu
-	*/
+	var timeDay = new Date()-86400000;
+	AngryBirds_red.deleteMany({'time':{$lt: timeDay}}).exec();
+	AngryBirds_xu.deleteMany({'time': {$lt: timeDay}}).exec();
+
+	// Bầu Cua
+	BauCua_phien.findOne({}, 'id', {sort:{'_id': -1}}, function(err, data){
+		if (!!data && data.id > 200) {
+			var phien = data.id-200;
+			BauCua_phien.deleteMany({'id':{$lt: phien}}).exec();
+			BauCua_cuoc.deleteMany({'phien':{$lt: phien}}).exec();
+		}
+	});
+
+	// BigBabol
+	BigBabol_red.deleteMany({'time':{$lt: timeDay}}).exec();
+	BigBabol_xu.deleteMany({'time': {$lt: timeDay}}).exec();
+
+	// Cao Thấp Red
+	CaoThap_red.findOne({}, 'id', {sort:{'_id': -1}}, function(err, data){
+		if (!!data && data.id > 200) {
+			var phien = data.id-200;
+			CaoThap_red.deleteMany({'id':{$lt: phien}}).exec();
+			CaoThap_redbuoc.deleteMany({'id':{$lt: phien}}).exec();
+		}
+	});
+
+	// Cao Thấp Xu
+	CaoThap_xu.findOne({}, 'id', {sort:{'_id': -1}}, function(err, data){
+		if (!!data && data.id > 200) {
+			var phien = data.id-200;
+			CaoThap_xu.deleteMany({'id':{$lt: phien}}).exec();
+			CaoThap_xubuoc.deleteMany({'id':{$lt: phien}}).exec();
+		}
+	});
+
+	// Mini3Cay
+	Mini3Cay_red.deleteMany({'time':{$lt: timeDay}}).exec();
+	Mini3Cay_xu.deleteMany({'time': {$lt: timeDay}}).exec();
+
+	// miniPoker
+	miniPokerRed.deleteMany({'time':{$lt: timeDay}}).exec();
+	miniPokerXu.deleteMany({'time': {$lt: timeDay}}).exec();
+
+	// VuongQuocRed
+	VuongQuocRed_red.deleteMany({'time':{$lt: timeDay}}).exec();
+	VuongQuocRed_xu.deleteMany({'time': {$lt: timeDay}}).exec();
 }

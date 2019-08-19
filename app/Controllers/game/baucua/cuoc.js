@@ -86,7 +86,7 @@ module.exports = function(client, data){
 									return (data[o] = cat[i] + (i == linhVat ? cuoc : 0));
 								}))
 								.then(result => {
-									var dataT = {mini:{baucua:{data: data}}, user:red ? {red: user.red-cuoc, xu:user.xu} : {red: user.red, xu:user.xu-cuoc}};
+									var dataT = {mini:{baucua:{data: data}}, user:{red: user.red, xu:user.xu}};
 									Promise.all(client.redT.users[client.UID].map(function(obj){
 										obj.red(dataT);
 									}));
@@ -103,7 +103,7 @@ module.exports = function(client, data){
 							create[linhVat] = cuoc;
 							BauCua_cuoc.create(create);
 							data[tab[linhVat]] = cuoc;
-							var dataT = {mini:{baucua:{data: data}}, user:red ? {red: user.red-cuoc, xu:user.xu} : {red: user.red, xu:user.xu-cuoc}};
+							var dataT = {mini:{baucua:{data: data}}, user:{red: user.red, xu:user.xu}};
 							Promise.all(client.redT.users[client.UID].map(function(obj){
 								obj.red(dataT);
 							}));
