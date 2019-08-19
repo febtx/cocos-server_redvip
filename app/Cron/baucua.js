@@ -197,7 +197,7 @@ function thongtin_thanhtoan(dice = null){
 				}))
 				.then(function(arrayOfResults) {
 					Promise.all(arrayOfResults.filter(function(st){
-						return bet.red && bet.bet > 0;
+						return (st.red && st.bet > 0);
 					}))
 					.then(result => {
 						if (result.length) {
