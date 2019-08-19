@@ -63,7 +63,7 @@ function thongtin_thanhtoan(dice = null){
 			}
 		}
 		var phien = io.BauCua_phien-1;
-		BauCua_temp.findOneAndUpdate({}, {$inc: updateLog}, function(err,cat){});
+		BauCua_temp.updateOne({}, {$inc: updateLog}).exec();
 		BauCua_cuoc.find({phien: phien}, {}, function(err, list) {
 			if (list.length) {
 				Promise.all(list.map(function(cuoc){
@@ -144,6 +144,10 @@ function thongtin_thanhtoan(dice = null){
 					var update     = {};
 					var updateGame = {};
 
+					cuoc.thanhtoan = true;
+					cuoc.betwin    = TongThang;
+					cuoc.save();
+
 					if (cuoc.red) {
 						//RED
 						if (TongThang > 0) {
@@ -158,9 +162,8 @@ function thongtin_thanhtoan(dice = null){
 
 						update['redPlay'] = updateGame['redPlay'] = tongDat;
 
-						var active1 = UserInfo.findOneAndUpdate({id:cuoc.uid}, {$inc:update}).exec();
-						var active2 = BauCua_cuoc.findOneAndUpdate({_id: cuoc._id.toString()}, {$set:{thanhtoan: true, betwin:TongThang}}).exec();
-						var active3 = BauCua_user.findOneAndUpdate({uid: cuoc.uid}, {$inc:updateGame}).exec();
+						UserInfo.updateOne({id:cuoc.uid}, {$inc:update}).exec();
+						BauCua_user.updateOne({uid: cuoc.uid}, {$inc:updateGame}).exec();
 					}else{
 						//XU
 						if (TongThang > 0) {
@@ -177,9 +180,8 @@ function thongtin_thanhtoan(dice = null){
 
 						update['xuPlay'] = updateGame['xuPlay'] = tongDat;
 
-						var active1 = UserInfo.findOneAndUpdate({id:cuoc.uid}, {$inc:update}).exec();
-						var active2 = BauCua_cuoc.findOneAndUpdate({_id: cuoc._id.toString()}, {$set:{thanhtoan: true, betwin:TongThang}}).exec();
-						var active3 = BauCua_user.findOneAndUpdate({uid: cuoc.uid}, {$inc:updateGame}).exec();
+						UserInfo.updateOne({id:cuoc.uid}, {$inc:update}).exec();
+						BauCua_user.updateOne({uid: cuoc.uid}, {$inc:updateGame}).exec();
 					}
 					if(void 0 !== io.users[cuoc.uid]){
 						if (TongThang > 0) {
@@ -191,13 +193,7 @@ function thongtin_thanhtoan(dice = null){
 							client.red(status);
 						}));
 					}
-					return Promise.all([active1, active2, active3])
-						.then(values => {
-							if (values[1].red && TienThang > 0) {
-								return {users: values[0].name, bet: TienThang};
-							}
-							return void 0;
-						});
+					return {users: cuoc.name, bet: TienThang};
 				}))
 				.then(function(arrayOfResults) {
 					Promise.all(arrayOfResults.filter(function(st){

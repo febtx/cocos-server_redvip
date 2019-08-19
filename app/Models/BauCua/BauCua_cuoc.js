@@ -1,5 +1,5 @@
 
-const mongoose      = require('mongoose');
+const mongoose = require('mongoose');
 
 const Schema = new mongoose.Schema({
 	uid:       {type: String,  required: true},    // ID Người cược
@@ -19,5 +19,7 @@ const Schema = new mongoose.Schema({
 	betwin:    {type: Number,  default: 0},	       // Tiền thắng được
 	time:      {type: Date},                       // thời gian cược
 });
+
+Schema.index({uid: 1}, {background: true});
 
 module.exports = mongoose.model("BauCua_cuoc", Schema);

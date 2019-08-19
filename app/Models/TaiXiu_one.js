@@ -2,8 +2,8 @@
 const mongoose      = require('mongoose');
 
 const Schema = new mongoose.Schema({
-	uid:      {type: String,  required: true},    // ID Người cược
-	phien:    {type: Number,  required: true},    // phiên cược
+	uid:      {type: String,  required: true, index: true},    // ID Người cược 
+	phien:    {type: Number,  required: true, index: true},    // phiên cược
 	bet:      {type: Number,  required: true},    // số tiền cược
 	red:      {type: Boolean, required: true},    // loại tiền (Red        = true, Xu       = false)
 	taixiu:   {type: Boolean, required: true},    // loại game (tài xỉu    = true, chẵn nẻ  = false)

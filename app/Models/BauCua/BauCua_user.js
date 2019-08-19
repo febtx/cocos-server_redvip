@@ -11,5 +11,6 @@ const Schema = new mongoose.Schema({
 	xuPlay:   {type: Number,  default: 0},             // Xu đã chơi
 	thuong:   {type: Number,  default: 0},             // Thưởng Red khi chơi Xu
 });
+Schema.index({uid: 1}, {unique: true, background: true});
 
 module.exports = mongoose.model("BauCua_user", Schema);

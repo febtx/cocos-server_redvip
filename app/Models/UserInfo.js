@@ -3,7 +3,7 @@ const AutoIncrement = require('mongoose-auto-increment-reworked').MongooseAutoIn
 const mongoose      = require('mongoose');
 
 const Schema = new mongoose.Schema({
-	id:         { type: String, required: true, unique: true }, // ID đăng nhập
+	id:         { type: String, required: true, unique: true, index: true}, // ID đăng nhập
 	name:       { type: String, unique: true },    // Tên nhân vật
 	avatar:     {type: String, default: ''},       // Tên avatar
 	joinedOn:   {type: Date, default: new Date()}, // Ngày tham gia
@@ -39,5 +39,7 @@ const Schema = new mongoose.Schema({
 });
 
 Schema.plugin(AutoIncrement.plugin, {modelName: 'UserInfo', field:'UID'});
+
+Schema.index({id: 1}, {background: true});
 
 module.exports = mongoose.model("UserInfo", Schema);

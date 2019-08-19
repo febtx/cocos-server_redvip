@@ -24,7 +24,8 @@ module.exports = function(client, data){
 								client.red({notice:{title:'THẤT BẠI',text:'Mã Gift Code đã qua sử dụng.' + "\n" + ' Hãy thử một mã khác...'}});
 							}else{
 								if (validator.isEmpty(check.type)) {
-									GiftCode.findOneAndUpdate({'_id': check._id.toString()}, {$set:{uid: client.UID}}).exec();
+									check.uid = client.UID;
+									check.save();
 									UserInfo.findOneAndUpdate({id: client.UID}, {$inc:{red:check.red, xu:check.xu}}).exec(function(err, user){
 										client.red({notice:{title:'THÀNH CÔNG',text:'Bạn nhận được: ' + (check.red > 0 ? Helpers.numberWithCommas(check.red) + ' RED' : '') + (check.xu > 0 ? (check.red > 0 ? ' và ' : '') + Helpers.numberWithCommas(check.xu) + ' XU' : '')}, user:{red:user.red*1+check.red, xu:user.xu*1+check.xu}});
 									});
@@ -33,7 +34,8 @@ module.exports = function(client, data){
 										if (!!check2) {
 											client.red({notice:{title:'THẤT BẠI',text:'Bạn đã từng sử dụng họ Gift Code này trước đây...!!'}});
 										}else{
-											GiftCode.findOneAndUpdate({'_id': check._id.toString()}, {$set:{uid: client.UID}}).exec();
+											check.uid = client.UID;
+											check.save();
 											UserInfo.findOneAndUpdate({id: client.UID}, {$inc:{red:check.red, xu:check.xu}}).exec(function(err, user){
 												client.red({notice:{title:'THÀNH CÔNG',text:'Bạn nhận được: ' + (check.red > 0 ? Helpers.numberWithCommas(check.red) + ' RED' : '') + (check.xu > 0 ? (check.red > 0 ? ' và ' : '') + Helpers.numberWithCommas(check.xu) + ' XU' : '')}, user:{red:user.red*1+check.red, xu:user.xu*1+check.xu}});
 											});

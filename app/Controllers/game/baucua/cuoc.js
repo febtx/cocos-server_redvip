@@ -21,6 +21,13 @@ module.exports = function(client, data){
 				if (!user || (red && user.red < cuoc) || (!red && user.xu < cuoc)) {
 					client.red({mini:{baucua:{notice: 'Bạn không đủ ' + (red ? 'RED':'XU') + ' để cược.!!'}}});
 				}else{
+					if(red){
+						user.red -= cuoc;
+					}else{
+						user.xu  -= cuoc;
+					}
+					user.save();
+
 					var dataXu = [
 						"meXuHuou",
 						"meXuBau",
@@ -39,7 +46,6 @@ module.exports = function(client, data){
 					]
 					var tab = red ? dataRed : dataXu;
 					var data = {};
-					UserInfo.findOneAndUpdate({id:client.UID}, red ? {$inc:{red:-cuoc}} : {$inc:{xu:-cuoc}}, function(err, cat){});
 					BauCua_cuoc.findOne({uid: client.UID, phien: client.redT.BauCua_phien, red:red}, function(err, checkOne) {
 						var io = client.redT;
 						if (red) {

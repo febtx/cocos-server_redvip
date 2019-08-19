@@ -27,8 +27,10 @@ module.exports = function(client){
 
 		var tien = vipHT*red; // Tiền thưởng
 		if (tien > 0) {
-			client.red({profile:{level: {level: 1, vipNext: 100, vipPre: 0, vipTL: user.vip+vipHT, vipHT: 0}}, notice:{text: "Bạn nhận được " + helper.numberWithCommas(tien) + " RED", title: "THÀNH CÔNG"}, user:{red: user.red*1+tien}});
-			UserInfo.findOneAndUpdate({id: client.UID}, {$set:{lastVip: user.redPlay}, $inc: {red: tien, vip: vipHT}}, function(err,cat){});
+			user.red  = user.red*1 + tien;
+			user.vip += vipHT;
+			user.save();
+			client.red({profile:{level: {level: 1, vipNext: 100, vipPre: 0, vipTL: user.vip+vipHT, vipHT: 0}}, notice:{text: "Bạn nhận được " + helper.numberWithCommas(tien) + " RED", title: "THÀNH CÔNG"}, user:{red: user.red}});
 		}else{
 			client.red({notice:{text: "Bạn chưa đủ cấp VIP để đổi thưởng...", title: "THẤT BẠI"}});
 		}

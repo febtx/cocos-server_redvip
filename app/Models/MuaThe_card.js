@@ -1,8 +1,7 @@
 
 const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
 
-const MuaThe_cardSchema = new Schema({
+const Schema = new mongoose.Schema({
 	cart:    {type: String, required: true}, // ID giỏ hàng
 	nhaMang: {type: String, required: true}, // Nhà mạng
 	menhGia: {type: String, required: true}, // Mệnh giá
@@ -10,5 +9,6 @@ const MuaThe_cardSchema = new Schema({
 	seri:    {type: String, default:  ""},   // Seri
 	time:    {type: String, default:  ""},   // Thời gian đến
 });
+Schema.index({cart: 1}, {background: true});
 
-module.exports = mongoose.model("MuaThe_card", MuaThe_cardSchema);
+module.exports = mongoose.model("MuaThe_card", Schema);

@@ -13,6 +13,7 @@ const Schema = new mongoose.Schema({
 	card2: {},                                   // Kết quả sau
 	time:  {type: Date,    default: new Date()}, // Thời gian chọn
 });
+Schema.index({uid: 1}, {background: true});
 
 module.exports = mongoose.model("CaoThap_xubuoc", Schema);
 

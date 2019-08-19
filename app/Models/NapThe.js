@@ -14,5 +14,6 @@ const Schema = new mongoose.Schema({
 });
 
 Schema.plugin(AutoIncrement.plugin, {modelName: 'NapThe', field:'GD'});
+Schema.index({uid: 1}, {background: true});
 
 module.exports = mongoose.model("NapThe", Schema);

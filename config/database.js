@@ -7,5 +7,6 @@ module.exports = {
 		//"pass":   "MrT98TT2",
 		"dbName": "red",
 		"useNewUrlParser": true,
+		//"autoIndex":       false,
 	},
 };

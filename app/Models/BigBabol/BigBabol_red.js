@@ -13,5 +13,6 @@ const Schema = new mongoose.Schema({
 });
 
 Schema.plugin(AutoIncrement.plugin, {modelName:'BigBabol_red', field:'id'});
+Schema.index({name: 1}, {background: true});
 
 module.exports = mongoose.model("BigBabol_red", Schema);

@@ -205,9 +205,8 @@ function changePassword(client, data){
 						client.red({notice: {title: "LỖI", text: 'Mật khẩu không được trùng với tên đăng nhập.!!'}});
 					}else{
 						if (Helper.validPassword(data.passOld, user.local.password)) {
-							User.findOneAndUpdate({'_id': client.UID}, {$set:{'local.password': Helper.generateHash(data.passNew)}}, function(err, cat){
-								client.red({notice:{load: 0, title: 'THÀNH CÔNG', text:'Đổi mật khẩu thành công.'}});
-							});
+							User.updateOne({'_id': client.UID}, {$set:{'local.password': Helper.generateHash(data.passNew)}}).exec();
+							client.red({notice:{load: 0, title: 'THÀNH CÔNG', text:'Đổi mật khẩu thành công.'}});
 						}else{
 							client.red({notice:{load: 0, title: 'THẤT BẠI', text:'Mật khẩu cũ không đúng.'}});
 						}

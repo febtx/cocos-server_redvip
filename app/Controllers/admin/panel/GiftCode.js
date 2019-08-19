@@ -8,7 +8,7 @@ function get_data(client, data){
 		var page  = data.page>>0;
 		var kmess = 10;
 		if (page > 0) {
-			GiftCode.countDocuments({}).exec(function(err, total){
+			GiftCode.estimatedDocumentCount().exec(function(err, total){
 				GiftCode.find({}, {}, {sort:{'_id':-1}, skip: (page-1)*kmess, limit: kmess}, function(err, result) {
 					client.red({giftcode:{get_data:{data:result, page:page, kmess:kmess, total:total}}});
 				});
@@ -44,7 +44,7 @@ function create_gift(client, data){
 					try {
 						GiftCode.create({'code':giftcode, 'red':red, 'xu':xu, 'type':type, 'date': new Date(), 'todate': new Date(nam, thang, ngay)}, function(errgift, gift){
 							if (!!gift){
-								GiftCode.countDocuments({}).exec(function(err, total){
+								GiftCode.estimatedDocumentCount().exec(function(err, total){
 									GiftCode.find({}, {}, {sort:{'_id':-1}, skip: 0, limit: 10}, function(err, result) {
 										client.red({giftcode:{get_data:{data:result, page:1, kmess:10, total:total}}, notice:{title:'TẠO GIFTCODE',text:'Tạo gift code thành công...'}});
 									});
@@ -67,15 +67,15 @@ function remove(client, id){
 				var active = GiftCode.findOneAndRemove({'_id': id}).exec();
 				Promise.all([active])
 				.then(values => {
-					GiftCode.countDocuments({}).exec(function(err, total){
-						GiftCode.find({}, {}, {sort:{'_id':-1}}, function(err, data){
+					GiftCode.estimatedDocumentCount().exec(function(err, total){
+						GiftCode.find({}, {}, {sort:{'_id':-1}, skip: 0, limit: 10}, function(err, data){
 							client.red({giftcode:{get_data:{data:data, page:1, kmess:10, total:total}}, notice:{title:'GIFT CODE',text:'Xoá thành công...'}});
 						});
 					});
 				})
 			}else{
-				GiftCode.countDocuments({}).exec(function(err, total){
-					GiftCode.find({}, {}, {sort:{'_id':-1}}, function(err, data){
+				GiftCode.estimatedDocumentCount().exec(function(err, total){
+					GiftCode.find({}, {}, {sort:{'_id':-1}, skip: 0, limit: 10}, function(err, data){
 						client.red({giftcode:{get_data:{data:data, page:1, kmess:10, total:total}}, notice:{title:'GIFT CODE',text:'Gift code không tồn tại...'}});
 					});
 				});

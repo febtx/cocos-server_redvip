@@ -30,16 +30,18 @@ module.exports = function(app, redT) {
 									}));
 								}
 							});
-							tab_NapThe.findOneAndUpdate({'_id': data.ref_code}, {$set:{nhan:nhan}}).exec();
+							tab_NapThe.updateOne({'_id': data.ref_code}, {$set:{nhan:nhan}}).exec();
 						}
 					});
 				}else{
 					// thất bại
 					tab_NapThe.findOneAndUpdate({'_id': data.ref_code}, {$set:{status:2}}, function(err, napthe) {
-						if (void 0 !== redT.users[napthe.uid]) {
-							Promise.all(redT.users[napthe.uid].map(function(obj){
-								obj.red({notice:{title:'THẤT BẠI', text: config[data.error_code], load: false}});
-							}));
+						if (!!napthe) {
+							if (void 0 !== redT.users[napthe.uid]) {
+								Promise.all(redT.users[napthe.uid].map(function(obj){
+									obj.red({notice:{title:'THẤT BẠI', text: config[data.error_code], load: false}});
+								}));
+							}
 						}
 					});
 				}

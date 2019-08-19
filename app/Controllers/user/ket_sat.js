@@ -66,13 +66,14 @@ function gui(client, red){
 	if (red < 10000) {
 		client.red({notice:{title: "GỬI RED", text: "Số tiền gửi phải lớn hơn 10.000"}});
 	}else{
-		UserInfo.findOne({id: client.UID}, 'red', function(err, user){
+		UserInfo.findOne({id: client.UID}, 'red ketSat', function(err, user){
 			if (user.red < red) {
 				client.red({notice:{title: "THÔNG BÁO", text: "Số dư không khả dụng."}});
 			}else{
-				UserInfo.findOneAndUpdate({id: client.UID}, {$inc:{red: -red, ketSat: red}}, function(err, cat){
-					client.red({notice:{title:'THÀNH CÔNG', text: 'Đã gửi ' + Helper.numberWithCommas(red) + ' RED vào két sắt thành công.!!'}, user:{red:cat.red-red, ketSat: cat.ketSat*1+red}});
-				});
+				user.red   -= red;
+				user.ketSat = user.ketSat*1 + red;
+				user.save();
+				client.red({notice:{title:'THÀNH CÔNG', text: 'Đã gửi ' + Helper.numberWithCommas(red) + ' RED vào két sắt thành công.!!'}, user:{red:user.red, ketSat: user.ketSat}});
 			}
 		});
 	}
@@ -89,9 +90,10 @@ function rut(client, data){
 			if (user.ketSat < red) {
 				client.red({notice:{title: "THẤT BẠI", text: "Số tiền trong két nhỏ hơn số tiền giao dịch."}});
 			}else{
-				UserInfo.findOneAndUpdate({id: client.UID}, {$inc:{red: red, ketSat: -red}}, function(err, cat){
-					client.red({notice:{title:'THÀNH CÔNG', text: 'Rút thành công ' + Helper.numberWithCommas(red) + ' RED từ két sắt.!!'}, user:{red: cat.red*1+red, ketSat: cat.ketSat-red}});
-				});
+				user.red     = user.red*1 + red;
+				user.ketSat -= red;
+				user.save();
+				client.red({notice:{title:'THÀNH CÔNG', text: 'Rút thành công ' + Helper.numberWithCommas(red) + ' RED từ két sắt.!!'}, user:{red: cat.red*1+red, ketSat: cat.ketSat-red}});
 			}
 		});
 	}

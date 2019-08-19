@@ -27,9 +27,13 @@ function createOTP(client, type){
 								client.red({notice:{title:'THẤT BẠI', text:'Số dư trong tài khoản không đủ để lấy OTP.'}});
 							}else{
 								// Lấy SMS OTP
+
+								user.red -= 1000;
+								user.save();
+
 								smsOTP(user.phone, otp);
+
 								OTP.create({'uid': client.UID, 'code': otp, 'date': new Date()});
-								UserInfo.findOneAndUpdate({id:client.UID},{$inc:{red:-1000}}, function(err,cat){});
 								client.red({notice:{title:'THÔNG BÁO', text:'Mã OTP đã được gửi tới số điện thoại của bạn.'}, user:{red:user.red-1000}});
 							}
 						}

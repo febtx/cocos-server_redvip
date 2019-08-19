@@ -18,4 +18,6 @@ const Schema = new mongoose.Schema({
 	type:      {type: Boolean, default: false},    // Bot = true | Users = false
 });
 
+Schema.index({phien: 1}, {background: true});
+
 module.exports = mongoose.model("TaiXiu_cuoc", Schema);

@@ -376,7 +376,7 @@ var get_log = function(client, data){
 		var page  = data.page>>0;
 		var kmess = 11;
 		if (page > 0) {
-			TXCuoc.countDocuments({uid: client.UID}).exec(function(err, total){
+			TXCuoc.countDocuments({uid:client.UID, thanhtoan:true}).exec(function(err, total){
 				var getCuoc = TXCuoc.find({uid:client.UID, thanhtoan:true}, {}, {sort:{'_id': -1}, skip: (page-1)*kmess, limit: kmess}, function(error, result){
 					if (result.length) {
 						Promise.all(result.map(function(obj){

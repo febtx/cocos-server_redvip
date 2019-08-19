@@ -72,7 +72,7 @@ var bet = function(bot, io, taixiu = true, red = true){
 		io.taixiu.taixiu.red_player_xiu += 1;
 	}
 	TXCuocOne.create({uid: bot.id, phien: io.TaiXiu_phien, taixiu:taixiu, select:select, red:red, bet:cuoc, type: true});
-	TXCuoc.create({uid:bot.id, name:bot.name, phien: io.TaiXiu_phien, bet:cuoc, taixiu:taixiu, select:select, red:red, type: true, time:new Date()}, function(err, cat){});
+	TXCuoc.create({uid:bot.id, name:bot.name, phien: io.TaiXiu_phien, bet:cuoc, taixiu:taixiu, select:select, red:red, type: true, time:new Date()});
 }
 
 module.exports = {

@@ -32,9 +32,9 @@ module.exports = function() {
 			arb100bet = arb100bet-(arb100.min*(arb100.x-1));
 		}
 		if (file_angrybird[timeNow]) {
-			HU.findOneAndUpdate({game: "arb", type:100, red:true}, {$set:{'bet': arb100bet, 'toX': file_angrybird['100'].toX, 'balans': file_angrybird['100'].balans, 'x': file_angrybird['100'].x}}, function(err,cat){});
+			HU.updateOne({game: "arb", type:100, red:true}, {$set:{'bet': arb100bet, 'toX': file_angrybird['100'].toX, 'balans': file_angrybird['100'].balans, 'x': file_angrybird['100'].x}}).exec();
 		}else{
-			HU.findOneAndUpdate({game: "arb", type:100, red:true}, {$set:{'toX': 0, 'balans': 0, 'bet': arb100bet}}, function(err,cat){});
+			HU.updateOne({game: "arb", type:100, red:true}, {$set:{'toX': 0, 'balans': 0, 'bet': arb100bet}}).exec();
 		}
 	});
 
@@ -45,9 +45,9 @@ module.exports = function() {
 			arb1000bet = arb1000bet-(arb1000.min*(arb1000.x-1));
 		}
 		if (file_angrybird[timeNow]) {
-			HU.findOneAndUpdate({game: "arb", type:1000, red:true}, {$set:{'bet': arb1000bet, 'toX': file_angrybird['1000'].toX, 'balans': file_angrybird['1000'].balans, 'x': file_angrybird['1000'].x}}, function(err,cat){});
+			HU.updateOne({game: "arb", type:1000, red:true}, {$set:{'bet': arb1000bet, 'toX': file_angrybird['1000'].toX, 'balans': file_angrybird['1000'].balans, 'x': file_angrybird['1000'].x}}).exec();
 		}else{
-			HU.findOneAndUpdate({game: "arb", type:1000, red:true}, {$set:{'toX': 0, 'balans': 0, 'bet': arb1000bet}}, function(err,cat){});
+			HU.updateOne({game: "arb", type:1000, red:true}, {$set:{'toX': 0, 'balans': 0, 'bet': arb1000bet}}).exec();
 		}
 	});
 
@@ -58,9 +58,9 @@ module.exports = function() {
 			arb10000bet = arb10000bet-(arb10000.min*(arb10000.x-1));
 		}
 		if (file_angrybird[timeNow]) {
-			HU.findOneAndUpdate({game: "arb", type:10000, red:true}, {$set:{'bet': arb10000bet, 'toX': file_angrybird['10000'].toX, 'balans': file_angrybird['10000'].balans, 'x': file_angrybird['10000'].x}}, function(err,cat){});
+			HU.updateOne({game: "arb", type:10000, red:true}, {$set:{'bet': arb10000bet, 'toX': file_angrybird['10000'].toX, 'balans': file_angrybird['10000'].balans, 'x': file_angrybird['10000'].x}}).exec();
 		}else{
-			HU.findOneAndUpdate({game: "arb", type:10000, red:true}, {$set:{'toX': 0, 'balans': 0, 'bet': arb10000bet}}, function(err,cat){});
+			HU.updateOne({game: "arb", type:10000, red:true}, {$set:{'toX': 0, 'balans': 0, 'bet': arb10000bet}}).exec();
 		}
 	});
 
@@ -76,9 +76,9 @@ module.exports = function() {
 			bbb100bet = bbb100bet-(bbb100.min*(bbb100.x-1));
 		}
 		if (file_bigbabol[timeNow]) {
-			HU.findOneAndUpdate({game: "bigbabol", type:100, red:true}, {$set:{'bet': bbb100bet, 'toX': file_bigbabol['100'].toX, 'balans': file_bigbabol['100'].balans, 'x': file_bigbabol['100'].x}}, function(err,cat){});
+			HU.updateOne({game: "bigbabol", type:100, red:true}, {$set:{'bet': bbb100bet, 'toX': file_bigbabol['100'].toX, 'balans': file_bigbabol['100'].balans, 'x': file_bigbabol['100'].x}}).exec();
 		}else{
-			HU.findOneAndUpdate({game: "bigbabol", type:100, red:true}, {$set:{'toX': 0, 'balans': 0, 'bet': bbb100bet}}, function(err,cat){});
+			HU.updateOne({game: "bigbabol", type:100, red:true}, {$set:{'toX': 0, 'balans': 0, 'bet': bbb100bet}}).exec();
 		}
 	});
 
@@ -89,9 +89,9 @@ module.exports = function() {
 			bbb1000bet = bbb1000bet-(bbb1000.min*(bbb1000.x-1));
 		}
 		if (file_bigbabol[timeNow]) {
-			HU.findOneAndUpdate({game: "bigbabol", type:1000, red:true}, {$set:{'bet': bbb1000bet, 'toX': file_bigbabol['1000'].toX, 'balans': file_bigbabol['1000'].balans, 'x': file_bigbabol['1000'].x}}, function(err,cat){});
+			HU.updateOne({game: "bigbabol", type:1000, red:true}, {$set:{'bet': bbb1000bet, 'toX': file_bigbabol['1000'].toX, 'balans': file_bigbabol['1000'].balans, 'x': file_bigbabol['1000'].x}}).exec();
 		}else{
-			HU.findOneAndUpdate({game: "bigbabol", type:1000, red:true}, {$set:{'toX': 0, 'balans': 0, 'bet': bbb1000bet}}, function(err,cat){});
+			HU.updateOne({game: "bigbabol", type:1000, red:true}, {$set:{'toX': 0, 'balans': 0, 'bet': bbb1000bet}}).exec();
 		}
 	});
 
@@ -102,9 +102,9 @@ module.exports = function() {
 			bbb10000bet = bbb10000bet-(bbb10000.min*(bbb10000.x-1));
 		}
 		if (file_bigbabol[timeNow]) {
-			HU.findOneAndUpdate({game: "bigbabol", type:10000, red:true}, {$set:{'bet': bbb10000bet, 'toX': file_bigbabol['10000'].toX, 'balans': file_bigbabol['10000'].balans, 'x': file_bigbabol['10000'].x}}, function(err,cat){});
+			HU.updateOne({game: "bigbabol", type:10000, red:true}, {$set:{'bet': bbb10000bet, 'toX': file_bigbabol['10000'].toX, 'balans': file_bigbabol['10000'].balans, 'x': file_bigbabol['10000'].x}}).exec();
 		}else{
-			HU.findOneAndUpdate({game: "bigbabol", type:10000, red:true}, {$set:{'toX': 0, 'balans': 0, 'bet': bbb10000bet}}, function(err,cat){});
+			HU.updateOne({game: "bigbabol", type:10000, red:true}, {$set:{'toX': 0, 'balans': 0, 'bet': bbb10000bet}}).exec();
 		}
 	});
 
@@ -119,9 +119,9 @@ module.exports = function() {
 			mpk100bet = mpk100bet-(mpk100.min*(mpk100.x-1));
 		}
 		if (file_minipoker[timeNow]) {
-			HU.findOneAndUpdate({game: "minipoker", type:100, red:true}, {$set:{'bet': mpk100bet, 'toX': file_minipoker['100'].toX, 'balans': file_minipoker['100'].balans, 'x': file_minipoker['100'].x}}, function(err,cat){});
+			HU.updateOne({game: "minipoker", type:100, red:true}, {$set:{'bet': mpk100bet, 'toX': file_minipoker['100'].toX, 'balans': file_minipoker['100'].balans, 'x': file_minipoker['100'].x}}).exec();
 		}else{
-			HU.findOneAndUpdate({game: "minipoker", type:100, red:true}, {$set:{'toX': 0, 'balans': 0, 'bet': mpk100bet}}, function(err,cat){});
+			HU.updateOne({game: "minipoker", type:100, red:true}, {$set:{'toX': 0, 'balans': 0, 'bet': mpk100bet}}).exec();
 		}
 	});
 
@@ -132,9 +132,9 @@ module.exports = function() {
 			mpk1000bet = mpk1000bet-(mpk1000.min*(mpk1000.x-1));
 		}
 		if (file_minipoker[timeNow]) {
-			HU.findOneAndUpdate({game: "minipoker", type:1000, red:true}, {$set:{'bet': mpk1000bet, 'toX': file_minipoker['1000'].toX, 'balans': file_minipoker['1000'].balans, 'x': file_minipoker['1000'].x}}, function(err,cat){});
+			HU.updateOne({game: "minipoker", type:1000, red:true}, {$set:{'bet': mpk1000bet, 'toX': file_minipoker['1000'].toX, 'balans': file_minipoker['1000'].balans, 'x': file_minipoker['1000'].x}}).exec();
 		}else{
-			HU.findOneAndUpdate({game: "minipoker", type:1000, red:true}, {$set:{'toX': 0, 'balans': 0, 'bet': mpk1000bet}}, function(err,cat){});
+			HU.updateOne({game: "minipoker", type:1000, red:true}, {$set:{'toX': 0, 'balans': 0, 'bet': mpk1000bet}}).exec();
 		}
 	});
 
@@ -145,9 +145,9 @@ module.exports = function() {
 			mpk10000bet = mpk10000bet-(mpk10000.min*(mpk10000.x-1));
 		}
 		if (file_minipoker[timeNow]) {
-			HU.findOneAndUpdate({game: "minipoker", type:10000, red:true}, {$set:{'bet': mpk10000bet, 'toX': file_minipoker['10000'].toX, 'balans': file_minipoker['10000'].balans, 'x': file_minipoker['10000'].x}}, function(err,cat){});
+			HU.updateOne({game: "minipoker", type:10000, red:true}, {$set:{'bet': mpk10000bet, 'toX': file_minipoker['10000'].toX, 'balans': file_minipoker['10000'].balans, 'x': file_minipoker['10000'].x}}).exec();
 		}else{
-			HU.findOneAndUpdate({game: "minipoker", type:10000, red:true}, {$set:{'toX': 0, 'balans': 0, 'bet': mpk10000bet}}, function(err,cat){});
+			HU.updateOne({game: "minipoker", type:10000, red:true}, {$set:{'toX': 0, 'balans': 0, 'bet': mpk10000bet}}).exec();
 		}
 	});
 
@@ -184,95 +184,95 @@ module.exports = function() {
 			/**
 			Promise.all(result[0].map(function(users, index){
 				if (index == 0) {
-					TaiXiu_User.findOneAndUpdate({'_id': users._id}, {$set:{'tLineWinHQ':users.top, 'tLineWinHQGift':500000}}, function(err, ok){});
-					UserInfo.findOneAndUpdate({'id': users.uid}, {$inc:{'red':500000}}, function(err, ok){});
+					TaiXiu_User.updateOne({'_id': users._id}, {$set:{'tLineWinHQ':users.top, 'tLineWinHQGift':500000}}).exec();
+					UserInfo.updateOne({'id': users.uid}, {$inc:{'red':500000}}).exec();
 				}else if (index == 1) {
-					TaiXiu_User.findOneAndUpdate({'_id': users._id}, {$set:{'tLineWinHQ':users.top, 'tLineWinHQGift':200000}}, function(err, ok){});
-					UserInfo.findOneAndUpdate({'id': users.uid}, {$inc:{'red':200000}}, function(err, ok){});
+					TaiXiu_User.updateOne({'_id': users._id}, {$set:{'tLineWinHQ':users.top, 'tLineWinHQGift':200000}}).exec();
+					UserInfo.updateOne({'id': users.uid}, {$inc:{'red':200000}}).exec();
 				}else if (index == 2) {
-					TaiXiu_User.findOneAndUpdate({'_id': users._id}, {$set:{'tLineWinHQ':users.top, 'tLineWinHQGift':100000}}, function(err, ok){});
-					UserInfo.findOneAndUpdate({'id': users.uid}, {$inc:{'red':100000}}, function(err, ok){});
+					TaiXiu_User.updateOne({'_id': users._id}, {$set:{'tLineWinHQ':users.top, 'tLineWinHQGift':100000}}).exec();
+					UserInfo.updateOne({'id': users.uid}, {$inc:{'red':100000}}).exec();
 				}else if (index >= 3 && index < 10) {
-					TaiXiu_User.findOneAndUpdate({'_id': users._id}, {$set:{'tLineWinHQ':users.top, 'tLineWinHQGift':50000}}, function(err, ok){});
-					UserInfo.findOneAndUpdate({'id': users.uid}, {$inc:{'red':50000}}, function(err, ok){});
+					TaiXiu_User.updateOne({'_id': users._id}, {$set:{'tLineWinHQ':users.top, 'tLineWinHQGift':50000}}).exec();
+					UserInfo.updateOne({'id': users.uid}, {$inc:{'red':50000}}).exec();
 				}else if (index >= 10 && index < 50) {
-					TaiXiu_User.findOneAndUpdate({'_id': users._id}, {$set:{'tLineWinHQ':users.top, 'tLineWinHQGift':20000}}, function(err, ok){});
-					UserInfo.findOneAndUpdate({'id': users.uid}, {$inc:{'red':20000}}, function(err, ok){});
+					TaiXiu_User.updateOne({'_id': users._id}, {$set:{'tLineWinHQ':users.top, 'tLineWinHQGift':20000}}).exec();
+					UserInfo.updateOne({'id': users.uid}, {$inc:{'red':20000}}).exec();
 				}else if (index >= 50 && index < 100) {
-					TaiXiu_User.findOneAndUpdate({'_id': users._id}, {$set:{'tLineWinHQ':users.top, 'tLineWinHQGift':10000}}, function(err, ok){});
-					UserInfo.findOneAndUpdate({'id': users.uid}, {$inc:{'red':10000}}, function(err, ok){});
+					TaiXiu_User.updateOne({'_id': users._id}, {$set:{'tLineWinHQ':users.top, 'tLineWinHQGift':10000}}).exec();
+					UserInfo.updateOne({'id': users.uid}, {$inc:{'red':10000}}).exec();
 				}
 			}));
 
 			Promise.all(result[1].map(function(users, index){
 				if (index == 0) {
-					TaiXiu_User.findOneAndUpdate({'_id': users._id}, {$set:{'tLineLostHQ':users.top, 'tLineLostHQGift':500000}}, function(err, ok){});
-					UserInfo.findOneAndUpdate({'id': users.uid}, {$inc:{'red':500000}}, function(err, ok){});
+					TaiXiu_User.updateOne({'_id': users._id}, {$set:{'tLineLostHQ':users.top, 'tLineLostHQGift':500000}}).exec();
+					UserInfo.updateOne({'id': users.uid}, {$inc:{'red':500000}}).exec();
 				}else if (index == 1) {
-					TaiXiu_User.findOneAndUpdate({'_id': users._id}, {$set:{'tLineLostHQ':users.top, 'tLineLostHQGift':200000}}, function(err, ok){});
-					UserInfo.findOneAndUpdate({'id': users.uid}, {$inc:{'red':200000}}, function(err, ok){});
+					TaiXiu_User.updateOne({'_id': users._id}, {$set:{'tLineLostHQ':users.top, 'tLineLostHQGift':200000}}).exec();
+					UserInfo.updateOne({'id': users.uid}, {$inc:{'red':200000}}).exec();
 				}else if (index == 2) {
-					TaiXiu_User.findOneAndUpdate({'_id': users._id}, {$set:{'tLineLostHQ':users.top, 'tLineLostHQGift':100000}}, function(err, ok){});
-					UserInfo.findOneAndUpdate({'id': users.uid}, {$inc:{'red':100000}}, function(err, ok){});
+					TaiXiu_User.updateOne({'_id': users._id}, {$set:{'tLineLostHQ':users.top, 'tLineLostHQGift':100000}}).exec();
+					UserInfo.updateOne({'id': users.uid}, {$inc:{'red':100000}}).exec();
 				}else if (index >= 3 && index < 10) {
-					TaiXiu_User.findOneAndUpdate({'_id': users._id}, {$set:{'tLineLostHQ':users.top, 'tLineLostHQGift':50000}}, function(err, ok){});
-					UserInfo.findOneAndUpdate({'id': users.uid}, {$inc:{'red':50000}}, function(err, ok){});
+					TaiXiu_User.updateOne({'_id': users._id}, {$set:{'tLineLostHQ':users.top, 'tLineLostHQGift':50000}}).exec();
+					UserInfo.updateOne({'id': users.uid}, {$inc:{'red':50000}}).exec();
 				}else if (index >= 10 && index < 50) {
-					TaiXiu_User.findOneAndUpdate({'_id': users._id}, {$set:{'tLineLostHQ':users.top, 'tLineLostHQGift':20000}}, function(err, ok){});
-					UserInfo.findOneAndUpdate({'id': users.uid}, {$inc:{'red':20000}}, function(err, ok){});
+					TaiXiu_User.updateOne({'_id': users._id}, {$set:{'tLineLostHQ':users.top, 'tLineLostHQGift':20000}}).exec();
+					UserInfo.updateOne({'id': users.uid}, {$inc:{'red':20000}}).exec();
 				}else if (index >= 50 && index < 100) {
-					TaiXiu_User.findOneAndUpdate({'_id': users._id}, {$set:{'tLineLostHQ':users.top, 'tLineLostHQGift':10000}}, function(err, ok){});
-					UserInfo.findOneAndUpdate({'id': users.uid}, {$inc:{'red':10000}}, function(err, ok){});
+					TaiXiu_User.updateOne({'_id': users._id}, {$set:{'tLineLostHQ':users.top, 'tLineLostHQGift':10000}}).exec();
+					UserInfo.updateOne({'id': users.uid}, {$inc:{'red':10000}}).exec();
 				}
 			}));
 			*/
 			Promise.all(result[0].map(function(users, index){
 				if (index == 0) {
-					TaiXiu_User.findOneAndUpdate({'_id': users._id}, {$set:{'tLineWinHQ':users.top, 'tLineWinHQGift':500000}}, function(err, ok){});
-					UserInfo.findOneAndUpdate({'id': users.uid}, {$inc:{'red':500000}}, function(err, ok){});
+					TaiXiu_User.updateOne({'_id': users._id}, {$set:{'tLineWinHQ':users.top, 'tLineWinHQGift':500000}}).exec();
+					UserInfo.updateOne({'id': users.uid}, {$inc:{'red':500000}}).exec();
 				}else if (index == 1) {
-					TaiXiu_User.findOneAndUpdate({'_id': users._id}, {$set:{'tLineWinHQ':users.top, 'tLineWinHQGift':400000}}, function(err, ok){});
-					UserInfo.findOneAndUpdate({'id': users.uid}, {$inc:{'red':400000}}, function(err, ok){});
+					TaiXiu_User.updateOne({'_id': users._id}, {$set:{'tLineWinHQ':users.top, 'tLineWinHQGift':400000}}).exec();
+					UserInfo.updateOne({'id': users.uid}, {$inc:{'red':400000}}).exec();
 				}else if (index == 2) {
-					TaiXiu_User.findOneAndUpdate({'_id': users._id}, {$set:{'tLineWinHQ':users.top, 'tLineWinHQGift':300000}}, function(err, ok){});
-					UserInfo.findOneAndUpdate({'id': users.uid}, {$inc:{'red':300000}}, function(err, ok){});
+					TaiXiu_User.updateOne({'_id': users._id}, {$set:{'tLineWinHQ':users.top, 'tLineWinHQGift':300000}}).exec();
+					UserInfo.updateOne({'id': users.uid}, {$inc:{'red':300000}}).exec();
 				}else if (index == 3) {
-					TaiXiu_User.findOneAndUpdate({'_id': users._id}, {$set:{'tLineWinHQ':users.top, 'tLineWinHQGift':200000}}, function(err, ok){});
-					UserInfo.findOneAndUpdate({'id': users.uid}, {$inc:{'red':200000}}, function(err, ok){});
+					TaiXiu_User.updateOne({'_id': users._id}, {$set:{'tLineWinHQ':users.top, 'tLineWinHQGift':200000}}).exec();
+					UserInfo.updateOne({'id': users.uid}, {$inc:{'red':200000}}).exec();
 				}else if (index == 4) {
-					TaiXiu_User.findOneAndUpdate({'_id': users._id}, {$set:{'tLineWinHQ':users.top, 'tLineWinHQGift':100000}}, function(err, ok){});
-					UserInfo.findOneAndUpdate({'id': users.uid}, {$inc:{'red':100000}}, function(err, ok){});
+					TaiXiu_User.updateOne({'_id': users._id}, {$set:{'tLineWinHQ':users.top, 'tLineWinHQGift':100000}}).exec();
+					UserInfo.updateOne({'id': users.uid}, {$inc:{'red':100000}}).exec();
 				}else if (index >= 5 && index < 10) {
-					TaiXiu_User.findOneAndUpdate({'_id': users._id}, {$set:{'tLineWinHQ':users.top, 'tLineWinHQGift':50000}}, function(err, ok){});
-					UserInfo.findOneAndUpdate({'id': users.uid}, {$inc:{'red':50000}}, function(err, ok){});
+					TaiXiu_User.updateOne({'_id': users._id}, {$set:{'tLineWinHQ':users.top, 'tLineWinHQGift':50000}}).exec();
+					UserInfo.updateOne({'id': users.uid}, {$inc:{'red':50000}}).exec();
 				}else if (index >= 10 && index < 20) {
-					TaiXiu_User.findOneAndUpdate({'_id': users._id}, {$set:{'tLineWinHQ':users.top, 'tLineWinHQGift':20000}}, function(err, ok){});
-					UserInfo.findOneAndUpdate({'id': users.uid}, {$inc:{'red':20000}}, function(err, ok){});
+					TaiXiu_User.updateOne({'_id': users._id}, {$set:{'tLineWinHQ':users.top, 'tLineWinHQGift':20000}}).exec();
+					UserInfo.updateOne({'id': users.uid}, {$inc:{'red':20000}}).exec();
 				}
 			}));
 
 			Promise.all(result[1].map(function(usersL, indexL){
 				if (indexL == 0) {
-					TaiXiu_User.findOneAndUpdate({'_id': usersL._id}, {$set:{'tLineLostHQ':usersL.top, 'tLineLostHQGift':500000}}, function(err, ok){});
-					UserInfo.findOneAndUpdate({'id': usersL.uid}, {$inc:{'red':500000}}, function(err, ok){});
+					TaiXiu_User.updateOne({'_id': usersL._id}, {$set:{'tLineLostHQ':usersL.top, 'tLineLostHQGift':500000}}).exec();
+					UserInfo.updateOne({'id': usersL.uid}, {$inc:{'red':500000}}).exec();
 				}else if (indexL == 1) {
-					TaiXiu_User.findOneAndUpdate({'_id': usersL._id}, {$set:{'tLineLostHQ':usersL.top, 'tLineLostHQGift':400000}}, function(err, ok){});
-					UserInfo.findOneAndUpdate({'id': usersL.uid}, {$inc:{'red':400000}}, function(err, ok){});
+					TaiXiu_User.updateOne({'_id': usersL._id}, {$set:{'tLineLostHQ':usersL.top, 'tLineLostHQGift':400000}}).exec();
+					UserInfo.updateOne({'id': usersL.uid}, {$inc:{'red':400000}}).exec();
 				}else if (indexL == 2) {
-					TaiXiu_User.findOneAndUpdate({'_id': usersL._id}, {$set:{'tLineLostHQ':usersL.top, 'tLineLostHQGift':300000}}, function(err, ok){});
-					UserInfo.findOneAndUpdate({'id': usersL.uid}, {$inc:{'red':300000}}, function(err, ok){});
+					TaiXiu_User.updateOne({'_id': usersL._id}, {$set:{'tLineLostHQ':usersL.top, 'tLineLostHQGift':300000}}).exec();
+					UserInfo.updateOne({'id': usersL.uid}, {$inc:{'red':300000}}).exec();
 				}else if (indexL == 3) {
-					TaiXiu_User.findOneAndUpdate({'_id': usersL._id}, {$set:{'tLineLostHQ':usersL.top, 'tLineLostHQGift':200000}}, function(err, ok){});
-					UserInfo.findOneAndUpdate({'id': usersL.uid}, {$inc:{'red':200000}}, function(err, ok){});
+					TaiXiu_User.updateOne({'_id': usersL._id}, {$set:{'tLineLostHQ':usersL.top, 'tLineLostHQGift':200000}}).exec();
+					UserInfo.updateOne({'id': usersL.uid}, {$inc:{'red':200000}}).exec();
 				}else if (indexL == 4) {
-					TaiXiu_User.findOneAndUpdate({'_id': usersL._id}, {$set:{'tLineLostHQ':usersL.top, 'tLineLostHQGift':100000}}, function(err, ok){});
-					UserInfo.findOneAndUpdate({'id': usersL.uid}, {$inc:{'red':100000}}, function(err, ok){});
+					TaiXiu_User.updateOne({'_id': usersL._id}, {$set:{'tLineLostHQ':usersL.top, 'tLineLostHQGift':100000}}).exec();
+					UserInfo.updateOne({'id': usersL.uid}, {$inc:{'red':100000}}).exec();
 				}else if (indexL >= 5 && indexL < 10) {
-					TaiXiu_User.findOneAndUpdate({'_id': usersL._id}, {$set:{'tLineLostHQ':usersL.top, 'tLineLostHQGift':50000}}, function(err, ok){});
-					UserInfo.findOneAndUpdate({'id': usersL.uid}, {$inc:{'red':50000}}, function(err, ok){});
+					TaiXiu_User.updateOne({'_id': usersL._id}, {$set:{'tLineLostHQ':usersL.top, 'tLineLostHQGift':50000}}).exec();
+					UserInfo.updateOne({'id': usersL.uid}, {$inc:{'red':50000}}).exec();
 				}else if (indexL >= 10 && indexL < 20) {
-					TaiXiu_User.findOneAndUpdate({'_id': usersL._id}, {$set:{'tLineLostHQ':usersL.top, 'tLineLostHQGift':20000}}, function(err, ok){});
-					UserInfo.findOneAndUpdate({'id': usersL.uid}, {$inc:{'red':20000}}, function(err, ok){});
+					TaiXiu_User.updateOne({'_id': usersL._id}, {$set:{'tLineLostHQ':usersL.top, 'tLineLostHQGift':20000}}).exec();
+					UserInfo.updateOne({'id': usersL.uid}, {$inc:{'red':20000}}).exec();
 				}
 			}));
 			TaiXiu_User.updateMany({}, {$set:{'tLineWinRedH':0,'tLineLostRedH':0,'tLineWinXuH':0,'tLineLostXuH':0,'cLineWinRedH':0,'cLineLostRedH':0,'cLineWinXuH':0,'cLineLostXuH':0}}).exec();

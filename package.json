@@ -26,6 +26,7 @@
 		"mongoose": "^5.5.5",
 		"mongoose-auto-increment-reworked": "^1.2.1",
 		"mongoose-long": "^0.2.1",
+		"mysql2": "^1.6.5",
 		"nodemailer": "^6.3.0",
 		"request": "^2.88.0",
 		"shortid": "^2.2.14",

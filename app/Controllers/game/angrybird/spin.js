@@ -485,7 +485,7 @@ module.exports = function(client, data){
 													huUpdate['huXu'] = uInfo['huXu'] = mini_users['huXu'] += 1; // Cập nhật Số Hũ Xu đã Trúng
 												}
 											}
-											HU.findOneAndUpdate({game: "arb", type:bet, red:red}, {$set:{name:"", bet:quyMin}}, function(err,cat){});
+											HU.updateOne({game: "arb", type:bet, red:red}, {$set:{name:"", bet:quyMin}}).exec();
 										}else{
 											bet_win += bet*10;
 										}
@@ -551,9 +551,9 @@ module.exports = function(client, data){
 										}
 									});
 								}
-								HU.findOneAndUpdate({game: "arb", type:bet, red:red}, {$inc:huUpdate}, function(err,cat){});
-								UserInfo.findOneAndUpdate({id:client.UID}, {$inc:uInfo}, function(err,cat){});
-								AngryBirds_user.findOneAndUpdate({'uid':client.UID}, {$set:{time: new Date()}, $inc:mini_users}, function(err,cat){});
+								HU.updateOne({game: "arb", type:bet, red:red}, {$inc:huUpdate}).exec();
+								UserInfo.updateOne({id:client.UID}, {$inc:uInfo}).exec();
+								AngryBirds_user.updateOne({'uid':client.UID}, {$set:{time: new Date()}, $inc:mini_users}).exec();
 							})
 						})
 					})

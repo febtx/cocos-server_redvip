@@ -16,5 +16,6 @@ const Schema = new mongoose.Schema({
 	thuong: {type: Number, default: 0},                     // Số Red Thưởng
 	time:   {type: Date},                                   // quay gần đây
 });
+Schema.index({uid: 1}, {unique: true, background: true});
 
 module.exports = mongoose.model("CaoThap_user", Schema);
