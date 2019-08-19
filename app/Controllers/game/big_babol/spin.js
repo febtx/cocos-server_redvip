@@ -376,13 +376,13 @@ module.exports = function(client, data){
 										if (!nohu) {
 											var okHu = (quyHu-Math.ceil(quyHu*phe/100))>>0;
 											bet_win += okHu;
-											red && Helpers.ThongBaoNoHu(client, {title: "BigBabol", name: client.profile.name, bet: okHu});
+											red && Helpers.ThongBaoNoHu(client, {title: "BigBabol", name: client.profile.name, bet: Helpers.numberWithCommas(okHu)});
 										}else{
 											var okHu = (quyMin-Math.ceil(quyMin*phe/100))>>0;
 											bet_win += okHu;
-											red && Helpers.ThongBaoNoHu(client, {title: "BigBabol", name: client.profile.name, bet: okHu});
+											red && Helpers.ThongBaoNoHu(client, {title: "BigBabol", name: client.profile.name, bet: Helpers.numberWithCommas(okHu)});
 										}
-										HU.findOneAndUpdate({game:'bigbabol', type:bet, red:red}, {$set:{name:"", bet:quyMin}}, function(err,cat){});
+										HU.updateOne({game:'bigbabol', type:bet, red:red}, {$set:{name:"", bet:quyMin}}).exec();
 
 										if (red){
 											huUpdate['hu'] = uInfo['hu'] = mini_users['hu']     += 1;
@@ -421,7 +421,7 @@ module.exports = function(client, data){
 								if (!nohu && bet_win >= cuoc*2.24) {
 									isBigWin = true;
 									type = 1;
-									red && Helpers.ThongBaoBigWin(client, {game: "BigBabol", users: client.profile.name, bet: bet_win, status: 2});
+									red && Helpers.ThongBaoBigWin(client, {game: "BigBabol", users: client.profile.name, bet: Helpers.numberWithCommas(bet_win), status: 2});
 								}
 
 								var thuong     = 0;
@@ -462,9 +462,9 @@ module.exports = function(client, data){
 									  }
 									});
 								}
-								HU.findOneAndUpdate({game:'bigbabol', type:bet, red:red}, {$inc:huUpdate}, function(err,cat){});
-								UserInfo.findOneAndUpdate({id:client.UID}, {$inc:uInfo}, function(err,cat){});
-								BigBabol_users.findOneAndUpdate({'uid':client.UID}, {$set:{time: new Date()}, $inc:mini_users}, function(err,cat){});
+								HU.updateOne({game:'bigbabol', type:bet, red:red}, {$inc:huUpdate}).exec();
+								UserInfo.updateOne({id:client.UID}, {$inc:uInfo}).exec();
+								BigBabol_users.updateOne({'uid':client.UID}, {$set:{time: new Date()}, $inc:mini_users}).exec();
 							})
 						})
 					})

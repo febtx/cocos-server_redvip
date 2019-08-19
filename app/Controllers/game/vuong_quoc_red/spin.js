@@ -491,12 +491,12 @@ module.exports = function(client, data){
 											//bet_win += quyHu; // bet_win = (bet_win-Math.ceil(bet_win*phe/100))>>0;
 											var okHu = (quyHu-Math.ceil(quyHu*phe/100))>>0;
 											bet_win += okHu;
-											HU.findOneAndUpdate({game:'vuongquocred', type:bet, red:red}, {$set:{name:"", bet:dataHu.min}}, function(err3,cat){});
-											red && Helpers.ThongBaoNoHu(client, {title: "VƯƠNG QUỐC RED", name: client.profile.name, bet: okHu});
+											HU.updateOne({game:'vuongquocred', type:bet, red:red}, {$set:{name:"", bet:dataHu.min}}).exec();
+											red && Helpers.ThongBaoNoHu(client, {title: "VƯƠNG QUỐC RED", name: client.profile.name, bet: Helpers.numberWithCommas(okHu)});
 										}else{
 											var okHu = (dataHu.min-Math.ceil(dataHu.min*phe/100))>>0;
 											bet_win += okHu;
-											red && Helpers.ThongBaoNoHu(client, {title: "VƯƠNG QUỐC RED", name: client.profile.name, bet: okHu});
+											red && Helpers.ThongBaoNoHu(client, {title: "VƯƠNG QUỐC RED", name: client.profile.name, bet: Helpers.numberWithCommas(okHu)});
 										}
 										if (red){
 											huUpdate['hu'] = uInfo['hu'] = mini_users['hu']     += 1;
@@ -596,7 +596,7 @@ module.exports = function(client, data){
 								if (!nohu && bet_win >= tongCuoc*2.24) {
 									isBigWin = true;
 									type = 1;
-									red && Helpers.ThongBaoBigWin(client, {game: "VƯƠNG QUỐC RED", users: client.profile.name, bet: bet_win, status: 2});
+									red && Helpers.ThongBaoBigWin(client, {game: "VƯƠNG QUỐC RED", users: client.profile.name, bet: Helpers.numberWithCommas(bet_win), status: 2});
 								}
 								if (free > 0) {
 									client.VuongQuocRed.free += free;
@@ -641,9 +641,9 @@ module.exports = function(client, data){
 										client.VuongQuocRed.id = small._id.toString();
 									});
 								}
-								HU.findOneAndUpdate({game:'vuongquocred', type:bet, red:red}, {$inc:huUpdate}, function(err,cat){});
-								UserInfo.findOneAndUpdate({id:client.UID},{$inc:uInfo}, function(err,cat){});
-								VuongQuocRed_users.findOneAndUpdate({'uid':client.UID}, {$set:{time: new Date()}, $inc:mini_users}, function(err,cat){});
+								HU.updateOne({game:'vuongquocred', type:bet, red:red}, {$inc:huUpdate}).exec();
+								UserInfo.updateOne({id:client.UID},{$inc:uInfo}).exec();
+								VuongQuocRed_users.updateOne({'uid':client.UID}, {$set:{time: new Date()}, $inc:mini_users}).exec();
 							})
 						})
 					})

@@ -470,7 +470,7 @@ module.exports = function(client, data){
 												var okHu = (quyHu-Math.ceil(quyHu*phe/100))>>0;
 												bet_win += okHu;
 												if (red){
-													Helpers.ThongBaoNoHu(client, {title: "AngryBirds", name: client.profile.name, bet: okHu});
+													Helpers.ThongBaoNoHu(client, {title: "AngryBirds", name: client.profile.name, bet: Helpers.numberWithCommas(okHu)});
 													huUpdate['hu']   = uInfo['hu']   = mini_users['hu']  += 1; // Cập nhật Số Hũ Red đã Trúng
 												}else{
 													huUpdate['huXu'] = uInfo['huXu'] = mini_users['huXu'] += 1; // Cập nhật Số Hũ Xu đã Trúng
@@ -508,7 +508,7 @@ module.exports = function(client, data){
 								if (!nohu && bet_win >= bet*10) {
 									isBigWin = true;          // Là thắng lớn
 									type = 1;
-									red && Helpers.ThongBaoBigWin(client, {game: "AngryBirds", users: client.profile.name, bet: bet_win, status: 2});
+									red && Helpers.ThongBaoBigWin(client, {game: "AngryBirds", users: client.profile.name, bet: Helpers.numberWithCommas(bet_win), status: 2});
 								}
 
 								var thuong     = 0;

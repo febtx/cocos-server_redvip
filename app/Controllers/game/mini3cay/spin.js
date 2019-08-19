@@ -94,7 +94,7 @@ module.exports = function(client, spin) {
 
 						if (checkName || (bo3 && bo3_a === 0)) {
 							// NỔ HŨ (Bộ 3 Át Hoặc được xác định là nổ hũ)
-							HU.findOneAndUpdate({game:'mini3cay', type:cuoc, red:red}, {$set:{name:"", bet:quyMin}}, function(err,cat){});
+							HU.updateOne({game:'mini3cay', type:cuoc, red:red}, {$set:{name:"", bet:quyMin}}).exec();
 							if (checkName){
 								// đặt kết quả thành nổ hũ nếu người chơi được xác định thủ công
 								card = [...base_card.card]
@@ -111,7 +111,7 @@ module.exports = function(client, spin) {
 							code = 6;
 							if (red){
 								huUpdate['hu'] = uInfo['hu'] = mini_users['hu']     = 1; // Khởi tạo
-								Helpers.ThongBaoNoHu(client, {title: "MINI 3 CÂY", name: client.profile.name, bet: an});
+								Helpers.ThongBaoNoHu(client, {title: "MINI 3 CÂY", name: client.profile.name, bet: Helpers.numberWithCommas(an)});
 							}else{
 								huUpdate['huXu'] = uInfo['huXu'] = mini_users['huXu'] = 1; // Khởi tạo
 							}
@@ -120,13 +120,13 @@ module.exports = function(client, spin) {
 							an   = cuoc*30;
 							text = 'Suốt';
 							code = 5;
-							red && Helpers.ThongBaoBigWin(client, {game: "MINI 3 CÂY", users: client.profile.name, bet: an, status: 2});
+							red && Helpers.ThongBaoBigWin(client, {game: "MINI 3 CÂY", users: client.profile.name, bet: Helpers.numberWithCommas(an), status: 2});
 						}else if (bo3) {
 							// x20      Sáp
 							an   = cuoc*20;
 							text = 'Sáp ' + (bo3_a+1);
 							code = 4;
-							red && Helpers.ThongBaoBigWin(client, {game: "MINI 3 CÂY", users: client.profile.name, bet: an, status: 2});
+							red && Helpers.ThongBaoBigWin(client, {game: "MINI 3 CÂY", users: client.profile.name, bet: Helpers.numberWithCommas(an), status: 2});
 						}else if (ADiamond && TongDiem == 10) {
 							// x10		Tổng 3 lá = 10, có Át rô
 							an   = cuoc*10;
@@ -173,9 +173,9 @@ module.exports = function(client, spin) {
 							Mini3Cay_xu.create({'uid': client.UID, 'win': an, 'bet': cuoc, 'type': code, 'kq': ketqua, 'time': new Date()}, function (err, small) {});
 							client.red({mini:{bacay:{status:1, card:ketqua, win: an, thuong: thuong, text: text, code: code}}, user:{red: user.red, xu: user.xu-cuoc}});
 						}
-						HU.findOneAndUpdate({game:'mini3cay', type:cuoc, red:red}, {$inc:huUpdate}, function(err,cat){});
-						UserInfo.findOneAndUpdate({id:client.UID}, {$inc: uInfo}, function(err,cat){});
-						Mini3Cay_user.findOneAndUpdate({'uid': client.UID}, {$set:{time: new Date()}, $inc: mini_users}, function(err,cat){});
+						HU.updateOne({game:'mini3cay', type:cuoc, red:red}, {$inc:huUpdate}).exec();
+						UserInfo.updateOne({id:client.UID}, {$inc: uInfo}).exec();
+						Mini3Cay_user.updateOne({'uid': client.UID}, {$set:{time: new Date()}, $inc: mini_users}).exec();
 					});
 				}
 			});
