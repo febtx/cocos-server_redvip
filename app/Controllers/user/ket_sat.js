@@ -4,14 +4,13 @@ const OTP      = require('../../Models/OTP');
 
 const Helper   = require('../../Helpers/Helpers');
 
-
 /** OTP
 function gui(client, red){
 	red = red>>0;
 	if (red < 10000) {
 		client.red({notice:{title: "GỬI RED", text: "Số tiền gửi phải lớn hơn 10.000"}});
 	}else{
-		UserInfo.findOne({id: client.UID}, 'red phone', function(err, user){
+		UserInfo.findOne({id: client.UID}, 'red ketSat phone', function(err, user){
 			if(Helper.isEmpty(user.phone)){
 				client.red({notice:{title: "THÔNG BÁO", text: "Chức năng chỉ dành cho tài khoản đã kích hoạt."}});
 				return void 0;
@@ -19,21 +18,21 @@ function gui(client, red){
 			if (user.red < red) {
 				client.red({notice:{title: "THÔNG BÁO", text: "Số dư không khả dụng."}});
 			}else{
-				UserInfo.findOneAndUpdate({id: client.UID}, {$inc:{red: -red, ketSat: red}}, function(err, cat){
-					client.red({notice:{title:'THÀNH CÔNG', text: 'Đã gửi ' + Helper.numberWithCommas(red) + ' RED vào két sắt thành công.!!'}, user:{red:cat.red-red, ketSat: cat.ketSat*1+red}});
-				});
+				UserInfo.updateOne({id: client.UID}, {$inc:{red: -red, ketSat: red}}).exec();
+				client.red({notice:{title:'THÀNH CÔNG', text: 'Đã gửi ' + Helper.numberWithCommas(red) + ' RED vào két sắt thành công.!!'}, user:{red:user.red-red, ketSat: user.ketSat*1+red}});
 			}
 		});
 	}
 	//return void 0;
 }
+
 function rut(client, data){
 	var red = data.red>>0;
 
 	if (red < 10000) {
 		client.red({notice:{title: "RÚT RED", text: "Số tiền rút phải lớn hơn 10.000"}});
 	}else{
-		UserInfo.findOne({id: client.UID}, 'ketSat phone', function(err, user){
+		UserInfo.findOne({id: client.UID}, 'red ketSat phone', function(err, user){
 			if(Helper.isEmpty(user.phone)){
 				client.red({notice:{title: "THÔNG BÁO", text: "Chức năng chỉ dành cho tài khoản đã kích hoạt."}});
 				return void 0;
@@ -46,10 +45,9 @@ function rut(client, data){
 						if (user.ketSat < red) {
 							client.red({notice:{title: "THẤT BẠI", text: "Số tiền trong két nhỏ hơn số tiền giao dịch."}});
 						}else{
-							OTP.findOneAndUpdate({'_id': data_otp._id.toString()}, {$set:{'active':true}}, function(err, cat){});
-							UserInfo.findOneAndUpdate({id: client.UID}, {$inc:{red: red, ketSat: -red}}, function(err, cat){
-								client.red({notice:{title:'THÀNH CÔNG', text: 'Rút thành công ' + Helper.numberWithCommas(red) + ' RED từ két sắt.!!'}, user:{red: cat.red*1+red, ketSat: cat.ketSat-red}});
-							});
+							OTP.updateOne({'_id': data_otp._id.toString()}, {$set:{'active':true}}).exec();
+							UserInfo.updateOne({id: client.UID}, {$inc:{red: red, ketSat: -red}}).exec();
+							client.red({notice:{title:'THÀNH CÔNG', text: 'Rút thành công ' + Helper.numberWithCommas(red) + ' RED từ két sắt.!!'}, user:{red: user.red*1+red, ketSat: user.ketSat-red}});
 						}
 					}
 				}else{
@@ -86,7 +84,7 @@ function rut(client, data){
 	if (red < 10000) {
 		client.red({notice:{title: "RÚT RED", text: "Số tiền rút phải lớn hơn 10.000"}});
 	}else{
-		UserInfo.findOne({id: client.UID}, 'ketSat', function(err, user){
+		UserInfo.findOne({id: client.UID}, 'red ketSat', function(err, user){
 			if (user.ketSat < red) {
 				client.red({notice:{title: "THẤT BẠI", text: "Số tiền trong két nhỏ hơn số tiền giao dịch."}});
 			}else{

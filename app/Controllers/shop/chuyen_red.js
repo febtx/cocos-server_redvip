@@ -40,7 +40,7 @@ module.exports = function(client, data){
 								{nickname: {$regex: regexUsers}}
 							]}).exec();
 
-							var active2 = UserInfo.findOne({name: {$regex: regex}}, 'id name').exec();
+							var active2 = UserInfo.findOne({name: {$regex: regex}}, 'id name red').exec();
 							var active3 = UserInfo.findOne({id: client.UID}, 'red').exec();
 							Promise.all([active1, active2, active3])
 							.then(valuesCheck => {
@@ -54,23 +54,21 @@ module.exports = function(client, data){
 										if (user == null || (user.red-10000 < red)) {
 											client.red({notice:{title:'CHUYỂN RED',text:'Số dư không khả dụng.!!'}});
 										}else{
-											UserInfo.findOneAndUpdate({id: client.UID}, {$inc:{red:-red}}, function(err,cat){
-												client.red({notice:{title:'CHUYỂN RED', text: 'Giao dịch thành công.!!'}, user:{red:cat.red-red}});
-											});
+											UserInfo.updateOne({id: client.UID}, {$inc:{red:-red}}).exec();
+											client.red({notice:{title:'CHUYỂN RED', text: 'Giao dịch thành công.!!'}, user:{red:user.red-red}});
 											var thanhTien = !!daily ? red : Helper.anPhanTram(red, 1, 2);
 											var create = {'from':client.profile.name, 'to':to.name, 'red':red, 'red_c':thanhTien, 'time': new Date()};
 											if (void 0 !== data.message && !validator.isEmpty(data.message.trim())) {
 												create = Object.assign(create, {message: data.message});
 											}
 											ChuyenRed.create(create);
-											UserInfo.findOneAndUpdate({name: {$regex: regex}}, {$inc:{red:thanhTien}}, function(err,cat){
-												if (void 0 !== client.redT.users[cat.id]) {
-													Promise.all(client.redT.users[cat.id].map(function(obj){
-														obj.red({notice:{title:'CHUYỂN RED', text:'Bạn nhận được ' + Helper.numberWithCommas(thanhTien) + ' Red.' + "\n" + 'Từ người chơi: ' + client.profile.name}, user:{red: cat.red*1+thanhTien}});
-													}));
-												}
-											});
-											OTP.findOneAndUpdate({'_id': data_otp._id.toString()}, {$set:{'active':true}}, function(err, cat){});
+											UserInfo.updateOne({name: to.name}, {$inc:{red:thanhTien}}).exec();
+											if (void 0 !== client.redT.users[to.id]) {
+												Promise.all(client.redT.users[to.id].map(function(obj){
+													obj.red({notice:{title:'CHUYỂN RED', text:'Bạn nhận được ' + Helper.numberWithCommas(thanhTien) + ' Red.' + "\n" + 'Từ người chơi: ' + client.profile.name}, user:{red: to.red*1+thanhTien}});
+												}));
+											}
+											OTP.updateOne({'_id': data_otp._id.toString()}, {$set:{'active':true}}).exec();
 										}
 									}
 								}else{
@@ -87,7 +85,6 @@ module.exports = function(client, data){
 	}
 }
 */
-
 
 module.exports = function(client, data){
 	if (!!data && !!data.name) {
@@ -108,14 +105,13 @@ module.exports = function(client, data){
 			}else{
 				var regex      = new RegExp("^" + name + "$", 'i');
 				var regexUsers = new RegExp("^" + client.profile.name + "$", 'i');
-				//var active1 = tab_DaiLy.findOne({nickname: {$regex: regex}}).exec();
 
 				var active1 = tab_DaiLy.findOne({$or:[
 					{nickname: {$regex: regex}},
 					{nickname: {$regex: regexUsers}}
 				]}).exec();
 
-				var active2 = UserInfo.findOne({name: {$regex: regex}}, 'id name').exec();
+				var active2 = UserInfo.findOne({name: {$regex: regex}}, 'id name red').exec();
 				var active3 = UserInfo.findOne({id: client.UID}, 'red').exec();
 				Promise.all([active1, active2, active3])
 				.then(valuesCheck => {
@@ -129,22 +125,20 @@ module.exports = function(client, data){
 							if (user == null || (user.red-10000 < red)) {
 								client.red({notice:{title:'CHUYỂN RED',text:'Số dư không khả dụng.!!'}});
 							}else{
-								UserInfo.findOneAndUpdate({id: client.UID}, {$inc:{red:-red}}, function(err,cat){
-									client.red({notice:{title:'CHUYỂN RED', text: 'Giao dịch thành công.!!'}, user:{red:cat.red-red}});
-								});
+								UserInfo.updateOne({id: client.UID}, {$inc:{red:-red}}).exec();
+								client.red({notice:{title:'CHUYỂN RED', text: 'Giao dịch thành công.!!'}, user:{red:user.red-red}});
 								var thanhTien = !!daily ? red : Helper.anPhanTram(red, 1, 2);
 								var create = {'from':client.profile.name, 'to':to.name, 'red':red, 'red_c':thanhTien, 'time': new Date()};
 								if (!!data.message && !validator.isEmpty(data.message)) {
 									create = Object.assign(create, {message: data.message});
 								}
 								ChuyenRed.create(create);
-								UserInfo.findOneAndUpdate({name: {$regex: regex}}, {$inc:{red:thanhTien}}, function(err,cat){
-									if (void 0 !== client.redT.users[cat.id]) {
-										Promise.all(client.redT.users[cat.id].map(function(obj){
-											obj.red({notice:{title:'NHẬN RED', text:'Bạn nhận được ' + Helper.numberWithCommas(thanhTien) + ' RED.' + "\n" + 'Từ người chơi: ' + client.profile.name}, user:{red: cat.red*1+thanhTien}});
-										}));
-									}
-								});
+								UserInfo.updateOne({name: to.name}, {$inc:{red:thanhTien}}).exec();
+								if (void 0 !== client.redT.users[to.id]) {
+									Promise.all(client.redT.users[to.id].map(function(obj){
+										obj.red({notice:{title:'NHẬN RED', text:'Bạn nhận được ' + Helper.numberWithCommas(thanhTien) + ' RED.' + "\n" + 'Từ người chơi: ' + client.profile.name}, user:{red: to.red*1+thanhTien}});
+									}));
+								}
 							}
 						}
 					}else{

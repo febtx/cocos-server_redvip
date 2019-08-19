@@ -34,7 +34,7 @@ function createOTP(client, type){
 								smsOTP(user.phone, otp);
 
 								OTP.create({'uid': client.UID, 'code': otp, 'date': new Date()});
-								client.red({notice:{title:'THÔNG BÁO', text:'Mã OTP đã được gửi tới số điện thoại của bạn.'}, user:{red:user.red-1000}});
+								client.red({notice:{title:'THÔNG BÁO', text:'Mã OTP đã được gửi tới số điện thoại của bạn.'}, user:{red:user.red}});
 							}
 						}
 					}else{

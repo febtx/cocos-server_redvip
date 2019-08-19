@@ -30,13 +30,13 @@ function onSelectBox(client, box){
 						if (client.VuongQuocRed.red) {
 							uInfo['red']    = betWin;
 							uInfo['redWin'] = gInfo['win'] = betWin; // Cập nhật Số Red đã Thắng
-							VuongQuocRed_red.findOneAndUpdate({'_id': client.VuongQuocRed.id}, {$inc:{win:betWin}}, function(err, small){});
+							VuongQuocRed_red.updateOne({'_id': client.VuongQuocRed.id}, {$inc:{win:betWin}}).exec();
 						}else{
 							uInfo['xu']    = betWin;
 							uInfo['xuWin'] = gInfo['winXu'] = betWin; // Cập nhật Số xu đã Thắng
 							thuong         = (betWin*0.039589)>>0;
 							uInfo['red']   = uInfo['thuong'] = gInfo['thuong'] = thuong;
-							VuongQuocRed_xu.findOneAndUpdate({'_id': client.VuongQuocRed.id}, {$inc:{win:betWin}}, function(err, small){});
+							VuongQuocRed_xu.updateOne({'_id': client.VuongQuocRed.id}, {$inc:{win:betWin}}).exec();
 						}
 
 						client.VuongQuocRed.bonus    = null;
@@ -51,7 +51,7 @@ function onSelectBox(client, box){
 							}
 						});
 
-						VuongQuocRed_users.findOneAndUpdate({'uid':client.UID}, {$inc:gInfo}, function(err,cat){});
+						VuongQuocRed_users.updateOne({'uid':client.UID}, {$inc:gInfo}).exec();
 
 					}, 700);
 				}

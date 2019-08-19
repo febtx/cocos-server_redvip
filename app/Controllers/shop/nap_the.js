@@ -67,7 +67,7 @@ module.exports = function(client, data){
 												var data = JSON.parse(body);
 												if (data['error_code'] == '00') {
 													var nhan = menhGia-(menhGia*config.extract/100);
-													tab_NapThe.findOneAndUpdate({'_id': cID}, {$set:{nhan:nhan, status:1}}).exec();
+													tab_NapThe.updateOne({'_id': cID}, {$set:{nhan:nhan, status:1}}).exec();
 													UserInfo.findOneAndUpdate({'id': client.UID}, {$inc:{red:nhan}}, function(err2, user) {
 														client.red({notice:{title:'THÀNH CÔNG', text:'Nạp thẻ thành công...', load: false}, user:{red: user.red*1+nhan}});
 													});
@@ -75,7 +75,7 @@ module.exports = function(client, data){
 													// Chờ kết quả tiếp theo
 													client.red({loading:{text: 'Đang chờ sử lý...'}});
 												}else{
-													tab_NapThe.findOneAndUpdate({'_id': cID}, {$set:{status:2}}).exec();
+													tab_NapThe.updateOne({'_id': cID}, {$set:{status:2}}).exec();
 													client.red({notice:{title:'THẤT BẠI', text: config[data['error_code']], load: false}});
 												}
 											} catch(e){

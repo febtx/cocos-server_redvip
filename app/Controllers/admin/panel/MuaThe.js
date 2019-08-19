@@ -76,18 +76,16 @@ function update(client, data){
 		var status = data.status>>0;
 		var cart   = data.cart;
 
-		MuaThe.findOneAndUpdate({'_id': cart}, {$set:{status: status}}, function(err, cart){});
+		MuaThe.updateOne({'_id': cart}, {$set:{status: status}}).exec();
 
 		if (Array.isArray(data.card)) {
 			Promise.all(data.card.map(function(obj){
-				MuaThe_card.findOneAndUpdate({'_id': obj.id}, {$set: obj.card}, function(err, cart){});
+				MuaThe_card.updateOne({'_id': obj.id}, {$set: obj.card}).exec();
 			}))
 		}
 		client.red({mua_the:{update: data}});
 	}
 }
-
-
 
 module.exports = function (client, data) {
 	if (!!data) {

@@ -34,10 +34,9 @@ module.exports = function(client, data){
 		if (!!Object.entries(update).length) {
 			UserInfo.findOne({'id': data.id}, function(err, check) {
 				if (check) {
-					UserInfo.findOneAndUpdate({'id': data.id}, {$set:update}, function(err, cart){
-						get_info(client, data.id);
-						client.red({notice:{title:'NGƯỜI DÙNG', text:'Thay đổi Thành Công...'}});
-					});
+					get_info(client, data.id);
+					client.red({notice:{title:'NGƯỜI DÙNG', text:'Thay đổi Thành Công...'}});
+					UserInfo.updateOne({'id': data.id}, {$set:update}).exec();
 				}else{
 					client.red({notice:{title:'NGƯỜI DÙNG', text:'Người dùng không tồn tại...'}});
 				}
@@ -45,7 +44,7 @@ module.exports = function(client, data){
 		}
 		if (!!uData.pass && validator.isLength(uData.pass, {min:6, max: 32})) {
 			password = Helper.generateHash(uData.pass);
-			Users.findOneAndUpdate({'_id': data.id}, {$set:{'local.password':password}}, function(err, cart){});
+			Users.updateOne({'_id': data.id}, {$set:{'local.password':password}}).exec();
 			client.red({notice:{title:'NGƯỜI DÙNG', text:'Thay đổi Thành Công...'}});
 		}
 	}

@@ -75,8 +75,8 @@ function update(client, data){
 					if (status == 1) {
 						MenhGia.findOne({'name': check.menhGia, 'nap': true}, 'values', function(err, checkMenhGia){
 							if (!!checkMenhGia) {
-								NapThe.findOneAndUpdate({'_id': id}, {$set:{nhan: checkMenhGia.values, status: status}}, function(err, cat){});
-								UserInfo.findOneAndUpdate({name: check.name}, {$inc:{red: checkMenhGia.values}}, function(err,cat){});
+								NapThe.updateOne({'_id': id}, {$set:{nhan: checkMenhGia.values, status: status}}).exec();
+								UserInfo.updateOne({name: check.name}, {$inc:{red: checkMenhGia.values}}).exec();
 								client.red({notice:{title: "THÔNG TIN NẠP THẺ", text: "Cập nhật thành công..."},nap_the:{update:{id: id, status: status, nhan: checkMenhGia.values}}});
 							}else{
 								client.red({notice:{title: 'LỖI HỆ THỐNG', text: 'Mệnh giá này không tồn tại trên hệ thống...'}});
@@ -84,10 +84,10 @@ function update(client, data){
 						});
 					}else{
 						if (check.status == 1) {
-							NapThe.findOneAndUpdate({'_id': id}, {$set:{nhan: 0, status: status}}, function(err, cat){});
-							UserInfo.findOneAndUpdate({name: check.name}, {$inc:{red: -check.nhan}}, function(err,cat){});
+							NapThe.updateOne({'_id': id}, {$set:{nhan: 0, status: status}}).exec();
+							UserInfo.updateOne({name: check.name}, {$inc:{red: -check.nhan}}).exec();
 						}else{
-							NapThe.findOneAndUpdate({'_id': id}, {$set:{status: status}}, function(err, cat){});
+							NapThe.updateOne({'_id': id}, {$set:{status: status}}).exec();
 						}
 						client.red({notice:{title: "THÔNG TIN NẠP THẺ", text: "Cập nhật thành công..."}, nap_the:{update:{id: id, status: status, nhan: 0}}});
 					}

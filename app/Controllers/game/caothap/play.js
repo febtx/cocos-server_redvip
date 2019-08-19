@@ -24,7 +24,7 @@ function newGame(client, data) {
 			// Error
 			client.red({mini:{caothap:{status:0,notice: "Dữ liệu trò chơi không đúng..."}}});
 		}else{
-			UserInfo.findOne({id:client.UID}, 'red xu', function(err, user){
+			UserInfo.findOne({id:client.UID}, 'red redPlay xu xuPlay', function(err, user){
 				if (!user || (red && user.red < cuoc) || (!red && user.xu < cuoc)) {
 					client.red({mini:{caothap:{status:0, notice: 'Bạn không đủ ' + (red ? 'RED':'XU') + ' để chơi.!!'}}});
 				}else{
@@ -34,13 +34,14 @@ function newGame(client, data) {
 					var uInfo     = {};                         // đối tượng cập nhật người dùng
 					var uInfoGame = {};
 					if (red){
-						uInfo['red']     = -cuoc; // Cập nhật Số dư Red trong tài khoản
-						uInfo['redPlay'] = uInfoGame['bet'] = cuoc;  // Cập nhật Số Red đã chơi
+						user.red    -= cuoc;
+						user.redPlay = user.redPlay*1 + cuoc;
 					}else{
-						uInfo['xu']     = -cuoc;  // Cập nhật Số dư Red trong tài khoản
-						uInfo['xuPlay'] = uInfoGame['betXu'] = cuoc;   // Cập nhật Số XU đã chơi
+						user.xu    -= cuoc;
+						user.xuPlay = user.xuPlay*1 + cuoc;
 					}
-					UserInfo.updateOne({id:client.UID}, {$inc: uInfo}).exec();
+					user.save();
+
 					CaoThap_user.updateOne({'uid': client.UID}, {$inc: uInfoGame}).exec();
 
 					HU.findOneAndUpdate({game: "caothap", type:cuoc, red:red}, {$inc:{bet:addQuy}}, function(err, caothap){
@@ -330,9 +331,8 @@ function annon(client) {
 							}
 							CaoThap_xu.updateOne({'_id': client.caothap.id}, {$set: {play: false, time: new Date()}}).exec();
 						}
-						UserInfo.findOneAndUpdate({id:client.UID}, {$inc: uInfo}, function(err, user){
-							client.red({mini:{caothap:{status:0, annon: result.bet}}, user:{red: client.caothap.red ? user.red*1+result.bet : user.red, xu: !client.caothap.red ? user.xu*1+result.bet : user.xu}});
-						});
+						UserInfo.updateOne({id:client.UID}, {$inc: uInfo}).exec();
+						client.red({mini:{caothap:{status:0, annon: result.bet}}});
 						CaoThap_user.updateOne({'uid': client.UID}, {$inc: uInfoGame}).exec();
 					}else{
 						client.red({mini:{caothap:{isAnNon: false, notice:"Chưa đủ điều kiện ăn non..."}}});
@@ -427,9 +427,9 @@ function reconnect(client){
 					}
 					CaoThap_xu.updateOne({'_id': client.caothap.id}, {$set: {play: false}}).exec();
 				}
-				UserInfo.findOneAndUpdate({id:client.UID}, {$inc: uInfo}, function(err, user){
-					client.red({user:{red: client.caothap.red ? user.red*1+result.bet : user.red, xu: !client.caothap.red ? user.xu*1+result.bet : user.xu}});
-				});
+				UserInfo.updateOne({id:client.UID}, {$inc: uInfo}).exec();
+					//client.red({user:{red: client.caothap.red ? user.red*1+result.bet : user.red, xu: !client.caothap.red ? user.xu*1+result.bet : user.xu}});
+				//});
 				CaoThap_user.updateOne({'uid': client.UID}, {$inc: uInfoGame}).exec();
 
 				if (result.buoc == 0) {

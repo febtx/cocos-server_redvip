@@ -2,13 +2,13 @@
 // Khởi tạo dữ liệu
 
 // Admin
-const Admin   = require('../app/Models/Admin');
-const helpers = require('../app/Helpers/Helpers');
-const HU      = require('../app/Models/HU');
+const Admin        = require('../app/Models/Admin');
+const generateHash = require('../app/Helpers/Helpers').generateHash;
+const HU           = require('../app/Models/HU');
 
 Admin.estimatedDocumentCount().exec(function(err, total){
 	if (total == 0) {
-		Admin.create({'username': 'admin', 'password': helpers.generateHash('12345'), 'rights': 9, 'regDate': new Date()});
+		Admin.create({'username': 'admin', 'password': generateHash('123456'), 'rights': 9, 'regDate': new Date()});
 	}
 })
 

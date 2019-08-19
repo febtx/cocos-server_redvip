@@ -27,9 +27,8 @@ function changePassword(client, data){
 			Admin.findOne({'_id': client.UID}, function(err, user){
 				if (user !== null) {
 					if (Helper.validPassword(data.password, user.password)) {
-						Admin.findOneAndUpdate({'_id': client.UID}, {$set:{'password':Helper.generateHash(data.newPassword)}}, function(err, cat){
-							client.red({notice:{title:'ĐỔI MẬT KHẨU',text:'Đổi mật khẩu thành công.'}});
-						});
+						Admin.updateOne({'_id': client.UID}, {$set:{'password':Helper.generateHash(data.newPassword)}}).exec();
+						client.red({notice:{title:'ĐỔI MẬT KHẨU',text:'Đổi mật khẩu thành công.'}});
 					}else{
 						client.red({notice:{title:'ĐỔI MẬT KHẨU',text:'Mật khẩu cũ không đúng.'}});
 					}

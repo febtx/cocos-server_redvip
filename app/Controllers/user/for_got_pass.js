@@ -38,8 +38,8 @@ function sendOTP(client, name){
 											// Lấy SMS OTP
 											smsOTP(user.phone, otp);
 											OTP.create({'uid': cID, 'code': otp, 'date': new Date()});
-											User.findOneAndUpdate({'_id': cID}, {$inc:{'local.ban_pass':1}}, function(err, cat){});
-											UserInfo.findOneAndUpdate({'id': cID}, {$inc:{red:-1000}}, function(err, cat){});
+											User.updateOne({'_id': cID}, {$inc:{'local.ban_pass':1}}).exec();
+											UserInfo.updateOne({'id': cID}, {$inc:{red:-1000}}).exec();
 											client.red({notice: {title: "THÔNG BÁO", text: "Mã OTP đã được gửi vào số điện thoại của bạn..."}});
 										}else{
 											client.red({notice:{title:'OTP', text:'Vui lòng kiểm tra hòm thư đến.!'}});
@@ -88,8 +88,8 @@ function iForGot(client, data){
 												if ((new Date()-Date.parse(data_otp.date))/1000 > 180 || data_otp.active) {
 													client.red({notice:{title:'OTP', text:'Mã OTP đã hết hạn.!'}});
 												}else{
-													OTP.findOneAndUpdate({'_id': data_otp._id.toString()}, {$set:{'active':true}}, function(err, cat){});
-													User.findOneAndUpdate({'_id': cID}, {$set:{'local.ban_pass':0, 'local.password': Helper.generateHash(data.pass)}}, function(err, cat){});
+													OTP.updateOne({'_id': data_otp._id.toString()}, {$set:{'active':true}}).exec();
+													User.updateOne({'_id': cID}, {$set:{'local.ban_pass':0, 'local.password': Helper.generateHash(data.pass)}}).exec();
 													client.red({notice: {title: "THÀNH CÔNG", text: "Bạn vừa lấy lại mật khẩu thành công."}});
 												}
 											}else{

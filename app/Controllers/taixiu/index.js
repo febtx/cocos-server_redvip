@@ -208,9 +208,9 @@ var cuoc = function(client, data){
 									}
 									io.taixiuAdmin.list.unshift({name:user.name, taixiu:taixiu, select:select, red:red, bet:bet, time:new Date()});
 									var updateINC = red ? {red:-bet} : {xu:-bet};
-									UserInfo.findOneAndUpdate({id:client.UID}, {$inc:updateINC}, function(err,cat){});
-									TXCuocOne.findOneAndUpdate({uid: client.UID, phien: phien, taixiu:taixiu, select:select, red:red}, {$inc:{bet:bet}}, function(err, cat){});
-									TXCuoc.create({uid:client.UID, name:user.name, phien:phien, bet:bet, taixiu:taixiu, select:select, red:red, time:new Date()}, function(err, cat){});
+									UserInfo.updateOne({id:client.UID}, {$inc:updateINC}).exec();
+									TXCuocOne.updateOne({uid: client.UID, phien: phien, taixiu:taixiu, select:select, red:red}, {$inc:{bet:bet}}).exec();
+									TXCuoc.create({uid:client.UID, name:user.name, phien:phien, bet:bet, taixiu:taixiu, select:select, red:red, time:new Date()});
 
 									var taixiuVery = (red ? (select ? (taixiu ? {red_me_tai: isCuoc.bet*1+bet} : {red_me_chan: isCuoc.bet*1+bet}) : (taixiu ? {red_me_xiu: isCuoc.bet*1+bet} : {red_me_le: isCuoc.bet*1+bet})) : (select ? (taixiu ? {xu_me_tai: isCuoc.bet*1+bet} : {xu_me_chan: isCuoc.bet*1+bet}) : (taixiu ? {xu_me_xiu: isCuoc.bet*1+bet} : {xu_me_le: isCuoc.bet*1+bet})));
 									taixiuVery = (taixiu ? {taixiu: taixiuVery} : {chanle: taixiuVery});
@@ -287,9 +287,9 @@ var cuoc = function(client, data){
 								}
 								io.taixiuAdmin.list.unshift({name:user.name, taixiu:taixiu, select:select, red:red, bet:bet, time:new Date()});
 								var updateINC = red ? {red:-bet} : {xu:-bet};
-								UserInfo.findOneAndUpdate({id:client.UID}, {$inc:updateINC}, function(err,cat){});
+								UserInfo.updateOne({id:client.UID}, {$inc:updateINC}).exec();
 								TXCuocOne.create({uid: client.UID, phien: phien, taixiu:taixiu, select:select, red:red, bet:bet});
-								TXCuoc.create({uid:client.UID, name:user.name, phien:phien, bet:bet, taixiu:taixiu, select:select, red:red, time:new Date()}, function(err, cat){});
+								TXCuoc.create({uid:client.UID, name:user.name, phien:phien, bet:bet, taixiu:taixiu, select:select, red:red, time:new Date()});
 
 								var taixiuVery = (red ? (select ? (taixiu ? {red_me_tai:bet} : {red_me_chan:bet}) : (taixiu ? {red_me_xiu:bet} : {red_me_le:bet})) : (select ? (taixiu ? {xu_me_tai:bet} : {xu_me_chan:bet}) : (taixiu ? {xu_me_xiu:bet} : {xu_me_le:bet})));
 								taixiuVery = (taixiu ? {taixiu: taixiuVery} : {chanle: taixiuVery});

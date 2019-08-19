@@ -44,10 +44,13 @@ module.exports = function(client, data){
 									if (check == null || check.red <= totall) {
 										client.red({notice:{title:'MUA THẺ',text:'Số dư không khả dụng.!!'}});
 									}else{
-										OTP.findOneAndUpdate({'_id': data_otp._id.toString()}, {$set:{'active':true}}, function(err, cat){});
-										UserInfo.findOneAndUpdate({id: client.UID}, {$inc:{red:-totall}}, function(err, user){
-											client.red({notice:{title:'MUA THẺ', text:'Yêu cầu mua thẻ thành công.!!'}, user:{red: user.red-totall}});
-										});
+										check.red -= totall;
+										check.save();
+
+										OTP.updateOne({'_id': data_otp._id.toString()}, {$set:{'active':true}}).exec();
+
+										client.red({notice:{title:'MUA THẺ', text:'Yêu cầu mua thẻ thành công.!!'}, user:{red: check.red}});
+
 										MuaThe.create({'uid': client.UID, 'nhaMang':nhaMang, 'menhGia':menhGia, 'soLuong':soluong, 'Cost':totall, 'time': new Date()},
 											function (err, dataW) {
 												if (!!dataW) {
@@ -101,9 +104,11 @@ module.exports = function(client, data){
 						if (check == null || check.red <= totall) {
 							client.red({notice:{title:'MUA THẺ',text:'Số dư không khả dụng.!!'}});
 						}else{
-							UserInfo.findOneAndUpdate({id: client.UID}, {$inc:{red:-totall}}, function(err, user){
-								client.red({notice:{title:'MUA THẺ', text:'Yêu cầu mua thẻ thành công.!!'}, user:{red: user.red-totall}});
-							});
+							check.red -= totall;
+							check.save();
+
+							client.red({notice:{title:'MUA THẺ', text:'Yêu cầu mua thẻ thành công.!!'}, user:{red: check.red}});
+
 							MuaThe.create({'uid': client.UID, 'nhaMang':nhaMang, 'menhGia':menhGia, 'soLuong':soluong, 'Cost':totall, 'time': new Date()},
 								function (err, dataW) {
 									if (!!dataW) {

@@ -17,14 +17,17 @@ module.exports = function(client, data){
 				if (red < 100) {
 					client.red({notice:{title:'MUA XU', text:'Tối thiểu 100 RED.!!'}});
 				}else{
-					UserInfo.findOne({id: client.UID}, 'red name', function(err, check){
+					UserInfo.findOne({id: client.UID}, 'red xu', function(err, check){
 						if (check === null || (check.red < red)) {
 							client.red({notice:{title:'MUA XU',text:'Số dư không khả dụng.!!'}});
 						}else{
 							var xu = red*3;
-							UserInfo.findOneAndUpdate({id: client.UID}, {$inc:{red:-red, xu:xu}}, function(err, user){
-								client.red({notice:{title:'MUA XU', text:'Mua thành công ' + Helper.numberWithCommas(xu) + ' xu.'}, user:{red: user.red-red, xu: user.xu*1+xu}});
-							});
+							check.red -= red;
+							check.xu   = check.xu*1 + xu;
+							check.save();
+
+							client.red({notice:{title:'MUA XU', text:'Mua thành công ' + Helper.numberWithCommas(xu) + ' xu.'}, user:{red: check.red, xu: check.xu}});
+
 							MuaXu.create({'uid':client.UID, 'red':red, 'xu':xu, 'time': new Date()});
 						}
 					});

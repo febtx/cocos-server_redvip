@@ -57,7 +57,7 @@ function regOTP(client, data){
 					if (((new Date()-Date.parse(data_otp.date))/1000) > 180 || data_otp.active) {
 						client.red({notice:{title:'LỖI', text:'Mã OTP đã hết hạn.!'}});
 					}else{
-						UserInfo.findOne({'id': client.UID}, 'phone email cmt', function(err, dU){
+						UserInfo.findOne({'id': client.UID}, 'red xu phone email cmt', function(err, dU){
 							if (dU) {
 								if (helper.isEmpty(dU.phone)){
 									UserInfo.findOne({'phone': data.phone}, 'id', function(err, check){
@@ -67,9 +67,8 @@ function regOTP(client, data){
 											// Xác thực thành công
 											data_otp.active = true;
 											data_otp.save();
-											UserInfo.findOneAndUpdate({id:client.UID},{$set:{phone:data.phone, email:data.email, cmt:data.cmt}, $inc:{red:3000, xu:10000}}, function(err, user){
-												client.red({notice:{title:'THÀNH CÔNG', text: 'Xác thực thành công.!' + "\n" + 'Bạn nhận được 3.000Red vào 10.000Xu, chúc bạn vui vẻ...'}, user: {red: user.red*1+3000, xu: user.xu*1+10000, phone: helper.cutPhone(data.phone), email: helper.cutEmail(data.email), cmt: data.cmt}});
-											});
+											UserInfo.updateOne({id:client.UID}, {$set:{phone:data.phone, email:data.email, cmt:data.cmt}, $inc:{red:3000, xu:10000}}).exec();
+											client.red({notice:{title:'THÀNH CÔNG', text: 'Xác thực thành công.!' + "\n" + 'Bạn nhận được 3.000 Red và 10.000 Xu, chúc bạn chơi game vui vẻ...'}, user: {red: dU.red*1+3000, xu: dU.xu*1+10000, phone: helper.cutPhone(data.phone), email: helper.cutEmail(data.email), cmt: data.cmt}});
 										}
 									});
 								}else{
