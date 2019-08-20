@@ -1,9 +1,11 @@
 
-var VuongQuocRed_red   = require('../../../Models/VuongQuocRed/VuongQuocRed_red');
-var VuongQuocRed_xu    = require('../../../Models/VuongQuocRed/VuongQuocRed_xu');
-var VuongQuocRed_users = require('../../../Models/VuongQuocRed/VuongQuocRed_users');
+const HU                 = require('../../../Models/HU');
 
-var UserInfo = require('../../../Models/UserInfo');
+const VuongQuocRed_red   = require('../../../Models/VuongQuocRed/VuongQuocRed_red');
+const VuongQuocRed_xu    = require('../../../Models/VuongQuocRed/VuongQuocRed_xu');
+const VuongQuocRed_users = require('../../../Models/VuongQuocRed/VuongQuocRed_users');
+
+const UserInfo           = require('../../../Models/UserInfo');
 
 function onSelectBox(client, box){
 	box = box>>0;
@@ -21,39 +23,47 @@ function onSelectBox(client, box){
 				client.VuongQuocRed.bonusWin += bet;
 				client.red({VuongQuocRed:{bonus:{bonus: client.VuongQuocRed.bonusL, box: index, bet: bet}}});
 				if (!client.VuongQuocRed.bonusL) {
-					setTimeout(function(){
-						var betWin = client.VuongQuocRed.bonusWin*client.VuongQuocRed.bonusX;
+					var betWin = client.VuongQuocRed.bonusWin*client.VuongQuocRed.bonusX;
 
-						var uInfo = {};
-						var gInfo = {};
+					var uInfo    = {};
+					var gInfo    = {};
+					var huUpdate = {};
 
-						if (client.VuongQuocRed.red) {
-							uInfo['red']    = betWin;
-							uInfo['redWin'] = gInfo['win'] = betWin; // Cập nhật Số Red đã Thắng
-							VuongQuocRed_red.updateOne({'_id': client.VuongQuocRed.id}, {$inc:{win:betWin}}).exec();
-						}else{
-							uInfo['xu']    = betWin;
-							uInfo['xuWin'] = gInfo['winXu'] = betWin; // Cập nhật Số xu đã Thắng
-							thuong         = (betWin*0.039589)>>0;
-							uInfo['red']   = uInfo['thuong'] = gInfo['thuong'] = thuong;
-							VuongQuocRed_xu.updateOne({'_id': client.VuongQuocRed.id}, {$inc:{win:betWin}}).exec();
-						}
+					if (client.VuongQuocRed.red) {
+						huUpdate.redWin = betWin;
+						uInfo.red       = betWin;
+						uInfo.redWin    = betWin;
+						gInfo.win       = betWin;
+						VuongQuocRed_red.updateOne({'_id': client.VuongQuocRed.id}, {$inc:{win:betWin}}).exec();
+					}else{
+						huUpdate.xuWin = betWin;
+						uInfo.xu       = betWin;
+						uInfo.xuWin    = betWin;
+						gInfo.winXu    = betWin;
 
-						client.VuongQuocRed.bonus    = null;
-						client.VuongQuocRed.bonusWin = 0;
-						client.VuongQuocRed.bonusX   = 0;
+						var thuong = (betWin*0.039589)>>0;
+						uInfo.red      = thuong;
+						uInfo.thuong   = thuong;
+						gInfo.thuong   = thuong;
 
-						UserInfo.findOneAndUpdate({id:client.UID}, 'red xu', {$inc: uInfo}, function(err, user){
+						VuongQuocRed_xu.updateOne({'_id': client.VuongQuocRed.id}, {$inc:{win:betWin}}).exec();
+					}
+
+					client.VuongQuocRed.bonus    = null;
+					client.VuongQuocRed.bonusWin = 0;
+					client.VuongQuocRed.bonusX   = 0;
+
+					UserInfo.findOneAndUpdate({id:client.UID}, 'red xu', {$inc:uInfo}, function(err, user){
+						setTimeout(function(){
 							if (client.VuongQuocRed.red) {
 								client.red({VuongQuocRed:{bonus:{win: betWin}}, user:{red:user.red*1+betWin}});
 							}else{
 								client.red({VuongQuocRed:{bonus:{win: betWin}}, user:{xu:user.xu*1+betWin}});
 							}
-						});
-
-						VuongQuocRed_users.updateOne({'uid':client.UID}, {$inc:gInfo}).exec();
-
-					}, 700);
+						}, 700);
+					});
+					HU.updateOne({game:'vuongquocred', type:client.VuongQuocRed.bet, red:client.VuongQuocRed.red}, {$inc:huUpdate}).exec();
+					VuongQuocRed_users.updateOne({'uid':client.UID}, {$inc:gInfo}).exec();
 				}
 			}
 		}

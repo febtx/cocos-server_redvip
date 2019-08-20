@@ -164,8 +164,9 @@ module.exports = function(client, data){
 		if (!(bet == 100 || bet == 1000 || bet == 10000) || line.length < 1) {
 			client.red({VuongQuocRed:{status:0}, notice:{text: "DỮ LIỆU KHÔNG ĐÚNG...", title: "THẤT BẠI"}});
 		}else{
-			client.VuongQuocRed = void 0 === client.VuongQuocRed ? {id: "", red: red, bonus: null, bonusX: 0, bonusL: 0, bonusWin: 0, free: 0} : client.VuongQuocRed;
+			client.VuongQuocRed = void 0 === client.VuongQuocRed ? {id: "", red: red, bet: bet, bonus: null, bonusX: 0, bonusL: 0, bonusWin: 0, free: 0} : client.VuongQuocRed;
 			client.VuongQuocRed.red = red;
+			client.VuongQuocRed.bet = bet;
 			var tongCuoc = bet*line.length;
 			UserInfo.findOne({id:client.UID}, red ? 'red name':'xu name', function(err, user){
 				if (client.VuongQuocRed.free === 0 && ((red && user.red < tongCuoc) || (!red && user.xu < tongCuoc))) {
@@ -488,7 +489,6 @@ module.exports = function(client, data){
 										// Nổ Hũ
 										type = 2;
 										if (!nohu) {
-											//bet_win += quyHu; // bet_win = (bet_win-Math.ceil(bet_win*phe/100))>>0;
 											var okHu = (quyHu-Math.ceil(quyHu*phe/100))>>0;
 											bet_win += okHu;
 											HU.updateOne({game:'vuongquocred', type:bet, red:red}, {$set:{name:"", bet:dataHu.min}}).exec();
@@ -499,9 +499,13 @@ module.exports = function(client, data){
 											red && Helpers.ThongBaoNoHu(client, {title: "VƯƠNG QUỐC RED", name: client.profile.name, bet: Helpers.numberWithCommas(okHu)});
 										}
 										if (red){
-											huUpdate['hu'] = uInfo['hu'] = mini_users['hu']     += 1;
+											huUpdate.hu += 1;
+											uInfo.hu += 1;
+											mini_users.hu += 1;
 										}else{
-											huUpdate['huXu'] = uInfo['huXu'] = mini_users['huXu'] += 1;
+											huUpdate.huXu += 1;
+											uInfo.huXu += 1;
+											mini_users.huXu += 1;
 										}
 										nohu = true;
 									}else if (!nohu && line_win.type === 4){
@@ -591,7 +595,7 @@ module.exports = function(client, data){
 									tien = bet_win;
 									client.VuongQuocRed.free -= 1;
 								}else{
-									tien = bet_win - tongCuoc;
+									tien = bet_win-tongCuoc;
 								}
 								if (!nohu && bet_win >= tongCuoc*2.24) {
 									isBigWin = true;
@@ -609,13 +613,21 @@ module.exports = function(client, data){
 
 								var thuong = 0;
 								if (red) {
-									uInfo['red'] = tien;         // Cập nhật Số dư Red trong tài khoản
-									huUpdate['redPlay'] = uInfo['redPlay'] = mini_users['bet'] = tongCuoc;       // Cập nhật Số Red đã chơi
+									uInfo.red = tien;
+									huUpdate.redPlay = tongCuoc;
+									uInfo.redPlay = tongCuoc;
+									mini_users.bet = tongCuoc;
+
 									if (tien > 0){
-										huUpdate['redWin'] = uInfo['redWin'] = mini_users['win'] = tien;         // Cập nhật Số Red đã Thắng
+										huUpdate.redWin = tien;
+										uInfo.redWin = tien;
+										mini_users.win = tien;         // Cập nhật Số Red đã Thắng
 									}
 									if (tien < 0){
-										huUpdate['redLost'] = uInfo['redLost'] = mini_users['lost'] = tien*(-1); // Cập nhật Số Red đã Thua
+										var tienLost = tien*-1;
+										huUpdate.redLost = tienLost;
+										uInfo.redLost = tienLost;
+										mini_users.lost = tienLost; // Cập nhật Số Red đã Thua
 									}
 
 									client.red({VuongQuocRed:{status:1, cel:[cel1, cel2, cel3, cel4, cel5], line_win: result2, win: bet_win, free: client.VuongQuocRed.free, isFree: isFree, isBonus: !!client.VuongQuocRed.bonusX, isNoHu: nohu, isBigWin: isBigWin}, user:{red:user.red-tongCuoc}});
@@ -624,16 +636,25 @@ module.exports = function(client, data){
 									});
 								}else{
 									thuong = (bet_win*0.039589)>>0;
-									uInfo['xu'] = tien;         // Cập nhật Số dư XU trong tài khoản
-									huUpdate['xuPlay'] = uInfo['xuPlay'] = mini_users['betXu'] = tongCuoc; // Cập nhật Số XU đã chơi
+									uInfo.xu = tien;         // Cập nhật Số dư XU trong tài khoản
+									huUpdate.xuPlay = tongCuoc;
+									uInfo.xuPlay = tongCuoc;
+									mini_users.betXu = tongCuoc; // Cập nhật Số XU đã chơi
 									if (thuong > 0){
-										uInfo['red'] = uInfo['thuong'] = mini_users['thuong'] = thuong;    // Cập nhật Số dư Xu trong tài khoản // Cập nhật Số Red được thưởng do chơi XU
+										uInfo.red = thuong;
+										uInfo.thuong = thuong;
+										mini_users.thuong = thuong;    // Cập nhật Số dư Xu trong tài khoản // Cập nhật Số Red được thưởng do chơi XU
 									}
 									if (tien > 0){
-										huUpdate['xuWin'] = uInfo['xuWin'] = mini_users['winXu'] = tien;   // Cập nhật Số Xu đã Thắng
+										huUpdate.xuWin = tien;
+										uInfo.xuWin = tien;
+										mini_users.winXu = tien;   // Cập nhật Số Xu đã Thắng
 									}
 									if (tien < 0){
-										huUpdate['xuLost'] = uInfo['xuLost'] = mini_users['lostXu'] = tien*(-1); // Cập nhật Số Xu đã Thua
+										var tienLost = tien*-1;
+										huUpdate.xuLost = tienLost;
+										uInfo.xuLost = tienLost;
+										mini_users.lostXu = tienLost;
 									}
 
 									client.red({VuongQuocRed:{status:1, cel:[cel1, cel2, cel3, cel4, cel5], line_win: result2, win: bet_win, free: client.VuongQuocRed.free, isFree: isFree, isBonus: !!client.VuongQuocRed.bonusX, isNoHu: nohu, isBigWin: isBigWin, thuong:thuong}, user:{xu:user.xu-tongCuoc}});
