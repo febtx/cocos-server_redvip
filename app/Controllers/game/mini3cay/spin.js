@@ -82,7 +82,7 @@ module.exports = function(client, spin) {
 					// Kết thúc Sử lý bài
 
 					// Kiểm tra kết quả
-					HU.findOne({type:cuoc, red:red}, {}, function(err, data){
+					HU.findOne({game:'mini3cay', type:cuoc, red:red}, {}, function(err, data){
 						var uInfo      = {};
 						var mini_users = {};
 						var huUpdate   = {bet:addQuy};
