@@ -17,4 +17,5 @@ const Schema = new mongoose.Schema({
 	time:   {type: Date},                                   // quay gần đây
 });
 Schema.index({uid: 1}, {unique: true, background: true});
-module.exports = mongoose.model("Mini3Cay_user", Schema);
+
+module.exports = mongoose.model("Candy_users", Schema);

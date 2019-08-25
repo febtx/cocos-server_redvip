@@ -94,23 +94,26 @@ function TopHu(){
 			}))
 			.then(result => {
 				var temp_data = {TopHu: {
-					mini_poker: result.filter(function(arb){
-						return (arb.game == "minipoker")
+					mini_poker: result.filter(function(mini_poker){
+						return (mini_poker.game == "minipoker")
 					}),
-					big_babol: result.filter(function(arb){
-						return (arb.game == "bigbabol")
+					big_babol: result.filter(function(big_babol){
+						return (big_babol.game == "bigbabol")
 					}),
-					vq_red: result.filter(function(arb){
-						return (arb.game == "vuongquocred")
+					vq_red: result.filter(function(vq_red){
+						return (vq_red.game == "vuongquocred")
 					}),
-					mini3cay: result.filter(function(arb){
-						return (arb.game == "mini3cay")
+					mini3cay: result.filter(function(mini3cay){
+						return (mini3cay.game == "mini3cay")
 					}),
-					caothap: result.filter(function(arb){
-						return (arb.game == "caothap")
+					caothap: result.filter(function(caothap){
+						return (caothap.game == "caothap")
 					}),
 					arb: result.filter(function(arb){
 						return (arb.game == "arb")
+					}),
+					candy: result.filter(function(candy){
+						return (candy.game == "candy")
 					})
 				}};
 				io.broadcast(temp_data);

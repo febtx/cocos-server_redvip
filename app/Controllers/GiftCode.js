@@ -6,7 +6,7 @@ var validator = require('validator');
 var Helpers   = require('../Helpers/Helpers');
 
 module.exports = function(client, data){
-	if (!!data && !!data.captcha && !!data.code) {
+	if (!!data.captcha && !!data.code) {
 		if (!validator.isLength(data.captcha, {min: 4, max: 4})) {
 			client.red({notice: {title: "LỖI", text: 'Captcha không đúng...'}});
 		}else if (!validator.isLength(data.code, {min: 4, max: void 0})) {

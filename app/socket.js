@@ -10,7 +10,13 @@ function auth(client) {
 
 function signMethod(client) {
 	client.TTClear = function(){
-		!!this.caothap && !!this.caothap.time && clearTimeout(this.caothap.time);
+		if (!!this.caothap && !!this.caothap.time) {
+			clearTimeout(this.caothap.time);
+		}
+		if (!!this.poker) {
+			this.poker.outGame();
+			//this.poker = null;
+		}
 	}
 }
 

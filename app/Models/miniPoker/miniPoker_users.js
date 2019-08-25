@@ -6,7 +6,7 @@ const Schema = new mongoose.Schema({
 
 	hu:     {type: Number, default: 0},                     // Số lần Nổ Hũ REd
 	bet:    {type: mongoose.Schema.Types.Long, default: 0}, // Số tiền đã chơi
-	win:    {type: mongoose.Schema.Types.Long, default: 0}, // Số tền đã thắng
+	win:    {type: mongoose.Schema.Types.Long, default: 0}, // Số tiền đã thắng
 	lost:   {type: mongoose.Schema.Types.Long, default: 0}, // Số Red đã thua
 
 	huXu:   {type: Number, default: 0},                     // Số lần Nổ Hũ Xu

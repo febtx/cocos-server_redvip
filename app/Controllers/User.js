@@ -11,6 +11,8 @@ var BauCua_User     = require('../Models/BauCua/BauCua_user');
 var Mini3Cay_User   = require('../Models/Mini3Cay/Mini3Cay_user');
 var CaoThap_User    = require('../Models/CaoThap/CaoThap_user');
 var AngryBirds_user = require('../Models/AngryBirds/AngryBirds_user');
+var Candy_user      = require('../Models/Candy/Candy_user');
+
 
 var validator   = require('validator');
 var Helper      = require('../Helpers/Helpers');
@@ -166,6 +168,7 @@ var signName = function(client, name){
 												Mini3Cay_User.create({'uid': client.UID});
 												CaoThap_User.create({'uid': client.UID});
 												AngryBirds_user.create({'uid': client.UID});
+												Candy.create({'uid': client.UID});
 
 												GameState(client);
 												client.red(data);
