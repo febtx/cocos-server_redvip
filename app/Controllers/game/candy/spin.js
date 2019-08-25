@@ -212,22 +212,12 @@ module.exports = function(client, data){
 							];
 						}else{
 							var celSS = [
-								random_cel2(), random_cel2(), random_cel2(),
-								random_cel2(), random_cel2(), random_cel2(),
-								random_cel1(), random_cel0(), random_cel0(),
-								2,             1,             1,
-								0,             0,             3,
-							];
-							// chế độ dễ
-							/**
-							var celSS = [
 								random_cel3(), random_cel2(), random_cel2(),
 								random_cel2(), random_cel2(), random_cel2(),
 								random_cel1(), random_cel0(),  random_cel0(),
 								2,             1,             1,
 								0,             0,             0,
 							];
-							*/
 						}
 
 						celSS = Helpers.shuffle(celSS); // tráo bài lần 1

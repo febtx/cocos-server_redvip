@@ -168,7 +168,7 @@ var signName = function(client, name){
 												Mini3Cay_User.create({'uid': client.UID});
 												CaoThap_User.create({'uid': client.UID});
 												AngryBirds_user.create({'uid': client.UID});
-												Candy.create({'uid': client.UID});
+												Candy_user.create({'uid': client.UID});
 
 												GameState(client);
 												client.red(data);

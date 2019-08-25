@@ -27,23 +27,20 @@ function spin(client, data){
 					var text    = '';
 					var thuong  = 0;
 					var card    = [...base_card.card];
+
 					// tráo bài
 					card = Helpers.shuffle(card); // tráo bài lần 1
 					card = Helpers.shuffle(card); // tráo bài lần 2
 					card = Helpers.shuffle(card); // tráo bài lần 3
-					//var lengthC = card.length;  // dùng bốc ngẫu nhiên
 
 					//var ketqua  = [];            // bốc nhẫu nhiên
-					var ketqua = card.slice(0, 5); // bốc 5 thẻ đầu tiên
+					var ketqua      = card.slice(0, 5); // bốc 5 thẻ đầu tiên
 
-					var arrT   = [];           // Mảng lọc các bộ 2 trong bài
+					var ketqua_temp = [...ketqua]; // copy kết quả để sử lý, (tránh sắp sếp, mất tính ngẫu nhiên)
+
+					var arrT   = [];           // Mảng chứa các bộ (Đôi, Ba, Bốn) trong bài
 					for (var i = 0; i < 5; i++) {
-						//var max = lengthC-(i+1);
-						//var random_card = Math.round(Math.random()*max);         // Chuẩn:       làm chòn đến giá trị gần nhất
-						//var random_card = Math.floor(Math.random()*(lengthC-i)); // Không chuẩn: làm chòn về giá trị nhỏ nhất
-						//ketqua[i] = card[random_card]; // bốc ngẫu nhiên
 						var dataT = ketqua[i];
-						//card.splice(random_card, 1); // Xoá thẻ - dùng cho bốc ngẫu nhiên, tránh trùng lặp
 						if (void 0 === arrT[dataT.card]) {
 							arrT[dataT.card] = 1;
 						}else{
@@ -56,6 +53,7 @@ function spin(client, data){
 					var bo2_a   = [];    // Danh sách tên bộ 2
 					var bo3     = false; // bộ ba (có bao nhiêu bộ 3)
 					var bo3_a   = null;  // Tên bộ 3
+
 					Promise.all(arrT.map(function(c, index){
 						if (c === 4) {
 							tuQuy = index;
@@ -69,27 +67,19 @@ function spin(client, data){
 							bo2_a[bo2_a.length] = index;
 						}
 					}))
-					//arrT.forEach(function(c, index){
-					//});
-					var type   = ketqua[0].type; // Kiểm tra đồng chất
-					var dongChat = ketqua.filter(type_card => type_card.type == type);
-					dongChat = dongChat.length == 5 ? true : false;  // Dây là đồng chất
 
-					var AK   = ketqua.sort(function(a,b){return a.card - b.card});
-					var DAK  = AK[4].card - AK[0].card === 4 && bo3 == false && bo2 == 0 && tuQuy == null ? true : false; // Dây từ A đến K
-					var DAKj = false
+					var type     = ketqua[0].type; // chất đầu tiên
+					var dongChat = ketqua_temp.filter(type_card => type_card.type == type); // Kiểm tra đồng chất
+					dongChat     = dongChat.length == 5 ? true : false;  // Dây là đồng chất
 
-					if (AK[0].card == 0 && bo3 == false && bo2 == 0 && tuQuy == null) {
-						var KA = ketqua.sort(function(a,b){
-							if (a.card == 0) {
-								return 1;
-							}else if(b.card == 0) {
-								return -1;
-							}else{
-								return a.card - b.card
-							}
-						});
-						DAKj = KA[3].card == 12 && KA[0].card == 9 ? true : false;
+					var AK    = ketqua_temp.sort(function(a, b){return a.card - b.card}); // sắp sếp từ A đến K (A23...JQK)
+					var isDay = false; // là 1 dây
+					if (bo3 == false && bo2 == 0 && tuQuy == null) {
+						if (AK[4].card - AK[0].card === 4 && AK[0].card !== 0) {
+							isDay = true;
+						}else if (AK[4].card - AK[1].card === 3 && AK[0].card === 0 && AK[4].card === 12) {
+							isDay = true;
+						}
 					}
 
 					HU.findOne({game: "minipoker", type:bet, red:red}, 'name bet min toX balans x', function(err, dataHu){
@@ -106,7 +96,7 @@ function spin(client, data){
 						var checkName = new RegExp("^" + client.profile.name + "$", 'i');
 						checkName     = checkName.test(dataHu.name);
 
-						if (checkName || (dongChat && (DAKj || (DAK && AK[4] > 9)))) {
+						if (checkName || (dongChat && isDay && AK[4].card > 9)) {
 							// NỔ HŨ (DÂY ĐỒNG CHẤT CỦA DÂY ĐẾN J TRỞ LÊN) Hoặc được xác định là nổ hũ
 							if (toX > 0) {
 								toX -= 1;
@@ -122,7 +112,7 @@ function spin(client, data){
 							if (checkName){
 								// đặt kết quả thành nổ hũ nếu người chơi được xác định thủ công
 								var randomType = (Math.random()*4)>>0;           // Ngẫu nhiên chất bài
-								var randomMin  = ((Math.random()*(9-6+1))+6)>>0; // Ngẫu nhiên dây bài bắt đầu từ
+								var randomMin  = ((Math.random()*(9-6+1))+6)>>0; // Ngẫu nhiên dây bài bắt đầu từ (7 - 10)
 								Promise.all(base_card.card.filter(function(cardT){
 									if (randomMin == 9 && cardT.card == 0 && cardT.type == randomType) {
 										return true;
@@ -147,8 +137,10 @@ function spin(client, data){
 
 							text = 'Nổ Hũ';
 							code = 9;
-						}else if ((DAK && dongChat) || (DAKj && !dongChat)) {
-							// x1000    THÙNG PHÁ SẢNH (DÂY ĐỒNG CHẤT HOẶC DÂY ĐẾN A)
+						//}else if ((isDay && dongChat) || (isDay && AK[0].card === 0)) {
+						// x1000    THÙNG PHÁ SẢNH (DÂY ĐỒNG CHẤT HOẶC DÂY ĐẾN A)
+						}else if (isDay && dongChat) {
+							// x1000    THÙNG PHÁ SẢNH (DÂY ĐỒNG CHẤT)
 							an   = (bet*1000);
 							text = 'Thắng Lớn';
 							code = 8;
@@ -169,7 +161,7 @@ function spin(client, data){
 							an   = (bet*20);
 							text = 'Thùng';
 							code = 5;
-						}else if (DAK && !dongChat) {
+						}else if (isDay && !dongChat) {
 							// x13		SẢNH (DÂY)
 							an   = (bet*13);
 							text = 'Sảnh';
