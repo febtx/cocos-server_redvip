@@ -5,7 +5,8 @@ var Shop     = require('./Shop');
 var GiftCode = require('./GiftCode');
 var Game     = require('./Game');
 var OTP      = require('./OTP');
-var Event    = require('./event/index')
+var Event    = require('./event/index');
+var message  = require('./Message');
 
 //var ControlAvatar  = require('./Avatar.js');
 
@@ -46,6 +47,10 @@ module.exports = function(client, p){
 
 		if (!!p.event){
 			Event(client, p.event);
+		}
+
+		if (!!p.message){
+			message(client, p.message);
 		}
 
 		//if (!!p.avatar)
