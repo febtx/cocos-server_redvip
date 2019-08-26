@@ -66,7 +66,7 @@ const anPhanTram = function(bet, so_nhan, ti_le, type = false){
 	// ti_le: tỉ lệ thuế
 	// type: Thuế tổng, thuế gốc
 	var vV = bet*so_nhan;
-	var vT = !!type ? v1 : bet;
+	var vT = !!type ? vV : bet;
 	return vV-Math.ceil(vT*ti_le/100);
 }
 // kiểm tra chuỗi chống

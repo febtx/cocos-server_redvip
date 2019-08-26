@@ -207,8 +207,11 @@ var cuoc = function(client, data){
 										}
 									}
 									io.taixiuAdmin.list.unshift({name:user.name, taixiu:taixiu, select:select, red:red, bet:bet, time:new Date()});
-									var updateINC = red ? {red:-bet} : {xu:-bet};
-									UserInfo.updateOne({id:client.UID}, {$inc:updateINC}).exec();
+									if (red) {
+										UserInfo.updateOne({id:client.UID}, {$inc:{red:-bet}}).exec();
+									}else{
+										UserInfo.updateOne({id:client.UID}, {$inc:{xu:-bet}}).exec();
+									}
 									TXCuocOne.updateOne({uid: client.UID, phien: phien, taixiu:taixiu, select:select, red:red}, {$inc:{bet:bet}}).exec();
 									TXCuoc.create({uid:client.UID, name:user.name, phien:phien, bet:bet, taixiu:taixiu, select:select, red:red, time:new Date()});
 
@@ -286,8 +289,11 @@ var cuoc = function(client, data){
 									}
 								}
 								io.taixiuAdmin.list.unshift({name:user.name, taixiu:taixiu, select:select, red:red, bet:bet, time:new Date()});
-								var updateINC = red ? {red:-bet} : {xu:-bet};
-								UserInfo.updateOne({id:client.UID}, {$inc:updateINC}).exec();
+								if (red) {
+									UserInfo.updateOne({id:client.UID}, {$inc:{red:-bet}}).exec();
+								}else{
+									UserInfo.updateOne({id:client.UID}, {$inc:{xu:-bet}}).exec();
+								}
 								TXCuocOne.create({uid: client.UID, phien: phien, taixiu:taixiu, select:select, red:red, bet:bet});
 								TXCuoc.create({uid:client.UID, name:user.name, phien:phien, bet:bet, taixiu:taixiu, select:select, red:red, time:new Date()});
 

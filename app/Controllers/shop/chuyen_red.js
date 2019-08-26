@@ -133,7 +133,7 @@ module.exports = function(client, data){
 									create = Object.assign(create, {message: data.message});
 								}
 								ChuyenRed.create(create);
-								UserInfo.updateOne({name: to.name}, {$inc:{red:thanhTien}}).exec();
+								UserInfo.updateOne({'_id': to._id}, {$inc:{red:thanhTien}}).exec();
 								if (void 0 !== client.redT.users[to.id]) {
 									Promise.all(client.redT.users[to.id].map(function(obj){
 										obj.red({notice:{title:'NHẬN RED', text:'Bạn nhận được ' + Helper.numberWithCommas(thanhTien) + ' RED.' + "\n" + 'Từ người chơi: ' + client.profile.name}, user:{red: to.red*1+thanhTien}});
