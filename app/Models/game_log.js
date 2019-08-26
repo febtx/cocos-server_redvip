@@ -2,7 +2,7 @@
 const mongoose = require("mongoose");
 
 const Schema = new mongoose.Schema({
-	uid:    {type: String, required: true, unique: true}, // ID Người chơi
+	uid:    {type: String, required: true, index: true}, // ID Người chơi
 	game:   {type: String},             // game chơi
 	bet:    {type: Number, default: 0}, // phòng
 	win:    {type: Number, default: 0}, // tiền thắng

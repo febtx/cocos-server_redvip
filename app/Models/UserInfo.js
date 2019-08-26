@@ -30,7 +30,7 @@ const Schema = new mongoose.Schema({
 	thuong:     {type: mongoose.Schema.Types.Long, default: 0},     // RED thưởng khi chơi XU
 
 	vip:        {type: Number, default: 0},                         // Tổng vip tích luỹ (Vip đã đổi thưởng)
-	lastVip:    {type: Number, default: 0},                         // Cập nhật lần đổi thưởng cuối
+	lastVip:    {type: mongoose.Schema.Types.Long, default: 0},     // Cập nhật lần đổi thưởng cuối
 
 	hu:         {type: Number, default: 0},                         // Số lần Nổ Hũ REd
 	huXu:       {type: Number, default: 0},                         // Số lần Nổ Hũ Xu

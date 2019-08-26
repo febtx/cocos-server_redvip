@@ -25,10 +25,11 @@ module.exports = function(client){
 			red = 250;
 		}
 
-		var tien = vipHT*red; // Tiền thưởng
+		var tien = vipHT*red; // Tiền thưởng lastVip
 		if (tien > 0) {
-			user.red  = user.red*1 + tien;
-			user.vip += vipHT;
+			user.red     = user.red*1 + tien; // cập nhật red
+			user.vip    += vipHT;             // vip tích lũy
+			user.lastVip = user.redPlay;      // Nhận thưởng lần cuối
 			user.save();
 			client.red({profile:{level: {level: 1, vipNext: 100, vipPre: 0, vipTL: user.vip+vipHT, vipHT: 0}}, notice:{text: "Bạn nhận được " + helper.numberWithCommas(tien) + " RED", title: "THÀNH CÔNG"}, user:{red: user.red}});
 		}else{
