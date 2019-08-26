@@ -13,6 +13,7 @@ var CaoThap_User    = require('../Models/CaoThap/CaoThap_user');
 var AngryBirds_user = require('../Models/AngryBirds/AngryBirds_user');
 var Candy_user      = require('../Models/Candy/Candy_user');
 
+var Message         = require('../Models/Message');
 
 var validator   = require('validator');
 var Helper      = require('../Helpers/Helpers');
@@ -92,8 +93,11 @@ var first = function(client){
 				Authorized: true,
 				user:       user,
 			};
-			client.red(data);
-			GameState(client);
+			Message.countDocuments({uid:client.UID, read: false}).exec(function(errMess, countMess){
+				data.message = {news:countMess};
+				client.red(data);
+				GameState(client);
+			});
 		}else{
 			client.red({Authorized: false});
 		}
