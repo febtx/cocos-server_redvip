@@ -161,6 +161,7 @@ var signName = function(client, name){
 												var data = {
 													Authorized: true,
 													user: user,
+													message:{news:1},
 												};
 												client.profile = {name: user.name};
 												
@@ -173,6 +174,8 @@ var signName = function(client, name){
 												CaoThap_User.create({'uid': client.UID});
 												AngryBirds_user.create({'uid': client.UID});
 												Candy_user.create({'uid': client.UID});
+
+												Message.create({'uid': client.UID, 'title':'Thành Viên Mới', 'text':'Chào mừng bạn đến với REDVip.Club, chúc bạn chơi game vui vẻ...', 'time':new Date()});
 
 												GameState(client);
 												client.red(data);
