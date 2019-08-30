@@ -1,5 +1,5 @@
 
-var HU         = require('../../../Models/HU');
+var HU           = require('../../../Models/HU');
 var LongLan_red  = require('../../../Models/LongLan/LongLan_red');
 var LongLan_xu   = require('../../../Models/LongLan/LongLan_xu');
 var LongLan_user = require('../../../Models/LongLan/LongLan_user');
@@ -9,6 +9,70 @@ var Helpers   = require('../../../Helpers/Helpers');
 
 function random_cel3(){
 	return (Math.random()*7)>>0;
+}
+
+function random_T1(){
+	var a = (Math.random()*66)>>0;
+	if (a == 65) {
+		// 65
+		return 10;
+	}else if (a >= 63 && a < 65) {
+		// 63 64
+		return 9;
+	}else if (a >= 60 && a < 63) {
+		// 60 61 62
+		return 8;
+	}else if (a >= 56 && a < 60) {
+		// 56 57 58 59
+		return 7;
+	}else if (a >= 51 && a < 56) {
+		// 51 52 53 54 55
+		return 6;
+	}else if (a >= 45 && a < 51) {
+		// 45 46 47 48 49 50
+		return 5;
+	}else if (a >= 38 && a < 45) {
+		// 38 39 40 41 42 43 44
+		return 4;
+	}else if (a >= 30 && a < 38) {
+		// 30 31 32 33 34 35 36 37
+		return 3;
+	}else if (a >= 21 && a < 30) {
+		// 21 22 23 24 25 26 27 28 29
+		return 2;
+	}else if (a >= 11 && a < 21) {
+		// 11 12 13 14 15 16 17 18 19 20
+		return 1;
+	}else{
+		// 0 1 2 3 4 5 6 7 8 9 10
+		return 0;
+	}
+}
+
+function random_T2(){
+	var a = (Math.random()*35)>>0;
+	if (a >= 33 && a < 35) {
+		// 33 34
+		return 6;
+	}else if (a >= 30 && a < 33) {
+		// 30 31 32
+		return 5;
+	}else if (a >= 26 && a < 30) {
+		// 26 27 28 29
+		return 4;
+	}else if (a >= 21 && a < 26) {
+		// 21 22 23 24 25
+		return 3;
+	}else if (a >= 15 && a < 21) {
+		// 15 16 17 18 19 20
+		return 2;
+	}else if (a >= 8 && a < 15) {
+		// 8 9 10 11 12 13 14
+		return 1;
+	}else{
+		// 0 1 2 3 4 5 6 7
+		return 0;
+	}
 }
 
 function random_cel2(){
@@ -37,49 +101,6 @@ function random_cel2(){
 	}
 }
 
-function random_cel11(){
-	return (Math.random()*5)>>0;
-}
-function random_cel1(){
-	var a = (Math.random()*15)>>0;
-	if (a == 14) {
-		// 14
-		return 4;
-	}else if (a >= 12 && a < 14) {
-		// 12 13
-		return 3;
-	}else if (a >= 9 && a < 12) {
-		// 9 10 11
-		return 2;
-	}else if (a >= 5 && a < 9) {
-		// 5 6 7 8
-		return 1;
-	}else{
-		// 0 1 2 3 4
-		return 0;
-	}
-}
-
-function random_cel01(){
-	return (Math.random()*4)>>0;
-}
-function random_cel0(){
-	var a = (Math.random()*10)>>0;
-	if (a == 9) {
-		// 9
-		return 3;
-	}else if (a >= 7 && a < 8) {
-		// 7 8
-		return 2;
-	}else if (a >= 4 && a < 7) {
-		// 4 5 6
-		return 1;
-	}else{
-		// 0 1 2 3
-		return 0;
-	}
-}
-
 function check_win(data, line){
 	var win_icon = 0;
 	var win_type = null;
@@ -88,7 +109,7 @@ function check_win(data, line){
 
 	for (var i = 0; i < 5; i++) {
 		var dataT = data[i];
-		if (dataT == 5) {
+		if (dataT == 10) {
 			++thaythe;
 		}
 		if (void 0 === arrT[dataT]) {
@@ -215,7 +236,7 @@ function check_win(data, line){
 
 function gameBonusX(bet, x){
 	if (x == 0) {
-		return (bet*((Math.random()*(20-2+1))+2))>>0;
+		return (bet*((Math.random()*(25-5+1))+5))>>0;
 	}else{
 		return bet*x;
 	}
@@ -230,17 +251,9 @@ function gameBonus(client, bet){
 		gameBonusX(bet, 0),
 		gameBonusX(bet, 0),
 		gameBonusX(bet, 0),
-		gameBonusX(bet, 4),
-		gameBonusX(bet, 4),
-		gameBonusX(bet, 5),
-		gameBonusX(bet, 3),
-		gameBonusX(bet, 3),
-		gameBonusX(bet, 3),
-		gameBonusX(bet, 2),
-		gameBonusX(bet, 2),
-		gameBonusX(bet, 2),
-		gameBonusX(bet, 2),
-		gameBonusX(bet, 2),
+		gameBonusX(bet, 0),
+		gameBonusX(bet, 0),
+		gameBonusX(bet, 0),
 	];
 
 	map = Helpers.shuffle(map); // tráo bài lần 1
@@ -297,51 +310,28 @@ module.exports = function(client, data){
 						if (config.chedo == 0) {
 							// chế độ khó
 							var celSS = [
-								random_cel3(), random_cel3(), random_cel2(),
-								random_cel2(), random_cel2(), random_cel1(),
-								random_cel0(), 3,             2,
-								2,             1,             1,
-								0,             0,             0,
+								random_T1(), random_T1(), random_T1(),
+								random_T1(), random_T1(), random_T1(),
+								4, 3, 2,
+								1, 1, 0,
+								0, 0, 0,
 							];
 						}else if(config.chedo == 1){
 							// trung bình
 							var celSS = [
-								random_cel2(), random_cel2(), random_cel2(),
-								random_cel2(), random_cel2(), random_cel2(),
-								random_cel1(), random_cel0(), random_cel0(),
-								2,             1,             1,
-								0,             0,             3,
+								random_T1(), random_T1(), random_T1(),
+								random_T1(), random_T1(), random_T1(),
+								random_cel2(), 4, 2,
+								3, 1, 1,
+								0, 0, 0,
 							];
 						}else{
-							/*
 							var celSS = [
-								random_cel3(), random_cel2(), random_cel2(),
-								random_cel2(), random_cel2(), random_cel2(),
-								random_cel1(), random_cel0(),  random_cel0(),
-								2,             1,             1,
-								0,             0,             0,
-							];
-							var celSS = [
-								random_cel2(), random_cel2(), random_cel2(),
-								random_cel2(), random_cel2(), random_cel2(),
-								random_cel2(), random_cel0(), random_cel0(),
-								random_cel0(), random_cel0(), random_cel1(),
-								2, 1, 0,
-							];
-							var celSS = [
-								random_cel2(), random_cel2(), random_cel2(),
-								random_cel2(), random_cel2(), random_cel2(),
-								random_cel2(), random_cel0(), random_cel0(),
-								0, 2, 1,
-								1, 0, 0,
-							];
-							*/
-							var celSS = [
-								random_cel2(), random_cel2(), random_cel2(),
-								random_cel2(), random_cel2(), random_cel2(),
-								random_cel1(), random_cel0(), random_cel0(),
-								2,             1,             1,
-								0,             0,             3,
+								random_T1(), random_T1(), random_T1(),
+								random_T1(), random_T1(), random_T1(),
+								random_T2(), 1, 2,
+								3, 1, random_T2(),
+								0, 0, 0,
 							];
 						}
 
@@ -703,14 +693,14 @@ module.exports = function(client, data){
 								} else if (line_win.win == 8) {
 									if (line_win.type === 5) {
 										checkWin = true;
-										// Bonus 5
-										bonusX += 5;
+										// Bonus x18
+										bonusX += 18;
 									}else if (!nohu && line_win.type === 4){
-										// Bonus 4
+										// Bonus x6
 										checkWin = true;
-										bonusX += 4;
+										bonusX += 6;
 									}else if (!nohu && line_win.type === 3){
-										// Bonus 3
+										// Bonus x3
 										checkWin = true;
 										bonusX += 3;
 									}
@@ -850,7 +840,7 @@ module.exports = function(client, data){
 								}
 								if (!!bonusX) {
 									client.LongLan.bonusX += bonusX;
-									client.LongLan.bonusL = 10;
+									client.LongLan.bonusL = 5;
 									gameBonus(client, bet);
 								}
 
