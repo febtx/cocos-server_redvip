@@ -211,12 +211,35 @@ module.exports = function(client, data){
 								0,             0,             3,
 							];
 						}else{
+							/*
 							var celSS = [
 								random_cel3(), random_cel2(), random_cel2(),
 								random_cel2(), random_cel2(), random_cel2(),
 								random_cel1(), random_cel0(),  random_cel0(),
 								2,             1,             1,
 								0,             0,             0,
+							];
+							var celSS = [
+								random_cel2(), random_cel2(), random_cel2(),
+								random_cel2(), random_cel2(), random_cel2(),
+								random_cel2(), random_cel0(), random_cel0(),
+								random_cel0(), random_cel0(), random_cel1(),
+								2, 1, 0,
+							];
+							var celSS = [
+								random_cel2(), random_cel2(), random_cel2(),
+								random_cel2(), random_cel2(), random_cel2(),
+								random_cel2(), random_cel0(), random_cel0(),
+								0, 2, 1,
+								1, 0, 0,
+							];
+							*/
+							var celSS = [
+								random_cel2(), random_cel2(), random_cel2(),
+								random_cel2(), random_cel2(), random_cel2(),
+								random_cel1(), random_cel0(), random_cel0(),
+								2,             1,             1,
+								0,             0,             3,
 							];
 						}
 

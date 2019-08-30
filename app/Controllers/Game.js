@@ -28,12 +28,14 @@ const angrybird  = require('./game/angrybird');
 // Vương Quốc Red
 const vq_red  = require('./game/vuong_quoc_red');
 
-// Poker
+// Candy
 const Candy   = require('./game/candy');
 
 // Poker
 const Poker   = require('./game/poker');
 
+// Long Lân
+const LongLan = require('./game/longlan');
 
 
 module.exports = function(client, data){
@@ -63,5 +65,9 @@ module.exports = function(client, data){
 	}
 	if (!!data.candy) {
 		Candy(client, data.candy);
+	}
+
+	if (!!data.longlan) {
+		LongLan(client, data.longlan);
 	}
 }

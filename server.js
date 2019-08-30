@@ -79,6 +79,4 @@ require("./app/Cron/baucua")(redT);   // Chạy game Bầu Cua
 
 require("./config/cron")();
 
-require("./update")();
-
 app.listen(port);

@@ -35,6 +35,46 @@ function random_cel2(){
 	}
 }
 
+function random_cel231(){
+	var a = (Math.random()*15)>>0;
+	if (a == 14) {
+		// 14
+		return 4;
+	}else if (a >= 12 && a < 14) {
+		// 12 13
+		return 3;
+	}else if (a >= 9 && a < 12) {
+		// 9 10 11
+		return 2;
+	}else if (a >= 5 && a < 9) {
+		// 5 6 7 8
+		return 1;
+	}else{
+		// 0 1 2 3 4
+		return 0;
+	}
+}
+
+function random_cel232(){
+	var a = (Math.random()*15)>>0;
+	if (a == 14) {
+		// 14
+		return 5;
+	}else if (a >= 12 && a < 14) {
+		// 12 13
+		return 3;
+	}else if (a >= 9 && a < 12) {
+		// 9 10 11
+		return 2;
+	}else if (a >= 5 && a < 9) {
+		// 5 6 7 8
+		return 1;
+	}else{
+		// 0 1 2 3 4
+		return 0;
+	}
+}
+
 function random_celR1(){
 	return (Math.random()*4)>>0;
 }
@@ -51,6 +91,22 @@ function random_celR3(){
 		return 1;
 	}else{
 		// 0 1 2
+		return 0;
+	}
+}
+function random_celR33(){
+	var a = (Math.random()*10)>>0;
+	if (a == 9) {
+		// 9
+		return 0;
+	}else if (a >= 7 && a < 9) {
+		// 7 8
+		return 2;
+	}else if (a >= 4 && a < 7) {
+		// 4 5 6
+		return 1;
+	}else{
+		// 0 1 2 3
 		return 0;
 	}
 }
@@ -156,13 +212,20 @@ module.exports = function(client, data){
 							random_cel2(), 2,             1,
 							1,             0,             0,
 						]; // Super
-						*/
 
 						var celSS = [
 							random_cel2(), random_cel2(), random_cel2(),
 							random_cel2(), 1,             1,
 							1,             0,             0,
 						]; // Super
+
+						*/
+
+						var celSS = [
+							random_cel232(), random_cel232(), random_cel232(),
+							random_cel231(), random_cel231(), random_cel231(),
+							random_cel231(), random_celR(), random_celR(),
+						];
 
 						celSS = Helpers.shuffle(celSS); // tráo bài lần 1
 						celSS = Helpers.shuffle(celSS); // tráo bài lần 2
@@ -173,8 +236,8 @@ module.exports = function(client, data){
 
 						// Tạo kết quả 2 Hàng sau
 						var celSR = [
-							random_celR(), random_celR(), random_celR3(),
-							1,             0,             0,
+							random_celR(),   random_celR(),   random_celR3(),
+							random_celR33(), random_celR33(), random_celR33(),
 						]; // Super
 
 						celSR = Helpers.shuffle(celSR); // tráo bài lần 1

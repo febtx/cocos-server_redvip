@@ -89,7 +89,7 @@ function newGame(client, data) {
 							});
 						}
 
-						client.red({mini:{caothap:{status:1, card:create['card'], a: create['a'], win: true, bet: cuoc, winUp: winUp, winDown: winDown, click:{isAnNon: false, down: down, up: up}}}, user:{red: red ? user.red-cuoc : user.red, xu: !red ? user.xu-cuoc : user.xu}});
+						client.red({mini:{caothap:{status:1, card:create['card'], a: create['a'], win: true, bet: cuoc, winUp: winUp, winDown: winDown, click:{isAnNon: false, down: down, up: up}}}, user:{red: user.red, xu: user.xu}});
 						client.caothap.red  = red;
 						client.caothap.time = setTimeout(function(){
 							var select = (Math.random()*2)>>0;

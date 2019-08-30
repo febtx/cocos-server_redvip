@@ -324,3 +324,42 @@ HU.findOne({game:'candy', type:10000, red: false}, {}, function(err, data){
 		HU.create({'game':'candy', 'type': 10000, red: false, 'bet': 50000000, 'min': 50000000});
 	}
 })
+
+// thiết lập Hũ Long Lân
+// red
+HU.findOne({game:'long', type:100, red: true}, {}, function(err, data){
+	if (!data) {
+		HU.create({'game':'long', 'type': 100, red: true, 'bet': 500000, 'min': 500000});
+	}
+})
+
+HU.findOne({game:'long', type:1000, red: true}, {}, function(err, data){
+	if (!data) {
+		HU.create({'game':'long', 'type': 1000, red: true, 'bet': 5000000, 'min': 5000000});
+	}
+})
+
+HU.findOne({game:'long', type:10000, red: true}, {}, function(err, data){
+	if (!data) {
+		HU.create({'game':'long', 'type': 10000, red: true, 'bet': 50000000, 'min': 50000000});
+	}
+})
+
+// xu
+HU.findOne({game:'long', type:100, red: false}, {}, function(err, data){
+	if (!data) {
+		HU.create({'game':'long', 'type': 100, red: false, 'bet': 500000, 'min': 500000});
+	}
+})
+
+HU.findOne({game:'long', type:1000, red: false}, {}, function(err, data){
+	if (!data) {
+		HU.create({'game':'long', 'type': 1000, red: false, 'bet': 5000000, 'min': 5000000});
+	}
+})
+
+HU.findOne({game:'long', type:10000, red: false}, {}, function(err, data){
+	if (!data) {
+		HU.create({'game':'long', 'type': 10000, red: false, 'bet': 50000000, 'min': 50000000});
+	}
+})

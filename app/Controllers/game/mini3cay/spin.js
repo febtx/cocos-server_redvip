@@ -45,6 +45,8 @@ module.exports = function(client, spin) {
 					card = Helpers.shuffle(card); // tráo bài lần 3
 
 					var ketqua = card.slice(0, 3); // bốc 3 thẻ đầu tiên
+					var ketqua_temp = [...ketqua]; // copy kết quả để sử lý, (tránh sắp sếp, mất tính ngẫu nhiên)
+					
 
 					var ADiamond = false;       // Có Át rô trong bài?
 
@@ -71,12 +73,12 @@ module.exports = function(client, spin) {
 					}))
 
 					var type     = ketqua[0].type;                                     // Lấy ra chất đầu tiên trong bài
-					var dongChat = ketqua.filter(type_card => type_card.type == type); // Lọc đồng chất
+					var dongChat = ketqua_temp.filter(type_card => type_card.type == type); // Lọc đồng chất
 					dongChat     = dongChat.length == 3 ? true : false;                // Dây là đồng chất
 
 					var TongDiem = (ketqua[0].card + ketqua[1].card + ketqua[2].card + 3)%10;     // Tổng điểm
 					TongDiem = TongDiem === 0 ? 10 : TongDiem;
-					var LienTiep   = ketqua.sort(function(a,b){return a.card - b.card});
+					var LienTiep   = ketqua_temp.sort(function(a,b){return a.card - b.card});
 					var Day        = LienTiep[2].card - LienTiep[0].card === 2 && LienTiep[2].card != LienTiep[1].card && LienTiep[1].card != LienTiep[0].card ? true : false; // Bộ liên tiếp
 
 					// Kết thúc Sử lý bài

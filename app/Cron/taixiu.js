@@ -114,7 +114,10 @@ function TopHu(){
 					}),
 					candy: result.filter(function(candy){
 						return (candy.game == "candy")
-					})
+					}),
+					long: result.filter(function(long){
+						return (long.game == "long")
+					}),
 				}};
 				io.broadcast(temp_data);
 			})
