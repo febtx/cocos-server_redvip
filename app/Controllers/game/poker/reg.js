@@ -11,7 +11,19 @@ module.exports = function(client, data){
 		var red    = !!data.red;
 		var auto   = !!data.auto;
 
-		if (room == 100 || room == 1000 || room == 5000 || room == 10000 || room == 50000 || room == 100000) {
+		if (room == 100 ||
+			room == 200 ||
+			room == 500 ||
+			room == 1000 || 
+			room == 2000 ||
+			room == 5000 ||
+			room == 10000 ||
+			room == 20000 ||
+			room == 50000 ||
+			room == 100000 ||
+			room == 200000 ||
+			room == 500000)
+		{
 			var min = room*20;
 			var max = room*200;
 			if (balans < min || balans > max) {

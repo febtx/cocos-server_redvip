@@ -3,7 +3,7 @@ const AutoIncrement = require('mongoose-auto-increment-reworked').MongooseAutoIn
 const mongoose      = require('mongoose');
 
 const Schema = new mongoose.Schema({
-	room:   {type: Number, required: true}, // phòng
+	room:   {type: Number, required: true}, // phòng (100, 1000, ...)
 	online: {type: Number, default: 0},     // Số người chơi
 });
 

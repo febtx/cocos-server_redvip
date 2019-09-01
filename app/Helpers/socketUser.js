@@ -1,5 +1,14 @@
 
+var Poker = require('./poker/init');
+
 module.exports = function(io){
+	io.users  = []; // danh sách người dùng đăng nhập
+	io.admins = []; // danh sách admin đăng nhập
+
+	io.game   = {
+		poker: new Poker(), // thiết lập game poker
+	};
+
 	// Phát sóng tới tất cả người dùng và khách
 	io.broadcast = function(data, noBroadcast = null){
 		this.clients.forEach(function(client){

@@ -68,9 +68,6 @@ var redT = expressWs.getWss();
 
 require('./app/Helpers/socketUser')(redT); // Add function socket
 
-redT.users  = []; // danh sách người dùng đăng nhập
-redT.admins = []; // danh sách admin đăng nhập
-
 require('./routerHttp')(app, redT);   // load các routes HTTP
 require('./routerSocket')(app, redT); // load các routes WebSocket
 
