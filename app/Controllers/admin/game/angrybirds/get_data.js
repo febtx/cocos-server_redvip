@@ -1,5 +1,7 @@
 
-const HU = require('../../../../Models/HU');
+const HU   = require('../../../../Models/HU');
+var config = require('../../../../../config/angrybird.json').chedo;
+
 
 module.exports = function(client) {
 	HU.find({game: "arb", red: true}, 'name type redPlay redWin redLost hu', function(err, cat){
@@ -9,7 +11,7 @@ module.exports = function(client) {
 			return obj;
 		}))
 		.then(varT => {
-			client.red({angrybird:{hu:varT}});
+			client.red({angrybird:{hu:varT, chedo:config}});
 		})
 	});
 }

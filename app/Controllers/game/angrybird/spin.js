@@ -35,52 +35,7 @@ function random_cel2(){
 	}
 }
 
-function random_cel231(){
-	var a = (Math.random()*15)>>0;
-	if (a == 14) {
-		// 14
-		return 4;
-	}else if (a >= 12 && a < 14) {
-		// 12 13
-		return 3;
-	}else if (a >= 9 && a < 12) {
-		// 9 10 11
-		return 2;
-	}else if (a >= 5 && a < 9) {
-		// 5 6 7 8
-		return 1;
-	}else{
-		// 0 1 2 3 4
-		return 0;
-	}
-}
 
-function random_cel232(){
-	var a = (Math.random()*15)>>0;
-	if (a == 14) {
-		// 14
-		return 5;
-	}else if (a >= 12 && a < 14) {
-		// 12 13
-		return 3;
-	}else if (a >= 9 && a < 12) {
-		// 9 10 11
-		return 2;
-	}else if (a >= 5 && a < 9) {
-		// 5 6 7 8
-		return 1;
-	}else{
-		// 0 1 2 3 4
-		return 0;
-	}
-}
-
-function random_celR1(){
-	return (Math.random()*4)>>0;
-}
-function random_celR2(){
-	return (Math.random()*3)>>0;
-}
 function random_celR3(){
 	var a = random_cel3();
 	if (a == 5) {
@@ -94,22 +49,7 @@ function random_celR3(){
 		return 0;
 	}
 }
-function random_celR33(){
-	var a = (Math.random()*10)>>0;
-	if (a == 9) {
-		// 9
-		return 0;
-	}else if (a >= 7 && a < 9) {
-		// 7 8
-		return 2;
-	}else if (a >= 4 && a < 7) {
-		// 4 5 6
-		return 1;
-	}else{
-		// 0 1 2 3
-		return 0;
-	}
-}
+
 function random_celR(){
 	var a = (Math.random()*10)>>0;
 	if (a == 9) {
@@ -188,6 +128,8 @@ module.exports = function(client, data){
 					var bet_win   = 0;
 					var type      = 0;   // Loại được ăn lớn nhất trong phiên
 
+					var config = require('../../../../config/angrybird.json').chedo;
+
 					HU.findOne({game: "arb", type:bet, red:red}, 'name bet min toX balans x', function(err, dataHu){
 						var uInfo      = {};
 						var mini_users = {};
@@ -205,27 +147,29 @@ module.exports = function(client, data){
 
 						var toX      = dataHu.toX;
 						var balans   = dataHu.balans;
-						/**
-						// Tạo kết quả 3 Hàng đầu
-						var celSS = [
-							random_cel3(), random_cel2(), random_cel2(),
-							random_cel2(), 2,             1,
-							1,             0,             0,
-						]; // Super
 
-						var celSS = [
-							random_cel2(), random_cel2(), random_cel2(),
-							random_cel2(), 1,             1,
-							1,             0,             0,
-						]; // Super
-
-						*/
-
-						var celSS = [
-							random_cel232(), random_cel232(), random_cel232(),
-							random_cel231(), random_cel231(), random_cel231(),
-							random_cel231(), random_celR(), random_celR(),
-						];
+						if (config == 0) {
+							// khó
+							var celSS = [
+								random_cel2(), random_cel2(), random_cel2(),
+								random_cel2(), random_celR(), random_celR(),
+								1,             0,             0,
+							];
+						}else if (config == 1) {
+							// trung bình
+							var celSS = [
+								random_cel2(), random_cel2(), random_cel2(),
+								random_cel2(), random_celR(), random_celR(),
+								1,             1,              0,
+							];
+						}else{
+							// dễ
+							var celSS = [
+								random_cel2(), random_cel2(), random_cel2(),
+								random_cel2(), random_celR(), random_celR(),
+								random_celR(), 1,              0,
+							];
+						}
 
 						celSS = Helpers.shuffle(celSS); // tráo bài lần 1
 						celSS = Helpers.shuffle(celSS); // tráo bài lần 2
@@ -236,8 +180,8 @@ module.exports = function(client, data){
 
 						// Tạo kết quả 2 Hàng sau
 						var celSR = [
-							random_celR(),   random_celR(),   random_celR3(),
-							random_celR33(), random_celR33(), random_celR33(),
+							random_celR(),  random_celR(), random_celR3(),
+							random_celR3(), 0,             0,
 						]; // Super
 
 						celSR = Helpers.shuffle(celSR); // tráo bài lần 1

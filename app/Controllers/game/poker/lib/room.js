@@ -4,6 +4,7 @@ var base_card = require('../../../../../data/card');
 
 var Poker = function(poker){
 	this.poker = poker; // quản lý các phòng
+	this.card  = [];    // bài
 
 	// ghế ngồi có sẵn 
 	this.player = {
@@ -121,10 +122,28 @@ Poker.prototype.checkGame = function(){
 				this.sendToAll({game:{start:result}});
 				this.timeOut = setTimeout(function(){
 					this.playerInGame = Object.values(this.playerWait); // danh sách người chơi
+					var self = this;
+					// vị trí người chơi đầu tiên trong mảng,
+					this.indexBegin = this.playerInGame.findIndex(function(obj){
+						return obj.ghe == self.d.map;
+					});
+
+					this.Round1();
 				}.bind(this), 5000);
 			});
 		}.bind(this), 1000);
 	}
+}
+
+// Round 1 // Chia 2 lá đầu
+Poker.prototype.Round1 = function(){
+	this.card = [...base_card.card]; // bộ bài mới
+
+	// chia bài
+}
+
+// Round 2 // mở 3 lá
+Poker.prototype.Round2 = function(){
 }
 
 Poker.prototype.resetD = function(){

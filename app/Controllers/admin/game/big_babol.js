@@ -6,6 +6,9 @@ var name_hu  = require('./big_babol/name_hu');
 var getEvent = require('./big_babol/getEvent');
 var setEvent = require('./big_babol/setEvent');
 
+var setChedo = require('./big_babol/setChedo');
+
+
 module.exports = function(client, data) {
 	if (void 0 !== data.get_data) {
 		get_data(client)
@@ -22,5 +25,8 @@ module.exports = function(client, data) {
 	}
 	if (!!data.setEvent) {
 		setEvent(client, data.setEvent)
+	}
+	if (void 0 !== data.chedo) {
+		setChedo(client, data.chedo);
 	}
 }

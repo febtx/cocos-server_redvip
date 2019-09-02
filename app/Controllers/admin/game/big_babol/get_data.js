@@ -1,5 +1,7 @@
 
-const HU = require('../../../../Models/HU');
+const HU   = require('../../../../Models/HU');
+var config = require('../../../../../config/bigbabol.json').chedo;
+
 
 module.exports = function(client) {
 	HU.find({game: "bigbabol", red:true}, 'name type redPlay redWin redLost hu', function(err, cat){
@@ -9,7 +11,7 @@ module.exports = function(client) {
 			return obj;
 		}))
 		.then(varT => {
-			client.red({big_babol:{hu:varT}});
+			client.red({big_babol:{hu:varT, chedo:config}});
 		})
 	});
 }

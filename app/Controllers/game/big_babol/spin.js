@@ -120,7 +120,7 @@ module.exports = function(client, data){
 				if (!user || (red && user.red < cuoc) || (!red && user.xu < cuoc)) {
 					client.red({mini:{big_babol:{status:0, notice: 'Bạn không đủ ' + (red ? 'RED':'XU') + ' để quay.!!'}}});
 				}else{
-					var config = require('../../../../config/bigbabol.json');
+					var config = require('../../../../config/bigbabol.json').chedo;
 					var phe = red ? 2 : 4;    // Phế
 					var addQuy = (cuoc*0.01)>>0;
 
@@ -139,18 +139,26 @@ module.exports = function(client, data){
 							huUpdate['huXu'] = uInfo['huXu'] = mini_users['huXu'] = 0; // Khởi tạo
 						}
 
-						if (config.chedo == 1) {
+						if (config == 0) {
+							// khó
 							var celSS = [
 								random_cel2(), random_cel2(), random_cel2(),
 								random_cel1(), 2,             1,
 								1,             0,             0,
-							]; // Super
-						}else{
+							];
+						}else if (config == 1) {
 							var celSS = [
 								random_cel2(), random_cel2(), random_cel2(),
-								random_cel2(), 2,             1,
+								random_cel2(), random_cel1(), random_cel1(),
 								1,             0,             0,
 							]; // Super
+						}else{
+							// dễ
+							var celSS = [
+								random_cel2(), random_cel2(), random_cel2(),
+								random_cel2(), random_cel1(), random_cel1(),
+								random_cel1(),             0,             0,
+							];
 						}
 
 						celSS = Helpers.shuffle(celSS); // tráo bài lần 1
