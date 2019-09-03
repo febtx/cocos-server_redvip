@@ -7,10 +7,6 @@ var LongLan_user = require('../../../Models/LongLan/LongLan_user');
 var UserInfo  = require('../../../Models/UserInfo');
 var Helpers   = require('../../../Helpers/Helpers');
 
-function random_cel3(){
-	return (Math.random()*7)>>0;
-}
-
 function random_T1(){
 	var a = (Math.random()*66)>>0;
 	if (a == 65) {
@@ -50,28 +46,11 @@ function random_T1(){
 }
 
 function random_T2(){
-	var a = (Math.random()*35)>>0;
-	if (a >= 33 && a < 35) {
-		// 33 34
-		return 6;
-	}else if (a >= 30 && a < 33) {
-		// 30 31 32
-		return 5;
-	}else if (a >= 26 && a < 30) {
-		// 26 27 28 29
-		return 4;
-	}else if (a >= 21 && a < 26) {
-		// 21 22 23 24 25
-		return 3;
-	}else if (a >= 15 && a < 21) {
-		// 15 16 17 18 19 20
-		return 2;
-	}else if (a >= 8 && a < 15) {
-		// 8 9 10 11 12 13 14
-		return 1;
+	var a = (Math.random()*2)>>0;
+	if (a == 1) {
+		return 8;
 	}else{
-		// 0 1 2 3 4 5 6 7
-		return 0;
+		return 7;
 	}
 }
 
@@ -236,7 +215,7 @@ function check_win(data, line){
 
 function gameBonusX(bet, x){
 	if (x == 0) {
-		return (bet*((Math.random()*(25-5+1))+5))>>0;
+		return ((((Math.random()*(28-8+1))+8))>>0)*bet;
 	}else{
 		return bet*x;
 	}
@@ -276,7 +255,7 @@ module.exports = function(client, data){
 		if (!(bet == 100 || bet == 1000 || bet == 10000) || line.length < 1) {
 			client.red({longlan:{status:0}, notice:{text: "DỮ LIỆU KHÔNG ĐÚNG...", title: "THẤT BẠI"}});
 		}else{
-			client.LongLan = void 0 === client.LongLan ? {id: "", red: red, bet: bet, bonus: null, bonusX: 0, bonusL: 0, bonusWin: 0, free: 0} : client.LongLan;
+			client.LongLan = void 0 === client.LongLan ? {id: "", red: red, bet: bet, bonus: null, bonusL: 0, bonusWin: 0, free: 0} : client.LongLan;
 			client.LongLan.red = red;
 			client.LongLan.bet = bet;
 			var tongCuoc = bet*line.length;
@@ -284,14 +263,13 @@ module.exports = function(client, data){
 				if (client.LongLan.free === 0 && ((red && user.red < tongCuoc) || (!red && user.xu < tongCuoc))) {
 					client.red({longlan:{status:0, notice: 'Bạn không đủ ' + (red ? 'RED':'XU') + ' để quay.!!'}});
 				}else{
-					var config = require('../../../../config/LongLan.json');
+					var config = require('../../../../config/LongLan.json').chedo;
 					var phe = red ? 2 : 4;    // Phế
 					var addQuy = (tongCuoc*0.01)>>0;
 
 					var line_nohu = 0;
 					var bet_win   = 0;
 					var free      = 0;
-					var bonusX    = 0;
 					var type      = 0;   // Loại được ăn lớn nhất trong phiên
 					var isFree    = false;
 					var nohu      = false;
@@ -307,30 +285,32 @@ module.exports = function(client, data){
 							huUpdate['huXu'] = uInfo['huXu'] = mini_users['huXu'] = 0; // Khởi tạo
 						}
 
-						if (config.chedo == 0) {
+						if (config == 0) {
 							// chế độ khó
 							var celSS = [
-								random_T1(), random_T1(), random_T1(),
-								random_T1(), random_T1(), random_T1(),
-								4, 3, 2,
-								1, 1, 0,
+								random_T1(),   random_T1(), random_T1(),
+								random_T1(),   random_T1(), 3,
+								random_cel2(), 0,           2,
+								1, 1, random_T2(),
 								0, 0, 0,
 							];
-						}else if(config.chedo == 1){
+
+
+						}else if(config == 1){
 							// trung bình
 							var celSS = [
-								random_T1(), random_T1(), random_T1(),
-								random_T1(), random_T1(), random_T1(),
-								random_cel2(), 4, 2,
-								3, 1, 1,
+								random_T1(),   random_T1(), random_T1(),
+								random_T1(),   random_T1(), random_T1(),
+								random_cel2(), 0,           2,
+								1, 1, random_T2(),
 								0, 0, 0,
 							];
 						}else{
 							var celSS = [
-								random_T1(), random_T1(), random_T1(),
-								random_T1(), random_T1(), random_T1(),
-								random_T2(), 1, 2,
-								3, 1, random_T2(),
+								random_T1(),   random_T1(),   random_T1(),
+								random_T1(),   random_T1(),   random_T1(),
+								random_cel2(), random_cel2(), 2,
+								1, 1, random_T2(),
 								0, 0, 0,
 							];
 						}
@@ -344,6 +324,45 @@ module.exports = function(client, data){
 						var cel3 = [celSS[6],  celSS[7],  celSS[8]];  // Cột 3
 						var cel4 = [celSS[9],  celSS[10], celSS[11]]; // Cột 4
 						var cel5 = [celSS[12], celSS[13], celSS[14]]; // Cột 5
+
+						var freeScreen = celSS.filter(function(cell){
+							return (cell == 7)
+						})
+
+						var bonusScreen = celSS.filter(function(cell){
+							return (cell == 8);
+						});
+
+						if (bonusScreen.length >= 5) {
+							// Bonus 5
+							client.LongLan.bonusL = 5;
+							gameBonus(client, bet);
+						}else if (bonusScreen.length == 4){
+							// Bonus 4
+							client.LongLan.bonusL = 4;
+							gameBonus(client, bet);
+						}else if (bonusScreen.length == 3){
+							// Bonus 3
+							client.LongLan.bonusL = 3;
+							gameBonus(client, bet);
+						}
+
+						if (freeScreen.length >= 5) {
+							checkWin = true;
+							// free x18
+							free += 18;
+							isFree = true;
+						}else if (freeScreen.length == 4){
+							// free x6
+							checkWin = true;
+							free += 6;
+							isFree = true;
+						}else if (freeScreen.length == 3){
+							// free x3
+							checkWin = true;
+							free += 3;
+							isFree = true;
+						}
 
 						var quyHu     = dataHu.bet;
 						var checkName = new RegExp("^" + client.profile.name + "$", 'i');
@@ -390,44 +409,44 @@ module.exports = function(client, data){
 
 								case 4:
 									if (!!line_nohu && line_nohu == selectLine) {
-										cel1[1] = 9;
+										cel1[2] = 9;
 										cel2[1] = 9;
 										cel3[0] = 9;
 										cel4[1] = 9;
-										cel5[1] = 9;
+										cel5[2] = 9;
 									}
 									return check_win([cel1[2], cel2[1], cel3[0], cel4[1], cel5[2]], selectLine);
 									break;
 
 								case 5:
 									if (!!line_nohu && line_nohu == selectLine) {
-										cel1[1] = 9;
+										cel1[0] = 9;
 										cel2[1] = 9;
 										cel3[2] = 9;
 										cel4[1] = 9;
-										cel5[1] = 9;
+										cel5[0] = 9;
 									}
 									return check_win([cel1[0], cel2[1], cel3[2], cel4[1], cel5[0]], selectLine);
 									break;
 
 								case 6:
 									if (!!line_nohu && line_nohu == selectLine) {
-										cel1[0] = 9;
+										cel1[1] = 9;
 										cel2[0] = 9;
-										cel3[1] = 9;
+										cel3[0] = 9;
 										cel4[0] = 9;
-										cel5[0] = 9;
+										cel5[1] = 9;
 									}
 									return check_win([cel1[1], cel2[0], cel3[0], cel4[0], cel5[1]], selectLine);
 									break;
 
 								case 7:
 									if (!!line_nohu && line_nohu == selectLine) {
-										cel1[2] = 9;
+										cel1[1] = 9;
 										cel2[2] = 9;
-										cel3[1] = 9;
+										cel3[2] = 9;
 										cel4[2] = 9;
-										cel5[2] = 9;
+										cel5[1] = 9;
 									}
 									return check_win([cel1[1], cel2[2], cel3[2], cel4[2], cel5[1]], selectLine);
 									break;
@@ -435,10 +454,10 @@ module.exports = function(client, data){
 								case 8:
 									if (!!line_nohu && line_nohu == selectLine) {
 										cel1[0] = 9;
-										cel2[2] = 9;
-										cel3[0] = 9;
+										cel2[0] = 9;
+										cel3[1] = 9;
 										cel4[2] = 9;
-										cel5[0] = 9;
+										cel5[2] = 9;
 									}
 									return check_win([cel1[0], cel2[0], cel3[1], cel4[2], cel5[2]], selectLine);
 									break;
@@ -446,10 +465,10 @@ module.exports = function(client, data){
 								case 9:
 									if (!!line_nohu && line_nohu == selectLine) {
 										cel1[2] = 9;
-										cel2[0] = 9;
-										cel3[2] = 9;
+										cel2[2] = 9;
+										cel3[1] = 9;
 										cel4[0] = 9;
-										cel5[2] = 9;
+										cel5[0] = 9;
 									}
 									return check_win([cel1[2], cel2[2], cel3[1], cel4[0], cel5[0]], selectLine);
 									break;
@@ -457,8 +476,8 @@ module.exports = function(client, data){
 								case 10:
 									if (!!line_nohu && line_nohu == selectLine) {
 										cel1[1] = 9;
-										cel2[0] = 9;
-										cel3[2] = 9;
+										cel2[2] = 9;
+										cel3[1] = 9;
 										cel4[0] = 9;
 										cel5[1] = 9;
 									}
@@ -467,11 +486,11 @@ module.exports = function(client, data){
 
 								case 11:
 									if (!!line_nohu && line_nohu == selectLine) {
-										cel1[2] = 9;
-										cel2[1] = 9;
-										cel3[0] = 9;
-										cel4[1] = 9;
-										cel5[2] = 9;
+										cel1[1] = 9;
+										cel2[0] = 9;
+										cel3[1] = 9;
+										cel4[2] = 9;
+										cel5[1] = 9;
 									}
 									return check_win([cel1[1], cel2[0], cel3[1], cel4[2], cel5[1]], selectLine);
 									break;
@@ -480,7 +499,7 @@ module.exports = function(client, data){
 									if (!!line_nohu && line_nohu == selectLine) {
 										cel1[0] = 9;
 										cel2[1] = 9;
-										cel3[2] = 9;
+										cel3[1] = 9;
 										cel4[1] = 9;
 										cel5[0] = 9;
 									}
@@ -489,22 +508,22 @@ module.exports = function(client, data){
 
 								case 13:
 									if (!!line_nohu && line_nohu == selectLine) {
-										cel1[1] = 9;
-										cel2[2] = 9;
+										cel1[2] = 9;
+										cel2[1] = 9;
 										cel3[1] = 9;
-										cel4[0] = 9;
-										cel5[1] = 9;
+										cel4[1] = 9;
+										cel5[2] = 9;
 									}
 									return check_win([cel1[2], cel2[1], cel3[1], cel4[1], cel5[2]], selectLine);
 									break;
 
 								case 14:
 									if (!!line_nohu && line_nohu == selectLine) {
-										cel1[1] = 9;
-										cel2[0] = 9;
-										cel3[1] = 9;
-										cel4[2] = 9;
-										cel5[1] = 9;
+										cel1[0] = 9;
+										cel2[1] = 9;
+										cel3[0] = 9;
+										cel4[1] = 9;
+										cel5[0] = 9;
 									}
 									return check_win([cel1[0], cel2[1], cel3[0], cel4[1], cel5[0]], selectLine);
 									break;
@@ -513,7 +532,7 @@ module.exports = function(client, data){
 									if (!!line_nohu && line_nohu == selectLine) {
 										cel1[2] = 9;
 										cel2[1] = 9;
-										cel3[1] = 9;
+										cel3[2] = 9;
 										cel4[1] = 9;
 										cel5[2] = 9;
 									}
@@ -522,11 +541,11 @@ module.exports = function(client, data){
 
 								case 16:
 									if (!!line_nohu && line_nohu == selectLine) {
-										cel1[0] = 9;
+										cel1[1] = 9;
 										cel2[1] = 9;
-										cel3[1] = 9;
+										cel3[0] = 9;
 										cel4[1] = 9;
-										cel5[0] = 9;
+										cel5[1] = 9;
 									}
 									return check_win([cel1[1], cel2[1], cel3[0], cel4[1], cel5[1]], selectLine);
 									break;
@@ -534,9 +553,9 @@ module.exports = function(client, data){
 								case 17:
 									if (!!line_nohu && line_nohu == selectLine) {
 										cel1[1] = 9;
-										cel2[2] = 9;
+										cel2[1] = 9;
 										cel3[2] = 9;
-										cel4[2] = 9;
+										cel4[1] = 9;
 										cel5[1] = 9;
 									}
 									return check_win([cel1[1], cel2[1], cel3[2], cel4[1], cel5[1]], selectLine);
@@ -544,11 +563,11 @@ module.exports = function(client, data){
 
 								case 18:
 									if (!!line_nohu && line_nohu == selectLine) {
-										cel1[1] = 9;
+										cel1[0] = 9;
 										cel2[0] = 9;
-										cel3[0] = 9;
+										cel3[2] = 9;
 										cel4[0] = 9;
-										cel5[1] = 9;
+										cel5[0] = 9;
 									}
 									return check_win([cel1[0], cel2[0], cel3[2], cel4[0], cel5[0]], selectLine);
 									break;
@@ -557,9 +576,9 @@ module.exports = function(client, data){
 									if (!!line_nohu && line_nohu == selectLine) {
 										cel1[2] = 9;
 										cel2[2] = 9;
-										cel3[1] = 9;
-										cel4[0] = 9;
-										cel5[0] = 9;
+										cel3[0] = 9;
+										cel4[2] = 9;
+										cel5[2] = 9;
 									}
 									return check_win([cel1[2], cel2[2], cel3[0], cel4[2], cel5[2]], selectLine);
 									break;
@@ -567,20 +586,20 @@ module.exports = function(client, data){
 								case 20:
 									if (!!line_nohu && line_nohu == selectLine) {
 										cel1[0] = 9;
-										cel2[0] = 9;
-										cel3[1] = 9;
+										cel2[2] = 9;
+										cel3[2] = 9;
 										cel4[2] = 9;
-										cel5[2] = 9;
+										cel5[0] = 9;
 									}
 									return check_win([cel1[0], cel2[2], cel3[2], cel4[2], cel5[0]], selectLine);
 									break;
 
 								case 21:
 									if (!!line_nohu && line_nohu == selectLine) {
-										cel1[0] = 9;
+										cel1[2] = 9;
 										cel2[0] = 9;
-										cel3[1] = 9;
-										cel4[2] = 9;
+										cel3[0] = 9;
+										cel4[0] = 9;
 										cel5[2] = 9;
 									}
 									return check_win([cel1[2], cel2[0], cel3[0], cel4[0], cel5[2]], selectLine);
@@ -588,22 +607,22 @@ module.exports = function(client, data){
 
 								case 22:
 									if (!!line_nohu && line_nohu == selectLine) {
-										cel1[0] = 9;
+										cel1[1] = 9;
 										cel2[0] = 9;
-										cel3[1] = 9;
-										cel4[2] = 9;
-										cel5[2] = 9;
+										cel3[2] = 9;
+										cel4[0] = 9;
+										cel5[1] = 9;
 									}
 									return check_win([cel1[1], cel2[0], cel3[2], cel4[0], cel5[1]], selectLine);
 									break;
 
 								case 23:
 									if (!!line_nohu && line_nohu == selectLine) {
-										cel1[0] = 9;
-										cel2[0] = 9;
-										cel3[1] = 9;
+										cel1[1] = 9;
+										cel2[2] = 9;
+										cel3[0] = 9;
 										cel4[2] = 9;
-										cel5[2] = 9;
+										cel5[1] = 9;
 									}
 									return check_win([cel1[1], cel2[2], cel3[0], cel4[2], cel5[1]], selectLine);
 									break;
@@ -611,20 +630,20 @@ module.exports = function(client, data){
 								case 24:
 									if (!!line_nohu && line_nohu == selectLine) {
 										cel1[0] = 9;
-										cel2[0] = 9;
-										cel3[1] = 9;
+										cel2[2] = 9;
+										cel3[0] = 9;
 										cel4[2] = 9;
-										cel5[2] = 9;
+										cel5[0] = 9;
 									}
 									return check_win([cel1[0], cel2[2], cel3[0], cel4[2], cel5[0]], selectLine);
 									break;
 
 								case 25:
 									if (!!line_nohu && line_nohu == selectLine) {
-										cel1[0] = 9;
+										cel1[2] = 9;
 										cel2[0] = 9;
-										cel3[1] = 9;
-										cel4[2] = 9;
+										cel3[2] = 9;
+										cel4[0] = 9;
 										cel5[2] = 9;
 									}
 									return check_win([cel1[2], cel2[0], cel3[2], cel4[0], cel5[2]], selectLine);
@@ -661,11 +680,11 @@ module.exports = function(client, data){
 											var okHu = (quyHu-Math.ceil(quyHu*phe/100))>>0;
 											bet_win += okHu;
 											HU.updateOne({game:'long', type:bet, red:red}, {$set:{name:"", bet:dataHu.min}}).exec();
-											red && Helpers.ThongBaoNoHu(client, {title: "Long Lân", name: client.profile.name, bet: Helpers.numberWithCommas(okHu)});
+											red && Helpers.ThongBaoNoHu(client, {title: "LONG LÂN", name: client.profile.name, bet: Helpers.numberWithCommas(okHu)});
 										}else{
 											var okHu = (dataHu.min-Math.ceil(dataHu.min*phe/100))>>0;
 											bet_win += okHu;
-											red && Helpers.ThongBaoNoHu(client, {title: "Long Lân", name: client.profile.name, bet: Helpers.numberWithCommas(okHu)});
+											red && Helpers.ThongBaoNoHu(client, {title: "LONG LÂN", name: client.profile.name, bet: Helpers.numberWithCommas(okHu)});
 										}
 										if (red){
 											huUpdate.hu += 1;
@@ -689,37 +708,6 @@ module.exports = function(client, data){
 										// x4
 										checkWin = true;
 										bet_win += bet*4;
-									}
-								} else if (line_win.win == 8) {
-									if (line_win.type === 5) {
-										checkWin = true;
-										// Bonus x18
-										bonusX += 18;
-									}else if (!nohu && line_win.type === 4){
-										// Bonus x6
-										checkWin = true;
-										bonusX += 6;
-									}else if (!nohu && line_win.type === 3){
-										// Bonus x3
-										checkWin = true;
-										bonusX += 3;
-									}
-								}else if(line_win.win == 7) {
-									if (line_win.type === 5) {
-										checkWin = true;
-										// free x18
-										free += 18;
-										isFree = true;
-									}else if (line_win.type === 4){
-										// free x6
-										checkWin = true;
-										free += 6;
-										isFree = true;
-									}else if (line_win.type === 3){
-										// free x3
-										checkWin = true;
-										free += 3;
-										isFree = true;
 									}
 								}else if(!nohu && line_win.win == 6) {
 									if (line_win.type === 5) {
@@ -833,15 +821,10 @@ module.exports = function(client, data){
 								if (!nohu && bet_win >= tongCuoc*2.24) {
 									isBigWin = true;
 									type = 1;
-									red && Helpers.ThongBaoBigWin(client, {game: "Long Lân", users: client.profile.name, bet: Helpers.numberWithCommas(bet_win), status: 2});
+									red && Helpers.ThongBaoBigWin(client, {game: "LONG LÂN", users: client.profile.name, bet: Helpers.numberWithCommas(bet_win), status: 2});
 								}
 								if (free > 0) {
 									client.LongLan.free += free;
-								}
-								if (!!bonusX) {
-									client.LongLan.bonusX += bonusX;
-									client.LongLan.bonusL = 5;
-									gameBonus(client, bet);
 								}
 
 								var thuong = 0;
@@ -864,7 +847,7 @@ module.exports = function(client, data){
 									}
 
 									LongLan_red.create({'name': client.profile.name, 'type': type, 'win': bet_win, 'bet': bet, 'kq': result2.length, 'line': line.length, 'time': new Date()}, function (err4, small) {
-										client.red({longlan:{status:1, cel:[cel1, cel2, cel3, cel4, cel5], line_win: result2, win: bet_win, free: client.LongLan.free, isFree: isFree, isBonus: !!client.LongLan.bonusX, isNoHu: nohu, isBigWin: isBigWin, phien: small.id}, user:{red:user.red-tongCuoc}});
+										client.red({longlan:{status:1, cel:[cel1, cel2, cel3, cel4, cel5], line_win: result2, win: bet_win, free: client.LongLan.free, isFree: isFree, isBonus: client.LongLan.bonusL, isNoHu: nohu, isBigWin: isBigWin, phien: small.id}, user:{red:user.red-tongCuoc}});
 										client.LongLan.id = small._id.toString();
 									});
 								}else{
