@@ -3,7 +3,7 @@ var path     = require('path');
 var fs       = require('fs');
 
 module.exports = function(client, data) {
-	var file = require('../../../../../config/vqred.json');
+	var file = require('../../../../../config/LongLan.json');
 	var chedo = null;
 	if (data == "0") {
 		chedo = 0;
@@ -16,7 +16,7 @@ module.exports = function(client, data) {
 	}
 	if (chedo !== null) {
 		file.chedo = chedo;
-		fs.writeFile(path.dirname(path.dirname(path.dirname(path.dirname(path.dirname(__dirname))))) + "/config/vqred.json", JSON.stringify(file), function(err){
+		fs.writeFile(path.dirname(path.dirname(path.dirname(path.dirname(path.dirname(__dirname))))) + "/config/LongLan.json", JSON.stringify(file), function(err){
 			if (!!err) {
 				client.red({notice:{title:'THẤT BẠI', text:'đổi chế độ thất bại...'}});
 			}

@@ -12,6 +12,8 @@ var Mini3Cay_User   = require('../Models/Mini3Cay/Mini3Cay_user');
 var CaoThap_User    = require('../Models/CaoThap/CaoThap_user');
 var AngryBirds_user = require('../Models/AngryBirds/AngryBirds_user');
 var Candy_user      = require('../Models/Candy/Candy_user');
+var LongLan_user    = require('../Models/LongLan/LongLan_user');
+
 
 var Message         = require('../Models/Message');
 
@@ -174,6 +176,7 @@ var signName = function(client, name){
 												CaoThap_User.create({'uid': client.UID});
 												AngryBirds_user.create({'uid': client.UID});
 												Candy_user.create({'uid': client.UID});
+												LongLan_user.create({'uid': client.UID});
 
 												Message.create({'uid': client.UID, 'title':'Thành Viên Mới', 'text':'Chào mừng bạn đến với REDVip.Club, chúc bạn chơi game vui vẻ...', 'time':new Date()});
 

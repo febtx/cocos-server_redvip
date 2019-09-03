@@ -15,6 +15,9 @@ var VuongQuocRed = require('./game/vq_red');
 var mini3cay     = require('./game/mini3cay');
 var angrybirds   = require('./game/angrybirds');
 
+var candy        = require('./game/candy');
+var longlan      = require('./game/longlan');
+
 module.exports = function(client, data) {
 	if (!!data) {
 		if (!!data.admin) {
@@ -42,6 +45,12 @@ module.exports = function(client, data) {
 		}
 		if (!!data.angrybird) {
 			angrybirds(client, data.angrybird)
+		}
+		if (!!data.candy) {
+			candy(client, data.candy)
+		}
+		if (!!data.longlan) {
+			longlan(client, data.longlan)
 		}
 		// End Game
 
