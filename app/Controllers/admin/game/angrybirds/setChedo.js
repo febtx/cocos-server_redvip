@@ -16,7 +16,8 @@ module.exports = function(client, data) {
 	}
 	if (chedo !== null) {
 		file.chedo = chedo;
-		fs.writeFile(path.dirname(path.dirname(path.dirname(path.dirname(path.dirname(__dirname))))) + "/config/angrybird.json", JSON.stringify(file), function(err){
+		var txt = JSON.stringify(file);
+		fs.writeFile(path.dirname(path.dirname(path.dirname(path.dirname(path.dirname(__dirname))))) + "/config/angrybird.json", txt, function(err){
 			if (!!err) {
 				client.red({notice:{title:'THẤT BẠI', text:'đổi chế độ thất bại...'}});
 			}

@@ -263,7 +263,7 @@ module.exports = function(client, data){
 				if (client.LongLan.free === 0 && ((red && user.red < tongCuoc) || (!red && user.xu < tongCuoc))) {
 					client.red({longlan:{status:0, notice: 'Bạn không đủ ' + (red ? 'RED':'XU') + ' để quay.!!'}});
 				}else{
-					var config = require('../../../../config/LongLan.json').chedo;
+					var config = require('../../../../config/LongLan.json');
 					var phe = red ? 2 : 4;    // Phế
 					var addQuy = (tongCuoc*0.01)>>0;
 
@@ -285,7 +285,7 @@ module.exports = function(client, data){
 							huUpdate['huXu'] = uInfo['huXu'] = mini_users['huXu'] = 0; // Khởi tạo
 						}
 
-						if (config == 0) {
+						if (config.chedo == 0) {
 							// chế độ khó
 							var celSS = [
 								random_T1(),   random_T1(), random_T1(),
@@ -296,7 +296,7 @@ module.exports = function(client, data){
 							];
 
 
-						}else if(config == 1){
+						}else if(config.chedo == 1){
 							// trung bình
 							var celSS = [
 								random_T1(),   random_T1(), random_T1(),

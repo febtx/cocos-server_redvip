@@ -19,6 +19,8 @@ var MuaThe_card        = require('../../../../Models/MuaThe_card');
 // Chuyển Red
 //var ChuyenRed          = require('../../../../Models/ChuyenRed');
 
+var Message            = require('../../../../Models/Message');
+
 // Tài Xỉu
 var TaiXiu_user        = require('../../../../Models/TaiXiu_user');
 var TaiXiu_one         = require('../../../../Models/TaiXiu_one');
@@ -57,9 +59,19 @@ var miniPokerRed       = require('../../../../Models/miniPoker/miniPokerRed');
 var miniPokerXu        = require('../../../../Models/miniPoker/miniPokerXu');
 
 // VuongQuocRed
-var VuongQuocRed_user  = require('../../../../Models/VuongQuocRed/VuongQuocRed_users');
-var VuongQuocRed_red   = require('../../../../Models/VuongQuocRed/VuongQuocRed_red');
-var VuongQuocRed_xu    = require('../../../../Models/VuongQuocRed/VuongQuocRed_xu');
+var VuongQuocRed_user = require('../../../../Models/VuongQuocRed/VuongQuocRed_users');
+var VuongQuocRed_red  = require('../../../../Models/VuongQuocRed/VuongQuocRed_red');
+var VuongQuocRed_xu   = require('../../../../Models/VuongQuocRed/VuongQuocRed_xu');
+
+// Candy
+var Candy_user        = require('../../../../Models/Candy/Candy_user');
+var Candy_red         = require('../../../../Models/Candy/Candy_red');
+var Candy_xu          = require('../../../../Models/Candy/Candy_xu');
+
+// LongLan
+var LongLan_user      = require('../../../../Models/LongLan/LongLan_user');
+var LongLan_red       = require('../../../../Models/LongLan/LongLan_red');
+var LongLan_xu        = require('../../../../Models/LongLan/LongLan_xu');
 
 module.exports = function(client, id){
 	UserInfo.findOne({'id': id}, 'name', function(err, data){
@@ -83,6 +95,8 @@ module.exports = function(client, id){
 				MuaThe.deleteMany({'uid': id}).exec();
 			});
 
+			Message.deleteMany({'uid': id}).exec();
+
 			// Tài Xỉu
 			TaiXiu_user.findOneAndDelete({'uid': id}).exec();
 			TaiXiu_one.deleteMany({'uid': id}).exec();
@@ -91,8 +105,8 @@ module.exports = function(client, id){
 
 			// AngryBirds
 			AngryBirds_user.findOneAndDelete({'uid': id}).exec();
-			AngryBirds_red.deleteMany({'name': {$regex: regex}}).exec();
-			AngryBirds_xu.deleteMany({'name': {$regex: regex}}).exec();
+			AngryBirds_red.deleteMany({'name': data.name}).exec();
+			AngryBirds_xu.deleteMany({'name': data.name}).exec();
 
 			// BauCua
 			BauCua_user.findOneAndDelete({'uid': id}).exec();
@@ -100,8 +114,8 @@ module.exports = function(client, id){
 
 			// BigBabol
 			BigBabol_user.findOneAndDelete({'uid': id}).exec();
-			BigBabol_red.deleteMany({'name': {$regex: regex}}).exec();
-			BigBabol_xu.deleteMany({'name': {$regex: regex}}).exec();
+			BigBabol_red.deleteMany({'name': data.name}).exec();
+			BigBabol_xu.deleteMany({'name': data.name}).exec();
 
 			// CaoThap
 			CaoThap_user.findOneAndDelete({'uid': id}).exec();
@@ -117,13 +131,23 @@ module.exports = function(client, id){
 
 			// miniPoker
 			miniPoker_user.findOneAndDelete({'uid': id}).exec();
-			miniPokerRed.deleteMany({'name': {$regex: regex}}).exec();
-			miniPokerXu.deleteMany({'name': {$regex: regex}}).exec();
+			miniPokerRed.deleteMany({'name': data.name}).exec();
+			miniPokerXu.deleteMany({'name': data.name}).exec();
 
 			// VuongQuocRed
 			VuongQuocRed_user.findOneAndDelete({'uid': id}).exec();
-			VuongQuocRed_red.deleteMany({'name': {$regex: regex}}).exec();
-			VuongQuocRed_xu.deleteMany({'name': {$regex: regex}}).exec();
+			VuongQuocRed_red.deleteMany({'name': data.name}).exec();
+			VuongQuocRed_xu.deleteMany({'name': data.name}).exec();
+
+			// Candy
+			Candy_user.findOneAndDelete({'uid': id}).exec();
+			Candy_red.deleteMany({'name': data.name}).exec();
+			Candy_xu.deleteMany({'name': data.name}).exec();
+
+			// LongLan
+			LongLan_user.findOneAndDelete({'uid': id}).exec();
+			LongLan_red.deleteMany({'name': data.name}).exec();
+			LongLan_xu.deleteMany({'name': data.name}).exec();
 		}
 	});
 }

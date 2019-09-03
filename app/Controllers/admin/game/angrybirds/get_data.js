@@ -1,6 +1,6 @@
 
 const HU   = require('../../../../Models/HU');
-var config = require('../../../../../config/angrybird.json').chedo;
+var config = require('../../../../../config/angrybird.json');
 
 
 module.exports = function(client) {
@@ -11,7 +11,7 @@ module.exports = function(client) {
 			return obj;
 		}))
 		.then(varT => {
-			client.red({angrybird:{hu:varT, chedo:config}});
+			client.red({angrybird:{hu:varT, chedo:config.chedo}});
 		})
 	});
 }

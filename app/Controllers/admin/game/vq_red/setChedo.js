@@ -16,11 +16,11 @@ module.exports = function(client, data) {
 	}
 	if (chedo !== null) {
 		file.chedo = chedo;
-		fs.writeFile(path.dirname(path.dirname(path.dirname(path.dirname(path.dirname(__dirname))))) + "/config/vqred.json", JSON.stringify(file), function(err){
+		var txt = JSON.stringify(file);
+		fs.writeFile(path.dirname(path.dirname(path.dirname(path.dirname(path.dirname(__dirname))))) + "/config/vqred.json", txt, function(err){
 			if (!!err) {
 				client.red({notice:{title:'THẤT BẠI', text:'đổi chế độ thất bại...'}});
 			}
-			client.red({notice:{title:'Tesst', text:'đổi chế độ...'}});
 		});
 	}else{
 		client.red({notice:{title:'THẤT BẠI', text:'đổi chế độ thất bại...'}});

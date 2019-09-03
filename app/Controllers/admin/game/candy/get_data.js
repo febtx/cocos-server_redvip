@@ -1,6 +1,6 @@
 
 var HU     = require('../../../../Models/HU');
-var config = require('../../../../../config/candy.json').chedo;
+var config = require('../../../../../config/candy.json');
 
 module.exports = function(client) {
 	HU.find({game: "candy", red:true}, 'name type redPlay redWin redLost hu', function(err, cat){
@@ -10,7 +10,7 @@ module.exports = function(client) {
 			return obj;
 		}))
 		.then(varT => {
-			client.red({candy:{hu:varT, chedo: config}});
+			client.red({candy:{hu:varT, chedo: config.chedo}});
 		})
 	});
 }

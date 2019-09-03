@@ -1,6 +1,6 @@
 
 const HU   = require('../../../../Models/HU');
-var config = require('../../../../../config/bigbabol.json').chedo;
+var config = require('../../../../../config/bigbabol.json');
 
 
 module.exports = function(client) {
@@ -11,7 +11,7 @@ module.exports = function(client) {
 			return obj;
 		}))
 		.then(varT => {
-			client.red({big_babol:{hu:varT, chedo:config}});
+			client.red({big_babol:{hu:varT, chedo:config.chedo}});
 		})
 	});
 }

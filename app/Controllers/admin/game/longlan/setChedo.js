@@ -14,13 +14,15 @@ module.exports = function(client, data) {
 	if (data == "2") {
 		chedo = 2;
 	}
+	console.log(data);
+	console.log(JSON.stringify(file));
 	if (chedo !== null) {
 		file.chedo = chedo;
-		fs.writeFile(path.dirname(path.dirname(path.dirname(path.dirname(path.dirname(__dirname))))) + "/config/LongLan.json", JSON.stringify(file), function(err){
+		var txt = JSON.stringify(file);
+		fs.writeFile(path.dirname(path.dirname(path.dirname(path.dirname(path.dirname(__dirname))))) + "/config/LongLan.json", txt, function(err){
 			if (!!err) {
 				client.red({notice:{title:'THẤT BẠI', text:'đổi chế độ thất bại...'}});
 			}
-			client.red({notice:{title:'Tesst', text:'đổi chế độ...'}});
 		});
 	}else{
 		client.red({notice:{title:'THẤT BẠI', text:'đổi chế độ thất bại...'}});

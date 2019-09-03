@@ -128,7 +128,7 @@ module.exports = function(client, data){
 					var bet_win   = 0;
 					var type      = 0;   // Loại được ăn lớn nhất trong phiên
 
-					var config = require('../../../../config/angrybird.json').chedo;
+					var config = require('../../../../config/angrybird.json');
 
 					HU.findOne({game: "arb", type:bet, red:red}, 'name bet min toX balans x', function(err, dataHu){
 						var uInfo      = {};
@@ -148,14 +148,14 @@ module.exports = function(client, data){
 						var toX      = dataHu.toX;
 						var balans   = dataHu.balans;
 
-						if (config == 0) {
+						if (config.chedo == 0) {
 							// khó
 							var celSS = [
 								random_cel2(), random_cel2(), random_cel2(),
 								random_cel2(), random_celR(), random_celR(),
 								1,             0,             0,
 							];
-						}else if (config == 1) {
+						}else if (config.chedo == 1) {
 							// trung bình
 							var celSS = [
 								random_cel2(), random_cel2(), random_cel2(),
