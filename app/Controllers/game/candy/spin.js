@@ -7,10 +7,6 @@ var Candy_user = require('../../../Models/Candy/Candy_user');
 var UserInfo  = require('../../../Models/UserInfo');
 var Helpers   = require('../../../Helpers/Helpers');
 
-function random_cel3(){
-	return (Math.random()*7)>>0;
-}
-
 function random_cel2(){
 	var a = (Math.random()*28)>>0;
 	if (a == 27) {
@@ -37,9 +33,6 @@ function random_cel2(){
 	}
 }
 
-function random_cel11(){
-	return (Math.random()*5)>>0;
-}
 function random_cel1(){
 	var a = (Math.random()*15)>>0;
 	if (a == 14) {
@@ -60,23 +53,12 @@ function random_cel1(){
 	}
 }
 
-function random_cel01(){
-	return (Math.random()*4)>>0;
-}
 function random_cel0(){
-	var a = (Math.random()*10)>>0;
-	if (a == 9) {
-		// 9
-		return 3;
-	}else if (a >= 7 && a < 8) {
-		// 7 8
-		return 2;
-	}else if (a >= 4 && a < 7) {
-		// 4 5 6
-		return 1;
+	var a = (Math.random()*2)>>0;
+	if (a == 1) {
+		return 5;
 	}else{
-		// 0 1 2 3
-		return 0;
+		return 3;
 	}
 }
 
@@ -195,9 +177,9 @@ module.exports = function(client, data){
 						if (config.chedo == 0) {
 							// chế độ khó
 							var celSS = [
-								random_cel3(), random_cel3(), random_cel2(),
+								random_cel2(), random_cel2(), random_cel2(),
 								random_cel2(), random_cel2(), random_cel1(),
-								random_cel0(), 3,             2,
+								random_cel1(), 3,             2,
 								2,             1,             1,
 								0,             0,             0,
 							];
@@ -206,40 +188,18 @@ module.exports = function(client, data){
 							var celSS = [
 								random_cel2(), random_cel2(), random_cel2(),
 								random_cel2(), random_cel2(), random_cel2(),
-								random_cel1(), random_cel0(), random_cel0(),
+								random_cel1(), random_cel1(), random_cel0(),
 								2,             1,             1,
 								0,             0,             3,
 							];
 						}else{
-							/*
+							// dễ
 							var celSS = [
-								random_cel3(), random_cel2(), random_cel2(),
 								random_cel2(), random_cel2(), random_cel2(),
-								random_cel1(), random_cel0(),  random_cel0(),
+								random_cel2(), random_cel2(), random_cel2(),
+								random_cel2(), random_cel1(), random_cel1(),
 								2,             1,             1,
-								0,             0,             0,
-							];
-							var celSS = [
-								random_cel2(), random_cel2(), random_cel2(),
-								random_cel2(), random_cel2(), random_cel2(),
-								random_cel2(), random_cel0(), random_cel0(),
-								random_cel0(), random_cel0(), random_cel1(),
-								2, 1, 0,
-							];
-							var celSS = [
-								random_cel2(), random_cel2(), random_cel2(),
-								random_cel2(), random_cel2(), random_cel2(),
-								random_cel2(), random_cel0(), random_cel0(),
-								0, 2, 1,
-								1, 0, 0,
-							];
-							*/
-							var celSS = [
-								random_cel2(), random_cel2(), random_cel2(),
-								random_cel2(), random_cel2(), random_cel2(),
-								random_cel1(), random_cel0(), random_cel0(),
-								2,             1,             1,
-								0,             0,             3,
+								0,             0,             random_cel0(),
 							];
 						}
 
