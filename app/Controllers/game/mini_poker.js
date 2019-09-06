@@ -283,11 +283,7 @@ function log(client, data){
 function top(client, data){
 	var red = !!data; // Loại tiền (Red: true, Xu: false)
 	if (red) {
-		miniPokerRed.find({$or:[
-			{type:9},
-			{type:8},
-			{type:7}
-		]}, 'name win bet time type', {sort:{'_id':-1}, limit: 50}, function(err, result) {
+		miniPokerRed.find({type:{$gte:7}}, 'name win bet time type', {sort:{'_id':-1}, limit: 50}, function(err, result) {
 			Promise.all(result.map(function(obj){
 				obj = obj._doc;
 				delete obj.__v;
@@ -299,11 +295,7 @@ function top(client, data){
 			})
 		});
 	}else{
-		miniPokerXu.find({$or:[
-			{type:9},
-			{type:8},
-			{type:7}
-		]}, 'name win bet time type', {sort:{'_id':-1}, limit: 50}, function(err, result) {
+		miniPokerXu.find({type:{$gte:7}}, 'name win bet time type', {sort:{'_id':-1}, limit: 50}, function(err, result) {
 			Promise.all(result.map(function(obj){
 				obj = obj._doc;
 				delete obj.__v;

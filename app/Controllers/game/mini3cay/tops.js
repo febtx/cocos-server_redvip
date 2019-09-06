@@ -7,7 +7,7 @@ const UserInfo     = require('../../../Models/UserInfo');
 module.exports = function(client, data){
 	var red  = !!data;   // Loại tiền (Red: true, Xu: false)
 	if (red) {
-		Mini3Cay_red.find({type: 6}, 'uid bet win kq time', {sort:{'_id':-1}, limit: 50}, function(err, result) {
+		Mini3Cay_red.find({type:{$gte:4}}, 'uid bet win kq time', {sort:{'_id':-1}, limit: 50}, function(err, result) {
 			Promise.all(result.map(function(obj){
 				obj = obj._doc;
 				var getPhien = UserInfo.findOne({id: obj.uid}, 'name').exec();
@@ -24,7 +24,7 @@ module.exports = function(client, data){
 			})
 		});
 	}else{
-		Mini3Cay_xu.find({type: 6}, 'uid bet win kq time', {sort:{'_id':-1}, limit: 50}, function(err, result) {
+		Mini3Cay_xu.find({type:{$gte:4}}, 'uid bet win kq time', {sort:{'_id':-1}, limit: 50}, function(err, result) {
 			Promise.all(result.map(function(obj){
 				obj = obj._doc;
 				var getPhien = UserInfo.findOne({id: obj.uid}, 'name').exec();
