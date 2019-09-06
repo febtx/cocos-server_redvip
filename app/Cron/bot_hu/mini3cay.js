@@ -37,15 +37,10 @@ function spin(io, user){
 	var nohu    = false;
 	var card    = [...base_card.card]
 		.slice(0, 36);
-	// card.slice(0, 36)
-	// tráo bài
-	card.splice((Math.random()*4)>>0, 1);
-	card.splice((Math.random()*3)>>0, 1);
-	card = Helpers.shuffle(card); // tráo bài lần 1
-	card = Helpers.shuffle(card); // tráo bài lần 2
-	card = Helpers.shuffle(card); // tráo bài lần 3
 
-	var ketqua = card.slice(0, 3); // bốc 3 thẻ đầu tiên
+	card = Helpers.shuffle(card); // tráo bài lần 1
+
+	var ketqua = card.slice(3, 6); // bốc 3 thẻ đầu tiên
 	var ketqua_temp = [...ketqua]; // copy kết quả để sử lý, (tránh sắp sếp, mất tính ngẫu nhiên)
 	
 	var ADiamond = false;       // Có Át rô trong bài?
