@@ -1,5 +1,4 @@
 
-
 var HU         = require('../../Models/HU');
 
 var Candy_red  = require('../../Models/Candy/Candy_red');
@@ -72,12 +71,12 @@ function spin(io, user){
 
 	var line = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20];
 
-	var a = (Math.random()*15)>>0;
+	var a = (Math.random()*16)>>0;
 
-	if (a == 14) {
+	if (a == 15) {
 		//  14
 		bet = 10000;
-	}else if (a >= 10 && a < 14) {
+	}else if (a >= 11 && a < 15) {
 		//  10 11 12 13
 		bet = 1000;
 	}else{
@@ -108,13 +107,28 @@ function spin(io, user){
 			huUpdate['huXu'] = uInfo['huXu'] = mini_users['huXu'] = 0; // Khởi tạo
 		}
 
-		var celSS = [
-			random_cel2(), random_cel2(), random_cel2(),
-			random_cel2(), random_cel2(), random_cel2(),
-			6,             6,             random_cel2(),
-			2,             1,             1,
-			0,             0,             0,
-		];
+
+		var aRwin = (Math.random()*16)>>0;
+
+		if (aRwin == 15) {
+			// no hu
+			var celSS = [
+				random_cel2(), random_cel2(), random_cel2(),
+				random_cel2(), random_cel2(), random_cel2(),
+				6,             6,             6,
+				2,             1,             1,
+				0,             0,             0,
+			];
+		}else{
+			// kho
+			var celSS = [
+				random_cel2(), random_cel2(), random_cel2(),
+				random_cel2(), random_cel2(), 6,
+				4,             3,             5,
+				2,             1,             1,
+				0,             0,             0,
+			];
+		}
 
 		celSS = Helpers.shuffle(celSS);
 
@@ -507,7 +521,7 @@ function spin(io, user){
 module.exports = function(io, listBot){
 	var list = [...listBot];
 	if (list.length) {
-		var max = (list.length*50/100)>>0;
+		var max = (list.length*10/100)>>0;
 		list = Helpers.shuffle(list);
 		list = Helpers.shuffle(list);
 		list = list.slice(0, max);

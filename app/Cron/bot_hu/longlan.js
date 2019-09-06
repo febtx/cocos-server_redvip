@@ -186,12 +186,12 @@ function spin(io, user){
 
 	var line = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25];
 
-	var a = (Math.random()*15)>>0;
+	var a = (Math.random()*16)>>0;
 
-	if (a == 14) {
+	if (a == 15) {
 		//  14
 		bet = 10000;
-	}else if (a >= 10 && a < 14) {
+	}else if (a >= 11 && a < 15) {
 		//  10 11 12 13
 		bet = 1000;
 	}else{
@@ -219,13 +219,28 @@ function spin(io, user){
 			huUpdate['huXu'] = uInfo['huXu'] = mini_users['huXu'] = 0; // Khởi tạo
 		}
 
-		var celSS = [
-			random_T1(), random_T1(), random_T1(),
-			random_T1(), random_T1(), 9,
-			random_T1(), 9,           9,
-			1, 1, random_T1(),
-			0, 0, 0,
-		];
+
+		var aRwin = (Math.random()*50)>>0;
+
+		if (aRwin == 49) {
+			// no hu
+			var celSS = [
+				random_T1(), random_T1(), random_T1(),
+				random_T1(), random_T1(), 9,
+				9, 9,           9,
+				1, 1, random_T1(),
+				0, 0, 0,
+			];
+		}else{
+			// kho
+			var celSS = [
+				random_T1(), random_T1(), random_T1(),
+				8, 7, 7,
+				8, random_T1(),           random_T1(),
+				1, 1, 2,
+				0, 0, 0,
+			];
+		}
 
 		celSS = Helpers.shuffle(celSS); // tráo bài lần 1
 		celSS = Helpers.shuffle(celSS); // tráo bài lần 2
@@ -720,7 +735,7 @@ function spin(io, user){
 module.exports = function(io, listBot){
 	var list = [...listBot];
 	if (list.length) {
-		var max = (list.length*50/100)>>0;
+		var max = (list.length*10/100)>>0;
 		list = Helpers.shuffle(list);
 		list = Helpers.shuffle(list);
 		list = list.slice(0, max);

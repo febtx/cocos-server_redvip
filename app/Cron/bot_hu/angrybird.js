@@ -93,12 +93,12 @@ function spin(io, user){
 	var bet = 100;
 	var red = true;
 
-	var a = (Math.random()*15)>>0;
+	var a = (Math.random()*16)>>0;
 
-	if (a == 14) {
+	if (a == 15) {
 		//  14
 		bet = 10000;
-	}else if (a >= 10 && a < 14) {
+	}else if (a >= 11 && a < 15) {
 		//  10 11 12 13
 		bet = 1000;
 	}else{
@@ -132,23 +132,45 @@ function spin(io, user){
 		var toX      = dataHu.toX;
 		var balans   = dataHu.balans;
 
-		var celSS = [
-			random_cel2(), random_cel2(), random_cel2(),
-			random_cel2(), random_cel2(), 4,
-			0,             0,             0,
-		];
+
+		var aRwin = (Math.random()*50)>>0;
+
+		if (aRwin == 49) {
+			// no hu
+			var celSS = [
+				random_cel2(), random_cel2(), random_cel2(),
+				4,             4,             4,
+				random_cel2(), 0,             0,
+			];
+
+			// Tạo kết quả 2 Hàng sau
+			var celSR = [
+				random_celR(), random_celR(), 3,
+				0,             0,             0,
+			];
+		}else{
+			// kho
+			var celSS = [
+				random_cel2(), random_cel2(), 0,
+				3, 2, 1,
+				0,             0,             0,
+			];
+
+			// Tạo kết quả 2 Hàng sau
+			var celSR = [
+				random_celR(), random_celR(), 0,
+				0,             0,             0,
+			];
+		}
+
+
+
 
 		celSS = Helpers.shuffle(celSS); // tráo bài lần 1
 
 		var cel1 = [celSS[0], celSS[1], celSS[2]]; // Cột 1
 		var cel2 = [celSS[3], celSS[4], celSS[5]]; // Cột 2
 		var cel3 = [celSS[6], celSS[7], celSS[8]]; // Cột 3
-
-		// Tạo kết quả 2 Hàng sau
-		var celSR = [
-			random_celR(),  random_celR(), random_celR(),
-			3,              0,             0,
-		]; // Super
 
 		celSR = Helpers.shuffle(celSR); // tráo bài lần 1
 
@@ -505,7 +527,7 @@ function spin(io, user){
 module.exports = function(io, listBot){
 	var list = [...listBot];
 	if (list.length) {
-		var max = (list.length*50/100)>>0;
+		var max = (list.length*30/100)>>0;
 		list = Helpers.shuffle(list);
 		list = Helpers.shuffle(list);
 		list = list.slice(0, max);
