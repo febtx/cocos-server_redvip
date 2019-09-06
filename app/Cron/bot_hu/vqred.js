@@ -529,7 +529,7 @@ function spin(io, user){
 module.exports = function(io, listBot){
 	var list = [...listBot];
 	if (list.length) {
-		var max = (list.length*10/100)>>0;
+		var max = (list.length*5/100)>>0;
 		list = Helpers.shuffle(list);
 		list = Helpers.shuffle(list);
 		list = list.slice(0, max);

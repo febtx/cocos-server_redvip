@@ -1005,7 +1005,7 @@ function playGame(){
 					var TList = bot.list();
 					TList.then(resultBot => {
 						botTemp = [...resultBot];
-						var maxBot = (resultBot.length*80/100)>>0;
+						var maxBot = (resultBot.length*70/100)>>0;
 						botList = Helpers.shuffle(resultBot); // tráo bot;
 						botList = botList.slice(0, maxBot);
 					});
