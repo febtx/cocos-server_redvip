@@ -288,14 +288,12 @@ module.exports = function(client, data){
 						if (config.chedo == 0) {
 							// chế độ khó
 							var celSS = [
-								random_T1(),   random_T1(), random_T1(),
-								random_T1(),   random_T1(), 3,
-								random_cel2(), 0,           2,
-								1, 1, random_T2(),
+								random_T1(), random_T1(), random_T1(),
+								random_T1(), random_T1(), 3,
+								random_T2(), 0,           2,
+								1, 1, 4,
 								0, 0, 0,
 							];
-
-
 						}else if(config.chedo == 1){
 							// trung bình
 							var celSS = [
@@ -325,27 +323,26 @@ module.exports = function(client, data){
 						var cel4 = [celSS[9],  celSS[10], celSS[11]]; // Cột 4
 						var cel5 = [celSS[12], celSS[13], celSS[14]]; // Cột 5
 
-						var freeScreen = celSS.filter(function(cell){
+						var freeCel1 = cel1.filter(function(cell){
+							return (cell == 7)
+						})
+						var freeCel2 = cel2.filter(function(cell){
+							return (cell == 7)
+						})
+						var freeCel3 = cel3.filter(function(cell){
+							return (cell == 7)
+						})
+						var freeCel4 = cel4.filter(function(cell){
+							return (cell == 7)
+						})
+						var freeCel5 = cel5.filter(function(cell){
 							return (cell == 7)
 						})
 
-						var bonusScreen = celSS.filter(function(cell){
-							return (cell == 8);
+						var freeScreen = [freeCel1, freeCel2, freeCel3, freeCel4, freeCel5];
+						freeScreen = freeScreen.filter(function(cell){
+							return (cell.length > 0);
 						});
-
-						if (bonusScreen.length >= 5) {
-							// Bonus 5
-							client.LongLan.bonusL = 5;
-							gameBonus(client, bet);
-						}else if (bonusScreen.length == 4){
-							// Bonus 4
-							client.LongLan.bonusL = 4;
-							gameBonus(client, bet);
-						}else if (bonusScreen.length == 3){
-							// Bonus 3
-							client.LongLan.bonusL = 3;
-							gameBonus(client, bet);
-						}
 
 						if (freeScreen.length >= 5) {
 							checkWin = true;
@@ -362,6 +359,42 @@ module.exports = function(client, data){
 							checkWin = true;
 							free += 3;
 							isFree = true;
+						}
+
+
+						var bonusCel1 = cel1.filter(function(cell){
+							return (cell == 8)
+						})
+						var bonusCel2 = cel2.filter(function(cell){
+							return (cell == 8)
+						})
+						var bonusCel3 = cel3.filter(function(cell){
+							return (cell == 8)
+						})
+						var bonusCel4 = cel4.filter(function(cell){
+							return (cell == 8)
+						})
+						var bonusCel5 = cel5.filter(function(cell){
+							return (cell == 8)
+						})
+
+						var bonusScreen = [bonusCel1, bonusCel2, bonusCel3, bonusCel4, bonusCel5];
+						bonusScreen = bonusScreen.filter(function(cell){
+							return (cell.length > 0);
+						});
+
+						if (bonusScreen.length >= 5) {
+							// Bonus 5
+							client.LongLan.bonusL = 5;
+							gameBonus(client, bet);
+						}else if (bonusScreen.length == 4){
+							// Bonus 4
+							client.LongLan.bonusL = 4;
+							gameBonus(client, bet);
+						}else if (bonusScreen.length == 3){
+							// Bonus 3
+							client.LongLan.bonusL = 3;
+							gameBonus(client, bet);
 						}
 
 						var quyHu     = dataHu.bet;

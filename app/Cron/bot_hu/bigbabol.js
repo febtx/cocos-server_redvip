@@ -105,6 +105,7 @@ function spin(io, user){
 		bet = 100;
 	}
 
+	var cuoc = bet*line.length;  // Tiền cược
 	var phe = 2;    // Phế
 	var addQuy = (cuoc*0.01)>>0;
 
@@ -410,8 +411,8 @@ function spin(io, user){
 				}
 				BigBabol_red.create({'name': user.name, 'type': type, 'win': bet_win, 'bet': bet, 'kq': result2.length, 'line': line.length, 'time': new Date()}, function (err, small) {});
 				HU.updateOne({game:'bigbabol', type:bet, red:red}, {$inc:huUpdate}).exec();
-				UserInfo.updateOne({id:client.UID}, {$inc:uInfo}).exec();
-				BigBabol_users.updateOne({'uid':client.UID}, {$set:{time: new Date()}, $inc:mini_users}).exec();
+				UserInfo.updateOne({id:user.id}, {$inc:uInfo}).exec();
+				BigBabol_users.updateOne({'uid':user.id}, {$set:{time: new Date()}, $inc:mini_users}).exec();
 			})
 		})
 	})
