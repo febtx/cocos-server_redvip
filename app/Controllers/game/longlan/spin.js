@@ -680,11 +680,11 @@ module.exports = function(client, data){
 											var okHu = (quyHu-Math.ceil(quyHu*phe/100))>>0;
 											bet_win += okHu;
 											HU.updateOne({game:'long', type:bet, red:red}, {$set:{name:"", bet:dataHu.min}}).exec();
-											red && Helpers.ThongBaoNoHu(client, {title: "LONG LÂN", name: client.profile.name, bet: Helpers.numberWithCommas(okHu)});
+											red && Helpers.ThongBaoNoHu(client.redT, {title: "LONG LÂN", name: client.profile.name, bet: Helpers.numberWithCommas(okHu)});
 										}else{
 											var okHu = (dataHu.min-Math.ceil(dataHu.min*phe/100))>>0;
 											bet_win += okHu;
-											red && Helpers.ThongBaoNoHu(client, {title: "LONG LÂN", name: client.profile.name, bet: Helpers.numberWithCommas(okHu)});
+											red && Helpers.ThongBaoNoHu(client.redT, {title: "LONG LÂN", name: client.profile.name, bet: Helpers.numberWithCommas(okHu)});
 										}
 										if (red){
 											huUpdate.hu += 1;
@@ -821,7 +821,7 @@ module.exports = function(client, data){
 								if (!nohu && bet_win >= tongCuoc*2.24) {
 									isBigWin = true;
 									type = 1;
-									red && Helpers.ThongBaoBigWin(client, {game: "LONG LÂN", users: client.profile.name, bet: Helpers.numberWithCommas(bet_win), status: 2});
+									red && Helpers.ThongBaoBigWin(client.redT, {game: "LONG LÂN", users: client.profile.name, bet: Helpers.numberWithCommas(bet_win), status: 2});
 								}
 								if (free > 0) {
 									client.LongLan.free += free;

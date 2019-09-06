@@ -312,7 +312,10 @@ function playGame(){
 					// lấy danh sách tài khoản bot
 					var TList = bot.list();
 					TList.then(resultBot => {
-						botList = Helpers.shuffle(resultBot); // tráo bot;
+						var maxBot = (resultBot.length*65/100)>>0;
+						botList = Helpers.shuffle(resultBot);
+						botList = Helpers.shuffle(botList);
+						botList = botList.slice(0, maxBot);
 					});
 				}else{
 					botList = [];

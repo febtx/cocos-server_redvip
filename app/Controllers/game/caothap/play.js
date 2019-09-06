@@ -232,7 +232,7 @@ function playGame(client, select) {
 											uInfo['redWin'] = uInfoGame['win'] = nohu-result.goc; // Cập nhật Số Red đã Thắng
 											CaoThap_red.updateOne({'_id': client.caothap.id}, {$set: {play: false, cuoc: result.bet, bet: nohu, card: card, a: result.a, time: new Date()}, $inc: {buoc:1}}).exec();
 											CaoThap_redbuoc.create(create);
-											Helpers.ThongBaoNoHu(client, {title: "Trên Dưới", name: client.profile.name, bet: Helpers.numberWithCommas(nohu)});
+											Helpers.ThongBaoNoHu(client.redT, {title: "Trên Dưới", name: client.profile.name, bet: Helpers.numberWithCommas(nohu)});
 										}else{
 											uInfo['xu']    = nohu;            // Cập nhật Số dư XU trong tài khoản
 											uInfo['xuWin'] = uInfoGame['winXu'] = nohu-result.goc; // Cập nhật Số XU đã Thắng

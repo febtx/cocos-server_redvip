@@ -16,6 +16,10 @@ var HU_game    = require('../Models/HU');
 var bot        = require('./taixiu/bot');
 var botList    = [];
 
+var botHu      = require('./bot_hu');
+var botTemp    = [];
+//var botTempP   = [];
+
 var dataTaiXiu = '../../data/taixiu.json';
 var io         = null;
 var gameLoop   = null;
@@ -904,7 +908,7 @@ function thongtin_thanhtoan(game_id, dice = false){
 }
 
 function playGame(){
-	io.TaiXiu_time = 82-5;
+	io.TaiXiu_time = 77;
 
 	//io.TaiXiu_time = 82;
 	//io.TaiXiu_time = 10
@@ -1000,9 +1004,13 @@ function playGame(){
 					// lấy danh sách tài khoản bot
 					var TList = bot.list();
 					TList.then(resultBot => {
+						botTemp = [...resultBot];
+						var maxBot = (resultBot.length*80/100)>>0;
 						botList = Helpers.shuffle(resultBot); // tráo bot;
+						botList = botList.slice(0, maxBot);
 					});
 				}else{
+					botTemp = [];
 					botList = [];
 				}
 			}else{
@@ -1019,8 +1027,9 @@ function playGame(){
 				}
 			}
 		}
-	}, 1000)
-	return gameLoop
+		botHu(io, botTemp);
+	}, 1000);
+	return gameLoop;
 }
 
 module.exports = init;

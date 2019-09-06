@@ -384,11 +384,11 @@ module.exports = function(client, data){
 										if (!nohu) {
 											var okHu = (quyHu-Math.ceil(quyHu*phe/100))>>0;
 											bet_win += okHu;
-											red && Helpers.ThongBaoNoHu(client, {title: "BigBabol", name: client.profile.name, bet: Helpers.numberWithCommas(okHu)});
+											red && Helpers.ThongBaoNoHu(client.redT, {title: "BigBabol", name: client.profile.name, bet: Helpers.numberWithCommas(okHu)});
 										}else{
 											var okHu = (quyMin-Math.ceil(quyMin*phe/100))>>0;
 											bet_win += okHu;
-											red && Helpers.ThongBaoNoHu(client, {title: "BigBabol", name: client.profile.name, bet: Helpers.numberWithCommas(okHu)});
+											red && Helpers.ThongBaoNoHu(client.redT, {title: "BigBabol", name: client.profile.name, bet: Helpers.numberWithCommas(okHu)});
 										}
 										HU.updateOne({game:'bigbabol', type:bet, red:red}, {$set:{name:"", bet:quyMin}}).exec();
 
@@ -429,7 +429,7 @@ module.exports = function(client, data){
 								if (!nohu && bet_win >= cuoc*2.24) {
 									isBigWin = true;
 									type = 1;
-									red && Helpers.ThongBaoBigWin(client, {game: "BigBabol", users: client.profile.name, bet: Helpers.numberWithCommas(bet_win), status: 2});
+									red && Helpers.ThongBaoBigWin(client.redT, {game: "BigBabol", users: client.profile.name, bet: Helpers.numberWithCommas(bet_win), status: 2});
 								}
 
 								var thuong     = 0;

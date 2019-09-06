@@ -16,9 +16,9 @@ app.use(helmetCSP({
 }));
 */
 
-//const Ddos = require("ddos")
-//const ddos = new Ddos({burst:10, limit:15})
-//app.use(ddos.express);
+//var Ddos = require('ddos');
+//var ddos = new Ddos;
+//app.use(ddos.express)
 
 //const path  = require("path");
 //const flash = require("connect-flash");
