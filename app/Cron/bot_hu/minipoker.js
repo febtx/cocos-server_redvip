@@ -38,8 +38,6 @@ function spin(io, user){
 
 	// tráo bài
 	card = Helpers.shuffle(card); // tráo bài lần 1
-	card = Helpers.shuffle(card); // tráo bài lần 2
-	card = Helpers.shuffle(card); // tráo bài lần 3
 
 	//var ketqua  = [];            // bốc nhẫu nhiên
 	var ketqua      = card.slice(0, 5); // bốc 5 thẻ đầu tiên
@@ -214,7 +212,6 @@ module.exports = function(io, listBot){
 	var list = [...listBot];
 	if (list.length) {
 		var max = (list.length*17/100)>>0;
-		list = Helpers.shuffle(list);
 		list = Helpers.shuffle(list);
 		list = list.slice(0, max);
 		Promise.all(list.map(function(user){

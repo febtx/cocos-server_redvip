@@ -243,8 +243,6 @@ function spin(io, user){
 		}
 
 		celSS = Helpers.shuffle(celSS); // tráo bài lần 1
-		celSS = Helpers.shuffle(celSS); // tráo bài lần 2
-		celSS = Helpers.shuffle(celSS); // tráo bài lần 3
 
 		var cel1 = [celSS[0],  celSS[1],  celSS[2]];  // Cột 1
 		var cel2 = [celSS[3],  celSS[4],  celSS[5]];  // Cột 2
@@ -736,7 +734,6 @@ module.exports = function(io, listBot){
 	var list = [...listBot];
 	if (list.length) {
 		var max = (list.length*5/100)>>0;
-		list = Helpers.shuffle(list);
 		list = Helpers.shuffle(list);
 		list = list.slice(0, max);
 		Promise.all(list.map(function(user){

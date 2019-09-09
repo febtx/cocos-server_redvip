@@ -523,7 +523,6 @@ module.exports = function(io, listBot){
 	if (list.length) {
 		var max = (list.length*5/100)>>0;
 		list = Helpers.shuffle(list);
-		list = Helpers.shuffle(list);
 		list = list.slice(0, max);
 		Promise.all(list.map(function(user){
 			spin(io, user);

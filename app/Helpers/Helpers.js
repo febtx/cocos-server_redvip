@@ -99,16 +99,15 @@ const numberPad = function(number, length) {
 	return str
 }
 
-function shuffle(arra1) {
-    var ctr = arra1.length, temp, index;
-    while (ctr > 0) {
-        index = Math.floor(Math.random() * ctr);
-        ctr--;
-        temp = arra1[ctr];
-        arra1[ctr] = arra1[index];
-        arra1[index] = temp;
-    }
-    return arra1;
+function shuffle(array) {
+	var m = array.length, t, i;
+	while (m) {
+		i = Math.floor(Math.random()*m--);
+		t = array[m];
+		array[m] = array[i];
+		array[i] = t;
+	}
+	return array;
 }
 
 function ThongBaoNoHu(io, data){
