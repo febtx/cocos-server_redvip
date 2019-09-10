@@ -10,7 +10,7 @@ var Helpers        = require('../../Helpers/Helpers');
 
 
 function random_cel2(){
-	var a = (Math.random()*21)>>0;
+	var a = Math.floor(Math.random()*21);
 	if (a == 20) {
 		// 20
 		return 5;
@@ -31,7 +31,6 @@ function random_cel2(){
 		return 0;
 	}
 }
-
 
 function check_win(data, line){
 	var win_icon = 0;
@@ -92,7 +91,7 @@ function spin(io, user){
 
 	var line = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20];
 
-	var a = (Math.random()*16)>>0;
+	var a = Math.floor(Math.random()*16);
 
 	if (a == 15) {
 		//  14
@@ -107,7 +106,7 @@ function spin(io, user){
 
 	var cuoc = bet*line.length;  // Tiền cược
 	var phe = 2;    // Phế
-	var addQuy = (cuoc*0.01)>>0;
+	var addQuy = Math.floor(cuoc*0.005);
 
 	var line_nohu = 0;
 	var win_arr   = null;
@@ -126,7 +125,7 @@ function spin(io, user){
 
 
 
-		var aRwin = (Math.random()*50)>>0;
+		var aRwin = Math.floor(Math.random()*50);
 
 		if (aRwin == 49) {
 			// no hu
@@ -161,7 +160,7 @@ function spin(io, user){
 		var checkName = new RegExp("^" + user.name + "$", 'i');
 		checkName     = checkName.test(dataHu.name);
 		if (checkName) {
-			line_nohu = ((Math.random()*line.length)>>0);
+			line_nohu = Math.floor(Math.random()*line.length);
 			line_nohu = line[line_nohu];
 		}
 		// kiểm tra kết quả
@@ -364,11 +363,11 @@ function spin(io, user){
 							quyMin = dataHu.min*dataHu.x;
 						}
 						if (!nohu) {
-							var okHu = (quyHu-Math.ceil(quyHu*phe/100))>>0;
+							var okHu = Math.floor(quyHu-Math.ceil(quyHu*phe/100));
 							bet_win += okHu;
 							red && Helpers.ThongBaoNoHu(io, {title: "BigBabol", name: user.name, bet: Helpers.numberWithCommas(okHu)});
 						}else{
-							var okHu = (quyMin-Math.ceil(quyMin*phe/100))>>0;
+							var okHu = Math.floor(quyMin-Math.ceil(quyMin*phe/100));
 							bet_win += okHu;
 							red && Helpers.ThongBaoNoHu(io, {title: "BigBabol", name: user.name, bet: Helpers.numberWithCommas(okHu)});
 						}
@@ -395,13 +394,13 @@ function spin(io, user){
 						bet_win += bet*8;
 					}else if(!nohu && line_win.win == 1 && line_win.type == 2) {
 						//	x0.8
-						bet_win += (bet*line_win.heso)>>0;
+						bet_win += Math.floor(bet*line_win.heso);
 					}else if(!nohu && line_win.win == 0 && line_win.type == 3) {
 						// x4
 						bet_win += bet*4;
 					}else if(!nohu && line_win.win == 0 && line_win.type == 2) {
 						// x0.4
-						bet_win += (bet*line_win.heso)>>0;
+						bet_win += Math.floor(bet*line_win.heso);
 					}
 				}
 				return (line_win.type != null);
@@ -432,12 +431,11 @@ function spin(io, user){
 }
 
 module.exports = function(io, listBot){
-	var list = [...listBot];
-	if (list.length) {
-		var max = (list.length*5/100)>>0;
-		list = Helpers.shuffle(list);
-		list = list.slice(0, max);
-		Promise.all(list.map(function(user){
+	if (listBot.length) {
+		var max = Math.floor(listBot.length*5/100);
+		listBot = Helpers.shuffle(listBot);
+		listBot = listBot.slice(0, max);
+		Promise.all(listBot.map(function(user){
 			spin(io, user);
 		}))
 	}

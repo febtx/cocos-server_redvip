@@ -15,7 +15,7 @@ function spin(io, user){
 	var bet = 100;
 	var red = true;
 
-	var a = (Math.random()*16)>>0;
+	var a = Math.floor(Math.random()*16);
 
 	if (a == 15) {
 		//  14
@@ -29,7 +29,7 @@ function spin(io, user){
 	}
 
 	var phe     = 2;    // Phế
-	var addQuy  = (bet*0.01)>>0;
+	var addQuy  = Math.floor(bet*0.01);
 	var an      = 0;
 	var code    = 0;
 	var text    = '';
@@ -117,8 +117,8 @@ function spin(io, user){
 			HU.updateOne({game: "minipoker", type:bet, red:red}, {$set:{name:"", bet:quyMin}}).exec();
 			if (checkName){
 				// đặt kết quả thành nổ hũ nếu người chơi được xác định thủ công
-				var randomType = (Math.random()*4)>>0;           // Ngẫu nhiên chất bài
-				var randomMin  = ((Math.random()*(9-6+1))+6)>>0; // Ngẫu nhiên dây bài bắt đầu từ (7 - 10)
+				var randomType = Math.floor(Math.random()*4);           // Ngẫu nhiên chất bài
+				var randomMin  = Math.floor((Math.random()*(9-6+1))+6); // Ngẫu nhiên dây bài bắt đầu từ (7 - 10)
 				Promise.all(base_card.card.filter(function(cardT){
 					if (randomMin == 9 && cardT.card == 0 && cardT.type == randomType) {
 						return true;
@@ -132,7 +132,7 @@ function spin(io, user){
 				})
 			}
 
-			an   = (quyHu-Math.ceil(quyHu*phe/100))>>0;
+			an   = Math.floor(quyHu-Math.ceil(quyHu*phe/100));
 
 			if (red){
 				Helpers.ThongBaoNoHu(io, {title: "MINI POKER", name: user.name, bet: Helpers.numberWithCommas(an)});
@@ -209,12 +209,11 @@ function spin(io, user){
 }
 
 module.exports = function(io, listBot){
-	var list = [...listBot];
-	if (list.length) {
-		var max = (list.length*17/100)>>0;
-		list = Helpers.shuffle(list);
-		list = list.slice(0, max);
-		Promise.all(list.map(function(user){
+	if (listBot.length) {
+		var max = Math.floor(listBot.length*17/100);
+		listBot = Helpers.shuffle(listBot);
+		listBot = listBot.slice(0, max);
+		Promise.all(listBot.map(function(user){
 			spin(io, user);
 		}))
 	}

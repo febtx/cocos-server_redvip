@@ -9,7 +9,7 @@ var UserInfo        = require('../../Models/UserInfo');
 var Helpers         = require('../../Helpers/Helpers');
 
 function random_cel2(){
-	var a = (Math.random()*21)>>0;
+	var a = Math.floor(Math.random()*21);
 	if (a == 20) {
 		// 20
 		return 5;
@@ -32,7 +32,7 @@ function random_cel2(){
 }
 
 function random_celR(){
-	var a = (Math.random()*10)>>0;
+	var a = Math.floor(Math.random()*10);
 	if (a == 9) {
 		// 9
 		return 3;
@@ -93,7 +93,7 @@ function spin(io, user){
 	var bet = 100;
 	var red = true;
 
-	var a = (Math.random()*16)>>0;
+	var a = Math.floor(Math.random()*16);
 
 	if (a == 15) {
 		//  14
@@ -107,7 +107,7 @@ function spin(io, user){
 	}
 
 	var phe = 2;    // Phế
-	var addQuy = (bet*0.01)>>0;
+	var addQuy = Math.floor(bet*0.005);
 
 	var line_nohu = 0;
 	var win_arr   = null;
@@ -133,7 +133,7 @@ function spin(io, user){
 		var balans   = dataHu.balans;
 
 
-		var aRwin = (Math.random()*50)>>0;
+		var aRwin = Math.floor(Math.random()*50);
 
 		if (aRwin == 49) {
 			// no hu
@@ -162,9 +162,6 @@ function spin(io, user){
 				0,             0,             0,
 			];
 		}
-
-
-
 
 		celSS = Helpers.shuffle(celSS); // tráo bài lần 1
 
@@ -461,7 +458,7 @@ function spin(io, user){
 
 							if (!nohu) {
 								nohu = true;
-								var okHu = (quyHu-Math.ceil(quyHu*phe/100))>>0;
+								var okHu = Math.floor(quyHu-Math.ceil(quyHu*phe/100));
 								bet_win += okHu;
 								if (red){
 									Helpers.ThongBaoNoHu(io, {title: "AngryBirds", name: user.name, bet: Helpers.numberWithCommas(okHu)});
@@ -470,7 +467,7 @@ function spin(io, user){
 									huUpdate['huXu'] = uInfo['huXu'] = mini_users['huXu'] += 1; // Cập nhật Số Hũ Xu đã Trúng
 								}
 							}else{
-								var okHu = (quyMin-Math.ceil(quyMin*phe/100))>>0;
+								var okHu = Math.floor(quyMin-Math.ceil(quyMin*phe/100));
 								bet_win += okHu;
 								if (red){
 									Helpers.ThongBaoNoHu(io, {title: "AngryBirds", name: user.name, bet: okHu});
@@ -525,12 +522,11 @@ function spin(io, user){
 }
 
 module.exports = function(io, listBot){
-	var list = [...listBot];
-	if (list.length) {
-		var max = (list.length*17/100)>>0;
-		list = Helpers.shuffle(list);
-		list = list.slice(0, max);
-		Promise.all(list.map(function(user){
+	if (listBot.length) {
+		var max = Math.floor(listBot.length*17/100);
+		listBot = Helpers.shuffle(listBot);
+		listBot = listBot.slice(0, max);
+		Promise.all(listBot.map(function(user){
 			spin(io, user);
 		}))
 	}

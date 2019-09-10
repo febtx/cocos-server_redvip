@@ -9,7 +9,7 @@ var UserInfo           = require('../../Models/UserInfo');
 var Helpers            = require('../../Helpers/Helpers');
 
 function random_cel2(){
-	var a = (Math.random()*28)>>0;
+	var a = Math.floor(Math.random()*28);
 	if (a == 27) {
 		// 27
 		return 6;
@@ -72,7 +72,7 @@ function spin(io, user){
 
 	var line = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20];
 
-	var a = (Math.random()*16)>>0;
+	var a = Math.floor(Math.random()*16);
 
 	if (a == 15) {
 		//  14
@@ -88,7 +88,7 @@ function spin(io, user){
 	var tongCuoc = bet*line.length;  // Tiền cược
 
 	var phe = 2;    // Phế
-	var addQuy = (tongCuoc*0.01)>>0;
+	var addQuy = Math.floor(tongCuoc*0.005);
 
 	var line_nohu = 0;
 	var bet_win  = 0;
@@ -109,7 +109,7 @@ function spin(io, user){
 			huUpdate['huXu'] = uInfo['huXu'] = mini_users['huXu'] = 0; // Khởi tạo
 		}
 
-		var aRwin = (Math.random()*16)>>0;
+		var aRwin = Math.floor(Math.random()*16);
 
 		if (aRwin == 15) {
 			// no hu
@@ -143,7 +143,7 @@ function spin(io, user){
 		var checkName = new RegExp("^" + user.name + "$", 'i');
 		checkName     = checkName.test(dataHu.name);
 		if (checkName) {
-			line_nohu = ((Math.random()*line.length)>>0);
+			line_nohu = Math.floor(Math.random()*line.length);
 			line_nohu = line[line_nohu];
 		}
 
@@ -394,12 +394,12 @@ function spin(io, user){
 						// Nổ Hũ
 						type = 2;
 						if (!nohu) {
-							var okHu = (quyHu-Math.ceil(quyHu*phe/100))>>0;
+							var okHu = Math.floor(quyHu-Math.ceil(quyHu*phe/100));
 							bet_win += okHu;
 							HU.updateOne({game:'vuongquocred', type:bet, red:red}, {$set:{name:"", bet:dataHu.min}}).exec();
 							red && Helpers.ThongBaoNoHu(io, {title: "VƯƠNG QUỐC RED", name: user.name, bet: Helpers.numberWithCommas(okHu)});
 						}else{
-							var okHu = (dataHu.min-Math.ceil(dataHu.min*phe/100))>>0;
+							var okHu = Math.floor(dataHu.min-Math.ceil(dataHu.min*phe/100));
 							bet_win += okHu;
 							red && Helpers.ThongBaoNoHu(io, {title: "VƯƠNG QUỐC RED", name: user.name, bet: Helpers.numberWithCommas(okHu)});
 						}
@@ -527,12 +527,11 @@ function spin(io, user){
 }
 
 module.exports = function(io, listBot){
-	var list = [...listBot];
-	if (list.length) {
-		var max = (list.length*5/100)>>0;
-		list = Helpers.shuffle(list);
-		list = list.slice(0, max);
-		Promise.all(list.map(function(user){
+	if (listBot.length) {
+		var max = Math.floor(listBot.length*5/100);
+		listBot = Helpers.shuffle(listBot);
+		listBot = listBot.slice(0, max);
+		Promise.all(listBot.map(function(user){
 			spin(io, user);
 		}))
 	}

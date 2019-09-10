@@ -121,7 +121,7 @@ module.exports = function(client, data){
 					client.red({mini:{arb:{status:0, notice: 'Bạn không đủ ' + (red ? 'RED':'XU') + ' để quay.!!'}}});
 				}else{
 					var phe = red ? 2 : 4;    // Phế
-					var addQuy = (bet*0.01)>>0;
+					var addQuy = (bet*0.005)>>0;
 
 					var line_nohu = 0;
 					var win_arr   = null;

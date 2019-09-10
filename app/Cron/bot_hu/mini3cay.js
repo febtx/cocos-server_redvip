@@ -14,7 +14,7 @@ function spin(io, user){
 	var cuoc = 100;
 	var red = true;
 
-	var a = (Math.random()*16)>>0;
+	var a = Math.floor(Math.random()*16);
 
 	if (a == 15) {
 		//  14
@@ -28,7 +28,7 @@ function spin(io, user){
 	}
 
 	var phe = red ? 2 : 4;    // Phế
-	var addQuy = (cuoc*0.01)>>0;
+	var addQuy = Math.floor(cuoc*0.01);
 	// Sử lý bài
 	var an      = 0;
 	var code    = 0;
@@ -101,7 +101,7 @@ function spin(io, user){
 				ketqua = card.slice(0, 3);
 			}
 			nohu = true;
-			an   = (quyHu-Math.ceil(quyHu*phe/100))>>0;
+			an   = Math.floor(quyHu-Math.ceil(quyHu*phe/100));
 			text = 'Nổ Hũ';
 			code = 6;
 			if (red){
@@ -156,12 +156,11 @@ function spin(io, user){
 }
 
 module.exports = function(io, listBot){
-	var list = [...listBot];
-	if (list.length) {
-		var max = (list.length*17/100)>>0;
-		list = Helpers.shuffle(list);
-		list = list.slice(0, max);
-		Promise.all(list.map(function(user){
+	if (listBot.length) {
+		var max = Math.floor(listBot.length*17/100);
+		listBot = Helpers.shuffle(listBot);
+		listBot = listBot.slice(0, max);
+		Promise.all(listBot.map(function(user){
 			spin(io, user);
 		}))
 	}

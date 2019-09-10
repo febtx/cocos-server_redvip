@@ -153,7 +153,7 @@ module.exports = function(client, data){
 				}else{
 					var config = require('../../../../config/candy.json');
 					var phe = red ? 2 : 4;    // Phế
-					var addQuy = (tongCuoc*0.01)>>0;
+					var addQuy = (tongCuoc*0.005)>>0;
 
 					var line_nohu = 0;
 					var bet_win   = 0;

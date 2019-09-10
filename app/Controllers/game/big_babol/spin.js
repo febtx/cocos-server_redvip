@@ -122,7 +122,7 @@ module.exports = function(client, data){
 				}else{
 					var config = require('../../../../config/bigbabol.json');
 					var phe = red ? 2 : 4;    // Phế
-					var addQuy = (cuoc*0.01)>>0;
+					var addQuy = (cuoc*0.005)>>0;
 
 					var line_nohu = 0;
 					var win_arr   = null;
