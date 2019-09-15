@@ -30,6 +30,7 @@ var Poker = function(poker){
 	this.timeOut      = null;  // thời gian
 
 	this.d            = null;  // Người chơi đầu tiên / lượt chơi
+	this.round        = 0;
 };
 
 Poker.prototype.sendTo = function(client, data){
@@ -107,6 +108,7 @@ Poker.prototype.outroom = function(player){
 
 Poker.prototype.checkGame = function(){
 	if (!this.isPlay && !this.timeOut) {
+		var self = this;
 		this.timeOut = setTimeout(function(){
 			var trongPhong = Object.values(this.player);                      // danh sách ghế
 			var ghe = trongPhong.filter(function(t){return t.data !== null}); // ghế có người ngồi
@@ -115,7 +117,7 @@ Poker.prototype.checkGame = function(){
 			this.playerWait = {}; // người được chơi trong phiên sắp tới
 
 			Promise.all(ghe.map(function(player){
-				this.playerWait[player.id] = {id:player.id, data:player.data};
+				self.playerWait[player.id] = {id:player.id, data:player.data};
 				return {ghe:player.id, data:{progress:5}};
 			}))
 			.then(result => {
@@ -127,7 +129,6 @@ Poker.prototype.checkGame = function(){
 					this.indexBegin = this.playerInGame.findIndex(function(obj){
 						return obj.ghe == self.d.map;
 					});
-
 					this.Round1();
 				}.bind(this), 5000);
 			});
@@ -138,7 +139,6 @@ Poker.prototype.checkGame = function(){
 // Round 1 // Chia 2 lá đầu
 Poker.prototype.Round1 = function(){
 	this.card = [...base_card.card]; // bộ bài mới
-
 	// chia bài
 }
 
