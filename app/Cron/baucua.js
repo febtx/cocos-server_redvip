@@ -1,24 +1,24 @@
 
-var path         = require('path');
-var fs           = require('fs');
+let path         = require('path');
+let fs           = require('fs');
 
-var Helpers      = require('../Helpers/Helpers');
+let Helpers      = require('../Helpers/Helpers');
 
-var UserInfo     = require('../Models/UserInfo');
-var BauCua_phien = require('../Models/BauCua/BauCua_phien');
-var BauCua_cuoc  = require('../Models/BauCua/BauCua_cuoc');
-var BauCua_user  = require('../Models/BauCua/BauCua_user');
-var BauCua_temp  = require('../Models/BauCua/BauCua_temp');
+let UserInfo     = require('../Models/UserInfo');
+let BauCua_phien = require('../Models/BauCua/BauCua_phien');
+let BauCua_cuoc  = require('../Models/BauCua/BauCua_cuoc');
+let BauCua_user  = require('../Models/BauCua/BauCua_user');
+let BauCua_temp  = require('../Models/BauCua/BauCua_temp');
 
-var bot        = require('./baucua/bot');
-var botList    = [];
+let bot        = require('./baucua/bot');
+let botList    = [];
 
-var dataBauCua = '../../data/baucua.json';
+let dataBauCua = '../../data/baucua.json';
 
-var io       = null;
-var gameLoop = null;
+let io       = null;
+let gameLoop = null;
 
-function init(obj){
+let init = function init(obj){
 	io = obj;
 	io.BauCua_phien = 1;
 	io.baucua = {ingame:[]};
@@ -45,38 +45,38 @@ function init(obj){
 	})
 }
 
-function thongtin_thanhtoan(dice = null){
+let thongtin_thanhtoan = function thongtin_thanhtoan(dice = null){
 	if (!!dice) {
-		var heSo   = {}; // Hệ số nhân
-		for (var i = 0; i < 3; i++) {
-			var dataT = dice[i];
+		let heSo   = {}; // Hệ số nhân
+		for (let i = 0; i < 3; i++) {
+			let dataT = dice[i];
 			if (void 0 === heSo[dataT]) {
 				heSo[dataT] = 1;
 			}else{
 				heSo[dataT] += 1;
 			}
 		}
-		var updateLog = {};
-		for (var j = 0; j < 6; j++) {
+		let updateLog = {};
+		for (let j = 0; j < 6; j++) {
 			if (void 0 !== heSo[j]) {
 				updateLog[j] = heSo[j];
 			}
 		}
-		var phien = io.BauCua_phien-1;
+		let phien = io.BauCua_phien-1;
 		BauCua_temp.updateOne({}, {$inc: updateLog}).exec();
 		BauCua_cuoc.find({phien: phien}, {}, function(err, list) {
 			if (list.length) {
 				Promise.all(list.map(function(cuoc){
-					var TienThang = 0; // Số tiền thắng (chưa tính gốc)
-					var TongThua  = 0; // Số tiền thua
-					var TongThang = 0; // Tổng tiền thắng (đã tính gốc)
-					var thuong    = 0;
-					var huou      = 0;
-					var bau       = 0;
-					var ga        = 0;
-					var ca        = 0;
-					var cua       = 0;
-					var tom       = 0;
+					let TienThang = 0; // Số tiền thắng (chưa tính gốc)
+					let TongThua  = 0; // Số tiền thua
+					let TongThang = 0; // Tổng tiền thắng (đã tính gốc)
+					let thuong    = 0;
+					let huou      = 0;
+					let bau       = 0;
+					let ga        = 0;
+					let ca        = 0;
+					let cua       = 0;
+					let tom       = 0;
 
 					// Cược Hươu
 					if (cuoc[0] > 0) {
@@ -139,10 +139,10 @@ function thongtin_thanhtoan(dice = null){
 						}
 					}
 
-					var tongDat    = cuoc[0]+cuoc[1]+cuoc[2]+cuoc[3]+cuoc[4]+cuoc[5];
+					let tongDat    = cuoc[0]+cuoc[1]+cuoc[2]+cuoc[3]+cuoc[4]+cuoc[5];
 
-					var update     = {};
-					var updateGame = {};
+					let update     = {};
+					let updateGame = {};
 
 					cuoc.thanhtoan = true;
 					cuoc.betwin    = TongThang;
@@ -184,10 +184,11 @@ function thongtin_thanhtoan(dice = null){
 						BauCua_user.updateOne({uid: cuoc.uid}, {$inc:updateGame}).exec();
 					}
 					if(void 0 !== io.users[cuoc.uid]){
+						let status = {};
 						if (TongThang > 0) {
-							var status = {mini:{baucua:{status:{win:true, bet: TongThang, thuong: thuong}}}};
+							status = {mini:{baucua:{status:{win:true, bet: TongThang, thuong: thuong}}}};
 						}else{
-							var status = {mini:{baucua:{status:{win:false, bet: TongThua}}}};
+							status = {mini:{baucua:{status:{win:false, bet: TongThua}}}};
 						}
 						Promise.all(io.users[cuoc.uid].map(function(client){
 							client.red(status);
@@ -237,7 +238,7 @@ function thongtin_thanhtoan(dice = null){
 					client.red({mini:{baucua:{data: io.baucua.info}}});
 			}));
 		}));
-		var admin_data = {baucua:{info: io.baucua.info, ingame: io.baucua.ingame}};
+		let admin_data = {baucua:{info: io.baucua.info, ingame: io.baucua.ingame}};
 		Promise.all(Object.values(io.admins).map(function(admin){
 			Promise.all(admin.map(function(client){
 				if (client.gameEvent !== void 0 && client.gameEvent.viewBauCua !== void 0 && client.gameEvent.viewBauCua)
@@ -247,7 +248,7 @@ function thongtin_thanhtoan(dice = null){
 	}
 }
 
-function playGame(){
+let playGame = function(){
 	io.BauCua_time = 71;
 	//io.BauCua_time = 15;
 
@@ -258,11 +259,11 @@ function playGame(){
 				clearInterval(gameLoop);
 				io.BauCua_time = 0;
 
-				var file  = require(dataBauCua);
+				let file  = require(dataBauCua);
 
-				var dice1 = file[0] == 6 ? (Math.random()*6)>>0 : file[0];
-				var dice2 = file[1] == 6 ? (Math.random()*6)>>0 : file[1];
-				var dice3 = file[2] == 6 ? (Math.random()*6)>>0 : file[2];
+				let dice1 = file[0] == 6 ? (Math.random()*6)>>0 : file[0];
+				let dice2 = file[1] == 6 ? (Math.random()*6)>>0 : file[1];
+				let dice3 = file[2] == 6 ? (Math.random()*6)>>0 : file[2];
 
 				file[0]     = 6;
 				file[1]     = 6;
@@ -276,7 +277,7 @@ function playGame(){
 					if (!!create) {
 						io.BauCua_phien = create.id+1;
 
-						var chothanhtoan = thongtin_thanhtoan([dice1, dice2, dice3]);
+						thongtin_thanhtoan([dice1, dice2, dice3]);
 
 						Promise.all(Object.values(io.users).map(function(users){
 							Promise.all(users.map(function(client){
@@ -307,12 +308,12 @@ function playGame(){
 					xuTom: 0,
 				};
 
-				var config = require('../../config/baucua.json');
+				let config = require('../../config/baucua.json');
 				if (config.bot) {
 					// lấy danh sách tài khoản bot
-					var TList = bot.list();
+					let TList = bot.list();
 					TList.then(resultBot => {
-						var maxBot = (resultBot.length*50/100)>>0;
+						let maxBot = (resultBot.length*50/100)>>0;
 						botList = Helpers.shuffle(resultBot);
 						botList = Helpers.shuffle(botList);
 						botList = botList.slice(0, maxBot);
@@ -323,9 +324,9 @@ function playGame(){
 			}else{
 				thongtin_thanhtoan();
 				if (!!botList.length && io.TaiXiu_time > 5) {
-					var userCuoc = (Math.random()*5)>>0;
-					for (var i = 0; i < userCuoc; i++) {
-						var dataT = botList[i];
+					let userCuoc = (Math.random()*5)>>0;
+					for (let i = 0; i < userCuoc; i++) {
+						let dataT = botList[i];
 						if (!!dataT) {
 							bot.bet(dataT, io);
 							botList.splice(i, 1); // Xoá bot đã đặt tránh trùng lặp

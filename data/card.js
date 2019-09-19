@@ -1,5 +1,5 @@
 
-const card = [
+let card = [
 	{
 		"card": 0,
 		"type": 0
@@ -209,8 +209,8 @@ const card = [
 		"type": 3
 	},
 ];
-const name = ["A","2","3","4","5","6","7","8","9","10","J","Q","K"];
-const type = ["♥", "♦", "♣", "♠"];
+let name = ["A","2","3","4","5","6","7","8","9","10","J","Q","K"];
+let type = ["♥", "♦", "♣", "♠"];
 
 module.exports = {
 	card: card,

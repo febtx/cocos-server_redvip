@@ -1,10 +1,10 @@
 
-const mongoose      = require('mongoose');
+let mongoose      = require('mongoose');
 
-const Schema = new mongoose.Schema({
+let Schema = new mongoose.Schema({
 	uid:       {type: String,  required: true},    // ID Người cược
 	name:      {type: String,  required: true},    // Name Người cược
-	phien:     {type: Number,  required: true},    // phiên cược
+	phien:     {type: Number,  required: true, index: true},    // phiên cược
 	bet:       {type: Number,  required: true},    // số tiền cược
 	red:       {type: Boolean, required: true},    // loại tiền (Red        = true, Xu       = false)
 	taixiu:    {type: Boolean, required: true},    // loại game (tài xỉu    = true, chẵn nẻ  = false)
@@ -18,6 +18,6 @@ const Schema = new mongoose.Schema({
 	type:      {type: Boolean, default: false},    // Bot = true | Users = false
 });
 
-Schema.index({phien: 1}, {background: true});
+//Schema.index({phien: 1}, {background: true});
 
 module.exports = mongoose.model("TaiXiu_cuoc", Schema);

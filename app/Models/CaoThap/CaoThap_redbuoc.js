@@ -1,9 +1,9 @@
 
-const AutoIncrement = require('mongoose-auto-increment-reworked').MongooseAutoIncrementID;
-const mongoose      = require('mongoose');
+let AutoIncrement = require('mongoose-auto-increment-reworked').MongooseAutoIncrementID;
+let mongoose      = require('mongoose');
 
-const Schema = new mongoose.Schema({
-	uid:   {type: String,  required: true},      // ID Người chơi
+let Schema = new mongoose.Schema({
+	uid:   {type: String,  required: true, index: true},      // ID Người chơi
 	id:    {type: Number,  default: 0},          // Phiên
 	cuoc:  {type: Number,  default: 0},          // Tiền cược
 	bet:   {type: Number,  default: 0},          // Tiền thắng
@@ -13,7 +13,7 @@ const Schema = new mongoose.Schema({
 	card2: {},                                   // Kết quả sau
 	time:  {type: Date,    default: new Date()}, // Thời gian chọn
 });
-Schema.index({uid: 1}, {background: true});
+//Schema.index({uid: 1}, {background: true});
 
 module.exports = mongoose.model("CaoThap_redbuoc", Schema);
 

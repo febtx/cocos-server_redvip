@@ -1,12 +1,11 @@
 
-var svgCaptcha = require('svg-captcha');
-var svg2img    = require('svg2img');
-
-function Create(client, name){
-	var captcha = svgCaptcha.create({background:'#FFFFFF', noise:0});
+let svgCaptcha = require('svg-captcha');
+let svg2img    = require('svg2img');
+let Create     = function(client, name){
+	let captcha = svgCaptcha.create({background:'#FFFFFF', noise:0});
 	svg2img(captcha.data, function(error, buffer) {
 		client.captcha = captcha.text;
-		var data = {};
+		let data = {};
 		data['data'] = "data:image/png;base64," + buffer.toString('base64');
 		data['name'] = name;
 		client.red({captcha: data});

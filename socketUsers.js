@@ -1,19 +1,19 @@
 
-var validator = require('validator');
-var User      = require('./app/Models/Users');
-var helpers   = require('./app/Helpers/Helpers');
-var socket    = require('./app/socket.js');
-var captcha   = require('./captcha');
-var forgotpass = require('./app/Controllers/user/for_got_pass');
+let validator = require('validator');
+let User      = require('./app/Models/Users');
+let helpers   = require('./app/Helpers/Helpers');
+let socket    = require('./app/socket.js');
+let captcha   = require('./captcha');
+let forgotpass = require('./app/Controllers/user/for_got_pass');
 
 // Authenticate!
-var authenticate = function(client, data, callback) {
+let authenticate = function(client, data, callback) {
 	if (!!data && !!data.username && !!data.password) {
-		var username = data.username;
-		var password = data.password;
-		var register = !!data.register;
-		var az09     = new RegExp("^[a-zA-Z0-9]+$");
-		var testName = az09.test(username);
+		let username = data.username;
+		let password = data.password;
+		let register = !!data.register;
+		let az09     = new RegExp("^[a-zA-Z0-9]+$");
+		let testName = az09.test(username);
 
 		if (!validator.isLength(username, {min: 3, max: 32})) {
 			register && client.c_captcha('signUp');
@@ -29,14 +29,14 @@ var authenticate = function(client, data, callback) {
 			callback({title: register ? 'ĐĂNG KÝ' : 'ĐĂNG NHẬP', text: 'Tài khoản không được trùng với mật khẩu!!'}, false);
 		}else{
 			try {
-				var regex = new RegExp("^" + username + "$", 'i');
+				let regex = new RegExp("^" + username + "$", 'i');
 				// Đăng Ký
 				if (register) {
 					if (!data.captcha || !client.c_captcha || !validator.isLength(data.captcha, {min: 4, max: 4})) {
 						client.c_captcha('signUp');
 						callback({title: 'ĐĂNG KÝ', text: 'Captcha không tồn tại.'}, false);	
 					}else{
-						var checkCaptcha = new RegExp("^" + data.captcha + "$", 'i');
+						let checkCaptcha = new RegExp("^" + data.captcha + "$", 'i');
 						checkCaptcha     = checkCaptcha.test(client.captcha);
 						if (checkCaptcha) {
 							User.findOne({'local.username': {$regex: regex}}).exec(async function(err, check){
@@ -130,7 +130,7 @@ module.exports = function(ws, redT){
 					delete this.redT.users[this.UID];
 				}
 			}else{
-				var self = this;
+				let self = this;
 				Promise.all(this.redT.users[this.UID].map(function(obj, index){
 					if (obj === self) {
 						self.redT.users[self.UID].splice(index, 1);

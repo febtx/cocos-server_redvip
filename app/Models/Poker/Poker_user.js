@@ -1,7 +1,7 @@
 
-const mongoose = require("mongoose");
+let mongoose = require("mongoose");
 
-const Schema = new mongoose.Schema({
+let Schema = new mongoose.Schema({
 	uid:    {type: String, required: true, unique: true}, // ID Người chơi
 
 	bet:    {type: mongoose.Schema.Types.Long, default: 0}, // Số tiền đã chơi
@@ -13,5 +13,7 @@ const Schema = new mongoose.Schema({
 	lostXu: {type: mongoose.Schema.Types.Long, default: 0}, // Số Xu đã thua
 	thuong: {type: Number, default: 0},                     // Số Red Thưởng
 });
-Schema.index({uid: 1}, {unique: true, background: true});
+
+//Schema.index({uid: 1}, {unique: true, background: true});
+
 module.exports = mongoose.model("Poker_user", Schema);

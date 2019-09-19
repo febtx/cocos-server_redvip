@@ -1,9 +1,9 @@
 
-const AutoIncrement = require('mongoose-auto-increment-reworked').MongooseAutoIncrementID;
-const mongoose = require("mongoose");
+let AutoIncrement = require('mongoose-auto-increment-reworked').MongooseAutoIncrementID;
+let mongoose = require("mongoose");
 
-const Schema = new mongoose.Schema({
-	uid:     {type: String, required: true}, // ID người chơi
+let Schema = new mongoose.Schema({
+	uid:     {type: String, required: true, index: true}, // ID người chơi
 	nhaMang: {type: String, required: true}, // Nhà mạng
 	menhGia: {type: Number, required: true}, // Mệnh giá
 	soLuong: {type: Number, required: true}, // Số lượng
@@ -13,6 +13,6 @@ const Schema = new mongoose.Schema({
 });
 
 Schema.plugin(AutoIncrement.plugin, {modelName: 'MuaThe', field:'GD'});
-Schema.index({uid: 1}, {background: true});
+//Schema.index({uid: 1}, {background: true});
 
 module.exports = mongoose.model("MuaThe", Schema);

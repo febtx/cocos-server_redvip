@@ -3,7 +3,7 @@ const AutoIncrement = require('mongoose-auto-increment-reworked').MongooseAutoIn
 const mongoose      = require('mongoose');
 
 const Schema = new mongoose.Schema({
-	name: {type: String, required: true},
+	name: {type: String, required: true, index: true},
 	type: {type: Number, default: 0},         // Loại được ăn lớn nhất trong phiên
 	win:  {type: Number, default: 0},         // Tiền thắng
 	bet:  {type: Number, default: 0},         // Mức cược
@@ -13,6 +13,6 @@ const Schema = new mongoose.Schema({
 });
 
 Schema.plugin(AutoIncrement.plugin, {modelName:'BigBabol_xu', field:'id'});
-Schema.index({name: 1}, {background: true});
+//Schema.index({name: 1}, {background: true});
 
 module.exports = mongoose.model("BigBabol_xu", Schema);

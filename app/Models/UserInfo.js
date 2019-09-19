@@ -1,9 +1,9 @@
 
-const AutoIncrement = require('mongoose-auto-increment-reworked').MongooseAutoIncrementID;
-const mongoose      = require('mongoose');
+let AutoIncrement = require('mongoose-auto-increment-reworked').MongooseAutoIncrementID;
+let mongoose      = require('mongoose');
 
-const Schema = new mongoose.Schema({
-	id:         {type: String, required: true, unique: true, index: true}, // ID đăng nhập
+let Schema = new mongoose.Schema({
+	id:         {type: String, required: true, unique: true}, // ID đăng nhập
 	name:       {type: String, unique: true,   index: true},    // Tên nhân vật
 	avatar:     {type: String, default: ''},       // Tên avatar
 	joinedOn:   {type: Date, default: new Date()}, // Ngày tham gia

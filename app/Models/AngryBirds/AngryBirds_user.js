@@ -1,7 +1,7 @@
 
-const mongoose = require("mongoose");
+let mongoose = require("mongoose");
 
-const Schema = new mongoose.Schema({
+let Schema = new mongoose.Schema({
 	uid:    {type: String, required: true, unique: true},   // ID Người chơi
 
 	hu:     {type: Number, default: 0},                     // Số lần Nổ Hũ REd
@@ -16,5 +16,5 @@ const Schema = new mongoose.Schema({
 	thuong: {type: Number, default: 0},                     // Số Red Thưởng
 	time:   {type: Date},                                   // quay gần đây
 });
-Schema.index({uid: 1}, {unique: true, background: true});
+//Schema.index({uid: 1}, {unique: true, background: true});
 module.exports = mongoose.model("AngryBirds_user", Schema);

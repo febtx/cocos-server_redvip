@@ -1,15 +1,15 @@
 
-var HU                 = require('../../Models/HU');
+let HU                 = require('../../Models/HU');
 
-var VuongQuocRed_red   = require('../../Models/VuongQuocRed/VuongQuocRed_red');
-var VuongQuocRed_users = require('../../Models/VuongQuocRed/VuongQuocRed_users');
+let VuongQuocRed_red   = require('../../Models/VuongQuocRed/VuongQuocRed_red');
+let VuongQuocRed_users = require('../../Models/VuongQuocRed/VuongQuocRed_users');
 
-var UserInfo           = require('../../Models/UserInfo');
+let UserInfo           = require('../../Models/UserInfo');
 
-var Helpers            = require('../../Helpers/Helpers');
+let Helpers            = require('../../Helpers/Helpers');
 
-function random_cel2(){
-	var a = Math.floor(Math.random()*28);
+let random_cel2 = function(){
+	let a = Math.floor(Math.random()*28);
 	if (a == 27) {
 		// 27
 		return 6;
@@ -34,13 +34,12 @@ function random_cel2(){
 	}
 }
 
-
-function check_win(data, line){
-	var win_icon = 0;
-	var number_win = null;
-	var arrT   = [];           // Mảng lọc các bộ
-	for (var i = 0; i < 5; i++) {
-		var dataT = data[i];
+let check_win = function(data, line){
+	let win_icon = 0;
+	let number_win = null;
+	let arrT   = [];           // Mảng lọc các bộ
+	for (let i = 0; i < 5; i++) {
+		let dataT = data[i];
 		if (void 0 === arrT[dataT]) {
 			arrT[dataT] = 1;
 		}else{
@@ -66,13 +65,13 @@ function check_win(data, line){
 	})
 }
 
-function spin(io, user){
-	var bet = 100;
-	var red = true;
+let spin = function(io, user){
+	let bet = 100;
+	let red = true;
 
-	var line = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20];
+	let line = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20];
 
-	var a = Math.floor(Math.random()*16);
+	let a = Math.floor(Math.random()*16);
 
 	if (a == 15) {
 		//  14
@@ -85,35 +84,37 @@ function spin(io, user){
 		bet = 100;
 	}
 
-	var tongCuoc = bet*line.length;  // Tiền cược
+	let tongCuoc = bet*line.length;  // Tiền cược
 
-	var phe = 2;    // Phế
-	var addQuy = Math.floor(tongCuoc*0.005);
+	let phe = 2;    // Phế
+	let addQuy = Math.floor(tongCuoc*0.005);
 
-	var line_nohu = 0;
-	var bet_win  = 0;
-	var free     = 0;
-	var bonusX   = 0;
-	var type     = 0;   // Loại được ăn lớn nhất trong phiên
-	var isFree   = false;
-	var nohu     = false;
-	var isBigWin = false;
+	let line_nohu = 0;
+	let bet_win  = 0;
+	let free     = 0;
+	let bonusX   = 0;
+	let type     = 0;   // Loại được ăn lớn nhất trong phiên
+	let isFree   = false;
+	let nohu     = false;
+	let isBigWin = false;
 	// tạo kết quả
 	HU.findOne({game:'vuongquocred', type:bet, red:red}, {}, function(err2, dataHu){
-		var uInfo      = {};
-		var mini_users = {};
-		var huUpdate   = {bet:addQuy};
+		let uInfo      = {};
+		let mini_users = {};
+		let huUpdate   = {bet:addQuy};
 		if (red){
 			huUpdate['hu'] = uInfo['hu'] = mini_users['hu']     = 0; // Khởi tạo
 		}else{
 			huUpdate['huXu'] = uInfo['huXu'] = mini_users['huXu'] = 0; // Khởi tạo
 		}
 
-		var aRwin = Math.floor(Math.random()*16);
+		let aRwin = Math.floor(Math.random()*16);
+		let celSS = [];
+
 
 		if (aRwin == 15) {
 			// no hu
-			var celSS = [
+			celSS = [
 				random_cel2(), random_cel2(), random_cel2(),
 				random_cel2(), random_cel2(), random_cel2(),
 				5,             5,             5,
@@ -122,7 +123,7 @@ function spin(io, user){
 			];
 		}else{
 			// kho
-			var celSS = [
+			celSS = [
 				random_cel2(), random_cel2(), random_cel2(),
 				random_cel2(), random_cel2(), 5,
 				4,             3,             6,
@@ -133,14 +134,14 @@ function spin(io, user){
 
 		celSS = Helpers.shuffle(celSS); // tráo bài lần 1
 
-		var cel1 = [celSS[0],  celSS[1],  celSS[2]];  // Cột 1
-		var cel2 = [celSS[3],  celSS[4],  celSS[5]];  // Cột 2
-		var cel3 = [celSS[6],  celSS[7],  celSS[8]];  // Cột 3
-		var cel4 = [celSS[9],  celSS[10], celSS[11]]; // Cột 4
-		var cel5 = [celSS[12], celSS[13], celSS[14]]; // Cột 5
+		let cel1 = [celSS[0],  celSS[1],  celSS[2]];  // Cột 1
+		let cel2 = [celSS[3],  celSS[4],  celSS[5]];  // Cột 2
+		let cel3 = [celSS[6],  celSS[7],  celSS[8]];  // Cột 3
+		let cel4 = [celSS[9],  celSS[10], celSS[11]]; // Cột 4
+		let cel5 = [celSS[12], celSS[13], celSS[14]]; // Cột 5
 
-		var quyHu     = dataHu.bet;
-		var checkName = new RegExp("^" + user.name + "$", 'i');
+		let quyHu     = dataHu.bet;
+		let checkName = new RegExp("^" + user.name + "$", 'i');
 		checkName     = checkName.test(dataHu.name);
 		if (checkName) {
 			line_nohu = Math.floor(Math.random()*line.length);
@@ -373,7 +374,7 @@ function spin(io, user){
 		}))
 		.then(result => {
 			Promise.all(result.filter(function(line_win){
-				var checkWin = false;
+				let checkWin = false;
 				if (line_win.win == 6) {
 					if (line_win.type === 5) {
 						checkWin = true;
@@ -394,12 +395,12 @@ function spin(io, user){
 						// Nổ Hũ
 						type = 2;
 						if (!nohu) {
-							var okHu = Math.floor(quyHu-Math.ceil(quyHu*phe/100));
+							let okHu = Math.floor(quyHu-Math.ceil(quyHu*phe/100));
 							bet_win += okHu;
 							HU.updateOne({game:'vuongquocred', type:bet, red:red}, {$set:{name:"", bet:dataHu.min}}).exec();
 							red && Helpers.ThongBaoNoHu(io, {title: "VƯƠNG QUỐC RED", name: user.name, bet: Helpers.numberWithCommas(okHu)});
 						}else{
-							var okHu = Math.floor(dataHu.min-Math.ceil(dataHu.min*phe/100));
+							let okHu = Math.floor(dataHu.min-Math.ceil(dataHu.min*phe/100));
 							bet_win += okHu;
 							red && Helpers.ThongBaoNoHu(io, {title: "VƯƠNG QUỐC RED", name: user.name, bet: Helpers.numberWithCommas(okHu)});
 						}
@@ -495,7 +496,7 @@ function spin(io, user){
 				return checkWin;
 			}))
 			.then(result2 => {
-				var tien = bet_win-tongCuoc;
+				let tien = bet_win-tongCuoc;
 				if (!nohu && bet_win >= tongCuoc*2.24) {
 					isBigWin = true;
 					type = 1;
@@ -512,12 +513,12 @@ function spin(io, user){
 					mini_users.win = tien;         // Cập nhật Số Red đã Thắng
 				}
 				if (tien < 0){
-					var tienLost = tien*-1;
+					let tienLost = tien*-1;
 					huUpdate.redLost = tienLost;
 					uInfo.redLost = tienLost;
 					mini_users.lost = tienLost; // Cập nhật Số Red đã Thua
 				}
-				VuongQuocRed_red.create({'name': user.name, 'type': type, 'win': bet_win, 'bet': bet, 'kq': result2.length, 'line': line.length, 'time': new Date()}, function (err4, small) {});
+				VuongQuocRed_red.create({'name': user.name, 'type': type, 'win': bet_win, 'bet': bet, 'kq': result2.length, 'line': line.length, 'time': new Date()}, function(err) {});
 				HU.updateOne({game:'vuongquocred', type:bet, red:red}, {$inc:huUpdate}).exec();
 				UserInfo.updateOne({id:user.id},{$inc:uInfo}).exec();
 				VuongQuocRed_users.updateOne({'uid':user.id}, {$set:{time: new Date()}, $inc:mini_users}).exec();
@@ -528,7 +529,7 @@ function spin(io, user){
 
 module.exports = function(io, listBot){
 	if (listBot.length) {
-		var max = Math.floor(listBot.length*5/100);
+		let max = Math.floor(listBot.length*5/100);
 		listBot = Helpers.shuffle(listBot);
 		listBot = listBot.slice(0, max);
 		Promise.all(listBot.map(function(user){

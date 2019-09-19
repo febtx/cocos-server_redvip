@@ -1,8 +1,8 @@
 
-const mongoose = require("mongoose");
+let mongoose = require("mongoose");
 
-const Schema = new mongoose.Schema({
-	uid:           {type: String, required: true, unique: true, index: true},    // ID Người chơi
+let Schema = new mongoose.Schema({
+	uid:           {type: String, required: true, unique: true},    // ID Người chơi
 
 	tRedPlay:      {type: mongoose.Schema.Types.Long,  default: 0}, // Red Tài Xỉu đã chơi
 

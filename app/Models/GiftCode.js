@@ -1,7 +1,7 @@
 
-const mongoose = require("mongoose");
+let mongoose = require("mongoose");
 
-const Schema = new mongoose.Schema({
+let Schema = new mongoose.Schema({
 	uid:    {type: String},                      // Người Nạp gift code
 	create: {type: String},                      // Người Tạo Mã gift (Chỉ người dùng)
 	code:   {type: String, unique:  true},       // Mã Gift code

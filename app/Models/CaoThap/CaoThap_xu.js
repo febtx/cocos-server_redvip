@@ -1,9 +1,9 @@
 
-const AutoIncrement = require('mongoose-auto-increment-reworked').MongooseAutoIncrementID;
-const mongoose      = require('mongoose');
+let AutoIncrement = require('mongoose-auto-increment-reworked').MongooseAutoIncrementID;
+let mongoose      = require('mongoose');
 
-const Schema = new mongoose.Schema({
-	uid:  {type: String,  required: true},      // ID Người chơi
+let Schema = new mongoose.Schema({
+	uid:  {type: String,  required: true, index: true},      // ID Người chơi
 	goc:  {type: Number,  default: 0},          // Tiền gốc (mức cược gốc)
 	play: {type: Boolean, default: false},      // Phiên đang chơi
 	cuoc: {type: Number,  default: 0},          // Tiền cược
@@ -15,6 +15,6 @@ const Schema = new mongoose.Schema({
 });
 
 Schema.plugin(AutoIncrement.plugin, {modelName:'CaoThap_xu', field:'id'});
-Schema.index({uid: 1}, {background: true});
+//Schema.index({uid: 1}, {background: true});
 
 module.exports = mongoose.model("CaoThap_xu", Schema);

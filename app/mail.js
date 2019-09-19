@@ -2,25 +2,25 @@
  * Mail Controller
  */
 
-var path       = require('path');
-var config     = require("../config/email");  // config email
-var fs         = require("fs");
-var nodemailer = require("nodemailer");
-var ejs        = require("ejs");
+let path       = require('path');
+let config     = require("../config/email");  // config email
+let fs         = require("fs");
+let nodemailer = require("nodemailer");
+let ejs        = require("ejs");
 
-function sendOTP(email, otp){
+let sendOTP    = function(email, otp){
 	ejs.renderFile(path.dirname(__dirname) + "/templates/emails/otp.ejs", {otp: otp}, function(err, data){
 		if (err) {
 		} else {
 			try {
-				var transporter = nodemailer.createTransport({
+				let transporter = nodemailer.createTransport({
 				  service: 'gmail',
 				  auth: {
 					user: config.user,
 					pass: config.pass
 				  }
 				});
-			    var mainOptions = {
+			    let mainOptions = {
 			        from: 'RedVip',
 			        to: email,
 			        subject: 'OTP ' + otp + ' - RedVip.club',

@@ -1,4 +1,4 @@
 
-var UserInfo     = require('./app/Models/UserInfo');
+let UserInfo   = require('./app/Models/UserInfo');
 module.exports = function(){
 }

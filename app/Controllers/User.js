@@ -1,43 +1,43 @@
 
-var User        = require('../Models/Users');
-var UserInfo    = require('../Models/UserInfo');
+let User        = require('../Models/Users');
+let UserInfo    = require('../Models/UserInfo');
 
 // Game User
-var TaiXiu_User     = require('../Models/TaiXiu_user');
-var MiniPoker_User  = require('../Models/miniPoker/miniPoker_users');
-var Bigbabol_User   = require('../Models/BigBabol/BigBabol_users');
-var VQRed_User      = require('../Models/VuongQuocRed/VuongQuocRed_users');
-var BauCua_User     = require('../Models/BauCua/BauCua_user');
-var Mini3Cay_User   = require('../Models/Mini3Cay/Mini3Cay_user');
-var CaoThap_User    = require('../Models/CaoThap/CaoThap_user');
-var AngryBirds_user = require('../Models/AngryBirds/AngryBirds_user');
-var Candy_user      = require('../Models/Candy/Candy_user');
-var LongLan_user    = require('../Models/LongLan/LongLan_user');
+let TaiXiu_User     = require('../Models/TaiXiu_user');
+let MiniPoker_User  = require('../Models/miniPoker/miniPoker_users');
+let Bigbabol_User   = require('../Models/BigBabol/BigBabol_users');
+let VQRed_User      = require('../Models/VuongQuocRed/VuongQuocRed_users');
+let BauCua_User     = require('../Models/BauCua/BauCua_user');
+let Mini3Cay_User   = require('../Models/Mini3Cay/Mini3Cay_user');
+let CaoThap_User    = require('../Models/CaoThap/CaoThap_user');
+let AngryBirds_user = require('../Models/AngryBirds/AngryBirds_user');
+let Candy_user      = require('../Models/Candy/Candy_user');
+let LongLan_user    = require('../Models/LongLan/LongLan_user');
 
 
-var Message         = require('../Models/Message');
+let Message         = require('../Models/Message');
 
-var validator   = require('validator');
-var Helper      = require('../Helpers/Helpers');
-var onHistory   = require('./user/onHistory');
-var ket_sat     = require('./user/ket_sat');
+let validator   = require('validator');
+let Helper      = require('../Helpers/Helpers');
+let onHistory   = require('./user/onHistory');
+let ket_sat     = require('./user/ket_sat');
 
-var next_scene  = require('./user/next_scene');
-var security    = require('./user/security');
+let next_scene  = require('./user/next_scene');
+let security    = require('./user/security');
 
-var nhanthuong  = require('./user/nhanthuong');
+let nhanthuong  = require('./user/nhanthuong');
 
-var GameState = require('./GameState.js')
+let GameState = require('./GameState.js')
 
-var first = function(client){
+let first = function(client){
 	UserInfo.findOne({id: client.UID}, 'name lastVip redPlay red xu ketSat UID phone cmt email security joinedOn', function(err, user) {
 		if (!!user) {
 			user = user._doc;
-			var vipHT = ((user.redPlay-user.lastVip)/100000)>>0; // Điểm vip Hiện Tại
+			let vipHT = ((user.redPlay-user.lastVip)/100000)>>0; // Điểm vip Hiện Tại
 			// Cấp vip hiện tại
-			var vipLevel = 1;
-			var vipPre   = 0;   // Điểm víp cấp Hiện tại
-			var vipNext  = 100; // Điểm víp cấp tiếp theo
+			let vipLevel = 1;
+			let vipPre   = 0;   // Điểm víp cấp Hiện tại
+			let vipNext  = 100; // Điểm víp cấp tiếp theo
 			if (vipHT >= 120000) {
 				vipLevel = 9;
 				vipPre   = 120000;
@@ -91,7 +91,7 @@ var first = function(client){
 
 			addToListOnline(client);
 
-			var data = {
+			let data = {
 				Authorized: true,
 				user:       user,
 			};
@@ -106,7 +106,7 @@ var first = function(client){
 	});
 }
 
-var updateCoint = function(client){
+let updateCoint = function(client){
 	UserInfo.findOne({id:client.UID}, 'red xu', function(err, user){
 		if (!!user) {
 			client.red({user: {red: user.red, xu: user.xu}});
@@ -114,10 +114,10 @@ var updateCoint = function(client){
 	});
 }
 
-var signName = function(client, name){
+let signName = function(client, name){
 	if (!!name) {
-		var az09     = new RegExp("^[a-zA-Z0-9]+$");
-		var testName = az09.test(name);
+		let az09     = new RegExp("^[a-zA-Z0-9]+$");
+		let testName = az09.test(name);
 
 		if (!validator.isLength(name, {min: 3, max: 14})) {
 			client.red({notice: {title: "TÊN NHÂN VẬT", text: 'Độ dài từ 3 đến 14 ký tự !!'}});
@@ -160,7 +160,7 @@ var signName = function(client, name){
 
 												addToListOnline(client);
 
-												var data = {
+												let data = {
 													Authorized: true,
 													user: user,
 													message:{news:1},
@@ -199,7 +199,7 @@ var signName = function(client, name){
 	}
 }
 
-function changePassword(client, data){
+let changePassword = function(client, data){
 	if (!!data && !!data.passOld && !!data.passNew && !!data.passNew2) {
 		if (!validator.isLength(data.passOld, {min: 6, max: 32})) {
 			client.red({notice: {title: "LỖI", text: 'Độ dài mật khẩu từ 6 đến 32 ký tự !!'}});
@@ -230,7 +230,7 @@ function changePassword(client, data){
 	}
 }
 
-function getLevel(client){
+let getLevel = function(client){
 	UserInfo.findOne({id:client.UID}, 'lastVip redPlay vip', function(err, user){
 		var vipHT = ((user.redPlay-user.lastVip)/100000)>>0; // Điểm vip Hiện Tại
 		// Cấp vip hiện tại

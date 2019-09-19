@@ -1,9 +1,9 @@
 
-const AutoIncrement = require('mongoose-auto-increment-reworked').MongooseAutoIncrementID;
-const mongoose      = require('mongoose');
+let AutoIncrement = require('mongoose-auto-increment-reworked').MongooseAutoIncrementID;
+let mongoose      = require('mongoose');
 
-const Schema = new mongoose.Schema({
-	name: {type: String, required: true},
+let Schema = new mongoose.Schema({
+	name: {type: String, required: true, index: true},
 	bet:  {type: Number, default: 0},         // Mức cược
 	win:  {type: Number, default: 0},         // Tiền thắng
 	type: {type: Number, default: 0},         // Loại được ăn lớn nhất trong phiên
@@ -12,6 +12,6 @@ const Schema = new mongoose.Schema({
 });
 
 Schema.plugin(AutoIncrement.plugin, {modelName:'mPoker_red', field:'id'});
-Schema.index({name: 1}, {background: true});
+//Schema.index({name: 1}, {background: true});
 
 module.exports = mongoose.model("mPoker_red", Schema);

@@ -1,15 +1,15 @@
 
-var HU              = require('../../Models/HU');
+let HU              = require('../../Models/HU');
 
-var AngryBirds_red  = require('../../Models/AngryBirds/AngryBirds_red');
-var AngryBirds_user = require('../../Models/AngryBirds/AngryBirds_user');
+let AngryBirds_red  = require('../../Models/AngryBirds/AngryBirds_red');
+let AngryBirds_user = require('../../Models/AngryBirds/AngryBirds_user');
 
-var UserInfo        = require('../../Models/UserInfo');
+let UserInfo        = require('../../Models/UserInfo');
 
-var Helpers         = require('../../Helpers/Helpers');
+let Helpers         = require('../../Helpers/Helpers');
 
-function random_cel2(){
-	var a = Math.floor(Math.random()*21);
+let random_cel2 = function(){
+	let a = Math.floor(Math.random()*21);
 	if (a == 20) {
 		// 20
 		return 5;
@@ -31,8 +31,8 @@ function random_cel2(){
 	}
 }
 
-function random_celR(){
-	var a = Math.floor(Math.random()*10);
+let random_celR = function(){
+	let a = Math.floor(Math.random()*10);
 	if (a == 9) {
 		// 9
 		return 3;
@@ -48,14 +48,14 @@ function random_celR(){
 	}
 }
 
-function check_win(data, line){
-	var win_icon = 0;
-	var win_type = null;
-	var thaythe  = 0;  // Thay Thế (WinD)
-	var arrT     = []; // Mảng lọc các bộ
+let check_win = function(data, line){
+	let win_icon = 0;
+	let win_type = null;
+	let thaythe  = 0;  // Thay Thế (WinD)
+	let arrT     = []; // Mảng lọc các bộ
 
-	for (var i = 0; i < 3; i++) {
-		var dataT = data[i];
+	for (let i = 0; i < 3; i++) {
+		let dataT = data[i];
 		if (dataT == 5) {
 			++thaythe;
 		}
@@ -89,11 +89,11 @@ function check_win(data, line){
 	})
 }
 
-function spin(io, user){
-	var bet = 100;
-	var red = true;
+let spin = function(io, user){
+	let bet = 100;
+	let red = true;
 
-	var a = Math.floor(Math.random()*16);
+	let a = Math.floor(Math.random()*16);
 
 	if (a == 15) {
 		//  14
@@ -106,58 +106,60 @@ function spin(io, user){
 		bet = 100;
 	}
 
-	var phe = 2;    // Phế
-	var addQuy = Math.floor(bet*0.005);
+	let phe = 2;    // Phế
+	let addQuy = Math.floor(bet*0.005);
 
-	var line_nohu = 0;
-	var win_arr   = null;
-	var bet_win   = 0;
-	var type      = 0;   // Loại được ăn lớn nhất trong phiên
+	let line_nohu = 0;
+	let win_arr   = null;
+	let bet_win   = 0;
+	let type      = 0;   // Loại được ăn lớn nhất trong phiên
 
 	HU.findOne({game: "arb", type:bet, red:red}, 'name bet min toX balans x', function(err, dataHu){
-		var uInfo      = {};
-		var mini_users = {};
-		var huUpdate   = {bet:addQuy, toX:0, balans:0};
+		let uInfo      = {};
+		let mini_users = {};
+		let huUpdate   = {bet:addQuy, toX:0, balans:0};
 		if (red){
 			huUpdate['hu'] = uInfo['hu'] = mini_users['hu']     = 0; // Khởi tạo
 		}else{
 			huUpdate['huXu'] = uInfo['huXu'] = mini_users['huXu'] = 0; // Khởi tạo
 		}
 
-		var nohu     = false;
-		var isBigWin = false;
-		var quyHu    = dataHu.bet;
-		var quyMin   = dataHu.min;
+		let nohu     = false;
+		let isBigWin = false;
+		let quyHu    = dataHu.bet;
+		let quyMin   = dataHu.min;
 
-		var toX      = dataHu.toX;
-		var balans   = dataHu.balans;
+		let toX      = dataHu.toX;
+		let balans   = dataHu.balans;
 
+		let aRwin = Math.floor(Math.random()*50);
 
-		var aRwin = Math.floor(Math.random()*50);
+		let celSS = [];
+		let celSR = [];
 
 		if (aRwin == 49) {
 			// no hu
-			var celSS = [
+			celSS = [
 				random_cel2(), random_cel2(), random_cel2(),
 				4,             4,             4,
 				random_cel2(), 0,             0,
 			];
 
 			// Tạo kết quả 2 Hàng sau
-			var celSR = [
+			celSR = [
 				random_celR(), random_celR(), 3,
 				0,             0,             0,
 			];
 		}else{
 			// kho
-			var celSS = [
+			celSS = [
 				random_cel2(), random_cel2(), 0,
 				3, 2, 1,
 				0,             0,             0,
 			];
 
 			// Tạo kết quả 2 Hàng sau
-			var celSR = [
+			celSR = [
 				random_celR(), random_celR(), 0,
 				0,             0,             0,
 			];
@@ -165,16 +167,16 @@ function spin(io, user){
 
 		celSS = Helpers.shuffle(celSS); // tráo bài lần 1
 
-		var cel1 = [celSS[0], celSS[1], celSS[2]]; // Cột 1
-		var cel2 = [celSS[3], celSS[4], celSS[5]]; // Cột 2
-		var cel3 = [celSS[6], celSS[7], celSS[8]]; // Cột 3
+		let cel1 = [celSS[0], celSS[1], celSS[2]]; // Cột 1
+		let cel2 = [celSS[3], celSS[4], celSS[5]]; // Cột 2
+		let cel3 = [celSS[6], celSS[7], celSS[8]]; // Cột 3
 
 		celSR = Helpers.shuffle(celSR); // tráo bài lần 1
 
-		var celR1  = [celSR[0], celSR[1], celSR[2]]; // Cột 1
-		var celR2  = [celSR[3], celSR[4], celSR[5]]; // Cột 2
+		let celR1  = [celSR[0], celSR[1], celSR[2]]; // Cột 1
+		let celR2  = [celSR[3], celSR[4], celSR[5]]; // Cột 2
 
-		var checkName = new RegExp("^" + user.name + "$", 'i');
+		let checkName = new RegExp("^" + user.name + "$", 'i');
 		checkName     = checkName.test(dataHu.name);
 		if (checkName) {
 			line_nohu = Math.floor(Math.random()*(27-1+1))+1;
@@ -183,8 +185,8 @@ function spin(io, user){
 			celR2[1] = 3;
 		}
 
-		var heso_T = [1, 3, 5, 10];                  // He so an
-		var heso   = 1;
+		let heso_T = [1, 3, 5, 10];                  // He so an
+		let heso   = 1;
 		if (celR1[1] != 0) {
 			heso = heso_T[celR1[1]]*heso_T[celR2[1]];
 		}
@@ -458,7 +460,7 @@ function spin(io, user){
 
 							if (!nohu) {
 								nohu = true;
-								var okHu = Math.floor(quyHu-Math.ceil(quyHu*phe/100));
+								let okHu = Math.floor(quyHu-Math.ceil(quyHu*phe/100));
 								bet_win += okHu;
 								if (red){
 									Helpers.ThongBaoNoHu(io, {title: "AngryBirds", name: user.name, bet: Helpers.numberWithCommas(okHu)});
@@ -467,7 +469,7 @@ function spin(io, user){
 									huUpdate['huXu'] = uInfo['huXu'] = mini_users['huXu'] += 1; // Cập nhật Số Hũ Xu đã Trúng
 								}
 							}else{
-								var okHu = Math.floor(quyMin-Math.ceil(quyMin*phe/100));
+								let okHu = Math.floor(quyMin-Math.ceil(quyMin*phe/100));
 								bet_win += okHu;
 								if (red){
 									Helpers.ThongBaoNoHu(io, {title: "AngryBirds", name: user.name, bet: okHu});
@@ -495,14 +497,13 @@ function spin(io, user){
 			}))
 			.then(result2 => {
 				bet_win  = nohu ? bet_win : bet_win*heso; // Tổng tiền ăn đc (chưa cắt phế)
-				var tien = bet_win-bet;
+				let tien = bet_win-bet;
 				if (!nohu && bet_win >= bet*10) {
 					isBigWin = true;          // Là thắng lớn
 					type = 1;
 					red && Helpers.ThongBaoBigWin(io, {game: "AngryBirds", users: user.name, bet: Helpers.numberWithCommas(bet_win), status: 2});
 				}
 
-				var thuong     = 0;
 				uInfo['red'] = tien;                                   // Cập nhật Số dư Red trong tài khoản
 				huUpdate['redPlay'] = uInfo['redPlay'] = mini_users['bet'] = bet;            // Cập nhật Số Red đã chơi
 				if (tien > 0){
@@ -512,7 +513,7 @@ function spin(io, user){
 					huUpdate['redLost'] = uInfo['redLost'] = mini_users['lost'] = tien*(-1); // Cập nhật Số Red đã Thua
 				}
 
-				AngryBirds_red.create({'name': user.name, 'type': type, 'win': bet_win, 'bet': bet, 'time': new Date()}, function (err, small) {});
+				AngryBirds_red.create({'name': user.name, 'type': type, 'win': bet_win, 'bet': bet, 'time': new Date()}, function(err) {});
 				HU.updateOne({game: "arb", type:bet, red:red}, {$inc:huUpdate}).exec();
 				UserInfo.updateOne({id:user.id}, {$inc:uInfo}).exec();
 				AngryBirds_user.updateOne({'uid':user.id}, {$set:{time: new Date()}, $inc:mini_users}).exec();
@@ -523,11 +524,11 @@ function spin(io, user){
 
 module.exports = function(io, listBot){
 	if (listBot.length) {
-		var max = Math.floor(listBot.length*17/100);
+		let max = Math.floor(listBot.length*17/100);
 		listBot = Helpers.shuffle(listBot);
 		listBot = listBot.slice(0, max);
 		Promise.all(listBot.map(function(user){
 			spin(io, user);
-		}))
+		}));
 	}
 };

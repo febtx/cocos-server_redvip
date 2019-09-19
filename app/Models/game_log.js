@@ -1,7 +1,7 @@
 
-const mongoose = require("mongoose");
+let mongoose = require("mongoose");
 
-const Schema = new mongoose.Schema({
+let Schema = new mongoose.Schema({
 	uid:    {type: String, required: true, index: true}, // ID Người chơi
 	game:   {type: String},             // game chơi
 	bet:    {type: Number, default: 0}, // phòng

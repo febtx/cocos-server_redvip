@@ -1,12 +1,12 @@
 
 // server.js
-const express    = require("express");
-const app        = express();
-const port       = process.env.PORT || 80;
-const expressWs  = require('express-ws')(app);
-const bodyParser = require("body-parser");
+let express    = require("express");
+let app        = express();
+let port       = process.env.PORT || 80;
+let expressWs  = require('express-ws')(app);
+let bodyParser = require("body-parser");
 
-// const helmetCSP = require('helmet-csp');
+// let helmetCSP = require('helmet-csp');
 
 /**
 app.use(helmetCSP({
@@ -20,16 +20,16 @@ app.use(helmetCSP({
 //var ddos = new Ddos;
 //app.use(ddos.express)
 
-//const path  = require("path");
-//const flash = require("connect-flash");
+//let path  = require("path");
+//let flash = require("connect-flash");
 
-//const cookieParser = require("cookie-parser");
-//const session      = require("express-session");
+//let cookieParser = require("cookie-parser");
+//let session      = require("express-session");
 
 
 // Setting & Connect to the Database
-const configDB = require("./config/database");
-const mongoose = require("mongoose");
+let configDB = require("./config/database");
+let mongoose = require("mongoose");
 
 require('mongoose-long')(mongoose); // INT 64bit
 
@@ -64,7 +64,7 @@ app.set("views", "./views");   // chỉ định thư mục view
 app.use(express.static("public"));
 
 // server socket
-var redT = expressWs.getWss();
+let redT = expressWs.getWss();
 
 require('./app/Helpers/socketUser')(redT); // Add function socket
 

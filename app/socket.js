@@ -1,14 +1,14 @@
 
-var first  = require('./Controllers/User.js').first;
-var onPost = require('./Controllers/onPost.js');
+let first  = require('./Controllers/User.js').first;
+let onPost = require('./Controllers/onPost.js');
 
-function auth(client) {
+let auth = function(client) {
 	client.gameEvent = {};
 	client.scene = "home";
 	first(client);
 }
 
-function signMethod(client) {
+let signMethod = function(client) {
 	client.TTClear = function(){
 		if (!!this.caothap && !!this.caothap.time) {
 			clearTimeout(this.caothap.time);

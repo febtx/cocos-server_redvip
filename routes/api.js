@@ -1,12 +1,12 @@
 
-const tab_NapThe = require('../app/Models/NapThe');
-const UserInfo   = require('../app/Models/UserInfo');
+let tab_NapThe = require('../app/Models/NapThe');
+let UserInfo   = require('../app/Models/UserInfo');
 
-const config     = require('../config/thecao');
+let config     = require('../config/thecao');
 
-const Helper     = require('../app/Helpers/Helpers');
+let Helper     = require('../app/Helpers/Helpers');
 
-const fs = require('fs');
+let fs = require('fs');
 
 module.exports = function(app, redT) {
 	// Sign API
@@ -16,13 +16,13 @@ module.exports = function(app, redT) {
 	});
 	app.post('/api/callback/prepaid_card', function(req, res) {
 		try {
-			var data = req.body;
+			let data = req.body;
 			if (!!data && !!data.error_code && !!data.ref_code) {
 				if (data.error_code == '00') {
 					// thành công
 					tab_NapThe.findOneAndUpdate({'_id': data.ref_code}, {$set:{status:1}}, function(err, napthe) {
 						if (!!napthe && napthe.nhan == 0) {
-							var nhan = napthe.menhGia-(napthe.menhGia*config.extract/100);
+							let nhan = napthe.menhGia-(napthe.menhGia*config.extract/100);
 							UserInfo.findOneAndUpdate({'id': napthe.uid}, {$inc:{red:nhan}}, function(err2, user) {
 								if (void 0 !== redT.users[napthe.uid]) {
 									Promise.all(redT.users[napthe.uid].map(function(obj){

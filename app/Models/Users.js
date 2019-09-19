@@ -1,10 +1,10 @@
 
-const mongoose = require('mongoose');
-const bcrypt   = require("bcrypt-nodejs");
+let mongoose = require('mongoose');
+let bcrypt   = require("bcrypt-nodejs");
 
-const Schema = new mongoose.Schema({
+let Schema = new mongoose.Schema({
 	local: {
-		username:   { type: String,  required: true, unique: true },
+		username:   { type: String,  required: true, unique: true},
 		password:   { type: String,  required: true, hide: true },
 		ban_pass:   { type: Number,  default: 0 },
 		ban_login:  { type: Boolean, default: false },

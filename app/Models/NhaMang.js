@@ -1,8 +1,8 @@
 
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+let mongoose = require("mongoose");
+let Schema = mongoose.Schema;
 
-const NhaMangSchema = new Schema({
+let NhaMangSchema = new Schema({
 	name:  {type: String,  required: true}, // Tên nhà mạng
 	value: {type: String,  required: true}, // Tên nhà mạng
 	nap:   {type: Boolean, default: false}, // Áp dụng cho nạp Red

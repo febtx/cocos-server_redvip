@@ -1,12 +1,12 @@
 
-var User     = require('./User');
-var TaiXiu   = require('./TaiXiu');
-var Shop     = require('./Shop');
-var GiftCode = require('./GiftCode');
-var Game     = require('./Game');
-var OTP      = require('./OTP');
-var Event    = require('./event/index');
-var message  = require('./Message');
+let User     = require('./User');
+let TaiXiu   = require('./TaiXiu');
+let Shop     = require('./Shop');
+let GiftCode = require('./GiftCode');
+let Game     = require('./Game');
+let OTP      = require('./OTP');
+let Event    = require('./event/index');
+let message  = require('./Message');
 
 //var ControlAvatar  = require('./Avatar.js');
 

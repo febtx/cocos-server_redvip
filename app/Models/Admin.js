@@ -1,9 +1,9 @@
 
-const mongoose = require("mongoose");
-const bcrypt  = require("bcrypt-nodejs");
+let mongoose = require("mongoose");
+let bcrypt  = require("bcrypt-nodejs");
 
-const Schema = new mongoose.Schema({
-	username:   { type: String, required: true, unique: true },
+let Schema = new mongoose.Schema({
+	username:   { type: String, required: true, unique: true},
 	password:   { type: String, required: true, hide: true },
 	rights:     { type: Number, default: 0},
 	token:      String,

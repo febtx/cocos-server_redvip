@@ -1,5 +1,5 @@
 
-var Poker = require('./poker/init');
+let Poker = require('./poker/init');
 
 module.exports = function(io){
 	io.users  = []; // danh sách người dùng đăng nhập

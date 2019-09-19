@@ -1,20 +1,19 @@
 
-var HU            = require('../../Models/HU');
+let HU            = require('../../Models/HU');
 
-var Mini3Cay_red  = require('../../Models/Mini3Cay/Mini3Cay_red');
-var Mini3Cay_user = require('../../Models/Mini3Cay/Mini3Cay_user');
+let Mini3Cay_red  = require('../../Models/Mini3Cay/Mini3Cay_red');
+let Mini3Cay_user = require('../../Models/Mini3Cay/Mini3Cay_user');
 
-var UserInfo      = require('../../Models/UserInfo');
+let UserInfo      = require('../../Models/UserInfo');
 
-var Helpers       = require('../../Helpers/Helpers');
-var base_card     = require('../../../data/card');
+let Helpers       = require('../../Helpers/Helpers');
+let base_card     = require('../../../data/card');
 
+let spin = function(io, user){
+	let cuoc = 100;
+	let red = true;
 
-function spin(io, user){
-	var cuoc = 100;
-	var red = true;
-
-	var a = Math.floor(Math.random()*16);
+	let a = Math.floor(Math.random()*16);
 
 	if (a == 15) {
 		//  14
@@ -27,27 +26,27 @@ function spin(io, user){
 		cuoc = 100;
 	}
 
-	var phe = red ? 2 : 4;    // Phế
-	var addQuy = Math.floor(cuoc*0.01);
+	let phe = red ? 2 : 4;    // Phế
+	let addQuy = Math.floor(cuoc*0.01);
 	// Sử lý bài
-	var an      = 0;
-	var code    = 0;
-	var text    = '';
-	var thuong  = 0;
-	var nohu    = false;
-	var card    = [...base_card.card]
+	let an      = 0;
+	let code    = 0;
+	let text    = '';
+	let thuong  = 0;
+	let nohu    = false;
+	let card    = [...base_card.card]
 		.slice(0, 36);
 
 	card = Helpers.shuffle(card); // tráo bài lần 1
 
-	var ketqua = card.slice(3, 6); // bốc 3 thẻ đầu tiên
-	var ketqua_temp = [...ketqua]; // copy kết quả để sử lý, (tránh sắp sếp, mất tính ngẫu nhiên)
+	let ketqua = card.slice(3, 6); // bốc 3 thẻ đầu tiên
+	let ketqua_temp = [...ketqua]; // copy kết quả để sử lý, (tránh sắp sếp, mất tính ngẫu nhiên)
 	
-	var ADiamond = false;       // Có Át rô trong bài?
+	let ADiamond = false;       // Có Át rô trong bài?
 
-	var arrT   = [];           // Mảng lọc các bộ 2 trong bài
-	for (var i = 0; i < 3; i++) {
-		var dataT = ketqua[i];
+	let arrT   = [];           // Mảng lọc các bộ 2 trong bài
+	for (let i = 0; i < 3; i++) {
+		let dataT = ketqua[i];
 		if (void 0 === arrT[dataT.card]) {
 			arrT[dataT.card] = 1;
 		}else{
@@ -58,8 +57,8 @@ function spin(io, user){
 		}
 	}
 
-	var bo3     = false; // bộ ba (Kết quả có phải là bộ 3?)
-	var bo3_a   = null;  // Tên bộ 3
+	let bo3     = false; // bộ ba (Kết quả có phải là bộ 3?)
+	let bo3_a   = null;  // Tên bộ 3
 	Promise.all(arrT.map(function(c, index){
 		if (c === 3) {
 			bo3   = true;
@@ -67,26 +66,26 @@ function spin(io, user){
 		}
 	}))
 
-	var type     = ketqua[0].type;                                     // Lấy ra chất đầu tiên trong bài
-	var dongChat = ketqua_temp.filter(type_card => type_card.type == type); // Lọc đồng chất
+	let type     = ketqua[0].type;                                     // Lấy ra chất đầu tiên trong bài
+	let dongChat = ketqua_temp.filter(type_card => type_card.type == type); // Lọc đồng chất
 	dongChat     = dongChat.length == 3 ? true : false;                // Dây là đồng chất
 
-	var TongDiem = (ketqua[0].card + ketqua[1].card + ketqua[2].card + 3)%10;     // Tổng điểm
+	let TongDiem = (ketqua[0].card + ketqua[1].card + ketqua[2].card + 3)%10;     // Tổng điểm
 	TongDiem = TongDiem === 0 ? 10 : TongDiem;
-	var LienTiep   = ketqua_temp.sort(function(a,b){return a.card - b.card});
-	var Day        = LienTiep[2].card - LienTiep[0].card === 2 && LienTiep[2].card != LienTiep[1].card && LienTiep[1].card != LienTiep[0].card ? true : false; // Bộ liên tiếp
+	let LienTiep   = ketqua_temp.sort(function(a,b){return a.card - b.card});
+	let Day        = LienTiep[2].card - LienTiep[0].card === 2 && LienTiep[2].card != LienTiep[1].card && LienTiep[1].card != LienTiep[0].card ? true : false; // Bộ liên tiếp
 
 	// Kết thúc Sử lý bài
 
 	// Kiểm tra kết quả
 	HU.findOne({game:'mini3cay', type:cuoc, red:red}, {}, function(err, data){
-		var uInfo      = {};
-		var mini_users = {};
-		var huUpdate   = {bet:addQuy};
+		let uInfo      = {};
+		let mini_users = {};
+		let huUpdate   = {bet:addQuy};
 
-		var quyHu     = data.bet;
-		var quyMin    = data.min+addQuy;
-		var checkName = new RegExp("^" + user.name + "$", 'i');
+		let quyHu     = data.bet;
+		let quyMin    = data.min+addQuy;
+		let checkName = new RegExp("^" + user.name + "$", 'i');
 		checkName     = checkName.test(data.name);
 
 		if (checkName || (bo3 && bo3_a === 0)) {
@@ -139,7 +138,7 @@ function spin(io, user){
 			code = 1;
 		}
 
-		var tien = an-cuoc;
+		let tien = an-cuoc;
 		uInfo['red'] = tien;         // Cập nhật Số dư Red trong tài khoản
 		huUpdate['redPlay'] = uInfo['redPlay'] = mini_users['bet'] = cuoc;     // Cập nhật Số Red đã chơi
 		if (tien > 0){
@@ -148,7 +147,7 @@ function spin(io, user){
 		if (tien < 0){
 			huUpdate['redLost'] = uInfo['redLost'] = mini_users['lost'] = tien*(-1); // Cập nhật Số Red đã Thua
 		}
-		Mini3Cay_red.create({'uid': user.id, 'win': an, 'bet': cuoc, 'type': code, 'kq': ketqua, 'time': new Date()}, function (err, small) {});
+		Mini3Cay_red.create({'uid': user.id, 'win': an, 'bet': cuoc, 'type': code, 'kq': ketqua, 'time': new Date()}, function(err) {});
 		HU.updateOne({game:'mini3cay', type:cuoc, red:red}, {$inc:huUpdate}).exec();
 		UserInfo.updateOne({id:user.id}, {$inc: uInfo}).exec();
 		Mini3Cay_user.updateOne({'uid': user.id}, {$set:{time: new Date()}, $inc: mini_users}).exec();
@@ -157,7 +156,7 @@ function spin(io, user){
 
 module.exports = function(io, listBot){
 	if (listBot.length) {
-		var max = Math.floor(listBot.length*17/100);
+		let max = Math.floor(listBot.length*17/100);
 		listBot = Helpers.shuffle(listBot);
 		listBot = listBot.slice(0, max);
 		Promise.all(listBot.map(function(user){

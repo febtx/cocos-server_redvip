@@ -1,8 +1,8 @@
 
-const mongoose = require('mongoose');
+let mongoose = require('mongoose');
 
-const Schema = new mongoose.Schema({
-	uid:       {type: String,  required: true},    // ID Người cược
+let Schema = new mongoose.Schema({
+	uid:       {type: String,  required: true, index: true},    // ID Người cược
 	name:      {type: String,  required: true},    // Name Người cược
 	phien:     {type: Number,  required: true},    // phiên cược
 	red:       {type: Boolean, required: true},    // loại tiền (Red = true,   Xu = false)
@@ -20,6 +20,6 @@ const Schema = new mongoose.Schema({
 	time:      {type: Date},                       // thời gian cược
 });
 
-Schema.index({uid: 1}, {background: true});
+//Schema.index({uid: 1}, {background: true});
 
 module.exports = mongoose.model("BauCua_cuoc", Schema);

@@ -1,15 +1,15 @@
 
-var validator = require('validator');
-var User      = require('./app/Models/Admin');
-var socket    = require('./app/Controllers/admin/socket.js');
+let validator = require('validator');
+let User      = require('./app/Models/Admin');
+let socket    = require('./app/Controllers/admin/socket.js');
 
 // Authenticate!
-var authenticate = function(client, data, callback) {
+let authenticate = function(client, data, callback) {
 	if (!!data && !!data.username && !!data.password) {
-		var username = data.username;
-		var password = data.password;
-		var az09     = new RegExp("^[a-zA-Z0-9]+$");
-		var testName = az09.test(username);
+		let username = data.username;
+		let password = data.password;
+		let az09     = new RegExp("^[a-zA-Z0-9]+$");
+		let testName = az09.test(username);
 
 		if (!validator.isLength(username, {min: 3, max: 32})) {
 			callback({title: 'ĐĂNG NHẬP', text: 'Tài khoản (3-32 kí tự).'}, false);
@@ -19,7 +19,7 @@ var authenticate = function(client, data, callback) {
 			callback({title: 'ĐĂNG NHẬP', text: 'Tên đăng nhập chỉ gồm kí tự và số !!'}, false);
 		} else {
 			try {
-				var regex = new RegExp("^" + username + "$", 'i');
+				let regex = new RegExp("^" + username + "$", 'i');
 				User.findOne({'username': {$regex: regex}}, function(err, user){
 					if (user){
 						if (user.validPassword(password)){
@@ -88,7 +88,7 @@ module.exports = function(ws, redT){
 				if (this.redT.admins[this.UID].length == 1) {
 					delete this.redT.admins[this.UID];
 				}else{
-					var self = this;
+					let self = this;
 					Promise.all(this.redT.admins[this.UID].map(function(obj, index){
 						if (obj === self) {
 							self.redT.admins[self.UID].splice(index, 1);

@@ -1,6 +1,6 @@
 
-const users = require('./socketUsers');
-const admin = require('./socketAdmin');
+let users = require('./socketUsers');
+let admin = require('./socketAdmin');
 // Router Websocket
 
 module.exports = function(app, redT) {

@@ -3,11 +3,10 @@
  * SMS Controller
  */
 
-const request = require('request');
-const config  = require("../config/sms");
-
-function sendOTP(phone, otp){
-	var qs = {
+let request = require('request');
+let config  = require("../config/sms");
+let sendOTP = function(phone, otp){
+	let qs = {
 		Phone:     phone,
 		Content:   'R-%20' + otp,
 		ApiKey:    config.API_KEY,

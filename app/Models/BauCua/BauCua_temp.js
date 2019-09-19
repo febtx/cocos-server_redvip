@@ -1,7 +1,7 @@
 
-const mongoose      = require('mongoose');
+let mongoose      = require('mongoose');
 
-const Schema = new mongoose.Schema({
+let Schema = new mongoose.Schema({
 	0: {type: Number,  default: 0}, // Số lần về Hươu
 	1: {type: Number,  default: 0}, // Số lần về Bầu
 	2: {type: Number,  default: 0}, // Số lần về Gà

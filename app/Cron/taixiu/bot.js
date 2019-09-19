@@ -1,15 +1,15 @@
 
-var TXCuoc      = require('../../Models/TaiXiu_cuoc');
-var TXCuocOne   = require('../../Models/TaiXiu_one');
+let TXCuoc      = require('../../Models/TaiXiu_cuoc');
+let TXCuocOne   = require('../../Models/TaiXiu_one');
 
-var UserInfo    = require('../../Models/UserInfo');
+let UserInfo    = require('../../Models/UserInfo');
 
 /**
  * Ngẫu nhiên cược
  * return {number}
 */
-var random = function(){
-	var a = (Math.random()*35)>>0;
+let random = function(){
+	let a = (Math.random()*35)>>0;
 	if (a == 34) {
 		// 34
 		return (Math.floor(Math.random()*(500-450+1))+450)*1000;
@@ -41,7 +41,7 @@ var random = function(){
  * Danh sách bot
  * return {list}
 */
-var list = function(){
+let list = function(){
 	return new Promise((a, b) => {
 		UserInfo.find({type: true}, 'id name', function(err, list){
 			Promise.all(list.map(function(user){
@@ -61,9 +61,9 @@ var list = function(){
  * Cược
 */
 // Tài Xỉu RED
-var bet = function(bot, io, taixiu = true, red = true){
-	var cuoc   = random();
-	var select = !!((Math.random()*2)>>0);
+let bet = function(bot, io, taixiu = true, red = true){
+	let cuoc   = random();
+	let select = !!((Math.random()*2)>>0);
 	if (select) {
 		io.taixiu.taixiu.red_tai        += cuoc;
 		io.taixiu.taixiu.red_player_tai += 1;
@@ -76,6 +76,6 @@ var bet = function(bot, io, taixiu = true, red = true){
 }
 
 module.exports = {
-	bet:      bet,
-	list:     list,
+	bet:  bet,
+	list: list,
 }

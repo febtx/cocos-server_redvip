@@ -1,6 +1,6 @@
 
 // Router HTTP / HTTPS
-const mobile = require('is-mobile');
+let mobile = require('is-mobile');
 
 module.exports = function(app, redT) {
 	// Home

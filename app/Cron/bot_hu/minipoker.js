@@ -1,21 +1,21 @@
 
-var HU             = require('../../Models/HU');
+let HU             = require('../../Models/HU');
 
-var miniPokerUsers = require('../../Models/miniPoker/miniPoker_users');
+let miniPokerUsers = require('../../Models/miniPoker/miniPoker_users');
 
-var miniPokerRed   = require('../../Models/miniPoker/miniPokerRed');
+let miniPokerRed   = require('../../Models/miniPoker/miniPokerRed');
 
-var UserInfo       = require('../../Models/UserInfo');
+let UserInfo       = require('../../Models/UserInfo');
 
-var Helpers        = require('../../Helpers/Helpers');
+let Helpers        = require('../../Helpers/Helpers');
 
-var base_card      = require('../../../data/card');
+let base_card      = require('../../../data/card');
 
-function spin(io, user){
-	var bet = 100;
-	var red = true;
+let spin = function(io, user){
+	let bet = 100;
+	let red = true;
 
-	var a = Math.floor(Math.random()*16);
+	let a = Math.floor(Math.random()*16);
 
 	if (a == 15) {
 		//  14
@@ -28,25 +28,25 @@ function spin(io, user){
 		bet = 100;
 	}
 
-	var phe     = 2;    // Phế
-	var addQuy  = Math.floor(bet*0.01);
-	var an      = 0;
-	var code    = 0;
-	var text    = '';
-	var thuong  = 0;
-	var card    = [...base_card.card];
+	let phe     = 2;    // Phế
+	let addQuy  = Math.floor(bet*0.01);
+	let an      = 0;
+	let code    = 0;
+	let text    = '';
+	let thuong  = 0;
+	let card    = [...base_card.card];
 
 	// tráo bài
 	card = Helpers.shuffle(card); // tráo bài lần 1
 
-	//var ketqua  = [];            // bốc nhẫu nhiên
-	var ketqua      = card.slice(0, 5); // bốc 5 thẻ đầu tiên
+	//let ketqua  = [];            // bốc nhẫu nhiên
+	let ketqua      = card.slice(0, 5); // bốc 5 thẻ đầu tiên
 
-	var ketqua_temp = [...ketqua]; // copy kết quả để sử lý, (tránh sắp sếp, mất tính ngẫu nhiên)
+	let ketqua_temp = [...ketqua]; // copy kết quả để sử lý, (tránh sắp sếp, mất tính ngẫu nhiên)
 
-	var arrT   = [];           // Mảng chứa các bộ (Đôi, Ba, Bốn) trong bài
-	for (var i = 0; i < 5; i++) {
-		var dataT = ketqua[i];
+	let arrT   = [];           // Mảng chứa các bộ (Đôi, Ba, Bốn) trong bài
+	for (let i = 0; i < 5; i++) {
+		let dataT = ketqua[i];
 		if (void 0 === arrT[dataT.card]) {
 			arrT[dataT.card] = 1;
 		}else{
@@ -54,11 +54,11 @@ function spin(io, user){
 		}
 	}
 
-	var tuQuy   = null;  // Tên bộ tứ
-	var bo2     = 0;     // bộ 2 (có bao nhiêu 2)
-	var bo2_a   = [];    // Danh sách tên bộ 2
-	var bo3     = false; // bộ ba (có bao nhiêu bộ 3)
-	var bo3_a   = null;  // Tên bộ 3
+	let tuQuy   = null;  // Tên bộ tứ
+	let bo2     = 0;     // bộ 2 (có bao nhiêu 2)
+	let bo2_a   = [];    // Danh sách tên bộ 2
+	let bo3     = false; // bộ ba (có bao nhiêu bộ 3)
+	let bo3_a   = null;  // Tên bộ 3
 
 	Promise.all(arrT.map(function(c, index){
 		if (c === 4) {
@@ -74,12 +74,12 @@ function spin(io, user){
 		}
 	}))
 
-	var type     = ketqua[0].type; // chất đầu tiên
-	var dongChat = ketqua_temp.filter(type_card => type_card.type == type); // Kiểm tra đồng chất
+	let type     = ketqua[0].type; // chất đầu tiên
+	let dongChat = ketqua_temp.filter(type_card => type_card.type == type); // Kiểm tra đồng chất
 	dongChat     = dongChat.length == 5 ? true : false;  // Dây là đồng chất
 
-	var AK    = ketqua_temp.sort(function(a, b){return a.card - b.card}); // sắp sếp từ A đến K (A23...JQK)
-	var isDay = false; // là 1 dây
+	let AK    = ketqua_temp.sort(function(a, b){return a.card - b.card}); // sắp sếp từ A đến K (A23...JQK)
+	let isDay = false; // là 1 dây
 	if (bo3 == false && bo2 == 0 && tuQuy == null) {
 		if (AK[4].card - AK[0].card === 4 && AK[0].card !== 0) {
 			isDay = true;
@@ -89,17 +89,17 @@ function spin(io, user){
 	}
 
 	HU.findOne({game: "minipoker", type:bet, red:red}, 'name bet min toX balans x', function(err, dataHu){
-		var uInfo      = {};
-		var mini_users = {};
-		var huUpdate   = {bet:addQuy, toX:0, balans:0};
+		let uInfo      = {};
+		let mini_users = {};
+		let huUpdate   = {bet:addQuy, toX:0, balans:0};
 
-		var quyHu     = dataHu.bet;
-		var quyMin    = dataHu.min;
+		let quyHu     = dataHu.bet;
+		let quyMin    = dataHu.min;
 
-		var toX       = dataHu.toX;
-		var balans    = dataHu.balans;
+		let toX       = dataHu.toX;
+		let balans    = dataHu.balans;
 
-		var checkName = new RegExp("^" + user.name + "$", 'i');
+		let checkName = new RegExp("^" + user.name + "$", 'i');
 		checkName     = checkName.test(dataHu.name);
 
 		if (checkName || (dongChat && isDay && AK[4].card > 9)) {
@@ -117,8 +117,8 @@ function spin(io, user){
 			HU.updateOne({game: "minipoker", type:bet, red:red}, {$set:{name:"", bet:quyMin}}).exec();
 			if (checkName){
 				// đặt kết quả thành nổ hũ nếu người chơi được xác định thủ công
-				var randomType = Math.floor(Math.random()*4);           // Ngẫu nhiên chất bài
-				var randomMin  = Math.floor((Math.random()*(9-6+1))+6); // Ngẫu nhiên dây bài bắt đầu từ (7 - 10)
+				let randomType = Math.floor(Math.random()*4);           // Ngẫu nhiên chất bài
+				let randomMin  = Math.floor((Math.random()*(9-6+1))+6); // Ngẫu nhiên dây bài bắt đầu từ (7 - 10)
 				Promise.all(base_card.card.filter(function(cardT){
 					if (randomMin == 9 && cardT.card == 0 && cardT.type == randomType) {
 						return true;
@@ -187,7 +187,7 @@ function spin(io, user){
 			code = 1;
 		}
 
-		var tien = an-bet;
+		let tien = an-bet;
 		setTimeout(function(){
 			uInfo['red'] = tien;         // Cập nhật Số dư Red trong tài khoản
 			huUpdate['redPlay'] = uInfo['redPlay'] = mini_users['bet'] = bet;       // Cập nhật Số Red đã chơi
@@ -200,7 +200,7 @@ function spin(io, user){
 			if (code == 9){
 				uInfo['hu'] = mini_users['hu'] = 1;         // Cập nhật Số Hũ Red đã Trúng
 			}
-			miniPokerRed.create({'name': user.name, 'win': an, 'bet': bet, 'type': code, 'kq': ketqua, 'time': new Date()}, function (err, small) {});
+			miniPokerRed.create({'name': user.name, 'win': an, 'bet': bet, 'type': code, 'kq': ketqua, 'time': new Date()}, function(err) {});
 			HU.updateOne({game: "minipoker", type:bet, red:red}, {$inc:huUpdate}).exec();
 			UserInfo.updateOne({id:user.id}, {$inc: uInfo}).exec();
 			miniPokerUsers.updateOne({'uid': user.id}, {$set:{time: new Date()}, $inc: mini_users}).exec();
@@ -210,7 +210,7 @@ function spin(io, user){
 
 module.exports = function(io, listBot){
 	if (listBot.length) {
-		var max = Math.floor(listBot.length*17/100);
+		let max = Math.floor(listBot.length*17/100);
 		listBot = Helpers.shuffle(listBot);
 		listBot = listBot.slice(0, max);
 		Promise.all(listBot.map(function(user){

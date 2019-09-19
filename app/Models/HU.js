@@ -1,8 +1,8 @@
 
-const mongoose = require("mongoose");
+let mongoose = require("mongoose");
 
-const Schema = new mongoose.Schema({
-	game: {type: String,  required: true},                   // Tên game
+let Schema = new mongoose.Schema({
+	game: {type: String,  required: true, index: true},                   // Tên game
 	name: {type: String,  default: ''},                      // Tên người được gọi
 	type: {type: Number,  required: true},                   // Loại hũ (100, 1000, 10000)
 	red:  {type: Boolean, required: true},                   // Hũ Xu hoặc Hũ Red
@@ -25,4 +25,5 @@ const Schema = new mongoose.Schema({
 	xuLost:  {type: mongoose.Schema.Types.Long, default: 0}, // Tổng Xu thua
 });
 
+//Schema.index({game: 1}, {background: true});
 module.exports = mongoose.model("hu", Schema);

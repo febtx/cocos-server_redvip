@@ -1,7 +1,7 @@
 
-var CronJob = require('cron').CronJob;
+let CronJob = require('cron').CronJob;
 
-var CronHu  = require('../app/Cron/EventHu');
+let CronHu  = require('../app/Cron/EventHu');
 
 module.exports = function() {
 	new CronJob('0 0 0 * * *', function() {

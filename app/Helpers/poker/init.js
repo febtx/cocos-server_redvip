@@ -1,5 +1,5 @@
 
-var Poker = function(){
+let Poker = function(){
 	this.room = {};
 }
 

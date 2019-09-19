@@ -1,8 +1,8 @@
 
-const AutoIncrement = require('mongoose-auto-increment-reworked').MongooseAutoIncrementID;
-const mongoose      = require('mongoose');
+let AutoIncrement = require('mongoose-auto-increment-reworked').MongooseAutoIncrementID;
+let mongoose      = require('mongoose');
 
-const Schema = new mongoose.Schema({
+let Schema = new mongoose.Schema({
 	dice1: {type: Number},
 	dice2: {type: Number},
 	dice3: {type: Number},

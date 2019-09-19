@@ -1,17 +1,17 @@
 
-var TXCuoc      = require('../../Models/TaiXiu_cuoc');
-var TXCuocOne   = require('../../Models/TaiXiu_one');
+let TXCuoc      = require('../../Models/TaiXiu_cuoc');
+let TXCuocOne   = require('../../Models/TaiXiu_one');
 
-var BauCua_cuoc = require('../../Models/BauCua/BauCua_cuoc');
+let BauCua_cuoc = require('../../Models/BauCua/BauCua_cuoc');
 
-var UserInfo    = require('../../Models/UserInfo');
+let UserInfo    = require('../../Models/UserInfo');
 
 /**
  * Ngẫu nhiên cược
  * return {number}
 */
-var random = function(){
-	var a = (Math.random()*35)>>0;
+let random = function(){
+	let a = (Math.random()*35)>>0;
 	if (a == 34) {
 		// 34
 		return (Math.floor(Math.random()*(500-450+1))+450)*1000;
@@ -43,7 +43,7 @@ var random = function(){
  * Danh sách bot
  * return {list}
 */
-var list = function(){
+let list = function(){
 	return new Promise((a, b) => {
 		UserInfo.find({type: true}, 'id name', function(err, list){
 			Promise.all(list.map(function(user){
@@ -64,9 +64,9 @@ var list = function(){
 */
 
 // Bầu cua RED
-var bet = function(bot, io, red = true){
-	var cuoc = random();
-	var userCuoc = (Math.random()*6)>>0;
+let bet = function(bot, io, red = true){
+	let cuoc = random();
+	let userCuoc = (Math.random()*6)>>0;
 
 	if (red) {
 		if (userCuoc == 0) {
@@ -98,7 +98,7 @@ var bet = function(bot, io, red = true){
 		}
 	}
 
-	var create = {uid: bot.id, name: bot.name, phien: io.BauCua_phien, red:red, time: new Date()};
+	let create = {uid: bot.id, name: bot.name, phien: io.BauCua_phien, red:red, time: new Date()};
 	create[userCuoc] = cuoc;
 	BauCua_cuoc.create(create);
 }

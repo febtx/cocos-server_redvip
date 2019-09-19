@@ -1,8 +1,8 @@
 
-const AutoIncrement = require('mongoose-auto-increment-reworked').MongooseAutoIncrementID;
-const mongoose      = require("mongoose");
+let AutoIncrement = require('mongoose-auto-increment-reworked').MongooseAutoIncrementID;
+let mongoose      = require("mongoose");
 
-const Schema = new mongoose.Schema({
+let Schema = new mongoose.Schema({
 	from:    {type: String, required: true}, // Tên người gủi
 	to:      {type: String, required: true}, // Tên người nhận
 	red:     {type: Number, required: true}, // Số red gửi

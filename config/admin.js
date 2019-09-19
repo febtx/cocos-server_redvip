@@ -2,9 +2,9 @@
 // Khởi tạo dữ liệu
 
 // Admin
-const Admin        = require('../app/Models/Admin');
-const generateHash = require('../app/Helpers/Helpers').generateHash;
-const HU           = require('../app/Models/HU');
+let Admin        = require('../app/Models/Admin');
+let generateHash = require('../app/Helpers/Helpers').generateHash;
+let HU           = require('../app/Models/HU');
 
 Admin.estimatedDocumentCount().exec(function(err, total){
 	if (total == 0) {
@@ -13,7 +13,7 @@ Admin.estimatedDocumentCount().exec(function(err, total){
 })
 
 // Bầu Cua
-const BauCua = require('../app/Models/BauCua/BauCua_temp');
+let BauCua = require('../app/Models/BauCua/BauCua_temp');
 BauCua.findOne({}, {}, function(err, data){
 	if (!data) {
 		BauCua.create({});
