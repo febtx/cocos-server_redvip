@@ -234,7 +234,6 @@ module.exports = function(){
 			}
 		}));
 
-
 		Promise.all(result[1].map(function(usersL, indexL){
 			if (indexL == 0) {
 				UserInfo.updateOne({'id': usersL.uid}, {$inc:{'red':500000}}).exec(function(err, user){

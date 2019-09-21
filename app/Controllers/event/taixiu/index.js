@@ -1,6 +1,6 @@
 
-var getTop   = require('./getTop');
-var getTopHQ = require('./getTopHQ');
+let getTop   = require('./getTop');
+let getTopHQ = require('./getTopHQ');
 
 module.exports = function(client, data){
 	if (!!data.getTop) {
@@ -8,6 +8,6 @@ module.exports = function(client, data){
 	}
 
 	if (!!data.getTopHQ) {
-		getTopHQ(client);
+		getTopHQ(client, data.getTopHQ);
 	}
 };
