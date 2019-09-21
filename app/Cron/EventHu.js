@@ -8,6 +8,7 @@ let UserInfo    = require('../Models/UserInfo');
 let Message     = require('../Models/Message');
 
 let numberWithCommas = require('../Helpers/Helpers').numberWithCommas;
+let numberPad        = require('../Helpers/Helpers').numberPad;
 
 let cronDay = function(day){
 	if (day < 0) {
@@ -193,7 +194,7 @@ module.exports = function(){
 		let date = new Date();
 		date.setDate(date.getDate()-1);
 
-		let stringTime = date.getDate() + '/' + (date.getMonth()+1) + '/' + date.getFullYear();
+		let stringTime = numberPad(date.getDate(), 2) + '/' + numberPad(date.getMonth()+1, 2) + '/' + date.getFullYear();
 		Promise.all(result[0].map(function(users, index){
 			if (index == 0) {
 				UserInfo.updateOne({'id': users.uid}, {$inc:{'red':500000}}).exec(function(err, user){
