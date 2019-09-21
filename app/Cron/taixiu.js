@@ -144,8 +144,17 @@ let setTaiXiu_user = function(phien, dice){
 								tLineLostRed:  !obj.win && data.tLineLostRed < data.tLineLostRedH+1 ? data.tLineLostRedH+1 : data.tLineLostRed,
 								tLineWinRedH:  obj.win ? data.tLineWinRedH+1 : 0,
 								tLineLostRedH: obj.win ? 0 : data.tLineLostRedH+1,
-								time:          new Date(),
+								last:          phien,
 							};
+							if (obj.win) {
+								if (data.tLineWinRedH == 0) {
+									update.first = phien;
+								}
+							}else{
+								if (data.tLineLostRedH == 0) {
+									update.first = phien;
+								}
+							}
 						} else if (obj.taixiu == true && obj.red == false && bet_thua >= 10000) { // Xu Tài Xỉu
 							update = {
 								tLineWinXu:   obj.win && data.tLineWinXu < data.tLineWinXuH+1 ? data.tLineWinXuH+1 : data.tLineWinXu,
@@ -323,7 +332,7 @@ let thongtin_thanhtoan = function(game_id, dice = false){
 									obj.save();
 
 									UserInfo.updateOne({id:obj.uid}, {$inc:{red:obj.bet}}).exec();
-									TXCuocOne.updateOne({uid: obj.uid, phien: game_id, taixiu:true, select:true, red:true}, {$set:{win:win}, $inc:{tralai:obj.bet}}).exec();
+									return TXCuocOne.updateOne({uid: obj.uid, phien: game_id, taixiu:true, select:true, red:true}, {$set:{win:win}, $inc:{tralai:obj.bet}}).exec();
 								}else{
 									// Trả lại 1 phần
 									let betPlay = obj.bet-TaiXiu_tong_red_lech;
@@ -347,7 +356,7 @@ let thongtin_thanhtoan = function(game_id, dice = false){
 										TaiXiu_User.updateOne({uid: obj.uid}, {$inc:{tLostRed:betPlay, tRedPlay: betPlay}}).exec();
 									}
 									obj.save();
-									TXCuocOne.updateOne({uid: obj.uid, phien: game_id, taixiu:true, select:true, red:true}, {$set:{win:win}, $inc:{tralai:obj.tralai, betwin:betwinP}}).exec();
+									return TXCuocOne.updateOne({uid: obj.uid, phien: game_id, taixiu:true, select:true, red:true}, {$set:{win:win}, $inc:{tralai:obj.tralai, betwin:betwinP}}).exec();
 								}
 							}else{
 								if (win) {
@@ -361,7 +370,7 @@ let thongtin_thanhtoan = function(game_id, dice = false){
 									let redUpdate = obj.bet+betwin;
 									UserInfo.updateOne({id:obj.uid}, {$inc:{red:redUpdate, redWin:betwin, redPlay:obj.bet}}).exec();
 									TaiXiu_User.updateOne({uid: obj.uid}, {$inc:{tWinRed:betwin, tRedPlay: obj.bet}}).exec();
-									TXCuocOne.updateOne({uid: obj.uid, phien: game_id, taixiu:true, select:true, red:true}, {$set:{win:true}, $inc:{betwin:betwin}}).exec();
+									return TXCuocOne.updateOne({uid: obj.uid, phien: game_id, taixiu:true, select:true, red:true}, {$set:{win:true}, $inc:{betwin:betwin}}).exec();
 								}else{
 									obj.thanhtoan = true;
 									obj.save();
@@ -383,7 +392,7 @@ let thongtin_thanhtoan = function(game_id, dice = false){
 									obj.save();
 
 									UserInfo.updateOne({id:obj.uid}, {$inc:{red:obj.bet}}).exec();
-									TXCuocOne.updateOne({uid: obj.uid, phien: game_id, taixiu:true, select:false, red:true}, {$set:{win:win}, $inc:{tralai:obj.bet}}).exec();
+									return TXCuocOne.updateOne({uid: obj.uid, phien: game_id, taixiu:true, select:false, red:true}, {$set:{win:win}, $inc:{tralai:obj.bet}}).exec();
 								}else{
 									// Trả lại 1 phần
 									let betPlay = obj.bet-TaiXiu_tong_red_lech;
@@ -407,7 +416,7 @@ let thongtin_thanhtoan = function(game_id, dice = false){
 										TaiXiu_User.updateOne({uid: obj.uid}, {$inc:{tLostRed:betPlay, tRedPlay:betPlay}}).exec();
 									}
 									obj.save();
-									TXCuocOne.updateOne({uid: obj.uid, phien: game_id, taixiu:true, select:false, red:true}, {$set:{win:win}, $inc:{tralai:obj.tralai, betwin:betwinP}}).exec();
+									return TXCuocOne.updateOne({uid: obj.uid, phien: game_id, taixiu:true, select:false, red:true}, {$set:{win:win}, $inc:{tralai:obj.tralai, betwin:betwinP}}).exec();
 								}
 							}else{
 								if (win) {
@@ -421,7 +430,7 @@ let thongtin_thanhtoan = function(game_id, dice = false){
 									let redUpdate = obj.bet+betwin;
 									UserInfo.updateOne({id:obj.uid}, {$inc:{red:redUpdate, redWin:betwin, redPlay:obj.bet}}).exec();
 									TaiXiu_User.updateOne({uid: obj.uid}, {$inc:{tWinRed:betwin, tRedPlay: obj.bet}}).exec();
-									TXCuocOne.updateOne({uid: obj.uid, phien: game_id, taixiu:true, select:false, red:true}, {$set:{win:true}, $inc:{betwin:betwin}}).exec();
+									return TXCuocOne.updateOne({uid: obj.uid, phien: game_id, taixiu:true, select:false, red:true}, {$set:{win:true}, $inc:{betwin:betwin}}).exec();
 								}else{
 									obj.thanhtoan = true;
 									obj.save();
@@ -443,7 +452,7 @@ let thongtin_thanhtoan = function(game_id, dice = false){
 									obj.save();
 
 									UserInfo.updateOne({id:obj.uid}, {$inc:{xu:obj.bet}}).exec();
-									TXCuocOne.updateOne({uid: obj.uid, phien: game_id, taixiu:true, select:true, red:false}, {$set:{win:win}, $inc:{tralai:obj.bet}}).exec();
+									return TXCuocOne.updateOne({uid: obj.uid, phien: game_id, taixiu:true, select:true, red:false}, {$set:{win:win}, $inc:{tralai:obj.bet}}).exec();
 								}else{
 									// Trả lại 1 phần
 									let betPlay = obj.bet-TaiXiu_tong_xu_lech;
@@ -473,8 +482,7 @@ let thongtin_thanhtoan = function(game_id, dice = false){
 									}
 									obj.save();
 									oneUpdate.tralai = obj.tralai;
-									TXCuocOne.updateOne({uid: obj.uid, phien: game_id, taixiu:true, select:true, red:false}, {$set:{win:win}, $inc:oneUpdate}).exec();
-									// cập nhật tiền trả lại
+									return TXCuocOne.updateOne({uid: obj.uid, phien: game_id, taixiu:true, select:true, red:false}, {$set:{win:win}, $inc:oneUpdate}).exec();
 								}
 							}else{
 								if (win) {
@@ -492,7 +500,7 @@ let thongtin_thanhtoan = function(game_id, dice = false){
 									let xuUpdate = obj.bet+betwin;
 									UserInfo.updateOne({id:obj.uid}, {$inc:{red:thuong, xu:xuUpdate, xuPlay:obj.bet, xuWin:betwin, thuong:thuong}}).exec();
 									TaiXiu_User.updateOne({uid: obj.uid}, {$inc:{tWinXu:obj.bet, tXuPlay:obj.bet}}).exec();
-									TXCuocOne.updateOne({uid: obj.uid, phien: game_id, taixiu:true, select:true, red:false}, {$set:{win:true}, $inc:oneUpdate}).exec();
+									return TXCuocOne.updateOne({uid: obj.uid, phien: game_id, taixiu:true, select:true, red:false}, {$set:{win:true}, $inc:oneUpdate}).exec();
 								}else{
 									obj.thanhtoan = true;
 									obj.save();
@@ -514,7 +522,7 @@ let thongtin_thanhtoan = function(game_id, dice = false){
 									obj.save();
 
 									UserInfo.updateOne({id:obj.uid}, {$inc:{xu:obj.bet}}).exec();
-									TXCuocOne.updateOne({uid: obj.uid, phien: game_id, taixiu:true, select:false, red:false}, {$set:{win:win}, $inc:{tralai:obj.bet}}).exec();
+									return TXCuocOne.updateOne({uid: obj.uid, phien: game_id, taixiu:true, select:false, red:false}, {$set:{win:win}, $inc:{tralai:obj.bet}}).exec();
 								}else{
 									// Trả lại 1 phần
 									let betPlay = obj.bet-TaiXiu_tong_xu_lech;
@@ -544,8 +552,7 @@ let thongtin_thanhtoan = function(game_id, dice = false){
 									}
 									obj.save();
 									oneUpdate.tralai = obj.tralai;
-									TXCuocOne.updateOne({uid: obj.uid, phien: game_id, taixiu:true, select:false, red:false}, {$set:{win:win}, $inc:oneUpdate}).exec();
-									// cập nhật tiền trả lại
+									return TXCuocOne.updateOne({uid: obj.uid, phien: game_id, taixiu:true, select:false, red:false}, {$set:{win:win}, $inc:oneUpdate}).exec();
 								}
 							}else{
 								if (win) {
@@ -563,7 +570,7 @@ let thongtin_thanhtoan = function(game_id, dice = false){
 									let xuUpdate = obj.bet+betwin;
 									UserInfo.updateOne({id:obj.uid}, {$inc:{red:thuong, xu:xuUpdate, xuPlay:obj.bet, xuWin:betwin, thuong:thuong}}).exec();
 									TaiXiu_User.updateOne({uid: obj.uid}, {$inc:{tWinXu:obj.bet, tXuPlay:obj.bet}}).exec();
-									TXCuocOne.updateOne({uid: obj.uid, phien: game_id, taixiu:true, select:false, red:false}, {$set:{win:true}, $inc:oneUpdate}).exec();
+									return TXCuocOne.updateOne({uid: obj.uid, phien: game_id, taixiu:true, select:false, red:false}, {$set:{win:true}, $inc:oneUpdate}).exec();
 								}else{
 									obj.thanhtoan = true;
 									obj.save();
@@ -585,7 +592,7 @@ let thongtin_thanhtoan = function(game_id, dice = false){
 									obj.save();
 
 									UserInfo.updateOne({id:obj.uid}, {$inc:{red:obj.bet}}).exec();
-									TXCuocOne.updateOne({uid: obj.uid, phien: game_id, taixiu:false, select:true, red:true}, {$set:{win:win}, $inc:{tralai:obj.bet}}).exec();
+									return TXCuocOne.updateOne({uid: obj.uid, phien: game_id, taixiu:false, select:true, red:true}, {$set:{win:win}, $inc:{tralai:obj.bet}}).exec();
 								}else{
 									// Trả lại 1 phần
 									let betPlay = obj.bet-ChanLe_tong_red_lech;
@@ -609,7 +616,7 @@ let thongtin_thanhtoan = function(game_id, dice = false){
 										TaiXiu_User.updateOne({uid: obj.uid}, {$inc:{cLostRed:betPlay, cRedPlay:betPlay}}).exec();
 									}
 									obj.save();
-									TXCuocOne.updateOne({uid: obj.uid, phien: game_id, taixiu:false, select:true, red:true}, {$set:{win:win}, $inc:{tralai:obj.tralai, betwin:betwinP}}).exec();
+									return TXCuocOne.updateOne({uid: obj.uid, phien: game_id, taixiu:false, select:true, red:true}, {$set:{win:win}, $inc:{tralai:obj.tralai, betwin:betwinP}}).exec();
 								}
 							}else{
 								if (win) {
@@ -623,7 +630,7 @@ let thongtin_thanhtoan = function(game_id, dice = false){
 									let redUpdate = obj.bet+betwin;
 									UserInfo.updateOne({id:obj.uid}, {$inc:{red:redUpdate, redWin:betwin, redPlay:obj.bet}}).exec();
 									TaiXiu_User.updateOne({uid: obj.uid}, {$inc:{cWinRed:betwin, cRedPlay: obj.bet}}).exec();
-									TXCuocOne.updateOne({uid: obj.uid, phien: game_id, taixiu:false, select:true, red:true}, {$set:{win:true}, $inc:{betwin:betwin}}).exec();
+									return TXCuocOne.updateOne({uid: obj.uid, phien: game_id, taixiu:false, select:true, red:true}, {$set:{win:true}, $inc:{betwin:betwin}}).exec();
 								}else{
 									obj.thanhtoan = true;
 									obj.save();
@@ -645,7 +652,7 @@ let thongtin_thanhtoan = function(game_id, dice = false){
 									obj.save();
 
 									UserInfo.updateOne({id:obj.uid}, {$inc:{red:obj.bet}}).exec();
-									TXCuocOne.updateOne({uid: obj.uid, phien: game_id, taixiu:false, select:false, red:true}, {$set:{win:win}, $inc:{tralai:obj.bet}}).exec();
+									return TXCuocOne.updateOne({uid: obj.uid, phien: game_id, taixiu:false, select:false, red:true}, {$set:{win:win}, $inc:{tralai:obj.bet}}).exec();
 								}else{
 									// Trả lại 1 phần
 									let betPlay = obj.bet-ChanLe_tong_red_lech;
@@ -669,7 +676,7 @@ let thongtin_thanhtoan = function(game_id, dice = false){
 										TaiXiu_User.updateOne({uid: obj.uid}, {$inc:{cLostRed:betPlay, cRedPlay:betPlay}}).exec();
 									}
 									obj.save();
-									TXCuocOne.updateOne({uid: obj.uid, phien: game_id, taixiu:false, select:false, red:true}, {$set:{win:win}, $inc:{tralai:obj.tralai, betwin:betwinP}}).exec();
+									return TXCuocOne.updateOne({uid: obj.uid, phien: game_id, taixiu:false, select:false, red:true}, {$set:{win:win}, $inc:{tralai:obj.tralai, betwin:betwinP}}).exec();
 								}
 							}else{
 								if (win) {
@@ -683,7 +690,7 @@ let thongtin_thanhtoan = function(game_id, dice = false){
 									let redUpdate = obj.bet+betwin;
 									UserInfo.updateOne({id:obj.uid}, {$inc:{red:redUpdate, redWin:betwin, redPlay:obj.bet}}).exec();
 									TaiXiu_User.updateOne({uid: obj.uid}, {$inc:{cWinRed:betwin, cRedPlay: obj.bet}}).exec();
-									TXCuocOne.updateOne({uid: obj.uid, phien: game_id, taixiu:false, select:false, red:true}, {$set:{win:true}, $inc:{betwin:betwin}}).exec();
+									return TXCuocOne.updateOne({uid: obj.uid, phien: game_id, taixiu:false, select:false, red:true}, {$set:{win:true}, $inc:{betwin:betwin}}).exec();
 								}else{
 									obj.thanhtoan = true;
 									obj.save();
@@ -705,7 +712,7 @@ let thongtin_thanhtoan = function(game_id, dice = false){
 									obj.save();
 
 									UserInfo.updateOne({id:obj.uid}, {$inc:{xu:obj.bet}}).exec();
-									TXCuocOne.updateOne({uid: obj.uid, phien: game_id, taixiu:false, select:true, red:false}, {$set:{win:win}, $inc:{tralai:obj.bet}}).exec();
+									return TXCuocOne.updateOne({uid: obj.uid, phien: game_id, taixiu:false, select:true, red:false}, {$set:{win:win}, $inc:{tralai:obj.bet}}).exec();
 								}else{
 									// Trả lại 1 phần
 									let betPlay = obj.bet-ChanLe_tong_xu_lech;
@@ -735,7 +742,7 @@ let thongtin_thanhtoan = function(game_id, dice = false){
 									}
 									obj.save();
 									oneUpdate.tralai = obj.tralai;
-									TXCuocOne.updateOne({uid: obj.uid, phien: game_id, taixiu:false, select:true, red:false}, {$set:{win:win}, $inc:oneUpdate}).exec();
+									return TXCuocOne.updateOne({uid: obj.uid, phien: game_id, taixiu:false, select:true, red:false}, {$set:{win:win}, $inc:oneUpdate}).exec();
 								}
 							}else{
 								if (win) {
@@ -752,7 +759,7 @@ let thongtin_thanhtoan = function(game_id, dice = false){
 									let xuUpdate = obj.bet+betwin;
 									UserInfo.updateOne({id:obj.uid}, {$inc:{red:thuong, xu:xuUpdate, xuPlay:obj.bet, xuWin:betwin, thuong:thuong}}).exec();
 									TaiXiu_User.updateOne({uid: obj.uid}, {$inc:{cWinXu:obj.bet, cXuPlay:obj.bet}}).exec();
-									TXCuocOne.updateOne({uid: obj.uid, phien: game_id, taixiu:false, select:true, red:false}, {$set:{win:true}, $inc:oneUpdate}).exec();
+									return TXCuocOne.updateOne({uid: obj.uid, phien: game_id, taixiu:false, select:true, red:false}, {$set:{win:true}, $inc:oneUpdate}).exec();
 								}else{
 									obj.thanhtoan = true;
 									obj.save();
@@ -773,7 +780,7 @@ let thongtin_thanhtoan = function(game_id, dice = false){
 									obj.tralai    = obj.bet;
 									obj.save();
 									UserInfo.updateOne({id:obj.uid}, {$inc:{xu:obj.bet}}).exec();
-									TXCuocOne.updateOne({uid: obj.uid, phien: game_id, taixiu:false, select:false, red:false}, {$set:{win:win}, $inc:{tralai:obj.bet}}).exec();
+									return TXCuocOne.updateOne({uid: obj.uid, phien: game_id, taixiu:false, select:false, red:false}, {$set:{win:win}, $inc:{tralai:obj.bet}}).exec();
 								}else{
 									// Trả lại 1 phần
 									let betPlay = obj.bet-ChanLe_tong_xu_lech;
@@ -803,7 +810,7 @@ let thongtin_thanhtoan = function(game_id, dice = false){
 									}
 									obj.save();
 									oneUpdate.tralai = obj.tralai;
-									TXCuocOne.updateOne({uid: obj.uid, phien: game_id, taixiu:false, select:false, red:false}, {$set:{win:win}, $inc:oneUpdate}).exec();
+									return TXCuocOne.updateOne({uid: obj.uid, phien: game_id, taixiu:false, select:false, red:false}, {$set:{win:win}, $inc:oneUpdate}).exec();
 								}
 							}else{
 								if (win) {
@@ -821,7 +828,7 @@ let thongtin_thanhtoan = function(game_id, dice = false){
 									let xuUpdate = obj.bet+betwin;
 									UserInfo.updateOne({id:obj.uid}, {$inc:{red:thuong, xu:xuUpdate, xuPlay:obj.bet, xuWin:betwin, thuong:thuong}}).exec();
 									TaiXiu_User.updateOne({uid: obj.uid}, {$inc:{cWinXu:obj.bet, cXuPlay:obj.bet}}).exec();
-									TXCuocOne.updateOne({uid: obj.uid, phien: game_id, taixiu:false, select:false, red:false}, {$set:{win:true}, $inc:oneUpdate}).exec();
+									return TXCuocOne.updateOne({uid: obj.uid, phien: game_id, taixiu:false, select:false, red:false}, {$set:{win:true}, $inc:oneUpdate}).exec();
 								}else{
 									obj.thanhtoan = true;
 									obj.save();
@@ -833,20 +840,21 @@ let thongtin_thanhtoan = function(game_id, dice = false){
 						}
 						return 1;
 					}))
-					.then(function(arrayOfResults) {
-						setTimeout(function(){
+					.then(function(resultUpdate) {
+						Promise.all(resultUpdate.map(function(okU){
+							return okU;
+						}))
+						.then(function(resultUpdateOk) {
 							playGame();
 							setTaiXiu_user(game_id, dice);
-						}, 1000);
+						});
 					});
-				}, reason => {
 				});
 			}else if (dice) {
 				playGame();
 			}
 		});
 	}else{
-
 		// Users
 		let home = {taixiu:{taixiu:{red_tai: io.taixiu.taixiu.red_tai, red_xiu: io.taixiu.taixiu.red_xiu}}};
 		Promise.all(Object.values(io.users).map(function(users){

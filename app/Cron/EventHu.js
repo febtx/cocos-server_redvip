@@ -1,13 +1,15 @@
 
-var TaiXiu_User = require('../Models/TaiXiu_user');
-var HU          = require('../Models/HU');
+let TaiXiu_User  = require('../Models/TaiXiu_user');
+let TaiXiu_event = require('../Models/TaiXiu/TaiXiu_event');
 
-var UserInfo    = require('../Models/UserInfo');
-var Message     = require('../Models/Message');
+let HU          = require('../Models/HU');
 
-var numberWithCommas = require('../Helpers/Helpers').numberWithCommas;
+let UserInfo    = require('../Models/UserInfo');
+let Message     = require('../Models/Message');
 
-function cronDay(day){
+let numberWithCommas = require('../Helpers/Helpers').numberWithCommas;
+
+let cronDay = function(day){
 	if (day < 0) {
 		return 6;
 	}else if (day > 6) {
@@ -15,19 +17,18 @@ function cronDay(day){
 	}
 	return day;
 }
-
-function createMess(uid, bet, top, day){
+let createMess = function(uid, bet, top, day){
 	Message.create({'uid': uid, 'title':'Đu dây Tài Xỉu', 'text':'Xin Chúc Mừng!!' + "\n\n" + 'Bạn nhận được ' + numberWithCommas(bet) + ' RED, từ sự kiện đu dây tài xỉu.' + "\n" + 'Vị trí của bạn: TOP ' + top + ' - ' + day, 'time':new Date()});
 }
 
-module.exports = function() {
-	var file_angrybird = require('../../config/angrybird.json');
-	var file_bigbabol  = require('../../config/bigbabol.json');
-	var file_minipoker = require('../../config/minipoker.json');
+module.exports = function(){
+	let file_angrybird = require('../../config/angrybird.json');
+	let file_bigbabol  = require('../../config/bigbabol.json');
+	let file_minipoker = require('../../config/minipoker.json');
 
-	var timeNow = new Date();
+	let timeNow = new Date();
 	timeNow     = timeNow.getDay();
-	var homQua  = cronDay(timeNow-1);
+	let homQua  = cronDay(timeNow-1);
 
 	/**
 	 * AngryBirds
@@ -163,140 +164,115 @@ module.exports = function() {
 	 * Tài Xỉu
 	*/
 
-	TaiXiu_User.updateMany({}, {$set:{'tLineWinHQ':0,'tLineLostHQ':0,'tLineWinHQGift':0,'tLineLostHQGift':0,}}).exec(function(err, okWait){
-		var topWin = TaiXiu_User.aggregate([
-			{$match:{tLineWinRedH:{$gt:0}}},
-			{$project: {
-				uid: "$uid",
-				top: "$tLineWinRedH",
-				time: "$time",
-			}},
-			{$sort: {'top': -1, 'time': -1}},
-			{$limit: 20}
-		]).exec();
+	var topWin = TaiXiu_User.aggregate([
+		{$match:{tLineWinRedH:{$gt:0}}},
+		{$project: {
+			uid:   "$uid",
+			top:   "$tLineWinRedH",
+			first: "$first",
+			last:  "$last",
+		}},
+		{$sort: {'top': -1, 'last': -1}},
+		{$limit: 20}
+	]).exec();
 
-		var topLost = TaiXiu_User.aggregate([
-			{$match:{tLineLostRedH:{$gt:0}}},
-			{$project: {
-				uid: "$uid",
-				top: "$tLineLostRedH",
-				time: "$time",
-			}},
-			{$sort: {'top': -1, 'time': -1}},
-			{$limit: 20}
-		]).exec();
+	var topLost = TaiXiu_User.aggregate([
+		{$match:{tLineLostRedH:{$gt:0}}},
+		{$project: {
+			uid:   "$uid",
+			top:   "$tLineLostRedH",
+			first: "$first",
+			last:  "$last",
+		}},
+		{$sort: {'top': -1, 'last': -1}},
+		{$limit: 20}
+	]).exec();
 
-		Promise.all([topWin, topLost])
-		.then(result => {
-			/**
-			Promise.all(result[0].map(function(users, index){
-				if (index == 0) {
-					TaiXiu_User.updateOne({'_id': users._id}, {$set:{'tLineWinHQ':users.top, 'tLineWinHQGift':500000}}).exec();
-					UserInfo.updateOne({'id': users.uid}, {$inc:{'red':500000}}).exec();
-				}else if (index == 1) {
-					TaiXiu_User.updateOne({'_id': users._id}, {$set:{'tLineWinHQ':users.top, 'tLineWinHQGift':200000}}).exec();
-					UserInfo.updateOne({'id': users.uid}, {$inc:{'red':200000}}).exec();
-				}else if (index == 2) {
-					TaiXiu_User.updateOne({'_id': users._id}, {$set:{'tLineWinHQ':users.top, 'tLineWinHQGift':100000}}).exec();
-					UserInfo.updateOne({'id': users.uid}, {$inc:{'red':100000}}).exec();
-				}else if (index >= 3 && index < 10) {
-					TaiXiu_User.updateOne({'_id': users._id}, {$set:{'tLineWinHQ':users.top, 'tLineWinHQGift':50000}}).exec();
-					UserInfo.updateOne({'id': users.uid}, {$inc:{'red':50000}}).exec();
-				}else if (index >= 10 && index < 50) {
-					TaiXiu_User.updateOne({'_id': users._id}, {$set:{'tLineWinHQ':users.top, 'tLineWinHQGift':20000}}).exec();
-					UserInfo.updateOne({'id': users.uid}, {$inc:{'red':20000}}).exec();
-				}else if (index >= 50 && index < 100) {
-					TaiXiu_User.updateOne({'_id': users._id}, {$set:{'tLineWinHQ':users.top, 'tLineWinHQGift':10000}}).exec();
-					UserInfo.updateOne({'id': users.uid}, {$inc:{'red':10000}}).exec();
-				}
-			}));
+	Promise.all([topWin, topLost])
+	.then(result => {
+		let date = new Date();
+		date.setDate(date.getDate()-1);
 
-			Promise.all(result[1].map(function(users, index){
-				if (index == 0) {
-					TaiXiu_User.updateOne({'_id': users._id}, {$set:{'tLineLostHQ':users.top, 'tLineLostHQGift':500000}}).exec();
-					UserInfo.updateOne({'id': users.uid}, {$inc:{'red':500000}}).exec();
-				}else if (index == 1) {
-					TaiXiu_User.updateOne({'_id': users._id}, {$set:{'tLineLostHQ':users.top, 'tLineLostHQGift':200000}}).exec();
-					UserInfo.updateOne({'id': users.uid}, {$inc:{'red':200000}}).exec();
-				}else if (index == 2) {
-					TaiXiu_User.updateOne({'_id': users._id}, {$set:{'tLineLostHQ':users.top, 'tLineLostHQGift':100000}}).exec();
-					UserInfo.updateOne({'id': users.uid}, {$inc:{'red':100000}}).exec();
-				}else if (index >= 3 && index < 10) {
-					TaiXiu_User.updateOne({'_id': users._id}, {$set:{'tLineLostHQ':users.top, 'tLineLostHQGift':50000}}).exec();
-					UserInfo.updateOne({'id': users.uid}, {$inc:{'red':50000}}).exec();
-				}else if (index >= 10 && index < 50) {
-					TaiXiu_User.updateOne({'_id': users._id}, {$set:{'tLineLostHQ':users.top, 'tLineLostHQGift':20000}}).exec();
-					UserInfo.updateOne({'id': users.uid}, {$inc:{'red':20000}}).exec();
-				}else if (index >= 50 && index < 100) {
-					TaiXiu_User.updateOne({'_id': users._id}, {$set:{'tLineLostHQ':users.top, 'tLineLostHQGift':10000}}).exec();
-					UserInfo.updateOne({'id': users.uid}, {$inc:{'red':10000}}).exec();
-				}
-			}));
-			*/
-			Promise.all(result[0].map(function(users, index){
-				if (index == 0) {
-					TaiXiu_User.updateOne({'_id': users._id}, {$set:{'tLineWinHQ':users.top, 'tLineWinHQGift':500000}}).exec();
-					UserInfo.updateOne({'id': users.uid}, {$inc:{'red':500000}}).exec();
-					createMess(users.uid, 500000, index+1, 'Dây Thắng');
-				}else if (index == 1) {
-					TaiXiu_User.updateOne({'_id': users._id}, {$set:{'tLineWinHQ':users.top, 'tLineWinHQGift':400000}}).exec();
-					UserInfo.updateOne({'id': users.uid}, {$inc:{'red':400000}}).exec();
-					createMess(users.uid, 400000, index+1, 'Dây Thắng');
-				}else if (index == 2) {
-					TaiXiu_User.updateOne({'_id': users._id}, {$set:{'tLineWinHQ':users.top, 'tLineWinHQGift':300000}}).exec();
-					UserInfo.updateOne({'id': users.uid}, {$inc:{'red':300000}}).exec();
-					createMess(users.uid, 300000, index+1, 'Dây Thắng');
-				}else if (index == 3) {
-					TaiXiu_User.updateOne({'_id': users._id}, {$set:{'tLineWinHQ':users.top, 'tLineWinHQGift':200000}}).exec();
-					UserInfo.updateOne({'id': users.uid}, {$inc:{'red':200000}}).exec();
-					createMess(users.uid, 200000, index+1, 'Dây Thắng');
-				}else if (index == 4) {
-					TaiXiu_User.updateOne({'_id': users._id}, {$set:{'tLineWinHQ':users.top, 'tLineWinHQGift':100000}}).exec();
-					UserInfo.updateOne({'id': users.uid}, {$inc:{'red':100000}}).exec();
-					createMess(users.uid, 100000, index+1, 'Dây Thắng');
-				}else if (index >= 5 && index < 10) {
-					TaiXiu_User.updateOne({'_id': users._id}, {$set:{'tLineWinHQ':users.top, 'tLineWinHQGift':50000}}).exec();
-					UserInfo.updateOne({'id': users.uid}, {$inc:{'red':50000}}).exec();
-					createMess(users.uid, 50000, index+1, 'Dây Thắng');
-				}else if (index >= 10 && index < 20) {
-					TaiXiu_User.updateOne({'_id': users._id}, {$set:{'tLineWinHQ':users.top, 'tLineWinHQGift':20000}}).exec();
-					UserInfo.updateOne({'id': users.uid}, {$inc:{'red':20000}}).exec();
-					createMess(users.uid, 20000, index+1, 'Dây Thắng');
-				}
-			}));
+		let stringTime = date.getDate() + '/' + (date.getMonth()+1) + '/' + date.getFullYear();
+		Promise.all(result[0].map(function(users, index){
+			if (index == 0) {
+				UserInfo.updateOne({'id': users.uid}, {$inc:{'red':500000}}).exec(function(err, user){
+					TaiXiu_event.create({date:stringTime, name:user.name, line:users.top, win:true, first:users.first, last:users.last, reward:500000});
+				});
+				createMess(users.uid, 500000, index+1, 'Dây Thắng');
+			}else if (index == 1) {
+				UserInfo.updateOne({'id': users.uid}, {$inc:{'red':400000}}).exec(function(err, user){
+					TaiXiu_event.create({date:stringTime, name:user.name, line:users.top, win:true, first:users.first, last:users.last, reward:400000});
+				});
+				createMess(users.uid, 400000, index+1, 'Dây Thắng');
+			}else if (index == 2) {
+				UserInfo.updateOne({'id': users.uid}, {$inc:{'red':300000}}).exec(function(err, user){
+					TaiXiu_event.create({date:stringTime, name:user.name, line:users.top, win:true, first:users.first, last:users.last, reward:300000});
+				});
+				createMess(users.uid, 300000, index+1, 'Dây Thắng');
+			}else if (index == 3) {
+				UserInfo.updateOne({'id': users.uid}, {$inc:{'red':200000}}).exec(function(err, user){
+					TaiXiu_event.create({date:stringTime, name:user.name, line:users.top, win:true, first:users.first, last:users.last, reward:200000});
+				});
+				createMess(users.uid, 200000, index+1, 'Dây Thắng');
+			}else if (index == 4) {
+				UserInfo.updateOne({'id': users.uid}, {$inc:{'red':100000}}).exec(function(err, user){
+					TaiXiu_event.create({date:stringTime, name:user.name, line:users.top, win:true, first:users.first, last:users.last, reward:100000});
+				});
+				createMess(users.uid, 100000, index+1, 'Dây Thắng');
+			}else if (index >= 5 && index < 10) {
+				UserInfo.updateOne({'id': users.uid}, {$inc:{'red':50000}}).exec(function(err, user){
+					TaiXiu_event.create({date:stringTime, name:user.name, line:users.top, win:true, first:users.first, last:users.last, reward:50000});
+				});
+				createMess(users.uid, 50000, index+1, 'Dây Thắng');
+			}else if (index >= 10 && index < 20) {
+				UserInfo.updateOne({'id': users.uid}, {$inc:{'red':20000}}).exec(function(err, user){
+					TaiXiu_event.create({date:stringTime, name:user.name, line:users.top, win:true, first:users.first, last:users.last, reward:20000});
+				});
+				createMess(users.uid, 20000, index+1, 'Dây Thắng');
+			}
+		}));
 
-			Promise.all(result[1].map(function(usersL, indexL){
-				if (indexL == 0) {
-					TaiXiu_User.updateOne({'_id': usersL._id}, {$set:{'tLineLostHQ':usersL.top, 'tLineLostHQGift':500000}}).exec();
-					UserInfo.updateOne({'id': usersL.uid}, {$inc:{'red':500000}}).exec();
-					createMess(usersL.uid, 500000, indexL+1, 'Dây Thua');
-				}else if (indexL == 1) {
-					TaiXiu_User.updateOne({'_id': usersL._id}, {$set:{'tLineLostHQ':usersL.top, 'tLineLostHQGift':400000}}).exec();
-					UserInfo.updateOne({'id': usersL.uid}, {$inc:{'red':400000}}).exec();
-					createMess(usersL.uid, 400000, indexL+1, 'Dây Thua');
-				}else if (indexL == 2) {
-					TaiXiu_User.updateOne({'_id': usersL._id}, {$set:{'tLineLostHQ':usersL.top, 'tLineLostHQGift':300000}}).exec();
-					UserInfo.updateOne({'id': usersL.uid}, {$inc:{'red':300000}}).exec();
-					createMess(usersL.uid, 300000, indexL+1, 'Dây Thua');
-				}else if (indexL == 3) {
-					TaiXiu_User.updateOne({'_id': usersL._id}, {$set:{'tLineLostHQ':usersL.top, 'tLineLostHQGift':200000}}).exec();
-					UserInfo.updateOne({'id': usersL.uid}, {$inc:{'red':200000}}).exec();
-					createMess(usersL.uid, 200000, indexL+1, 'Dây Thua');
-				}else if (indexL == 4) {
-					TaiXiu_User.updateOne({'_id': usersL._id}, {$set:{'tLineLostHQ':usersL.top, 'tLineLostHQGift':100000}}).exec();
-					UserInfo.updateOne({'id': usersL.uid}, {$inc:{'red':100000}}).exec();
-					createMess(usersL.uid, 100000, indexL+1, 'Dây Thua');
-				}else if (indexL >= 5 && indexL < 10) {
-					TaiXiu_User.updateOne({'_id': usersL._id}, {$set:{'tLineLostHQ':usersL.top, 'tLineLostHQGift':50000}}).exec();
-					UserInfo.updateOne({'id': usersL.uid}, {$inc:{'red':50000}}).exec();
-					createMess(usersL.uid, 50000, indexL+1, 'Dây Thua');
-				}else if (indexL >= 10 && indexL < 20) {
-					TaiXiu_User.updateOne({'_id': usersL._id}, {$set:{'tLineLostHQ':usersL.top, 'tLineLostHQGift':20000}}).exec();
-					UserInfo.updateOne({'id': usersL.uid}, {$inc:{'red':20000}}).exec();
-					createMess(usersL.uid, 20000, indexL+1, 'Dây Thua');
-				}
-			}));
-			TaiXiu_User.updateMany({}, {$set:{'tLineWinRedH':0,'tLineLostRedH':0,'tLineWinXuH':0,'tLineLostXuH':0,'cLineWinRedH':0,'cLineLostRedH':0,'cLineWinXuH':0,'cLineLostXuH':0}}).exec();
-		});
+
+		Promise.all(result[1].map(function(usersL, indexL){
+			if (indexL == 0) {
+				UserInfo.updateOne({'id': usersL.uid}, {$inc:{'red':500000}}).exec(function(err, user){
+					TaiXiu_event.create({date:stringTime, name:user.name, line:usersL.top, win:false, first:usersL.first, last:usersL.last, reward:500000});
+				});
+				createMess(usersL.uid, 500000, indexL+1, 'Dây Thua');
+			}else if (indexL == 1) {
+				UserInfo.updateOne({'id': usersL.uid}, {$inc:{'red':400000}}).exec(function(err, user){
+					TaiXiu_event.create({date:stringTime, name:user.name, line:usersL.top, win:false, first:usersL.first, last:usersL.last, reward:400000});
+				});
+				createMess(usersL.uid, 400000, indexL+1, 'Dây Thua');
+			}else if (indexL == 2) {
+				UserInfo.updateOne({'id': usersL.uid}, {$inc:{'red':300000}}).exec(function(err, user){
+					TaiXiu_event.create({date:stringTime, name:user.name, line:usersL.top, win:false, first:usersL.first, last:usersL.last, reward:300000});
+				});
+				createMess(usersL.uid, 300000, indexL+1, 'Dây Thua');
+			}else if (indexL == 3) {
+				UserInfo.updateOne({'id': usersL.uid}, {$inc:{'red':200000}}).exec(function(err, user){
+					TaiXiu_event.create({date:stringTime, name:user.name, line:usersL.top, win:false, first:usersL.first, last:usersL.last, reward:200000});
+				});
+				createMess(usersL.uid, 200000, indexL+1, 'Dây Thua');
+			}else if (indexL == 4) {
+				UserInfo.updateOne({'id': usersL.uid}, {$inc:{'red':100000}}).exec(function(err, user){
+					TaiXiu_event.create({date:stringTime, name:user.name, line:usersL.top, win:false, first:usersL.first, last:usersL.last, reward:100000});
+				});
+				createMess(usersL.uid, 100000, indexL+1, 'Dây Thua');
+			}else if (indexL >= 5 && indexL < 10) {
+				UserInfo.updateOne({'id': usersL.uid}, {$inc:{'red':50000}}).exec(function(err, user){
+					TaiXiu_event.create({date:stringTime, name:user.name, line:usersL.top, win:false, first:usersL.first, last:usersL.last, reward:50000});
+				});
+				createMess(usersL.uid, 50000, indexL+1, 'Dây Thua');
+			}else if (indexL >= 10 && indexL < 20) {
+				UserInfo.updateOne({'id': usersL.uid}, {$inc:{'red':20000}}).exec(function(err, user){
+					TaiXiu_event.create({date:stringTime, name:user.name, line:usersL.top, win:false, first:usersL.first, last:usersL.last, reward:20000});
+				});
+				createMess(usersL.uid, 20000, indexL+1, 'Dây Thua');
+			}
+		}));
+
+		TaiXiu_User.updateMany({}, {$set:{'tLineWinRedH':0,'tLineLostRedH':0,'tLineWinXuH':0,'tLineLostXuH':0,'cLineWinRedH':0,'cLineLostRedH':0,'cLineWinXuH':0,'cLineLostXuH':0}}).exec();
 	});
 };

@@ -3,7 +3,6 @@ let mongoose = require("mongoose");
 
 let Schema = new mongoose.Schema({
 	date:   {type: String,  required: true, index: true}, // ngày sự kiện
-	top:    {type: Number,  required: true},              // vị trí
 	name:   {type: String,  required: true},              // Tên tài khoản
 	line:   {type: Number,  required: true},              // Số dây Thắng/Thua
 	win:    {type: Boolean, default: false},              // Thắng/Thua

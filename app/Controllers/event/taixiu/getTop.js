@@ -1,6 +1,6 @@
 
-var TaiXiu_User = require('../../../Models/TaiXiu_user');
-var UserInfo    = require('../../../Models/UserInfo');
+let TaiXiu_User = require('../../../Models/TaiXiu_user');
+let UserInfo    = require('../../../Models/UserInfo');
 
 module.exports = function(client){
 	var topWin = TaiXiu_User.aggregate([
@@ -8,9 +8,9 @@ module.exports = function(client){
 		{$project: {
 			uid: "$uid",
 			top: "$tLineWinRedH",
-			time: "$time",
+			last: "$last",
 		}},
-		{$sort: {'top': -1, 'time': -1}},
+		{$sort: {'top': -1, 'last': -1}},
 		{$limit: 20}
 	]).exec();
 
@@ -19,9 +19,9 @@ module.exports = function(client){
 		{$project: {
 			uid: "$uid",
 			top: "$tLineLostRedH",
-			time: "$time",
+			last: "$last",
 		}},
-		{$sort: {'top': -1, 'time': -1}},
+		{$sort: {'top': -1, 'last': -1}},
 		{$limit: 20}
 	]).exec();
 

@@ -1,71 +1,20 @@
 
-var TaiXiu_User = require('../../../Models/TaiXiu_user');
-var UserInfo    = require('../../../Models/UserInfo');
+let TaiXiu_User  = require('../../../Models/TaiXiu_user');
+let TaiXiu_event = require('../../../Models/TaiXiu/TaiXiu_event');
+
+let UserInfo     = require('../../../Models/UserInfo');
 
 module.exports = function(client){
-	var topWin = TaiXiu_User.aggregate([
-		{$match:{tLineWinHQ:{$gt:0}}},
-		{$project: {
-			uid: "$uid",
-			top: "$tLineWinHQ",
-			gift: "$tLineWinHQGift",
-		}},
-		{$sort: {'top': -1, 'gift': -1}},
-		{$limit: 20}
-	]).exec();
+	let date = new Date();
+	date.setDate(date.getDate()-1);
 
-	var topLost = TaiXiu_User.aggregate([
-		{$match:{tLineLostHQ:{$gt:1}}},
-		{$project: {
-			uid: "$uid",
-			top: "$tLineLostHQ",
-			gift: "$tLineLostHQGift",
-		}},
-		{$sort: {'top': -1, 'gift': -1}},
-		{$limit: 20}
-	]).exec();
+	let stringTime = date.getDate() + '/' + (date.getMonth()+1) + '/' + date.getFullYear();
+
+	var topWin  = TaiXiu_event.find({date: stringTime, win: true}, {}, {sort:{'line':-1, 'last':-1}}).exec();
+	var topLost = TaiXiu_event.find({date: stringTime, win: false}, {}, {sort:{'line':-1, 'last':-1}}).exec();
 
 	Promise.all([topWin, topLost])
 	.then(result => {
-		var win = new Promise(function(resolveH, rejectTH) {
-			Promise.all(result[0].map(function(obj){
-				return new Promise(function(resolve, reject) {
-					UserInfo.findOne({'id': obj.uid}, 'name', function(error, user){
-							delete obj._id;
-							delete obj.uid;
-							if (!!user) {
-								obj['name'] = user.name;
-							}
-							resolve(obj);
-						})
-					})
-			}))
-			.then(usersWin => {
-				resolveH(usersWin);
-			})
-		});
-
-		var lost = new Promise(function(resolveTH, rejectTH) {
-			Promise.all(result[1].map(function(obj){
-				return new Promise(function(resolve, reject) {
-					UserInfo.findOne({'id': obj.uid}, 'name', function(error, user){
-							delete obj._id;
-							delete obj.uid;
-							if (!!user) {
-								obj['name'] = user.name;
-							}
-							resolve(obj);
-						})
-					})
-			}))
-			.then(usersLost => {
-				resolveTH(usersLost);
-			})
-		});
-		Promise.all([win, lost])
-		.then(resultH => {
-			win = resultH[0]
-			client.red({event:{taixiu:{topHQ:{win: resultH[0], lost: resultH[1]}}}});
-		});
+		client.red({event:{taixiu:{topHQ:{win: result[0], lost: result[1]}}}});
 	});
 };
