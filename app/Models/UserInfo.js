@@ -36,6 +36,10 @@ let Schema = new mongoose.Schema({
 	huXu:       {type: Number, default: 0},                         // Số lần Nổ Hũ Xu
 
 	type:       {type: Boolean, default: false},                    // Bot = true | Users = false
+
+	otpGet:     {type: Number, default: 0},                         // Số lần lấy mã otp liên tục
+	otpTime:    {type: Number, default: 0},                         // Thời gian lấy mã otp cuối cùng
+
 });
 
 Schema.plugin(AutoIncrement.plugin, {modelName: 'UserInfo', field:'UID'});
