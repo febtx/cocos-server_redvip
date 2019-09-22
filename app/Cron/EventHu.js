@@ -197,38 +197,39 @@ module.exports = function(){
 		let stringTime = numberPad(date.getDate(), 2) + '/' + numberPad(date.getMonth()+1, 2) + '/' + date.getFullYear();
 		Promise.all(result[0].map(function(users, index){
 			if (index == 0) {
-				UserInfo.updateOne({'id': users.uid}, {$inc:{'red':500000}}).exec(function(err, user){
-					TaiXiu_event.create({date:stringTime, name:user.name, line:users.top, win:true, first:users.first, last:users.last, reward:500000});
+				UserInfo.findOneAndUpdate({'id': users.uid}, {$inc:{'red':500000}}).exec(function(err, user){
+					console.log(user);
+					TaiXiu_event.create({date:stringTime, top:index+1, name:user.name, line:users.top, win:true, first:users.first, last:users.last, reward:500000});
 				});
 				createMess(users.uid, 500000, index+1, 'Dây Thắng');
 			}else if (index == 1) {
-				UserInfo.updateOne({'id': users.uid}, {$inc:{'red':400000}}).exec(function(err, user){
-					TaiXiu_event.create({date:stringTime, name:user.name, line:users.top, win:true, first:users.first, last:users.last, reward:400000});
+				UserInfo.findOneAndUpdate({'id': users.uid}, {$inc:{'red':400000}}).exec(function(err, user){
+					TaiXiu_event.create({date:stringTime, top:index+1, name:user.name, line:users.top, win:true, first:users.first, last:users.last, reward:400000});
 				});
 				createMess(users.uid, 400000, index+1, 'Dây Thắng');
 			}else if (index == 2) {
-				UserInfo.updateOne({'id': users.uid}, {$inc:{'red':300000}}).exec(function(err, user){
-					TaiXiu_event.create({date:stringTime, name:user.name, line:users.top, win:true, first:users.first, last:users.last, reward:300000});
+				UserInfo.findOneAndUpdate({'id': users.uid}, {$inc:{'red':300000}}).exec(function(err, user){
+					TaiXiu_event.create({date:stringTime, top:index+1, name:user.name, line:users.top, win:true, first:users.first, last:users.last, reward:300000});
 				});
 				createMess(users.uid, 300000, index+1, 'Dây Thắng');
 			}else if (index == 3) {
-				UserInfo.updateOne({'id': users.uid}, {$inc:{'red':200000}}).exec(function(err, user){
-					TaiXiu_event.create({date:stringTime, name:user.name, line:users.top, win:true, first:users.first, last:users.last, reward:200000});
+				UserInfo.findOneAndUpdate({'id': users.uid}, {$inc:{'red':200000}}).exec(function(err, user){
+					TaiXiu_event.create({date:stringTime, top:index+1, name:user.name, line:users.top, win:true, first:users.first, last:users.last, reward:200000});
 				});
 				createMess(users.uid, 200000, index+1, 'Dây Thắng');
 			}else if (index == 4) {
-				UserInfo.updateOne({'id': users.uid}, {$inc:{'red':100000}}).exec(function(err, user){
-					TaiXiu_event.create({date:stringTime, name:user.name, line:users.top, win:true, first:users.first, last:users.last, reward:100000});
+				UserInfo.findOneAndUpdate({'id': users.uid}, {$inc:{'red':100000}}).exec(function(err, user){
+					TaiXiu_event.create({date:stringTime, top:index+1, name:user.name, line:users.top, win:true, first:users.first, last:users.last, reward:100000});
 				});
 				createMess(users.uid, 100000, index+1, 'Dây Thắng');
 			}else if (index >= 5 && index < 10) {
-				UserInfo.updateOne({'id': users.uid}, {$inc:{'red':50000}}).exec(function(err, user){
-					TaiXiu_event.create({date:stringTime, name:user.name, line:users.top, win:true, first:users.first, last:users.last, reward:50000});
+				UserInfo.findOneAndUpdate({'id': users.uid}, {$inc:{'red':50000}}).exec(function(err, user){
+					TaiXiu_event.create({date:stringTime, top:index+1, name:user.name, line:users.top, win:true, first:users.first, last:users.last, reward:50000});
 				});
 				createMess(users.uid, 50000, index+1, 'Dây Thắng');
 			}else if (index >= 10 && index < 20) {
-				UserInfo.updateOne({'id': users.uid}, {$inc:{'red':20000}}).exec(function(err, user){
-					TaiXiu_event.create({date:stringTime, name:user.name, line:users.top, win:true, first:users.first, last:users.last, reward:20000});
+				UserInfo.findOneAndUpdate({'id': users.uid}, {$inc:{'red':20000}}).exec(function(err, user){
+					TaiXiu_event.create({date:stringTime, top:index+1, name:user.name, line:users.top, win:true, first:users.first, last:users.last, reward:20000});
 				});
 				createMess(users.uid, 20000, index+1, 'Dây Thắng');
 			}
@@ -236,38 +237,38 @@ module.exports = function(){
 
 		Promise.all(result[1].map(function(usersL, indexL){
 			if (indexL == 0) {
-				UserInfo.updateOne({'id': usersL.uid}, {$inc:{'red':500000}}).exec(function(err, user){
-					TaiXiu_event.create({date:stringTime, name:user.name, line:usersL.top, win:false, first:usersL.first, last:usersL.last, reward:500000});
+				UserInfo.findOneAndUpdate({'id': usersL.uid}, {$inc:{'red':500000}}).exec(function(err, user){
+					TaiXiu_event.create({date:stringTime, top:indexL+1, name:user.name, line:usersL.top, win:false, first:usersL.first, last:usersL.last, reward:500000});
 				});
 				createMess(usersL.uid, 500000, indexL+1, 'Dây Thua');
 			}else if (indexL == 1) {
-				UserInfo.updateOne({'id': usersL.uid}, {$inc:{'red':400000}}).exec(function(err, user){
-					TaiXiu_event.create({date:stringTime, name:user.name, line:usersL.top, win:false, first:usersL.first, last:usersL.last, reward:400000});
+				UserInfo.findOneAndUpdate({'id': usersL.uid}, {$inc:{'red':400000}}).exec(function(err, user){
+					TaiXiu_event.create({date:stringTime, top:indexL+1, name:user.name, line:usersL.top, win:false, first:usersL.first, last:usersL.last, reward:400000});
 				});
 				createMess(usersL.uid, 400000, indexL+1, 'Dây Thua');
 			}else if (indexL == 2) {
-				UserInfo.updateOne({'id': usersL.uid}, {$inc:{'red':300000}}).exec(function(err, user){
-					TaiXiu_event.create({date:stringTime, name:user.name, line:usersL.top, win:false, first:usersL.first, last:usersL.last, reward:300000});
+				UserInfo.findOneAndUpdate({'id': usersL.uid}, {$inc:{'red':300000}}).exec(function(err, user){
+					TaiXiu_event.create({date:stringTime, top:indexL+1, name:user.name, line:usersL.top, win:false, first:usersL.first, last:usersL.last, reward:300000});
 				});
 				createMess(usersL.uid, 300000, indexL+1, 'Dây Thua');
 			}else if (indexL == 3) {
-				UserInfo.updateOne({'id': usersL.uid}, {$inc:{'red':200000}}).exec(function(err, user){
-					TaiXiu_event.create({date:stringTime, name:user.name, line:usersL.top, win:false, first:usersL.first, last:usersL.last, reward:200000});
+				UserInfo.findOneAndUpdate({'id': usersL.uid}, {$inc:{'red':200000}}).exec(function(err, user){
+					TaiXiu_event.create({date:stringTime, top:indexL+1, name:user.name, line:usersL.top, win:false, first:usersL.first, last:usersL.last, reward:200000});
 				});
 				createMess(usersL.uid, 200000, indexL+1, 'Dây Thua');
 			}else if (indexL == 4) {
-				UserInfo.updateOne({'id': usersL.uid}, {$inc:{'red':100000}}).exec(function(err, user){
-					TaiXiu_event.create({date:stringTime, name:user.name, line:usersL.top, win:false, first:usersL.first, last:usersL.last, reward:100000});
+				UserInfo.findOneAndUpdate({'id': usersL.uid}, {$inc:{'red':100000}}).exec(function(err, user){
+					TaiXiu_event.create({date:stringTime, top:indexL+1, name:user.name, line:usersL.top, win:false, first:usersL.first, last:usersL.last, reward:100000});
 				});
 				createMess(usersL.uid, 100000, indexL+1, 'Dây Thua');
 			}else if (indexL >= 5 && indexL < 10) {
-				UserInfo.updateOne({'id': usersL.uid}, {$inc:{'red':50000}}).exec(function(err, user){
-					TaiXiu_event.create({date:stringTime, name:user.name, line:usersL.top, win:false, first:usersL.first, last:usersL.last, reward:50000});
+				UserInfo.findOneAndUpdate({'id': usersL.uid}, {$inc:{'red':50000}}).exec(function(err, user){
+					TaiXiu_event.create({date:stringTime, top:indexL+1, name:user.name, line:usersL.top, win:false, first:usersL.first, last:usersL.last, reward:50000});
 				});
 				createMess(usersL.uid, 50000, indexL+1, 'Dây Thua');
 			}else if (indexL >= 10 && indexL < 20) {
-				UserInfo.updateOne({'id': usersL.uid}, {$inc:{'red':20000}}).exec(function(err, user){
-					TaiXiu_event.create({date:stringTime, name:user.name, line:usersL.top, win:false, first:usersL.first, last:usersL.last, reward:20000});
+				UserInfo.findOneAndUpdate({'id': usersL.uid}, {$inc:{'red':20000}}).exec(function(err, user){
+					TaiXiu_event.create({date:stringTime, top:indexL+1, name:user.name, line:usersL.top, win:false, first:usersL.first, last:usersL.last, reward:20000});
 				});
 				createMess(usersL.uid, 20000, indexL+1, 'Dây Thua');
 			}

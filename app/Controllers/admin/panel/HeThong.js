@@ -1,8 +1,14 @@
 
-var get_data = require('./HeThong/get_data');
-var TXBot    = require('./HeThong/TXBot');
-var BCBot    = require('./HeThong/BCBot');
-var clear    = require('./HeThong/clear');
+let get_data = require('./HeThong/get_data');
+let TXBot    = require('./HeThong/TXBot');
+let BCBot    = require('./HeThong/BCBot');
+let clear    = require('./HeThong/clear');
+
+
+
+
+let test    = require('../../../Cron/EventHu');
+
 
 module.exports = function(client, data) {
 	if (!!data) {
@@ -17,6 +23,9 @@ module.exports = function(client, data) {
 		}
 		if (!!data.clear){
 			clear();
+		}
+		if (!!data.test){
+			test();
 		}
 	}
 }

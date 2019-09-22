@@ -5,6 +5,7 @@ let bcrypt = require("bcrypt-nodejs")
 let generateHash = function(password) {
 	return bcrypt.hashSync(password, bcrypt.genSaltSync(12), null)
 }
+
 // so sánh pass
 let validPassword = function(password, Hash) {
 	return bcrypt.compareSync(password, Hash)
@@ -34,7 +35,18 @@ let validateEmail = function(t) {
 }
 
 let checkPhoneValid = function(phone) {
-	return /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im.test(phone)
+	return /^[\+]?(?:[(][0-9]{1,3}[)]|(?:84|0))[0-9]{7,10}$/im.test(phone);
+}
+
+let phoneCrack = function(phone) {
+	let data = phone.match(/^[\+]?(?:[(][0-9]{1,3}[)]|(?:84|0))/im);
+	if (data) {
+		return {
+			region: data[0],
+			phone:  phone.slice(data[0].length, phone.length),
+		};
+	}
+	return data;
 }
 
 let nFormatter = function(t, e) {
@@ -61,6 +73,7 @@ let nFormatter = function(t, e) {
 			return (t / i[n].value).toFixed(e).replace(o, "$1") + i[n].symbol;
 	return t.toFixed(e).replace(o, "$1")
 }
+
 let anPhanTram = function(bet, so_nhan, ti_le, type = false){
 	// so_nhan: số nhân
 	// ti_le: tỉ lệ thuế
@@ -69,10 +82,12 @@ let anPhanTram = function(bet, so_nhan, ti_le, type = false){
 	let vT = !!type ? vV : bet;
 	return vV-Math.ceil(vT*ti_le/100);
 }
+
 // kiểm tra chuỗi chống
 let isEmpty = function(str) {
 	return (!str || 0 === str.length)
 }
+
 // đổi số thành tiền
 let numberWithCommas = function(number) {
 	if (number) {
@@ -82,6 +97,7 @@ let numberWithCommas = function(number) {
 	}
 	return "0"
 }
+
 // Lấy số từ chuỗi
 let getOnlyNumberInString = function(t) {
 	let e = t.match(/\d+/g);
@@ -109,6 +125,7 @@ let shuffle = function(array) {
 	}
 	return array;
 }
+
 let ThongBaoNoHu = function(io, data){
 	Promise.all(Object.values(io.users).map(function(users){
 		Promise.all(users.map(function(client){
@@ -119,6 +136,7 @@ let ThongBaoNoHu = function(io, data){
 	}));
 	io.sendAllClient({pushnohu:data});
 }
+
 let ThongBaoBigWin = function(io, data){
 	Promise.all(Object.values(io.users).map(function(users){
 		Promise.all(users.map(function(client){
@@ -141,6 +159,7 @@ module.exports = {
 	shuffle:         shuffle,
 	validateEmail:   validateEmail,
 	checkPhoneValid: checkPhoneValid,
+	phoneCrack:      phoneCrack,
 	nFormatter:      nFormatter,
 	ThongBaoNoHu:    ThongBaoNoHu,
 	ThongBaoBigWin:  ThongBaoBigWin,
