@@ -91,9 +91,18 @@ function regOTP(client, data){
 													// Xác thực thành công
 													data_otp.active = true;
 													data_otp.save();
-													Phone.create({'uid':client.UID, 'phone':phoneCrack.phone, 'region':phoneCrack.region});
-													UserInfo.updateOne({id:client.UID}, {$set:{email:data.email, cmt:data.cmt}, $inc:{red:3000, xu:10000}}).exec();
-													client.red({notice:{title:'THÀNH CÔNG', text: 'Xác thực thành công.!' + "\n" + 'Bạn nhận được 3.000 Red và 10.000 Xu, chúc bạn chơi game vui vẻ...'}, user: {red: dU.red*1+3000, xu: dU.xu*1+10000, phone: helper.cutPhone(data.phone), email: helper.cutEmail(data.email), cmt: data.cmt}});
+													try {
+														Phone.create({'uid':client.UID, 'phone':phoneCrack.phone, 'region':phoneCrack.region}, function(err, cP){
+															if (!!cP) {
+																UserInfo.updateOne({id:client.UID}, {$set:{email:data.email, cmt:data.cmt}, $inc:{red:3000, xu:10000}}).exec();
+																client.red({notice:{title:'THÀNH CÔNG', text: 'Xác thực thành công.!' + "\n" + 'Bạn nhận được 3.000 Red và 10.000 Xu, chúc bạn chơi game vui vẻ...'}, user: {red: dU.red*1+3000, xu: dU.xu*1+10000, phone: helper.cutPhone(data.phone), email: helper.cutEmail(data.email), cmt: data.cmt}});
+															}else{
+																client.red({notice:{title:'LỖI', text:'Số điện thoại đã tồn tại trên hệ thống.!'}});
+															}
+														});
+													} catch (error) {
+														client.red({notice:{title:'LỖI', text:'Số điện thoại đã tồn tại trên hệ thống.!'}});
+													}
 												}
 											});
 										}
