@@ -9,7 +9,7 @@ module.exports = function(bot, id) {
 		if (check) {
 			Phone.findOne({'phone':check.phone}, {}, function(err2, checkPhone){
 				if (checkPhone) {
-					if (!check.gift || ((new Date()-Date.parse(check.giftTime))/1000) > 86400) {
+					if (!check.gift) {
 						// Gift khởi nghiệp
 						let get_gift = shortid.generate();
 						try {
@@ -17,7 +17,6 @@ module.exports = function(bot, id) {
 								if (!!gift){
 									if (!check.gift){
 										check.gift = true;
-										check.giftTime = new Date();
 										check.save();
 										bot.sendMessage(id, 'Chúc mừng bạn đã nhận Giftcode khởi nghiệp, mã Giftcode của bạn là: ' + get_gift, {reply_markup:{remove_keyboard:true}});
 									}else{
