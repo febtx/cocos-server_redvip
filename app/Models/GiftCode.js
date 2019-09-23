@@ -10,6 +10,7 @@ let Schema = new mongoose.Schema({
 	type:   {type: String, default: ''},         // Mã chung của họ gift code (Người dùng chỉ được sử dụng tối đa 1 thẻ gift trong họ gift cùng loại)
     date:   {type: Date,   default: new Date()}, // Ngày tạo
     todate: {type: Date},                        // Ngày hết hạn (Thẻ gift có giá trị đến hết 24H trong ngày hết hạn)
+    to:     {type: String},                      // Đến người dùng (chỉ họ mới đc nhận)
 });
 
 module.exports = mongoose.model("GiftCode", Schema);

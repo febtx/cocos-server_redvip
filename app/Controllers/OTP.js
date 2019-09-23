@@ -10,7 +10,7 @@ function createOTP(client, type){
 	type = type>>0;
 	Phone.findOne({'uid':client.UID}, function(err3, check){
 		if (check) {
-			OTP.findOne({'uid': client.UID}, {}, {sort:{'_id':-1}}, function(err, data){
+			OTP.findOne({'uid': client.UID, 'phone':check.phone}, {}, {sort:{'_id':-1}}, function(err, data){
 				if (!data || ((new Date()-Date.parse(data.date))/1000) > 180 || data.active) {
 					// Tạo mã OTP mới
 					UserInfo.findOne({'id': client.UID}, 'email red', function(err, user){

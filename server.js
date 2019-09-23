@@ -1,10 +1,16 @@
 
 // server.js
+const Telegram      = require('node-telegram-bot-api');
+const TelegramToken = '987211295:AAGlIN124PtI_g3VXSWXczTrc_ri9BBx-ek';
+const TelegramBot   = new Telegram(TelegramToken, {polling: true});
+
 let express    = require("express");
 let app        = express();
 let port       = process.env.PORT || 80;
 let expressWs  = require('express-ws')(app);
 let bodyParser = require("body-parser");
+
+
 
 // let helmetCSP = require('helmet-csp');
 
@@ -75,6 +81,9 @@ require("./app/Cron/taixiu")(redT);   // Chạy game Tài Xỉu
 require("./app/Cron/baucua")(redT);   // Chạy game Bầu Cua
 
 require("./config/cron")();
+
+require("./app/Telegram/Telegram")(TelegramBot); // Telegram Bot
+
 
 require("./update")();
 
