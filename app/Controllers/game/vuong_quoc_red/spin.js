@@ -209,7 +209,7 @@ module.exports = function(client, data){
 							var celSS = [
 								random_cel2(), random_cel2(), random_cel2(),
 								random_cel2(), random_cel2(), random_cel2(),
-								random_cel1(), random_cel0(),  random_cel0(),
+								random_cel1(), random_cel0(), random_cel0(),
 								2,             1,             1,
 								0,             0,             3,
 							];
@@ -218,7 +218,7 @@ module.exports = function(client, data){
 							var celSS = [
 								random_cel3(), random_cel2(), random_cel2(),
 								random_cel2(), random_cel2(), random_cel2(),
-								random_cel1(), random_cel0(),  random_cel0(),
+								random_cel1(), random_cel0(), 3,
 								2,             1,             1,
 								0,             0,             0,
 							];

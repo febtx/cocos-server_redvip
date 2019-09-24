@@ -143,21 +143,21 @@ module.exports = function(client, data){
 							// khó
 							var celSS = [
 								random_cel2(), random_cel2(), random_cel2(),
-								random_cel1(), 2,             1,
+								3,             1,             2,
 								1,             0,             0,
 							];
 						}else if (config.chedo == 1) {
 							var celSS = [
 								random_cel2(), random_cel2(), random_cel2(),
-								random_cel2(), random_cel1(), random_cel1(),
+								random_cel2(), 2,             1,
 								1,             0,             0,
-							]; // Super
+							];
 						}else{
 							// dễ
 							var celSS = [
 								random_cel2(), random_cel2(), random_cel2(),
-								random_cel2(), random_cel1(), random_cel1(),
-								random_cel1(),             0,             0,
+								random_cel2(), random_cel1(), 1,
+								1,             0,             0,
 							];
 						}
 
