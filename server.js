@@ -1,8 +1,9 @@
 
 // server.js
-const Telegram      = require('node-telegram-bot-api');
-const TelegramToken = '987211295:AAGlIN124PtI_g3VXSWXczTrc_ri9BBx-ek';
-const TelegramBot   = new Telegram(TelegramToken, {polling: true});
+
+let Telegram      = require('node-telegram-bot-api');
+let TelegramToken = '987211295:AAGlIN124PtI_g3VXSWXczTrc_ri9BBx-ek';
+let TelegramBot   = new Telegram(TelegramToken, {polling: true});
 
 let express    = require("express");
 let app        = express();
@@ -71,6 +72,7 @@ app.use(express.static("public"));
 
 // server socket
 let redT = expressWs.getWss();
+redT.telegram = TelegramBot;
 
 require('./app/Helpers/socketUser')(redT); // Add function socket
 
