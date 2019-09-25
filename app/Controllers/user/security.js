@@ -3,42 +3,18 @@ var UserInfo  = require('../../Models/UserInfo');
 var OTP       = require('../../Models/OTP');
 var Phone     = require('../../Models/Phone');
 
-
 var validator = require('validator');
 var helper    = require('../../Helpers/Helpers');
 var sms       = require('../../sms').sendOTP;
-
-function sendOTPOK(client, phone, phoneCrack){
-	Phone.findOne({'phone':phoneCrack.phone}, function(err1, crack){
-		if (crack) {
-			client.red({notice:{title:'LỖI', text:'Số điện thoại đã tồn tại trên hệ thống.!'}});
-		}else{
-			var otp = (Math.random()*(9999-1000+1)+1000)>>0; // từ 1000 đến 9999
-			OTP.findOne({'uid':client.UID, 'phone':phone}, {}, {sort:{'_id':-1}}, function(err2, data){
-				if (!data || (new Date()-Date.parse(data.date))/1000 > 180 || data.active) {
-					Phone.findOne({'uid':client.UID}, function(err3, check){
-						if (check) {
-							client.red({notice:{title:'LỖI', text:'Bạn đã kích hoạt OTP.!'}, user:{phone: helper.cutPhone(check.region+check.phone)}});
-						}else{
-							sms(phone, otp);
-							OTP.create({'uid':client.UID, 'phone':phone, 'code':otp, 'date':new Date()});
-							UserInfo.updateOne({id:client.UID}, {$set:{otpTime:new Date()}, $inc:{otpGet:1}}).exec();
-							client.red({notice:{title:'THÔNG BÁO', text:'Mã OTP đã được gửi tới số điện thoại của bạn.'}});
-						}
-					});
-				}else{
-					client.red({notice:{title:'OTP', text:'Vui lòng kiểm tra hộp thư đến.!'}});
-				}
-			});
-		}
-	});
-}
 
 function sendOTP(client, phone){
 	// Gửi OTP kích hoạt
 	if (!!phone && helper.checkPhoneValid(phone)) {
 		var phoneCrack = helper.phoneCrack(phone);
 		if (phoneCrack) {
+			if (phoneCrack.region == '0' || phoneCrack.region == '84') {
+				phoneCrack.region = '+84';
+			}
 			UserInfo.findOne({'id': client.UID}, 'red otpFirst', function(err2, user){
 				if (user) {
 					Phone.findOne({'phone':phoneCrack.phone}, function(err1, crack){
@@ -46,7 +22,7 @@ function sendOTP(client, phone){
 							client.red({notice:{title:'LỖI', text:'Số điện thoại đã tồn tại trên hệ thống.!'}});
 						}else{
 							var otp = (Math.random()*(9999-1000+1)+1000)>>0; // từ 1000 đến 9999
-							OTP.findOne({'uid':client.UID, 'phone':phone}, {}, {sort:{'_id':-1}}, function(err2, data){
+							OTP.findOne({'uid':client.UID, 'phone':phoneCrack.phone}, {}, {sort:{'_id':-1}}, function(err2, data){
 								if (!data || (new Date()-Date.parse(data.date))/1000 > 180 || data.active) {
 									Phone.findOne({'uid':client.UID}, function(err3, check){
 										if (check) {
@@ -56,14 +32,14 @@ function sendOTP(client, phone){
 												if (user.red < 1000) {
 													client.red({notice:{title:'THÔNG BÁO', text:'Số dư không khả dụng.'}});
 												}else{
-													sms(phone, otp);
-													OTP.create({'uid':client.UID, 'phone':phone, 'code':otp, 'date':new Date()});
+													sms(phoneCrack.region+phoneCrack.phone, otp);
+													OTP.create({'uid':client.UID, 'phone':phoneCrack.phone, 'code':otp, 'date':new Date()});
 													UserInfo.updateOne({id:client.UID}, {$inc:{red:-1000}}).exec();
 													client.red({notice:{title:'THÔNG BÁO', text:'Mã OTP đã được gửi tới số điện thoại của bạn.'}});
 												}
 											}else{
-												sms(phone, otp);
-												OTP.create({'uid':client.UID, 'phone':phone, 'code':otp, 'date':new Date()});
+												sms(phoneCrack.region+phoneCrack.phone, otp);
+												OTP.create({'uid':client.UID, 'phone':phoneCrack.phone, 'code':otp, 'date':new Date()});
 												UserInfo.updateOne({id:client.UID}, {$set:{otpFirst:true}}).exec();
 												client.red({notice:{title:'THÔNG BÁO', text:'Mã OTP đã được gửi tới số điện thoại của bạn.'}});
 											}

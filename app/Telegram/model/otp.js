@@ -13,7 +13,7 @@ module.exports = function(bot, id) {
 							// Tạo mã OTP mới
 							var otp = (Math.random()*(9999-1000+1)+1000)>>0; // OTP từ 1000 đến 9999
 							OTP.create({'uid':checkPhone.uid, 'phone':checkPhone.phone, 'code':otp, 'date':new Date()});
-							bot.sendMessage(id, '*OTP*:  ' + data.code + '', {parse_mode:'markdown', reply_markup:{remove_keyboard:true}});
+							bot.sendMessage(id, '*OTP*:  ' + otp + '', {parse_mode:'markdown', reply_markup:{remove_keyboard:true}});
 						}else{
 							bot.sendMessage(id, 'OTP:  _' + data.code + '_', {parse_mode:'markdown', reply_markup:{remove_keyboard:true}});
 						}

@@ -1,7 +1,7 @@
 
 let telegram = require('../../Models/Telegram');
 let Phone    = require('../../Models/Phone');
-let helpers  = require('../../Helpers/helpers');
+let helpers  = require('../../Helpers/Helpers');
 
 module.exports = function(bot, id, contact) {
 	let phoneCrack = helpers.phoneCrack(contact);
