@@ -88,7 +88,6 @@ let spin = function(io, user){
 	let phe = 2;    // Phế
 	let addQuy = Math.floor(tongCuoc*0.005);
 
-	let line_nohu = 0;
 	let bet_win   = 0;
 	let free      = 0;
 	let bonusX    = 0;
@@ -140,232 +139,87 @@ let spin = function(io, user){
 		let cel5 = [celSS[12], celSS[13], celSS[14]]; // Cột 5
 
 		let quyHu     = dataHu.bet;
-		let checkName = new RegExp("^" + user.name + "$", 'i');
-		checkName     = checkName.test(dataHu.name);
-		if (checkName) {
-			line_nohu = Math.floor(Math.random()*line.length);
-			line_nohu = line[line_nohu];
-		}
+
 		// kiểm tra kết quả
 		Promise.all(line.map(function(selectLine){
 			switch(selectLine){
 				case 1:
-					if (!!line_nohu && line_nohu == selectLine) {
-						cel1[1] = 6;
-						cel2[1] = 6;
-						cel3[1] = 6;
-						cel4[1] = 6;
-						cel5[1] = 6;
-					}
 					return check_win([cel1[1], cel2[1], cel3[1], cel4[1], cel5[1]], selectLine);
 					break;
 
 				case 2:
-					if (!!line_nohu && line_nohu == selectLine) {
-						cel1[0] = 6;
-						cel2[0] = 6;
-						cel3[0] = 6;
-						cel4[0] = 6;
-						cel5[0] = 6;
-					}
 					return check_win([cel1[0], cel2[0], cel3[0], cel4[0], cel5[0]], selectLine);
 					break;
 
 				case 3:
-					if (!!line_nohu && line_nohu == selectLine) {
-						cel1[2] = 6;
-						cel2[2] = 6;
-						cel3[2] = 6;
-						cel4[2] = 6;
-						cel5[2] = 6;
-					}
 					return check_win([cel1[2], cel2[2], cel3[2], cel4[2], cel5[2]], selectLine);
 					break;
 
 				case 4:
-					if (!!line_nohu && line_nohu == selectLine) {
-						cel1[1] = 6;
-						cel2[1] = 6;
-						cel3[0] = 6;
-						cel4[1] = 6;
-						cel5[1] = 6;
-					}
 					return check_win([cel1[1], cel2[1], cel3[0], cel4[1], cel5[1]], selectLine);
 					break;
 
 				case 5:
-					if (!!line_nohu && line_nohu == selectLine) {
-						cel1[1] = 6;
-						cel2[1] = 6;
-						cel3[2] = 6;
-						cel4[1] = 6;
-						cel5[1] = 6;
-					}
 					return check_win([cel1[1], cel2[1], cel3[2], cel4[1], cel5[1]], selectLine);
 					break;
 
 				case 6:
-					if (!!line_nohu && line_nohu == selectLine) {
-						cel1[0] = 6;
-						cel2[0] = 6;
-						cel3[1] = 6;
-						cel4[0] = 6;
-						cel5[0] = 6;
-					}
 					return check_win([cel1[0], cel2[0], cel3[1], cel4[0], cel5[0]], selectLine);
 					break;
 
 				case 7:
-					if (!!line_nohu && line_nohu == selectLine) {
-						cel1[2] = 6;
-						cel2[2] = 6;
-						cel3[1] = 6;
-						cel4[2] = 6;
-						cel5[2] = 6;
-					}
 					return check_win([cel1[2], cel2[2], cel3[1], cel4[2], cel5[2]], selectLine);
 					break;
 
 				case 8:
-					if (!!line_nohu && line_nohu == selectLine) {
-						cel1[0] = 6;
-						cel2[2] = 6;
-						cel3[0] = 6;
-						cel4[2] = 6;
-						cel5[0] = 6;
-					}
 					return check_win([cel1[0], cel2[2], cel3[0], cel4[2], cel5[0]], selectLine);
 					break;
 
 				case 9:
-					if (!!line_nohu && line_nohu == selectLine) {
-						cel1[2] = 6;
-						cel2[0] = 6;
-						cel3[2] = 6;
-						cel4[0] = 6;
-						cel5[2] = 6;
-					}
 					return check_win([cel1[2], cel2[0], cel3[2], cel4[0], cel5[2]], selectLine);
 					break;
 
 				case 10:
-					if (!!line_nohu && line_nohu == selectLine) {
-						cel1[1] = 6;
-						cel2[0] = 6;
-						cel3[2] = 6;
-						cel4[0] = 6;
-						cel5[1] = 6;
-					}
 					return check_win([cel1[1], cel2[0], cel3[2], cel4[0], cel5[1]], selectLine);
 					break;
 
 				case 11:
-					if (!!line_nohu && line_nohu == selectLine) {
-						cel1[2] = 6;
-						cel2[1] = 6;
-						cel3[0] = 6;
-						cel4[1] = 6;
-						cel5[2] = 6;
-					}
 					return check_win([cel1[2], cel2[1], cel3[0], cel4[1], cel5[2]], selectLine);
 					break;
 
 				case 12:
-					if (!!line_nohu && line_nohu == selectLine) {
-						cel1[0] = 6;
-						cel2[1] = 6;
-						cel3[2] = 6;
-						cel4[1] = 6;
-						cel5[0] = 6;
-					}
 					return check_win([cel1[0], cel2[1], cel3[2], cel4[1], cel5[0]], selectLine);
 					break;
 
 				case 13:
-					if (!!line_nohu && line_nohu == selectLine) {
-						cel1[1] = 6;
-						cel2[2] = 6;
-						cel3[1] = 6;
-						cel4[0] = 6;
-						cel5[1] = 6;
-					}
 					return check_win([cel1[1], cel2[2], cel3[1], cel4[0], cel5[1]], selectLine);
 					break;
 
 				case 14:
-					if (!!line_nohu && line_nohu == selectLine) {
-						cel1[1] = 6;
-						cel2[0] = 6;
-						cel3[1] = 6;
-						cel4[2] = 6;
-						cel5[1] = 6;
-					}
 					return check_win([cel1[1], cel2[0], cel3[1], cel4[2], cel5[1]], selectLine);
 					break;
 
 				case 15:
-					if (!!line_nohu && line_nohu == selectLine) {
-						cel1[2] = 6;
-						cel2[1] = 6;
-						cel3[1] = 6;
-						cel4[1] = 6;
-						cel5[2] = 6;
-					}
 					return check_win([cel1[2], cel2[1], cel3[1], cel4[1], cel5[2]], selectLine);
 					break;
 
 				case 16:
-					if (!!line_nohu && line_nohu == selectLine) {
-						cel1[0] = 6;
-						cel2[1] = 6;
-						cel3[1] = 6;
-						cel4[1] = 6;
-						cel5[0] = 6;
-					}
 					return check_win([cel1[0], cel2[1], cel3[1], cel4[1], cel5[0]], selectLine);
 					break;
 
 				case 17:
-					if (!!line_nohu && line_nohu == selectLine) {
-						cel1[1] = 6;
-						cel2[2] = 6;
-						cel3[2] = 6;
-						cel4[2] = 6;
-						cel5[1] = 6;
-					}
 					return check_win([cel1[1], cel2[2], cel3[2], cel4[2], cel5[1]], selectLine);
 					break;
 
 				case 18:
-					if (!!line_nohu && line_nohu == selectLine) {
-						cel1[1] = 6;
-						cel2[0] = 6;
-						cel3[0] = 6;
-						cel4[0] = 6;
-						cel5[1] = 6;
-					}
 					return check_win([cel1[1], cel2[0], cel3[0], cel4[0], cel5[1]], selectLine);
 					break;
 
 				case 19:
-					if (!!line_nohu && line_nohu == selectLine) {
-						cel1[2] = 6;
-						cel2[2] = 6;
-						cel3[1] = 6;
-						cel4[0] = 6;
-						cel5[0] = 6;
-					}
 					return check_win([cel1[2], cel2[2], cel3[1], cel4[0], cel5[0]], selectLine);
 					break;
 
 				case 20:
-					if (!!line_nohu && line_nohu == selectLine) {
-						cel1[0] = 6;
-						cel2[0] = 6;
-						cel3[1] = 6;
-						cel4[2] = 6;
-						cel5[2] = 6;
-					}
 					return check_win([cel1[0], cel2[0], cel3[1], cel4[2], cel5[2]], selectLine);
 					break;
 			}

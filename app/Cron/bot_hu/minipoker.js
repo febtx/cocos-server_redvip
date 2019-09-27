@@ -99,10 +99,7 @@ let spin = function(io, user){
 		let toX       = dataHu.toX;
 		let balans    = dataHu.balans;
 
-		let checkName = new RegExp("^" + user.name + "$", 'i');
-		checkName     = checkName.test(dataHu.name);
-
-		if (checkName || (dongChat && isDay && AK[4].card > 9)) {
+		if (dongChat && isDay && AK[4].card > 9) {
 			// NỔ HŨ (DÂY ĐỒNG CHẤT CỦA DÂY ĐẾN J TRỞ LÊN) Hoặc được xác định là nổ hũ
 			if (toX > 0) {
 				toX -= 1;
@@ -115,22 +112,6 @@ let spin = function(io, user){
 				quyMin = quyMin*dataHu.x;
 			}
 			HU.updateOne({game: "minipoker", type:bet, red:red}, {$set:{name:"", bet:quyMin}}).exec();
-			if (checkName){
-				// đặt kết quả thành nổ hũ nếu người chơi được xác định thủ công
-				let randomType = Math.floor(Math.random()*4);           // Ngẫu nhiên chất bài
-				let randomMin  = Math.floor((Math.random()*(9-6+1))+6); // Ngẫu nhiên dây bài bắt đầu từ (7 - 10)
-				Promise.all(base_card.card.filter(function(cardT){
-					if (randomMin == 9 && cardT.card == 0 && cardT.type == randomType) {
-						return true;
-					}else if (cardT.card >= randomMin && cardT.card < randomMin+5 && cardT.type == randomType) {
-						return true;
-					}
-					return false;
-				}))
-				.then(resultCard => {
-					ketqua = Helpers.shuffle(resultCard); // tráo bài
-				})
-			}
 
 			an   = Math.floor(quyHu-Math.ceil(quyHu*phe/100));
 

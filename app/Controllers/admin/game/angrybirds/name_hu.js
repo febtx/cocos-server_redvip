@@ -4,14 +4,14 @@ const HU       = require('../../../../Models/HU');
 
 module.exports = function(client, data) {
 	if (!!data && !!data.name) {
-		var name = data.name;
+		var name = ''+data.name+'';
 		var bet  = data.bet;
+		name = name.toLowerCase();
 
-		var regex = new RegExp("^" + name + "$", 'i');
-		UserInfo.findOne({name: {$regex: regex}}, 'name', function(err, data){
+		UserInfo.findOne({name:name}, 'name', function(err, data){
 			if (!!data) {
-				HU.updateOne({game: "arb", type:bet, red:true}, {$set:{name:data.name}}).exec();
-				client.red({angrybird:{name_hu:{bet: bet, name: data.name}}, notice:{title:'ANGRY BIRD', text:'Hũ ' + bet + ' sẽ được kích nổ bởi ' + data.name + '...'}});
+				HU.updateOne({game: "arb", type:bet, red:true}, {$set:{name:name}}).exec();
+				client.red({angrybird:{name_hu:{bet: bet, name:name}}, notice:{title:'ANGRY BIRD', text:'Hũ ' + bet + ' sẽ được kích nổ bởi ' + data.name + '...'}});
 			}else{
 				client.red({notice:{title:'THẤT BẠI', text:'Người dùng không tồn tại...'}});
 			}

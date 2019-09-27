@@ -85,20 +85,11 @@ let spin = function(io, user){
 
 		let quyHu     = data.bet;
 		let quyMin    = data.min+addQuy;
-		let checkName = new RegExp("^" + user.name + "$", 'i');
-		checkName     = checkName.test(data.name);
 
-		if (checkName || (bo3 && bo3_a === 0)) {
-			// NỔ HŨ (Bộ 3 Át Hoặc được xác định là nổ hũ)
+		if (bo3 && bo3_a === 0) {
+			// NỔ HŨ
 			HU.updateOne({game:'mini3cay', type:cuoc, red:red}, {$set:{name:"", bet:quyMin}}).exec();
-			if (checkName){
-				// đặt kết quả thành nổ hũ nếu người chơi được xác định thủ công
-				card = [...base_card.card]
-					.slice(0, 4);
-				// tráo bài
-				card = Helpers.shuffle(card); // tráo bài lần 1
-				ketqua = card.slice(0, 3);
-			}
+
 			nohu = true;
 			an   = Math.floor(quyHu-Math.ceil(quyHu*phe/100));
 			text = 'Nổ Hũ';
