@@ -14,8 +14,10 @@ module.exports = function(client, data){
 		} else {
 			var checkCaptcha = new RegExp("^" + data.captcha + "$", 'i').test(client.captcha);
 			if (checkCaptcha) {
-				var code = new RegExp("^" + data.code + "$", 'i');
-				GiftCode.findOne({'code': {$regex: code}}, {}, function(err, check) {
+				var code = ''+data.code+'';
+				code = code.toLowerCase();
+
+				GiftCode.findOne({'code':code}, {}, function(err, check) {
 					if (!!check) {
 						var d1 = Date.parse(new Date());
 						var d2 = Date.parse(check.todate);

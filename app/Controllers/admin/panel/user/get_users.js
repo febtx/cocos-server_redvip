@@ -1,8 +1,11 @@
 
 const Users    = require('../../../../Models/Users');
 const UserInfo = require('../../../../Models/UserInfo');
+const Phone    = require('../../../../Models/Phone');
 
-const isEmpty   = require('../../../../Helpers/Helpers').isEmpty;
+const isEmpty    = require('../../../../Helpers/Helpers').isEmpty;
+const phoneCrack = require('../../../../Helpers/Helpers').phoneCrack;
+
 
 module.exports = function(client, data){
 	if (!!data && !!data.page) {
@@ -44,15 +47,9 @@ module.exports = function(client, data){
 				match.UID = data.uid>>0;
 			}
 			if (!isEmpty(data.name)) {
-				var regexName = new RegExp("^" + data.name.trim() + "$", 'i');
-				match.name = {$regex: regexName};
-			}
-			if (!isEmpty(data.phone)) {
-				match.phone = data.phone.trim();
-			}
-			if (!isEmpty(data.email)) {
-				var regexEmail = new RegExp("^" + data.email.trim() + "$", 'i');
-				match.email = {$regex: regexEmail};
+				var name =''+data.name+'';
+				name = name.toLowerCase();
+				match.name = name;
 			}
 			if (data.macth == 1) {
 				match.type = false;
@@ -61,8 +58,9 @@ module.exports = function(client, data){
 			}
 
 			if (!isEmpty(data.nick)) {
-				var regexNick = new RegExp("^" + data.nick + "$", 'i');
-				Users.findOne({'local.username': {$regex: regexNick}}, function(error, result){
+				var nick =''+data.nick+'';
+				nick = nick.toLowerCase();
+				Users.findOne({'local.username':nick}, function(error, result){
 					if (!!result) {
 						match.id = result._id.toString();
 						UserInfo.aggregate([
@@ -97,6 +95,47 @@ module.exports = function(client, data){
 						client.red({users:{get_users:{data:[], page:1, kmess:10, total:0}}});
 					}
 				});
+			}else if (!isEmpty(data.phone)) {
+				var pCrack = phoneCrack(data.phone);
+				if (pCrack) {
+					Phone.findOne({'phone':pCrack.phone}, function(error, result){
+						if (!!result) {
+							match.id = result.uid;
+							UserInfo.aggregate([
+								{$match: match},
+								{
+									$project:{
+										profit: {$subtract: ["$redWin", "$redLost"]},
+										id:       "$id",
+										UID:      "$UID",
+										name:     "$name",
+										red:      "$red",
+										xu:       "$xu",
+										phone:    "$phone",
+										type:     "$type",
+									}
+								},
+							]).exec(function(err, result2){
+								if (result2.length) {
+									Promise.all(result2.map(function(obj){
+										delete obj._id;
+										obj.username = result.local.username;
+										return obj;
+									}))
+									.then(function(data){
+										client.red({users:{get_users:{data:data, page:page, kmess:10, total:1}}});
+									})
+								}else{
+									client.red({users:{get_users:{data:[], page:1, kmess:10, total:0}}});
+								}
+							});
+						}else{
+							client.red({users:{get_users:{data:[], page:1, kmess:10, total:0}}});
+						}
+					});
+				}else{
+					client.red({users:{get_users:{data:[], page:1, kmess:10, total:0}}});
+				}
 			}else{
 				// count total
 				UserInfo.aggregate([

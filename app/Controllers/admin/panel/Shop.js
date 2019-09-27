@@ -8,14 +8,14 @@ var Helper     = require('../../../Helpers/Helpers');
 function DaiLy_add(client, data){
 	if (!!data && !!data.name && !!data.nickname && !!data.phone && !!data.fb) {
 		var name     = data.name;
-		var nickname = data.nickname;
+		var nickname = ''+data.nickname+'';
 		var phone    = data.phone;
 		var fb       = data.fb;
 		if (Helper.isEmpty(name) || Helper.isEmpty(nickname) || Helper.isEmpty(phone) || Helper.isEmpty(fb)) {
 			client.red({notice:{title:'ĐẠI LÝ',text:'Không bỏ trống các thông tin...'}});
 		}else{
-			var regexNick = new RegExp("^" + nickname + "$", 'i');
-			tabDaiLy.findOne({'nickname': {$regex: regexNick}}, function(err, check){
+			nickname = nickname.toLowerCase();
+			tabDaiLy.findOne({'nickname':nickname}, function(err, check){
 				if (!!check) {
 					client.red({notice:{title:'ĐẠI LÝ',text:'NICKNAME đã tồn tại...'}});
 				}else{
@@ -85,8 +85,7 @@ function NhaMang_add(client, data){
 		if (Helper.isEmpty(name) || (!nap && !mua)) {
 			client.red({notice:{title:'THÊM NHÀ MẠNG',text:'Không bỏ trống các thông tin...'}});
 		}else{
-			var regex = new RegExp("^" + name + "$", 'i');
-			tabNhaMang.findOne({'name': {$regex: regex}, 'nap': nap, 'mua': mua}, function(err, check){
+			tabNhaMang.findOne({'name': name, 'nap': nap, 'mua': mua}, function(err, check){
 				if (!!check) {
 					client.red({notice:{title:'THÊM NHÀ MẠNG',text:'Nhà mạng đã tồn tại...'}});
 				}else{
@@ -144,8 +143,7 @@ function MenhGia_add(client, data){
 		if (Helper.isEmpty(name) || Helper.isEmpty(values) || (!nap && !mua)) {
 			client.red({notice:{title:'THÊM MỆNH GIÁ',text:'Không bỏ trống các thông tin...'}});
 		}else{
-			var regex = new RegExp("^" + name + "$", 'i');
-			tabMenhGia.findOne({'name': {$regex: regex}, 'values': values, 'nap': nap, 'mua': mua} , async function(err, check){
+			tabMenhGia.findOne({'name': name, 'values': values, 'nap': nap, 'mua': mua} , async function(err, check){
 				if (!!check) {
 					client.red({notice:{title:'THÊM MỆNH GIÁ',text:'Mệnh giá đã tồn tại...'}});
 				}else{

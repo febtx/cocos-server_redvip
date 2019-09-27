@@ -10,7 +10,6 @@ module.exports = function(client, data){
 			client.red({notice:{text: "DỮ LIỆU KHÔNG ĐÚNG...", title: "THẤT BẠI"}});
 		}else{
 			var kmess = 10;
-			//var regex = new RegExp("^" + client.profile.name + "$", 'i');
 			if (red) {
 				Candy_red.countDocuments({name: client.profile.name}).exec(function(err, total){
 					Candy_red.find({name: client.profile.name}, 'id win bet kq time', {sort:{'_id':-1}, skip: (page-1)*kmess, limit: kmess}, function(err, result) {

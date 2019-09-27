@@ -77,10 +77,9 @@ module.exports = function(client, id){
 	UserInfo.findOne({'id': id}, 'name', function(err, data){
 		if (!!data) {
 			// thực hiện xóa @@
-			var regex = new RegExp("^" + data.name + "$", 'i');
 
-			Users.findOneAndDelete({'_id': id}).exec();
-			UserInfo.findOneAndDelete({'id': id}).exec();
+			Users.deleteOne({'_id': id}).exec();
+			UserInfo.deleteOne({'id': id}).exec();
 
 			OTP.deleteMany({'uid': id}).exec();
 
@@ -98,54 +97,54 @@ module.exports = function(client, id){
 			Message.deleteMany({'uid': id}).exec();
 
 			// Tài Xỉu
-			TaiXiu_user.findOneAndDelete({'uid': id}).exec();
+			TaiXiu_user.deleteOne({'uid': id}).exec();
 			TaiXiu_one.deleteMany({'uid': id}).exec();
 			TaiXiu_cuoc.deleteMany({'uid': id}).exec();
 			TaiXiu_chat.deleteMany({'uid': id}).exec();
 
 			// AngryBirds
-			AngryBirds_user.findOneAndDelete({'uid': id}).exec();
+			AngryBirds_user.deleteOne({'uid': id}).exec();
 			AngryBirds_red.deleteMany({'name': data.name}).exec();
 			AngryBirds_xu.deleteMany({'name': data.name}).exec();
 
 			// BauCua
-			BauCua_user.findOneAndDelete({'uid': id}).exec();
+			BauCua_user.deleteOne({'uid': id}).exec();
 			BauCua_cuoc.deleteMany({'uid': id}).exec();
 
 			// BigBabol
-			BigBabol_user.findOneAndDelete({'uid': id}).exec();
+			BigBabol_user.deleteOne({'uid': id}).exec();
 			BigBabol_red.deleteMany({'name': data.name}).exec();
 			BigBabol_xu.deleteMany({'name': data.name}).exec();
 
 			// CaoThap
-			CaoThap_user.findOneAndDelete({'uid': id}).exec();
+			CaoThap_user.deleteOne({'uid': id}).exec();
 			CaoThap_red.deleteMany({'uid': id}).exec();
 			CaoThap_xu.deleteMany({'uid': id}).exec();
 			CaoThap_redbuoc.deleteMany({'uid': id}).exec();
 			CaoThap_xubuoc.deleteMany({'uid': id}).exec();
 
 			// Mini3Cay
-			Mini3Cay_user.findOneAndDelete({'uid': id}).exec();
+			Mini3Cay_user.deleteOne({'uid': id}).exec();
 			Mini3Cay_red.deleteMany({'uid': id}).exec();
 			Mini3Cay_xu.deleteMany({'uid': id}).exec();
 
 			// miniPoker
-			miniPoker_user.findOneAndDelete({'uid': id}).exec();
+			miniPoker_user.deleteOne({'uid': id}).exec();
 			miniPokerRed.deleteMany({'name': data.name}).exec();
 			miniPokerXu.deleteMany({'name': data.name}).exec();
 
 			// VuongQuocRed
-			VuongQuocRed_user.findOneAndDelete({'uid': id}).exec();
+			VuongQuocRed_user.deleteOne({'uid': id}).exec();
 			VuongQuocRed_red.deleteMany({'name': data.name}).exec();
 			VuongQuocRed_xu.deleteMany({'name': data.name}).exec();
 
 			// Candy
-			Candy_user.findOneAndDelete({'uid': id}).exec();
+			Candy_user.deleteOne({'uid': id}).exec();
 			Candy_red.deleteMany({'name': data.name}).exec();
 			Candy_xu.deleteMany({'name': data.name}).exec();
 
 			// LongLan
-			LongLan_user.findOneAndDelete({'uid': id}).exec();
+			LongLan_user.deleteOne({'uid': id}).exec();
 			LongLan_red.deleteMany({'name': data.name}).exec();
 			LongLan_xu.deleteMany({'name': data.name}).exec();
 		}

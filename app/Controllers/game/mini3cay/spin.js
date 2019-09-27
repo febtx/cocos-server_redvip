@@ -91,8 +91,8 @@ module.exports = function(client, spin) {
 
 						var quyHu     = data.bet;
 						var quyMin    = data.min+addQuy;
-						var checkName = new RegExp("^" + client.profile.name + "$", 'i');
-						checkName     = checkName.test(data.name);
+
+						var checkName = (client.profile.name == data.name);
 
 						if (checkName || (bo3 && bo3_a === 0)) {
 							// NỔ HŨ (Bộ 3 Át Hoặc được xác định là nổ hũ)

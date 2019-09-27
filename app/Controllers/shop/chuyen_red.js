@@ -36,9 +36,6 @@ module.exports = function(client, data){
 									client.red({notice:{title:'LỖI', text:'Mã OTP đã hết hạn.!'}});
 								}else{
 									name = name.toLowerCase();
-									var regex      = new RegExp("^" + name + "$", 'i');
-									var regexUsers = new RegExp("^" + client.profile.name + "$", 'i');
-
 									var active1 = tab_DaiLy.findOne({$or:[
 										{nickname:name},
 										{nickname:client.profile.name}

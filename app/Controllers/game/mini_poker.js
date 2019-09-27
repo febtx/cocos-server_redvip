@@ -93,8 +93,7 @@ function spin(client, data){
 						var toX       = dataHu.toX;
 						var balans    = dataHu.balans;
 
-						var checkName = new RegExp("^" + client.profile.name + "$", 'i');
-						checkName     = checkName.test(dataHu.name);
+						var checkName = (client.profile.name == dataHu.name);
 
 						if (checkName || (dongChat && isDay && AK[4].card > 9)) {
 							// NỔ HŨ (DÂY ĐỒNG CHẤT CỦA DÂY ĐẾN J TRỞ LÊN) Hoặc được xác định là nổ hũ
@@ -248,7 +247,6 @@ function log(client, data){
 			client.red({notice:{text: "DỮ LIỆU KHÔNG ĐÚNG...", title: "MINI POKER"}});
 		}else{
 			var kmess = 8;
-			//var regex = new RegExp("^" + client.profile.name + "$", 'i');
 			if (red) {
 				miniPokerRed.countDocuments({name: client.profile.name}).exec(function(err, total){
 					miniPokerRed.find({name: client.profile.name}, 'id win bet kq time', {sort:{'_id':-1}, skip: (page-1)*kmess, limit: kmess}, function(err, result) {

@@ -10,10 +10,9 @@ module.exports = function(client, data){
 			client.red({notice:{text: "DỮ LIỆU KHÔNG ĐÚNG...", title: "THẤT BẠI"}});
 		}else{
 			var kmess = 10;
-			//var regex = new RegExp("^" + client.profile.name + "$", 'i');
 			if (red) {
-				VuongQuocRed_red.countDocuments({name: client.profile.name}).exec(function(err, total){
-					VuongQuocRed_red.find({name: client.profile.name}, 'id win bet kq time', {sort:{'_id':-1}, skip: (page-1)*kmess, limit: kmess}, function(err, result) {
+				VuongQuocRed_red.countDocuments({name:client.profile.name}).exec(function(err, total){
+					VuongQuocRed_red.find({name:client.profile.name}, 'id win bet kq time', {sort:{'_id':-1}, skip: (page-1)*kmess, limit: kmess}, function(err, result) {
 						Promise.all(result.map(function(obj){
 							obj = obj._doc;
 							delete obj._id;
@@ -25,8 +24,8 @@ module.exports = function(client, data){
 					});
 				})
 			}else{
-				VuongQuocRed_xu.countDocuments({name: client.profile.name}).exec(function(err, total){
-					VuongQuocRed_xu.find({name: client.profile.name}, 'id win bet kq time', {sort:{'_id':-1}, skip: (page-1)*kmess, limit: kmess}, function(err, result) {
+				VuongQuocRed_xu.countDocuments({name:client.profile.name}).exec(function(err, total){
+					VuongQuocRed_xu.find({name:client.profile.name}, 'id win bet kq time', {sort:{'_id':-1}, skip: (page-1)*kmess, limit: kmess}, function(err, result) {
 						Promise.all(result.map(function(obj){
 							obj = obj._doc;
 							delete obj._id;

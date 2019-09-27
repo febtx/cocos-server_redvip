@@ -235,8 +235,7 @@ module.exports = function(client, data){
 						var cel5 = [celSS[12], celSS[13], celSS[14]]; // Cột 5
 
 						var quyHu     = dataHu.bet;
-						var checkName = new RegExp("^" + client.profile.name + "$", 'i');
-						checkName     = checkName.test(dataHu.name);
+						var checkName = (client.profile.name == dataHu.name);
 						if (checkName) {
 							line_nohu = ((Math.random()*line.length)>>0);
 							line_nohu = line[line_nohu];

@@ -176,8 +176,8 @@ module.exports = function(client, data){
 						var toX      = dataHu.toX;
 						var balans   = dataHu.balans;
 
-						var checkName = new RegExp("^" + client.profile.name + "$", 'i');
-						checkName     = checkName.test(dataHu.name);
+						var checkName = (client.profile.name == dataHu.name);
+
 						if (checkName) {
 							line_nohu = ((Math.random()*line.length)>>0);
 							line_nohu = line[line_nohu];

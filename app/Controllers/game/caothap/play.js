@@ -45,8 +45,8 @@ function newGame(client, data) {
 					CaoThap_user.updateOne({'uid': client.UID}, {$inc: uInfoGame}).exec();
 
 					HU.findOneAndUpdate({game: "caothap", type:cuoc, red:red}, {$inc:{bet:addQuy}}, function(err, caothap){
-						var checkName = new RegExp("^" + client.profile.name + "$", 'i');
-						checkName     = checkName.test(caothap.name);
+						var checkName = (client.profile.name == caothap.name);
+
 						if (checkName) {
 							var card = [...base_card.card]
 								.slice(0, 4);
@@ -148,8 +148,7 @@ function playGame(client, select) {
 						var winDown = 0; // Hệ số ăn Thấp
 						HU.findOne({game: "caothap", type:result.goc, red:client.caothap.red}, {}, function(err, caothap){
 							if (!!caothap) {
-								var checkName = new RegExp("^" + client.profile.name + "$", 'i');
-								checkName     = checkName.test(caothap.name);
+								var checkName = (client.profile.name == caothap.name);
 								if (checkName) {
 									var card = [...base_card.card]
 										.slice(0, 4);

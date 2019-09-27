@@ -190,8 +190,8 @@ module.exports = function(client, data){
 						var celR1  = [celSR[0], celSR[1], celSR[2]]; // Cột 1
 						var celR2  = [celSR[3], celSR[4], celSR[5]]; // Cột 2
 
-						var checkName = new RegExp("^" + client.profile.name + "$", 'i');
-						checkName     = checkName.test(dataHu.name);
+						var checkName = (client.profile.name == dataHu.name);
+
 						if (checkName) {
 							line_nohu = Math.floor(Math.random()*(27-1+1))+1;
 

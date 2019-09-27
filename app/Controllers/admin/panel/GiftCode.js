@@ -28,7 +28,7 @@ function create_gift(client, data){
 		!!data.nam)
 	{
 		if (!validator.isEmpty(data.giftcode)) {
-			var giftcode = data.giftcode;
+			var giftcode = ''+data.giftcode+'';
 			var red      = data.red>>0;
 			var xu       = data.xu>>0;
 			var type     = data.chung;
@@ -36,8 +36,9 @@ function create_gift(client, data){
 			var thang    = (data.thang>>0)-1;
 			var nam      = data.nam>>0;
 
-			var checkG = new RegExp("^" + giftcode + "$", 'i');
-			GiftCode.findOne({'code': {$regex: checkG}}, function(err, check) {
+			giftcode = giftcode.toLowerCase();
+
+			GiftCode.findOne({'code':giftcode}, function(err, check) {
 				if (!!check) {
 					client.red({notice:{title:'THẤT BẠI',text:'Mã GiftCode đã tồn tại...'}});
 				}else{
