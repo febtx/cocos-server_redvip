@@ -6,7 +6,7 @@ let socket    = require('./app/Controllers/admin/socket.js');
 // Authenticate!
 let authenticate = function(client, data, callback) {
 	if (!!data && !!data.username && !!data.password) {
-		let username = data.username;
+		let username = ''+data.username+'';
 		let password = data.password;
 		let az09     = new RegExp("^[a-zA-Z0-9]+$");
 		let testName = az09.test(username);
@@ -19,8 +19,8 @@ let authenticate = function(client, data, callback) {
 			callback({title: 'ĐĂNG NHẬP', text: 'Tên đăng nhập chỉ gồm kí tự và số !!'}, false);
 		} else {
 			try {
-				let regex = new RegExp("^" + username + "$", 'i');
-				User.findOne({'username': {$regex: regex}}, function(err, user){
+				username = username.toLowerCase();
+				User.findOne({'username':username}, function(err, user){
 					if (user){
 						if (user.validPassword(password)){
 							client.UID = user._id.toString();

@@ -72,18 +72,18 @@ function regOTP(client, data){
 		} else if (!validator.isLength(data.otp, {min: 4, max: 6})){
 			client.red({notice: {title: "LỖI", text: 'Mã OTP Không đúng!!'}});
 		} else {
-			OTP.findOne({'uid':client.UID, 'phone':data.phone}, {}, {sort:{'_id':-1}}, function(err1, data_otp){
-				if (data_otp && data.otp == data_otp.code) {
-					if (((new Date()-Date.parse(data_otp.date))/1000) > 180 || data_otp.active) {
-						client.red({notice:{title:'LỖI', text:'Mã OTP đã hết hạn.!'}});
-					}else{
-						UserInfo.findOne({'id': client.UID}, 'red xu phone email cmt', function(err2, dU){
-							if (dU) {
-								var phoneCrack = helper.phoneCrack(data.phone);
-								if (phoneCrack) {
-									if (phoneCrack.region == '0' || phoneCrack.region == '84') {
-										phoneCrack.region = '+84';
-									}
+			var phoneCrack = helper.phoneCrack(data.phone);
+			if (phoneCrack) {
+				if (phoneCrack.region == '0' || phoneCrack.region == '84') {
+					phoneCrack.region = '+84';
+				}
+				OTP.findOne({'uid':client.UID, 'phone':phoneCrack.phone}, {}, {sort:{'_id':-1}}, function(err1, data_otp){
+					if (data_otp && data.otp == data_otp.code) {
+						if (((new Date()-Date.parse(data_otp.date))/1000) > 180 || data_otp.active) {
+							client.red({notice:{title:'LỖI', text:'Mã OTP đã hết hạn.!'}});
+						}else{
+							UserInfo.findOne({'id': client.UID}, 'red xu phone email cmt', function(err2, dU){
+								if (dU) {
 									Phone.findOne({'phone':phoneCrack.phone}, function(err3, crack){
 										if (crack) {
 											client.red({notice:{title:'LỖI', text:'Số điện thoại đã tồn tại trên hệ thống.!'}});
@@ -111,16 +111,16 @@ function regOTP(client, data){
 											});
 										}
 									});
-								}else{
-									client.red({notice:{title:'THÔNG BÁO', text:'Số điện thoại không hợp lệ.!'}});
 								}
-							}
-						});
+							});
+						}
+					}else{
+						client.red({notice:{title:'LỖI', text:'Mã OTP Không đúng.!'}});
 					}
-				}else{
-					client.red({notice:{title:'LỖI', text:'Mã OTP Không đúng.!'}});
-				}
-			});
+				});
+			}else{
+				client.red({notice:{title:'THÔNG BÁO', text:'Số điện thoại không hợp lệ.!'}});
+			}
 		}
 	}
 }

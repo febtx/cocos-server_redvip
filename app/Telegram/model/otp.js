@@ -8,7 +8,7 @@ module.exports = function(bot, id) {
 		if (check) {
 			Phone.findOne({'phone':check.phone}, {}, function(err3, checkPhone){
 				if (checkPhone) {
-					OTP.findOne({'uid': client.UID, 'phone':checkPhone.phone}, {}, {sort:{'_id':-1}}, function(err, data){
+					OTP.findOne({'uid':checkPhone.uid, 'phone':checkPhone.phone}, {}, {sort:{'_id':-1}}, function(err, data){
 						if (!data || ((new Date()-Date.parse(data.date))/1000) > 180 || data.active) {
 							// Tạo mã OTP mới
 							var otp = (Math.random()*(9999-1000+1)+1000)>>0; // OTP từ 1000 đến 9999

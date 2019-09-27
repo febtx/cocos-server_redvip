@@ -76,11 +76,28 @@ function update(client, data){
 		var status = data.status>>0;
 		var cart   = data.cart;
 
-		MuaThe.updateOne({'_id': cart}, {$set:{status: status}}).exec();
+		MuaThe.updateOne({'_id': cart}, {$set:{status:status}}).exec(function(err, mua){
+			if (!!mua) {
+				if (mua.status != status) {
+					var tien = mua.menhGia*mua.soLuong;
+					if (status == 2) {
+						// trả lại
+						UserInfo.updateOne({id:mua.uid}, {$inc:{red:tien}}).exec();
+					}else if (mua.status == 2) {
+						UserInfo.findOne({id:mua.uid}, 'red').exec(function(err2, user){
+							if (user && user.red >= tien) {
+								// mua lại
+								UserInfo.updateOne({id:mua.uid}, {$inc:{red:-tien}}).exec();
+							}
+						});
+					}
+				}
+			}
+		});
 
 		if (Array.isArray(data.card)) {
 			Promise.all(data.card.map(function(obj){
-				MuaThe_card.updateOne({'_id': obj.id}, {$set: obj.card}).exec();
+				MuaThe_card.updateOne({'_id':obj.id}, {$set: obj.card}).exec();
 			}))
 		}
 		client.red({mua_the:{update: data}});

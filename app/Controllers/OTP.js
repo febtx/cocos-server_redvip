@@ -18,7 +18,7 @@ function createOTP(client, type){
 							var otp = (Math.random()*(9999-1000+1)+1000)>>0; // OTP từ 1000 đến 9999
 							if (type == '1') {
 								// App OTP
-								telegram.findOne({'phone':check.phone}, 'phone', function(err3, teleCheck){
+								telegram.findOne({'phone':check.phone}, 'form', function(err3, teleCheck){
 									if (!!teleCheck) {
 										OTP.create({'uid':client.UID, 'phone':check.phone, 'code':otp, 'date':new Date()});
 										client.red({notice:{title:'THÔNG BÁO', text:'Mã OTP đã được gửi tới Telegram của bạn.'}});

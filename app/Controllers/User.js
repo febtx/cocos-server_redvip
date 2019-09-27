@@ -14,7 +14,6 @@ let AngryBirds_user = require('../Models/AngryBirds/AngryBirds_user');
 let Candy_user      = require('../Models/Candy/Candy_user');
 let LongLan_user    = require('../Models/LongLan/LongLan_user');
 
-
 let Message         = require('../Models/Message');
 
 let validator   = require('validator');
@@ -116,6 +115,7 @@ let updateCoint = function(client){
 
 let signName = function(client, name){
 	if (!!name) {
+		name = ''+name+'';
 		let az09     = new RegExp("^[a-zA-Z0-9]+$");
 		let testName = az09.test(name);
 
@@ -125,14 +125,15 @@ let signName = function(client, name){
 			client.red({notice: {title: "TÊN NHÂN VẬT", text: 'Tên không chứa ký tự đặc biệt !!'}});
 		} else{
 			UserInfo.findOne({id: client.UID}, 'name red xu ketSat UID phone email cmt security joinedOn', function(err, d){
-				if (d == null) {
-					var regex = new RegExp("^" + name + "$", 'i');
-					User.findOne({'_id': client.UID}, function(err, base){
-						var testBase = regex.test(base.local.username);
+				if (!d) {
+					name = name.toLowerCase();
+					User.findOne({'_id':client.UID}, function(err, base){
+						var regex = new RegExp("^" + base.local.username + "$", 'i');
+						var testBase = regex.test(name);
 						if (testBase) {
 							client.red({notice: {title: "TÊN NHÂN VẬT", text: "Tên nhân vật không được trùng với tên đăng nhập..."}});
 						}else{
-							UserInfo.findOne({'name': {$regex: regex}}, 'name', function(err, check){
+							UserInfo.findOne({'name':name}, 'name', function(err, check){
 								if (!!check) {
 									client.red({notice: {title: "TÊN NHÂN VẬT", text: "Tên nhân vật đã tồn tại..."}});
 								}else{
@@ -232,46 +233,50 @@ let changePassword = function(client, data){
 
 let getLevel = function(client){
 	UserInfo.findOne({id:client.UID}, 'lastVip redPlay vip', function(err, user){
-		var vipHT = ((user.redPlay-user.lastVip)/100000)>>0; // Điểm vip Hiện Tại
-		// Cấp vip hiện tại
-		var vipLevel = 1;
-		var vipPre   = 0; // Điểm víp cấp Hiện tại
-		var vipNext  = 100; // Điểm víp cấp tiếp theo
-		if (vipHT >= 120000) {
-			vipLevel = 9;
-			vipPre   = 120000;
-			vipNext  = 0;
-		}else if (vipHT >= 50000){
-			vipLevel = 8;
-			vipPre   = 50000;
-			vipNext  = 120000;
-		}else if (vipHT >= 15000){
-			vipLevel = 7;
-			vipPre   = 15000;
-			vipNext  = 50000;
-		}else if (vipHT >= 6000){
-			vipLevel = 6;
-			vipPre   = 6000;
-			vipNext  = 15000;
-		}else if (vipHT >= 3000){
-			vipLevel = 5;
-			vipPre   = 3000;
-			vipNext  = 6000;
-		}else if (vipHT >= 1000){
-			vipLevel = 4;
-			vipPre   = 1000;
-			vipNext  = 3000;
-		}else if (vipHT >= 500){
-			vipLevel = 3;
-			vipPre   = 500;
-			vipNext  = 1000;
-		}else if (vipHT >= 100){
-			vipLevel = 2;
-			vipPre   = 100;
-			vipNext  = 500;
-		}
+		if (user) {
+			var vipHT = ((user.redPlay-user.lastVip)/100000)>>0; // Điểm vip Hiện Tại
+			// Cấp vip hiện tại
+			var vipLevel = 1;
+			var vipPre   = 0; // Điểm víp cấp Hiện tại
+			var vipNext  = 100; // Điểm víp cấp tiếp theo
+			if (vipHT >= 120000) {
+				vipLevel = 9;
+				vipPre   = 120000;
+				vipNext  = 0;
+			}else if (vipHT >= 50000){
+				vipLevel = 8;
+				vipPre   = 50000;
+				vipNext  = 120000;
+			}else if (vipHT >= 15000){
+				vipLevel = 7;
+				vipPre   = 15000;
+				vipNext  = 50000;
+			}else if (vipHT >= 6000){
+				vipLevel = 6;
+				vipPre   = 6000;
+				vipNext  = 15000;
+			}else if (vipHT >= 3000){
+				vipLevel = 5;
+				vipPre   = 3000;
+				vipNext  = 6000;
+			}else if (vipHT >= 1000){
+				vipLevel = 4;
+				vipPre   = 1000;
+				vipNext  = 3000;
+			}else if (vipHT >= 500){
+				vipLevel = 3;
+				vipPre   = 500;
+				vipNext  = 1000;
+			}else if (vipHT >= 100){
+				vipLevel = 2;
+				vipPre   = 100;
+				vipNext  = 500;
+			}
 
-		client.red({profile:{level: {level: vipLevel, vipNext: vipNext, vipPre: vipPre, vipTL: user.vip, vipHT: vipHT}}});
+			client.red({profile:{level: {level: vipLevel, vipNext: vipNext, vipPre: vipPre, vipTL: user.vip, vipHT: vipHT}}});
+		}else{
+			client.close();
+		}
 	});
 }
 

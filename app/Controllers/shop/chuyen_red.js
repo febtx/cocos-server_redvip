@@ -17,7 +17,7 @@ module.exports = function(client, data){
 			client.red({notice: {title: "LỖI", text: 'Mã OTP không hợp lệ.!'}});
 		}else{
 			var red  = data.red>>0;
-			var name = data.name;
+			var name = ''+data.name+'';
 			var otp  = data.otp;
 
 			if(validator.isEmpty(name) ||
@@ -35,16 +35,17 @@ module.exports = function(client, data){
 								if (((new Date()-Date.parse(data_otp.date))/1000) > 180 || data_otp.active) {
 									client.red({notice:{title:'LỖI', text:'Mã OTP đã hết hạn.!'}});
 								}else{
+									name = name.toLowerCase();
 									var regex      = new RegExp("^" + name + "$", 'i');
 									var regexUsers = new RegExp("^" + client.profile.name + "$", 'i');
 
 									var active1 = tab_DaiLy.findOne({$or:[
-										{nickname: {$regex: regex}},
-										{nickname: {$regex: regexUsers}}
+										{nickname:name},
+										{nickname:client.profile.name}
 									]}).exec();
 
-									var active2 = UserInfo.findOne({name: {$regex: regex}}, 'id name red').exec();
-									var active3 = UserInfo.findOne({id: client.UID}, 'red').exec();
+									var active2 = UserInfo.findOne({name:name}, 'id name red').exec();
+									var active3 = UserInfo.findOne({id:client.UID}, 'red').exec();
 									Promise.all([active1, active2, active3])
 									.then(valuesCheck => {
 										var daily = valuesCheck[0];
@@ -71,7 +72,7 @@ module.exports = function(client, data){
 															obj.red({notice:{title:'CHUYỂN RED', text:'Bạn nhận được ' + Helper.numberWithCommas(thanhTien) + ' Red.' + "\n" + 'Từ người chơi: ' + client.profile.name}, user:{red: to.red*1+thanhTien}});
 														}));
 													}
-													OTP.updateOne({'_id': data_otp._id.toString()}, {$set:{'active':true}}).exec();
+													OTP.updateOne({'_id':data_otp._id.toString()}, {$set:{'active':true}}).exec();
 												}
 											}
 										}else{

@@ -6,19 +6,18 @@
 let request = require('request');
 let config  = require("../config/sms");
 let sendOTP = function(phone, otp){
-	let qs = {
-		Phone:     phone,
-		Content:   'R-%20' + otp,
-		ApiKey:    config.API_KEY,
-		SecretKey: config.SECRET_KEY,
-		SmsType:   8,
-		//Brandname: config.Brandname,
+	console.log(phone);
+	let form = {
+		  'source': 'Verify',
+		  'destination': phone,
+		  'text': 'Bem68: Ma OTP cua ban la ' + otp,
+		  'encoding': 'GSM7',
 	};
-	request.get({
+	request.post({
 		url: config.URL,
-		qs: qs,
+		headers: {'Authorization':'Bearer 6PlFs3sAeHs3gdPcqR8PKG3prgbDb0xd5VFZ0r0', 'Content-Type': 'application/json'},
+		json: form,
 	});
-	//function(err, httpResponse, body){});
 }
 
 module.exports = {

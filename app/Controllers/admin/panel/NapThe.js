@@ -18,10 +18,15 @@ function get_data(client, data){
 								obj = obj._doc;
 								var user = UserInfo.findOne({id: obj.uid}, 'name').exec();
 								return Promise.all([user]).then(values => {
-									Object.assign(obj, values[0]._doc);
-									delete obj.__v;
-									delete obj._id;
-									delete obj.uid;
+									if (values[0]) {
+										values = values[0]._doc;
+										delete values._id;
+										Object.assign(obj, values);
+										delete obj.__v;
+										delete obj.GD;
+										delete obj.uid;
+										return obj;
+									}
 									return obj;
 								});
 							}))
@@ -42,10 +47,15 @@ function get_data(client, data){
 								obj = obj._doc;
 								var user = UserInfo.findOne({id: obj.uid}, 'name').exec();
 								return Promise.all([user]).then(values => {
-									Object.assign(obj, values[0]._doc);
-									delete obj.__v;
-									delete obj._id;
-									delete obj.uid;
+									if (values[0]) {
+										values = values[0]._doc;
+										delete values._id;
+										Object.assign(obj, values);
+										delete obj.__v;
+										delete obj.GD;
+										delete obj.uid;
+										return obj;
+									}
 									return obj;
 								});
 							}))
@@ -67,33 +77,44 @@ function update(client, data){
 		var status = data.status>>0;
 		var id     = data.id;
 
-		NapThe.findOne({'_id': id}, 'name nhaMang menhGia maThe seri nhan status', function(err, check){
+		NapThe.findOne({'_id':id}, 'uid menhGia nhan status', function(err, check){
 			if (check) {
 				if (check.status == status) {
 					client.red({notice:{title: 'CHÚ Ý', text: 'Không Thể Cập Nhật...' + "\n" + 'Vì Thẻ Cào Đang trong trạng thái được chọn...'}});
 				}else{
 					if (status == 1) {
-						MenhGia.findOne({'name': check.menhGia, 'nap': true}, 'values', function(err, checkMenhGia){
+						MenhGia.findOne({'name':check.menhGia, 'nap': true}, 'values', function(err, checkMenhGia){
 							if (!!checkMenhGia) {
-								NapThe.updateOne({'_id': id}, {$set:{nhan: checkMenhGia.values, status: status}}).exec();
-								UserInfo.updateOne({name: check.name}, {$inc:{red: checkMenhGia.values}}).exec();
+								NapThe.updateOne({'_id':id}, {$set:{nhan: checkMenhGia.values, status: status}}).exec();
+								UserInfo.findOneAndUpdate({'id':check.uid}, {$inc:{red:checkMenhGia.values}}).exec(function(err3, user){
+									if (user) {
+										if (void 0 !== client.redT.users[check.uid]) {
+											Promise.all(client.redT.users[check.uid].map(function(obj){
+												obj.red({user:{red:user.red*1+checkMenhGia.values}});
+											}));
+										}
+									}
+								});
 								client.red({notice:{title: "THÔNG TIN NẠP THẺ", text: "Cập nhật thành công..."},nap_the:{update:{id: id, status: status, nhan: checkMenhGia.values}}});
+
 							}else{
 								client.red({notice:{title: 'LỖI HỆ THỐNG', text: 'Mệnh giá này không tồn tại trên hệ thống...'}});
 							}
 						});
 					}else{
 						if (check.status == 1) {
-							NapThe.updateOne({'_id': id}, {$set:{nhan: 0, status: status}}).exec();
-							UserInfo.updateOne({name: check.name}, {$inc:{red: -check.nhan}}).exec();
+							NapThe.updateOne({'_id':id}, {$set:{nhan:0, status:status}}).exec();
+							UserInfo.updateOne({'id':check.uid}, {$inc:{red:-check.nhan}}).exec();
 						}else{
-							NapThe.updateOne({'_id': id}, {$set:{status: status}}).exec();
+							NapThe.updateOne({'_id':id}, {$set:{status: status}}).exec();
 						}
 						client.red({notice:{title: "THÔNG TIN NẠP THẺ", text: "Cập nhật thành công..."}, nap_the:{update:{id: id, status: status, nhan: 0}}});
 					}
 				}
+			}else{
+				client.red({notice:{title: 'LỖI', text: 'Thẻ không tồn tại.'}});
 			}
-		})
+		});
 	}
 }
 

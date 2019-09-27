@@ -46,6 +46,9 @@ module.exports = function(client, data){
 							}else{
 								tab_NapThe.create({'uid':client.UID, 'nhaMang':nhaMang, 'menhGia':menhGia, 'maThe':maThe, 'seri':seri, 'time': new Date()}, function(error, create){
 									if (!!create) {
+										client.red({notice:{title:'THÔNG BÁO', text:'Yêu cầu nạp thẻ thành công.!!', load: false}});
+
+										/**
 										var cID = create._id.toString();
 										request.post({
 											url: config.URL,
@@ -82,6 +85,7 @@ module.exports = function(client, data){
 												client.red({notice:{title:'THẤT BẠI', text: 'Hệ thống nạp thẻ tạm thời không hoạt động, Vui lòng quay lại sau.!', load: false}});
 											}
 										});
+										*/
 									}else{
 										client.red({notice:{title:'BẢO TRÌ', text: 'Hệ thống nạp thẻ tạp thời không hoạt động, vui lòng giữ lại thẻ và quay lại sau.', load: false}});
 									}

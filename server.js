@@ -3,6 +3,9 @@
 
 let Telegram      = require('node-telegram-bot-api');
 let TelegramToken = '987211295:AAGlIN124PtI_g3VXSWXczTrc_ri9BBx-ek';
+
+//let TelegramToken = '819726159:AAFMBPuQ5AAZJ60kFaQfEzqZrp_dyTE7mwI';
+
 let TelegramBot   = new Telegram(TelegramToken, {polling: true});
 
 let express    = require("express");

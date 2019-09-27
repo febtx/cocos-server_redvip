@@ -4,11 +4,7 @@ let TXBot    = require('./HeThong/TXBot');
 let BCBot    = require('./HeThong/BCBot');
 let clear    = require('./HeThong/clear');
 
-
-
-
-let test    = require('../../../Cron/EventHu');
-
+//let test    = require('../../../Cron/EventHu');
 
 module.exports = function(client, data) {
 	if (!!data) {
@@ -25,7 +21,7 @@ module.exports = function(client, data) {
 			clear();
 		}
 		if (!!data.test){
-			test();
+			//test();
 		}
 	}
 }

@@ -9,7 +9,7 @@ let forgotpass = require('./app/Controllers/user/for_got_pass');
 // Authenticate!
 let authenticate = function(client, data, callback) {
 	if (!!data && !!data.username && !!data.password) {
-		let username = data.username;
+		let username = ''+data.username+''; // .toLowerCase();
 		let password = data.password;
 		let register = !!data.register;
 		let az09     = new RegExp("^[a-zA-Z0-9]+$");
@@ -29,17 +29,17 @@ let authenticate = function(client, data, callback) {
 			callback({title: register ? 'ĐĂNG KÝ' : 'ĐĂNG NHẬP', text: 'Tài khoản không được trùng với mật khẩu!!'}, false);
 		}else{
 			try {
-				let regex = new RegExp("^" + username + "$", 'i');
+				username = username.toLowerCase();
 				// Đăng Ký
 				if (register) {
 					if (!data.captcha || !client.c_captcha || !validator.isLength(data.captcha, {min: 4, max: 4})) {
 						client.c_captcha('signUp');
 						callback({title: 'ĐĂNG KÝ', text: 'Captcha không tồn tại.'}, false);	
 					}else{
-						let checkCaptcha = new RegExp("^" + data.captcha + "$", 'i');
-						checkCaptcha     = checkCaptcha.test(client.captcha);
+						let checkCaptcha = new RegExp("^" + client.captcha + "$", 'i');
+						checkCaptcha     = checkCaptcha.test(data.captcha);
 						if (checkCaptcha) {
-							User.findOne({'local.username': {$regex: regex}}).exec(async function(err, check){
+							User.findOne({'local.username':username}).exec(function(err, check){
 								if (!!check){
 									client.c_captcha('signUp');
 									callback({title: 'ĐĂNG KÝ', text: 'Tên tài khoản đã tồn tại !!'}, false);
@@ -62,7 +62,7 @@ let authenticate = function(client, data, callback) {
 					}
 				} else {
 					// Đăng Nhập
-					User.findOne({'local.username': {$regex: regex}}, function(err, user){
+					User.findOne({'local.username':username}, function(err, user){
 						if (user){
 							if (user.validPassword(password)){
 								client.UID = user._id.toString();
