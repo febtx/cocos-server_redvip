@@ -9,7 +9,7 @@ let forgotpass = require('./app/Controllers/user/for_got_pass');
 // Authenticate!
 let authenticate = function(client, data, callback) {
 	if (!!data && !!data.username && !!data.password) {
-		let username = ''+data.username+''; // .toLowerCase();
+		let username = ''+data.username+'';
 		let password = data.password;
 		let register = !!data.register;
 		let az09     = new RegExp("^[a-zA-Z0-9]+$");

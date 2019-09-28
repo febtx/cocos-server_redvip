@@ -1,12 +1,12 @@
 
 // server.js
 
-let Telegram      = require('node-telegram-bot-api');
-let TelegramToken = '987211295:AAGlIN124PtI_g3VXSWXczTrc_ri9BBx-ek';
+//let Telegram      = require('node-telegram-bot-api');
+//let TelegramToken = '987211295:AAGlIN124PtI_g3VXSWXczTrc_ri9BBx-ek';
 
 //let TelegramToken = '819726159:AAFMBPuQ5AAZJ60kFaQfEzqZrp_dyTE7mwI';
 
-let TelegramBot   = new Telegram(TelegramToken, {polling: true});
+//let TelegramBot   = new Telegram(TelegramToken, {polling: true});
 
 let express    = require("express");
 let app        = express();
@@ -75,7 +75,7 @@ app.use(express.static("public"));
 
 // server socket
 let redT = expressWs.getWss();
-redT.telegram = TelegramBot;
+//redT.telegram = TelegramBot;
 
 require('./app/Helpers/socketUser')(redT); // Add function socket
 
@@ -87,7 +87,7 @@ require("./app/Cron/baucua")(redT);   // Chạy game Bầu Cua
 
 require("./config/cron")();
 
-require("./app/Telegram/Telegram")(TelegramBot); // Telegram Bot
+//require("./app/Telegram/Telegram")(TelegramBot); // Telegram Bot
 
 
 require("./update")();
