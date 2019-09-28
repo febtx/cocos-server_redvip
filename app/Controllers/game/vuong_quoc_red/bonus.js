@@ -53,7 +53,7 @@ function onSelectBox(client, box){
 					client.VuongQuocRed.bonusWin = 0;
 					client.VuongQuocRed.bonusX   = 0;
 
-					UserInfo.findOneAndUpdate({id:client.UID}, 'red xu', {$inc:uInfo}, function(err, user){
+					UserInfo.findOneAndUpdate({id:client.UID}, {$inc:uInfo}, function(err, user){
 						setTimeout(function(){
 							if (client.VuongQuocRed.red) {
 								client.red({VuongQuocRed:{bonus:{win: betWin}}, user:{red:user.red*1+betWin}});

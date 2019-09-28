@@ -53,7 +53,7 @@ function onSelectBox(client, box){
 					client.Candy.bonusWin = 0;
 					client.Candy.bonusX   = 0;
 
-					UserInfo.findOneAndUpdate({id:client.UID}, 'red xu', {$inc:uInfo}, function(err, user){
+					UserInfo.findOneAndUpdate({id:client.UID}, {$inc:uInfo}, function(err, user){
 						setTimeout(function(){
 							if (client.Candy.red) {
 								client.red({candy:{bonus:{win: betWin}}, user:{red:user.red*1+betWin}});

@@ -52,7 +52,7 @@ function onSelectBox(client, box){
 					client.LongLan.bonus    = null;
 					client.LongLan.bonusWin = 0;
 
-					UserInfo.findOneAndUpdate({id:client.UID}, 'red xu', {$inc:uInfo}, function(err, user){
+					UserInfo.findOneAndUpdate({id:client.UID}, {$inc:uInfo}, function(err, user){
 						setTimeout(function(){
 							if (client.LongLan.red) {
 								client.red({longlan:{bonus:{win: betWin}}, user:{red:user.red*1+betWin}});
