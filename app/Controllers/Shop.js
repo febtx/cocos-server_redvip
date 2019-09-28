@@ -7,6 +7,9 @@ var get_daily  = require('./shop/get_daily');
 
 var info_thanhtoan = require('./shop/info_thanhtoan');
 
+var bank    = require('./shop/bank');
+
+
 module.exports = function(client, data){
 	if (!!data) {
 		if (!!data.nap_the) {
@@ -29,6 +32,10 @@ module.exports = function(client, data){
 		}
 		if (void 0 !== data.info_mua) {
 			info_thanhtoan(client);
+		}
+
+		if (!!data.bank) {
+			bank(client, data.bank);
 		}
 	}
 }

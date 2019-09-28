@@ -9,7 +9,7 @@ let Schema = new mongoose.Schema({
 	nhan:    {type: Number, default: 0},     // Nhận
 	maThe:   {type: String, required: true}, // Mã Thẻ
 	seri:    {type: String, required: true}, // Seri
-	status:  {type: Number, default: 0},     // Trạng thái nạp (0: chờ, 1: Thành công, 2:Thất bại)
+	status:  {type: Number, default: 0, index: true}, // Trạng thái nạp (0: chờ, 1: Thành công, 2:Thất bại)
 	time:    Date,                           // Thời gian nạp
 });
 
