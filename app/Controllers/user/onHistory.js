@@ -7,6 +7,9 @@ var MuaThe_card = require('../../Models/MuaThe_card');
 var MuaXu       = require('../../Models/MuaXu');
 var ChuyenRed   = require('../../Models/ChuyenRed');
 
+var Bank_history = require('../../Models/Bank/Bank_history');
+
+
 var Helper      = require('../../Helpers/Helpers');
 
 function historyNapRed(client, data){
@@ -77,6 +80,20 @@ function the_cao(client, id){
 	}
 }
 
+function bank(client, data){
+	if(!!data && !!data.page){
+		var page  = data.page>>0;
+		var kmess = 10;
+		if (page > 0) {
+			Bank_history.countDocuments({'uid':client.UID}).exec(function(err, total){
+				Bank_history.find({'uid':client.UID}, {}, {sort:{'_id':-1}, skip:(page-1)*kmess, limit:kmess}, function(err, result) {
+					client.red({profile:{history:{bank:result, page:page, kmess:kmess, total:total}}});
+				});
+			});
+		}
+	}
+}
+
 module.exports = function(client, data) {
 	if (!!data) {
 		if (!!data.nap_red) {
@@ -98,5 +115,10 @@ module.exports = function(client, data) {
 		if (!!data.the_cao) {
 			the_cao(client, data.the_cao)
 		}
+
+		if (!!data.bank) {
+			bank(client, data.bank)
+		}
+		
 	}
 };

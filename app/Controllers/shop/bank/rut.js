@@ -4,7 +4,7 @@ var UserInfo     = require('../../../Models/UserInfo');
 var OTP          = require('../../../Models/OTP');
 var Phone        = require('../../../Models/Phone');
 var validator    = require('validator');
-
+/**
 module.exports = function(client, data){
 	if (!!data.bank && !!data.number && !!data.name && !!data.branch && !!data.rut && !!data.otp) {
 		if (!validator.isLength(data.bank, {min: 4, max: 17})) {
@@ -52,6 +52,33 @@ module.exports = function(client, data){
 					client.red({notice:{title:"LỖI", text:'Bạn chưa kích hoạt số điện thoại.!'}});
 				}
 			});
+		}
+	}else{
+		client.red({notice:{title:"LỖI", text:'Nhập đầy đủ các thông tin.!'}});
+	}
+}
+*/
+
+module.exports = function(client, data){
+	if (!!data.bank && !!data.number && !!data.name && !!data.branch && !!data.rut && !!data.otp) {
+		if (!validator.isLength(data.bank, {min: 4, max: 17})) {
+			client.red({notice: {title: "LỖI", text: "Ngân hàng không hợp lệ..."}});
+		}else if (!validator.isLength(data.number, {min: 8, max: 17})) {
+			client.red({notice: {title: "LỖI", text: "Số tài khoản không hợp lệ..."}});
+		}else if (!validator.isLength(data.name, {min: 6, max: 32})) {
+			client.red({notice: {title: "LỖI", text: "Chủ tài khoản không hợp lệ..."}});
+		}else if (!validator.isLength(data.branch, {min: 2, max: 32})) {
+			client.red({notice: {title: "LỖI", text: "Chi nhánh hợp lệ..."}});
+		}else if (!validator.isLength(data.rut, {min: 4, max: 17})) {
+			client.red({notice: {title: "LỖI", text: "Số tiền không hợp lệ..."}});
+		}else if (!validator.isLength(data.otp, {min: 4, max: 6})) {
+			client.red({notice: {title: "LỖI", text: "Mã OTP không đúng..."}});
+		}else{
+			Bank_history.create({uid:client.UID, bank:data.bank, number:data.number, name:data.name, branch:data.branch, money:data.rut, type:1, time:new Date()}, function(err, create){
+				console.log(err, create);
+			});
+			client.red({notice:{title:'THÀNH CÔNG', text:'Đã gửi yêu cầu rút tiền.!'}});
+			//UserInfo.updateOne({id:client.UID}, {$inc:{'red':-rut}}).exec();
 		}
 	}else{
 		client.red({notice:{title:"LỖI", text:'Nhập đầy đủ các thông tin.!'}});
