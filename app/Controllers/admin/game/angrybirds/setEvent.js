@@ -17,15 +17,15 @@ module.exports = function(client, data) {
 	file['10000'].balans = data.huP10000>>0;
 	file['10000'].x      = data.huX10000>>0;
 
-	file["0"] = !!data["0"];
-	file["1"] = !!data["1"];
-	file["2"] = !!data["2"];
-	file["3"] = !!data["3"];
-	file["4"] = !!data["4"];
-	file["5"] = !!data["5"];
-	file["6"] = !!data["6"];
+	file['0'] = !!data['0'];
+	file['1'] = !!data['1'];
+	file['2'] = !!data['2'];
+	file['3'] = !!data['3'];
+	file['4'] = !!data['4'];
+	file['5'] = !!data['5'];
+	file['6'] = !!data['6'];
 
-	fs.writeFile(path.dirname(path.dirname(path.dirname(path.dirname(path.dirname(__dirname))))) + "/config/angrybird.json", JSON.stringify(file), function(err){
+	fs.writeFile(path.dirname(path.dirname(path.dirname(path.dirname(path.dirname(__dirname))))) + '/config/angrybird.json', JSON.stringify(file), function(err){
 		if (!!err) {
 			client.red({notice:{title:'THẤT BẠI', text:'Lưu thất bại...'}});
 		}else{

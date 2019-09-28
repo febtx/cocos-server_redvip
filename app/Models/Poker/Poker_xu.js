@@ -10,4 +10,4 @@ let Schema = new mongoose.Schema({
 Schema.plugin(AutoIncrement.plugin, {modelName:'Poker_xu', field:'id'});
 //Schema.index({room: 1}, {background: true});
 
-module.exports = mongoose.model("Poker_xu", Schema);
+module.exports = mongoose.model('Poker_xu', Schema);

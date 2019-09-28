@@ -4,7 +4,7 @@ let onPost = require('./Controllers/onPost.js');
 
 let auth = function(client) {
 	client.gameEvent = {};
-	client.scene = "home";
+	client.scene = 'home';
 	first(client);
 }
 

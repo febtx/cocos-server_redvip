@@ -1,5 +1,5 @@
 
-let mongoose = require("mongoose");
+let mongoose = require('mongoose');
 
 let Schema = new mongoose.Schema({
 	uid:           {type: String, required: true, unique: true},    // ID Người chơi
@@ -51,4 +51,4 @@ let Schema = new mongoose.Schema({
 	cLineLostXuH:  {type: Number,  default: 0},                     // Dây thua xu hiện tại
 });
 
-module.exports = mongoose.model("TaiXiu_user", Schema);
+module.exports = mongoose.model('TaiXiu_user', Schema);

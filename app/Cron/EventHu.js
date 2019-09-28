@@ -19,7 +19,7 @@ let cronDay = function(day){
 	return day;
 }
 let createMess = function(uid, bet, top, day){
-	Message.create({'uid': uid, 'title':'Đu dây Tài Xỉu', 'text':'Xin Chúc Mừng!!' + "\n\n" + 'Bạn nhận được ' + numberWithCommas(bet) + ' RED, từ sự kiện đu dây tài xỉu.' + "\n" + 'Vị trí của bạn: TOP ' + top + ' - ' + day, 'time':new Date()});
+	Message.create({'uid': uid, 'title':'Đu dây Tài Xỉu', 'text':'Xin Chúc Mừng!!' + '\n\n' + 'Bạn nhận được ' + numberWithCommas(bet) + ' RED, từ sự kiện đu dây tài xỉu.' + '\n' + 'Vị trí của bạn: TOP ' + top + ' - ' + day, 'time':new Date()});
 }
 
 module.exports = function(){
@@ -35,41 +35,41 @@ module.exports = function(){
 	 * AngryBirds
 	*/
 	// 100 Angrybird
-	HU.findOne({game: "arb", type:100, red:true}, 'bet min toX balans x', function(err, arb100){
+	HU.findOne({game:'arb', type:100, red:true}, 'bet min toX balans x', function(err, arb100){
 		var arb100bet = arb100.bet;
 		if (file_angrybird[homQua] && arb100.toX < 1 && arb100.balans > 0) {
 			arb100bet = arb100bet-(arb100.min*(arb100.x-1));
 		}
 		if (file_angrybird[timeNow]) {
-			HU.updateOne({game: "arb", type:100, red:true}, {$set:{'bet': arb100bet, 'toX': file_angrybird['100'].toX, 'balans': file_angrybird['100'].balans, 'x': file_angrybird['100'].x}}).exec();
+			HU.updateOne({game:'arb', type:100, red:true}, {$set:{'bet': arb100bet, 'toX': file_angrybird['100'].toX, 'balans': file_angrybird['100'].balans, 'x': file_angrybird['100'].x}}).exec();
 		}else{
-			HU.updateOne({game: "arb", type:100, red:true}, {$set:{'toX': 0, 'balans': 0, 'bet': arb100bet}}).exec();
+			HU.updateOne({game:'arb', type:100, red:true}, {$set:{'toX': 0, 'balans': 0, 'bet': arb100bet}}).exec();
 		}
 	});
 
 	// 1000 Angrybird
-	HU.findOne({game: "arb", type:1000, red:true}, 'bet min toX balans x', function(err, arb1000){
+	HU.findOne({game:'arb', type:1000, red:true}, 'bet min toX balans x', function(err, arb1000){
 		var arb1000bet = arb1000.bet;
 		if (file_angrybird[homQua] && arb1000.toX < 1 && arb1000.balans > 0) {
 			arb1000bet = arb1000bet-(arb1000.min*(arb1000.x-1));
 		}
 		if (file_angrybird[timeNow]) {
-			HU.updateOne({game: "arb", type:1000, red:true}, {$set:{'bet': arb1000bet, 'toX': file_angrybird['1000'].toX, 'balans': file_angrybird['1000'].balans, 'x': file_angrybird['1000'].x}}).exec();
+			HU.updateOne({game:'arb', type:1000, red:true}, {$set:{'bet': arb1000bet, 'toX': file_angrybird['1000'].toX, 'balans': file_angrybird['1000'].balans, 'x': file_angrybird['1000'].x}}).exec();
 		}else{
-			HU.updateOne({game: "arb", type:1000, red:true}, {$set:{'toX': 0, 'balans': 0, 'bet': arb1000bet}}).exec();
+			HU.updateOne({game:'arb', type:1000, red:true}, {$set:{'toX': 0, 'balans': 0, 'bet': arb1000bet}}).exec();
 		}
 	});
 
 	// 10000 Angrybird
-	HU.findOne({game: "arb", type:10000, red:true}, 'bet min toX balans x', function(err, arb10000){
+	HU.findOne({game:'arb', type:10000, red:true}, 'bet min toX balans x', function(err, arb10000){
 		var arb10000bet = arb10000.bet;
 		if (file_angrybird[homQua] && arb10000.toX < 1 && arb10000.balans > 0) {
 			arb10000bet = arb10000bet-(arb10000.min*(arb10000.x-1));
 		}
 		if (file_angrybird[timeNow]) {
-			HU.updateOne({game: "arb", type:10000, red:true}, {$set:{'bet': arb10000bet, 'toX': file_angrybird['10000'].toX, 'balans': file_angrybird['10000'].balans, 'x': file_angrybird['10000'].x}}).exec();
+			HU.updateOne({game:'arb', type:10000, red:true}, {$set:{'bet': arb10000bet, 'toX': file_angrybird['10000'].toX, 'balans': file_angrybird['10000'].balans, 'x': file_angrybird['10000'].x}}).exec();
 		}else{
-			HU.updateOne({game: "arb", type:10000, red:true}, {$set:{'toX': 0, 'balans': 0, 'bet': arb10000bet}}).exec();
+			HU.updateOne({game:'arb', type:10000, red:true}, {$set:{'toX': 0, 'balans': 0, 'bet': arb10000bet}}).exec();
 		}
 	});
 
@@ -79,41 +79,41 @@ module.exports = function(){
 	 * BigBabol
 	*/
 	// 100 BigBabol
-	HU.findOne({game: "bigbabol", type:100, red:true}, 'bet min toX balans x', function(err, bbb100){
+	HU.findOne({game:'bigbabol', type:100, red:true}, 'bet min toX balans x', function(err, bbb100){
 		var bbb100bet = bbb100.bet;
 		if (file_bigbabol[homQua] && bbb100.toX < 1 && bbb100.balans > 0) {
 			bbb100bet = bbb100bet-(bbb100.min*(bbb100.x-1));
 		}
 		if (file_bigbabol[timeNow]) {
-			HU.updateOne({game: "bigbabol", type:100, red:true}, {$set:{'bet': bbb100bet, 'toX': file_bigbabol['100'].toX, 'balans': file_bigbabol['100'].balans, 'x': file_bigbabol['100'].x}}).exec();
+			HU.updateOne({game:'bigbabol', type:100, red:true}, {$set:{'bet': bbb100bet, 'toX': file_bigbabol['100'].toX, 'balans': file_bigbabol['100'].balans, 'x': file_bigbabol['100'].x}}).exec();
 		}else{
-			HU.updateOne({game: "bigbabol", type:100, red:true}, {$set:{'toX': 0, 'balans': 0, 'bet': bbb100bet}}).exec();
+			HU.updateOne({game:'bigbabol', type:100, red:true}, {$set:{'toX': 0, 'balans': 0, 'bet': bbb100bet}}).exec();
 		}
 	});
 
 	// 1000 BigBabol
-	HU.findOne({game: "bigbabol", type:1000, red:true}, 'bet min toX balans x', function(err, bbb1000){
+	HU.findOne({game:'bigbabol', type:1000, red:true}, 'bet min toX balans x', function(err, bbb1000){
 		var bbb1000bet = bbb1000.bet;
 		if (file_bigbabol[homQua] && bbb1000.toX < 1 && bbb1000.balans > 0) {
 			bbb1000bet = bbb1000bet-(bbb1000.min*(bbb1000.x-1));
 		}
 		if (file_bigbabol[timeNow]) {
-			HU.updateOne({game: "bigbabol", type:1000, red:true}, {$set:{'bet': bbb1000bet, 'toX': file_bigbabol['1000'].toX, 'balans': file_bigbabol['1000'].balans, 'x': file_bigbabol['1000'].x}}).exec();
+			HU.updateOne({game:'bigbabol', type:1000, red:true}, {$set:{'bet': bbb1000bet, 'toX': file_bigbabol['1000'].toX, 'balans': file_bigbabol['1000'].balans, 'x': file_bigbabol['1000'].x}}).exec();
 		}else{
-			HU.updateOne({game: "bigbabol", type:1000, red:true}, {$set:{'toX': 0, 'balans': 0, 'bet': bbb1000bet}}).exec();
+			HU.updateOne({game:'bigbabol', type:1000, red:true}, {$set:{'toX': 0, 'balans': 0, 'bet': bbb1000bet}}).exec();
 		}
 	});
 
 	// 10000 BigBabol
-	HU.findOne({game: "bigbabol", type:10000, red:true}, 'bet min toX balans x', function(err, bbb10000){
+	HU.findOne({game:'bigbabol', type:10000, red:true}, 'bet min toX balans x', function(err, bbb10000){
 		var bbb10000bet = bbb10000.bet;
 		if (file_bigbabol[homQua] && bbb10000.toX < 1 && bbb10000.balans > 0) {
 			bbb10000bet = bbb10000bet-(bbb10000.min*(bbb10000.x-1));
 		}
 		if (file_bigbabol[timeNow]) {
-			HU.updateOne({game: "bigbabol", type:10000, red:true}, {$set:{'bet': bbb10000bet, 'toX': file_bigbabol['10000'].toX, 'balans': file_bigbabol['10000'].balans, 'x': file_bigbabol['10000'].x}}).exec();
+			HU.updateOne({game:'bigbabol', type:10000, red:true}, {$set:{'bet': bbb10000bet, 'toX': file_bigbabol['10000'].toX, 'balans': file_bigbabol['10000'].balans, 'x': file_bigbabol['10000'].x}}).exec();
 		}else{
-			HU.updateOne({game: "bigbabol", type:10000, red:true}, {$set:{'toX': 0, 'balans': 0, 'bet': bbb10000bet}}).exec();
+			HU.updateOne({game:'bigbabol', type:10000, red:true}, {$set:{'toX': 0, 'balans': 0, 'bet': bbb10000bet}}).exec();
 		}
 	});
 
@@ -122,41 +122,41 @@ module.exports = function(){
 	 * MiniPoker
 	*/
 	// 100 MiniPoker
-	HU.findOne({game: "minipoker", type:100, red:true}, 'bet min toX balans x', function(err, mpk100){
+	HU.findOne({game:'minipoker', type:100, red:true}, 'bet min toX balans x', function(err, mpk100){
 		var mpk100bet = mpk100.bet;
 		if (file_minipoker[homQua] && mpk100.toX < 1 && mpk100.balans > 0) {
 			mpk100bet = mpk100bet-(mpk100.min*(mpk100.x-1));
 		}
 		if (file_minipoker[timeNow]) {
-			HU.updateOne({game: "minipoker", type:100, red:true}, {$set:{'bet': mpk100bet, 'toX': file_minipoker['100'].toX, 'balans': file_minipoker['100'].balans, 'x': file_minipoker['100'].x}}).exec();
+			HU.updateOne({game:'minipoker', type:100, red:true}, {$set:{'bet': mpk100bet, 'toX': file_minipoker['100'].toX, 'balans': file_minipoker['100'].balans, 'x': file_minipoker['100'].x}}).exec();
 		}else{
-			HU.updateOne({game: "minipoker", type:100, red:true}, {$set:{'toX': 0, 'balans': 0, 'bet': mpk100bet}}).exec();
+			HU.updateOne({game:'minipoker', type:100, red:true}, {$set:{'toX': 0, 'balans': 0, 'bet': mpk100bet}}).exec();
 		}
 	});
 
 	// 1000 MiniPoker
-	HU.findOne({game: "minipoker", type:1000, red:true}, 'bet min toX balans x', function(err, mpk1000){
+	HU.findOne({game:'minipoker', type:1000, red:true}, 'bet min toX balans x', function(err, mpk1000){
 		var mpk1000bet = mpk1000.bet;
 		if (file_minipoker[homQua] && mpk1000.toX < 1 && mpk1000.balans > 0) {
 			mpk1000bet = mpk1000bet-(mpk1000.min*(mpk1000.x-1));
 		}
 		if (file_minipoker[timeNow]) {
-			HU.updateOne({game: "minipoker", type:1000, red:true}, {$set:{'bet': mpk1000bet, 'toX': file_minipoker['1000'].toX, 'balans': file_minipoker['1000'].balans, 'x': file_minipoker['1000'].x}}).exec();
+			HU.updateOne({game:'minipoker', type:1000, red:true}, {$set:{'bet': mpk1000bet, 'toX': file_minipoker['1000'].toX, 'balans': file_minipoker['1000'].balans, 'x': file_minipoker['1000'].x}}).exec();
 		}else{
-			HU.updateOne({game: "minipoker", type:1000, red:true}, {$set:{'toX': 0, 'balans': 0, 'bet': mpk1000bet}}).exec();
+			HU.updateOne({game:'minipoker', type:1000, red:true}, {$set:{'toX': 0, 'balans': 0, 'bet': mpk1000bet}}).exec();
 		}
 	});
 
 	// 10000 MiniPoker
-	HU.findOne({game: "minipoker", type:10000, red:true}, 'bet min toX balans x', function(err, mpk10000){
+	HU.findOne({game:'minipoker', type:10000, red:true}, 'bet min toX balans x', function(err, mpk10000){
 		var mpk10000bet = mpk10000.bet;
 		if (file_minipoker[homQua] && mpk10000.toX < 1 && mpk10000.balans > 0) {
 			mpk10000bet = mpk10000bet-(mpk10000.min*(mpk10000.x-1));
 		}
 		if (file_minipoker[timeNow]) {
-			HU.updateOne({game: "minipoker", type:10000, red:true}, {$set:{'bet': mpk10000bet, 'toX': file_minipoker['10000'].toX, 'balans': file_minipoker['10000'].balans, 'x': file_minipoker['10000'].x}}).exec();
+			HU.updateOne({game:'minipoker', type:10000, red:true}, {$set:{'bet': mpk10000bet, 'toX': file_minipoker['10000'].toX, 'balans': file_minipoker['10000'].balans, 'x': file_minipoker['10000'].x}}).exec();
 		}else{
-			HU.updateOne({game: "minipoker", type:10000, red:true}, {$set:{'toX': 0, 'balans': 0, 'bet': mpk10000bet}}).exec();
+			HU.updateOne({game:'minipoker', type:10000, red:true}, {$set:{'toX': 0, 'balans': 0, 'bet': mpk10000bet}}).exec();
 		}
 	});
 
@@ -168,10 +168,10 @@ module.exports = function(){
 	var topWin = TaiXiu_User.aggregate([
 		{$match:{tLineWinRedH:{$gt:0}}},
 		{$project: {
-			uid:   "$uid",
-			top:   "$tLineWinRedH",
-			first: "$first",
-			last:  "$last",
+			uid:   '$uid',
+			top:   '$tLineWinRedH',
+			first: '$first',
+			last:  '$last',
 		}},
 		{$sort: {'top': -1, 'last': -1}},
 		{$limit: 20}
@@ -180,10 +180,10 @@ module.exports = function(){
 	var topLost = TaiXiu_User.aggregate([
 		{$match:{tLineLostRedH:{$gt:0}}},
 		{$project: {
-			uid:   "$uid",
-			top:   "$tLineLostRedH",
-			first: "$first",
-			last:  "$last",
+			uid:   '$uid',
+			top:   '$tLineLostRedH',
+			first: '$first',
+			last:  '$last',
 		}},
 		{$sort: {'top': -1, 'last': -1}},
 		{$limit: 20}
@@ -198,7 +198,6 @@ module.exports = function(){
 		Promise.all(result[0].map(function(users, index){
 			if (index == 0) {
 				UserInfo.findOneAndUpdate({'id': users.uid}, {$inc:{'red':500000}}).exec(function(err, user){
-					console.log(user);
 					TaiXiu_event.create({date:stringTime, top:index+1, name:user.name, line:users.top, win:true, first:users.first, last:users.last, reward:500000});
 				});
 				createMess(users.uid, 500000, index+1, 'Dây Thắng');

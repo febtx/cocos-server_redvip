@@ -216,7 +216,7 @@ let thongtin_thanhtoan = function thongtin_thanhtoan(dice = null){
 								results = {news:{a:results}};
 								Promise.all(Object.values(io.users).map(function(users){
 									Promise.all(users.map(function(client){
-										if(client.scene == "home"){
+										if(client.scene == 'home'){
 											client.red(results);
 										}
 									}));
@@ -268,10 +268,10 @@ let playGame = function(){
 				file[0]     = 6;
 				file[1]     = 6;
 				file[2]     = 6;
-				file.uid    = "";
+				file.uid    = '';
 				file.rights = 2;
 
-				fs.writeFile(path.dirname(path.dirname(__dirname)) + "/data/baucua.json", JSON.stringify(file), function(err){});
+				fs.writeFile(path.dirname(path.dirname(__dirname)) + '/data/baucua.json', JSON.stringify(file), function(err){});
 
 				BauCua_phien.create({'dice1':dice1, 'dice2':dice2, 'dice3':dice3, 'time':new Date()}, function(err, create){
 					if (!!create) {

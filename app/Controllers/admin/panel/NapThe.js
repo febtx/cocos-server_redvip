@@ -80,7 +80,7 @@ function update(client, data){
 		NapThe.findOne({'_id':id}, 'uid menhGia nhan status', function(err, check){
 			if (check) {
 				if (check.status == status) {
-					client.red({notice:{title: 'CHÚ Ý', text: 'Không Thể Cập Nhật...' + "\n" + 'Vì Thẻ Cào Đang trong trạng thái được chọn...'}});
+					client.red({notice:{title: 'CHÚ Ý', text: 'Không Thể Cập Nhật...' + '\n' + 'Vì Thẻ Cào Đang trong trạng thái được chọn...'}});
 				}else{
 					if (status == 1) {
 						MenhGia.findOne({'name':check.menhGia, 'nap': true}, 'values', function(err, checkMenhGia){
@@ -95,7 +95,7 @@ function update(client, data){
 										}
 									}
 								});
-								client.red({notice:{title: "THÔNG TIN NẠP THẺ", text: "Cập nhật thành công..."},nap_the:{update:{id: id, status: status, nhan: checkMenhGia.values}}});
+								client.red({notice:{title: 'THÔNG TIN NẠP THẺ', text: 'Cập nhật thành công...'},nap_the:{update:{id: id, status: status, nhan: checkMenhGia.values}}});
 
 							}else{
 								client.red({notice:{title: 'LỖI HỆ THỐNG', text: 'Mệnh giá này không tồn tại trên hệ thống...'}});
@@ -108,7 +108,7 @@ function update(client, data){
 						}else{
 							NapThe.updateOne({'_id':id}, {$set:{status: status}}).exec();
 						}
-						client.red({notice:{title: "THÔNG TIN NẠP THẺ", text: "Cập nhật thành công..."}, nap_the:{update:{id: id, status: status, nhan: 0}}});
+						client.red({notice:{title: 'THÔNG TIN NẠP THẺ', text: 'Cập nhật thành công...'}, nap_the:{update:{id: id, status: status, nhan: 0}}});
 					}
 				}
 			}else{

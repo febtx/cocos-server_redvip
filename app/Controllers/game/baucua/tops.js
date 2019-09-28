@@ -6,17 +6,17 @@ var UserInfo   = require('../../../Models/UserInfo');
 module.exports = function(client, data){
 	var red  = !!data;   // Loại tiền (Red: true, Xu: false)
 
-	var project = {uid: "$uid"};
+	var project = {uid: '$uid'};
 
 	if (red) {
-		project.profit =  {$subtract: ["$red", "$red_lost"]};
+		project.profit =  {$subtract: ['$red', '$red_lost']};
 	}else{
-		project.profit =  {$subtract: ["$xu", "$xu_lost"]};
+		project.profit =  {$subtract: ['$xu', '$xu_lost']};
 	}
 
 	BauCua_user.aggregate([
 		{$project: project},
-		{$match:{"profit":{$gt:0}}},
+		{$match:{'profit':{$gt:0}}},
 		{$sort: {'profit': -1}},
 		{$limit: 100}
 	]).exec(function(err, result){

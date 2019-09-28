@@ -11,16 +11,16 @@ var smsOTP    = require('../../sms').sendOTP;
 function sendOTP(client, name){
 	if (!!name) {
 		name = ''+name+'';
-		var az09     = new RegExp("^[a-zA-Z0-9]+$");
+		var az09     = new RegExp('^[a-zA-Z0-9]+$');
 		var testName = az09.test(name);
 		if (!validator.isLength(name, {min: 3, max: 32}) || !testName) {
-			client.red({notice: {title: "LỖI", text: "Vui lòng nhập chính xác tên tài khoản..."}});
+			client.red({notice: {title: 'LỖI', text: 'Vui lòng nhập chính xác tên tài khoản...'}});
 		}else{
 			name = name.toLowerCase();
 			User.findOne({'local.username':name}).exec(function(err, check){
 				if (!!check) {
 					if (check['local']['ban_pass'] > 3) {
-						client.red({notice: {title: "LỖI", text: "Bạn đã đạt giới hạn lấy mã OTP, liên hệ Admin để được trợ giúp..."}});
+						client.red({notice: {title: 'LỖI', text: 'Bạn đã đạt giới hạn lấy mã OTP, liên hệ Admin để được trợ giúp...'}});
 						return void 0;
 					}
 					var cID = check._id.toString();
@@ -40,22 +40,22 @@ function sendOTP(client, name){
 												OTP.create({'uid':cID, 'phone':checkP.phone, 'code':otp, 'date': new Date()});
 												User.updateOne({'_id': cID}, {$inc:{'local.ban_pass':1}}).exec();
 												UserInfo.updateOne({'id': cID}, {$inc:{red:-1000}}).exec();
-												client.red({notice: {title: "THÔNG BÁO", text: "Mã OTP đã được gửi vào số điện thoại của bạn..."}});
+												client.red({notice: {title: 'THÔNG BÁO', text: 'Mã OTP đã được gửi vào số điện thoại của bạn...'}});
 											}else{
 												client.red({notice:{title:'OTP', text:'Vui lòng kiểm tra hòm thư đến.!'}});
 											}
 										});
 									}
 								}else{
-									client.red({notice: {title: "LỖI", text: "Tài khoản này chưa tạo nhân vật..."}});
+									client.red({notice: {title: 'LỖI', text: 'Tài khoản này chưa tạo nhân vật...'}});
 								}
 							});
 						}else{
-							client.red({notice: {title: "LỖI", text: "Tài khoản này chưa xác thực số điện thoại..."}});
+							client.red({notice: {title: 'LỖI', text: 'Tài khoản này chưa xác thực số điện thoại...'}});
 						}
 					});
 				}else{
-					client.red({notice: {title: "LỖI", text: "Tên tài khoản không tồn tại..."}});
+					client.red({notice: {title: 'LỖI', text: 'Tên tài khoản không tồn tại...'}});
 				}
 			});
 		}
@@ -69,22 +69,22 @@ function iForGot(client, data){
 			!validator.isLength(data.otp, {min: 4, max: 6})   ||
 			!validator.isLength(data.captcha, {min: 4, max: 4}))
 		{
-			client.red({notice: {title: "LỖI", text: "Thông tin không đúng..."}});
+			client.red({notice: {title: 'LỖI', text: 'Thông tin không đúng...'}});
 		}else{
 			var name     = ''+data.name+'';
-			var az09     = new RegExp("^[a-zA-Z0-9]+$");
+			var az09     = new RegExp('^[a-zA-Z0-9]+$');
 			var testName = az09.test(name);
 			if (!testName) {
-				client.red({notice: {title: "LỖI", text: "Vui lòng nhập chính xác tên tài khoản..."}});
+				client.red({notice: {title: 'LỖI', text: 'Vui lòng nhập chính xác tên tài khoản...'}});
 			}else{
 				name = name.toLowerCase();
-				var checkCaptcha = new RegExp("^" + client.captcha + "$", 'i');
+				var checkCaptcha = new RegExp('^' + client.captcha + '$', 'i');
 					checkCaptcha = checkCaptcha.test(data.captcha);
 				if (checkCaptcha) {
 					User.findOne({'local.username':name}).exec(function(err, check){
 						if (!!check) {
 							if (check['local']['ban_pass'] > 3) {
-								client.red({notice: {title: "LỖI", text: "Tài khoản này bị khóa lấy lại mật khẩu, liên hệ admin để được trợ giúp..."}});
+								client.red({notice: {title: 'LỖI', text: 'Tài khoản này bị khóa lấy lại mật khẩu, liên hệ admin để được trợ giúp...'}});
 							}else{
 								var cID = check._id.toString();
 								Phone.findOne({'uid':cID}, function(err3, checkP){
@@ -97,19 +97,19 @@ function iForGot(client, data){
 													data_otp.active = true;
 													data_otp.save();
 													User.updateOne({'_id': cID}, {$set:{'local.ban_pass':0, 'local.password':Helper.generateHash(data.pass)}}).exec();
-													client.red({notice: {title: "THÀNH CÔNG", text: "Bạn vừa lấy lại mật khẩu thành công."}});
+													client.red({notice: {title: 'THÀNH CÔNG', text: 'Bạn vừa lấy lại mật khẩu thành công.'}});
 												}
 											}else{
-												client.red({notice: {title: "LỖI", text: "Mã OTP không đúng..."}});
+												client.red({notice: {title: 'LỖI', text: 'Mã OTP không đúng...'}});
 											}
 										});
 									}else{
-										client.red({notice: {title: "LỖI", text: "Tài khoản này chưa xác thực số điện thoại..."}});
+										client.red({notice: {title: 'LỖI', text: 'Tài khoản này chưa xác thực số điện thoại...'}});
 									}
 								});
 							}
 						}else{
-							client.red({notice: {title: "LỖI", text: "Tên tài khoản không tồn tại..."}});
+							client.red({notice: {title: 'LỖI', text: 'Tên tài khoản không tồn tại...'}});
 						}
 					});
 				}else{

@@ -31,9 +31,9 @@ module.exports = function(client){
 			user.vip    += vipHT;             // vip tích lũy
 			user.lastVip = user.redPlay;      // Nhận thưởng lần cuối
 			user.save();
-			client.red({profile:{level: {level: 1, vipNext: 100, vipPre: 0, vipTL: user.vip+vipHT, vipHT: 0}}, notice:{text: "Bạn nhận được " + helper.numberWithCommas(tien) + " RED", title: "THÀNH CÔNG"}, user:{red: user.red}});
+			client.red({profile:{level: {level: 1, vipNext: 100, vipPre: 0, vipTL: user.vip+vipHT, vipHT: 0}}, notice:{text: 'Bạn nhận được ' + helper.numberWithCommas(tien) + ' RED', title: 'THÀNH CÔNG'}, user:{red: user.red}});
 		}else{
-			client.red({notice:{text: "Bạn chưa đủ cấp VIP để đổi thưởng...", title: "THẤT BẠI"}});
+			client.red({notice:{text: 'Bạn chưa đủ cấp VIP để đổi thưởng...', title: 'THẤT BẠI'}});
 		}
 	});
 }

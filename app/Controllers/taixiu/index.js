@@ -98,8 +98,6 @@ function getNew(client){
 
 	Promise.all([active1, active2]).then(values => {
 		client.red({user: values[0], taixiu: {du_day: values[1]}});
-	}, reason => {
-		console.log(reason)
 	});
 }
 
@@ -415,26 +413,26 @@ var get_top = async function(client, data){
 		var taixiu = !!data.taixiu;
 		var red    = !!data.red;
 
-		var project = {uid: "$uid"};
+		var project = {uid: '$uid'};
 
 		if (taixiu) {
 			if (red) {
-				project.profit =  {$subtract: ["$tWinRed", "$tLostRed"]};
+				project.profit =  {$subtract: ['$tWinRed', '$tLostRed']};
 			}else{
-				project.profit =  {$subtract: ["$tWinXu", "$tLostXu"]};
+				project.profit =  {$subtract: ['$tWinXu', '$tLostXu']};
 			}
 		}else{
 			if (red) {
-				project.profit =  {$subtract: ["$cWinRed", "$cLostRed"]};
+				project.profit =  {$subtract: ['$cWinRed', '$cLostRed']};
 			}else{
-				project.profit =  {$subtract: ["$cWinXu", "$cLostXu"]};
+				project.profit =  {$subtract: ['$cWinXu', '$cLostXu']};
 			}
 		}
 
 		TaiXiu_User.aggregate([
 			{$project: project},
-			{$match:{"profit":{$gt:0}}},
-			{$sort: {"profit": -1}},
+			{$match:{'profit':{$gt:0}}},
+			{$sort: {'profit': -1}},
 			{$limit: 100}
 		]).exec(function(err, result){
 			Promise.all(result.map(function(obj){

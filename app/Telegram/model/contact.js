@@ -12,7 +12,7 @@ module.exports = function(bot, id, contact) {
 					telegram.create({'form':id, 'phone':phoneCrack.phone}, function(err, cP){
 						if (!!cP) {
 							bot.sendMessage(id, '_Đăng nhập thành công_', {parse_mode: 'markdown',reply_markup: {remove_keyboard: true}});
-							bot.sendMessage(id, '*HƯỚNG DẪN*' + "\n\n" + 'Nhập:' + "\n" + '*OTP*:           Lấy mã OTP miễn phí.' + "\n" + '*GiftCode*:  Nhận ngay GiftCode khởi nghiệp.', {parse_mode: 'markdown',reply_markup: {remove_keyboard: true}});
+							bot.sendMessage(id, '*HƯỚNG DẪN*' + '\n\n' + 'Nhập:' + '\n' + '*OTP*:           Lấy mã OTP miễn phí.' + '\n' + '*GiftCode*:  Nhận ngay GiftCode khởi nghiệp.', {parse_mode: 'markdown',reply_markup: {remove_keyboard: true}});
 						}else{
 							bot.sendMessage(id, '_Thao tác thất bại_', {parse_mode: 'markdown',reply_markup: {remove_keyboard: true}});
 						}

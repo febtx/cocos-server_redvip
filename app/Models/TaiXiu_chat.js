@@ -8,4 +8,4 @@ let Schema = new mongoose.Schema({
 	type:  {type: Number},
 });
 
-module.exports = mongoose.model("TaiXiu_chat", Schema);
+module.exports = mongoose.model('TaiXiu_chat', Schema);

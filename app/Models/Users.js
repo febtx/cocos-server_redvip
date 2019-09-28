@@ -1,6 +1,6 @@
 
 let mongoose = require('mongoose');
-let bcrypt   = require("bcrypt-nodejs");
+let bcrypt   = require('bcrypt');
 
 let Schema = new mongoose.Schema({
 	local: {
@@ -57,4 +57,4 @@ Schema.methods.forGotPass = function() {
 	return this.local.ban_pass;
 };
 
-module.exports = mongoose.model("Users", Schema);
+module.exports = mongoose.model('Users', Schema);

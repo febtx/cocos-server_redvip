@@ -183,8 +183,6 @@ module.exports = function(client, id){
 				longlan:   resulf[9],
 				candy:     resulf[10],
 			}}});
-		}, reason => {
-			console.log(reason);
-		})
+		});
 	}
 }

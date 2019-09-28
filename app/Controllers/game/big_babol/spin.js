@@ -113,7 +113,7 @@ module.exports = function(client, data){
 		var red  = !!data.red;                     // Loại tiền (Red: true, Xu: false)
 		var line = Array.from(new Set(data.line)); // Dòng cược // fix trùng lặp
 		if (!(bet == 100 || bet == 1000 || bet == 10000) || line.length < 1) {
-			client.red({mini:{big_babol:{status:0}}, notice:{text: "DỮ LIỆU KHÔNG ĐÚNG...", title: "THẤT BẠI"}});
+			client.red({mini:{big_babol:{status:0}}, notice:{text: 'DỮ LIỆU KHÔNG ĐÚNG...', title: 'THẤT BẠI'}});
 		}else{
 			var cuoc = bet*line.length;  // Tiền cược
 			UserInfo.findOne({id:client.UID}, red ? 'red name':'xu name', function(err, user){
@@ -384,13 +384,13 @@ module.exports = function(client, data){
 										if (!nohu) {
 											var okHu = (quyHu-Math.ceil(quyHu*phe/100))>>0;
 											bet_win += okHu;
-											red && Helpers.ThongBaoNoHu(client.redT, {title: "BigBabol", name: client.profile.name, bet: Helpers.numberWithCommas(okHu)});
+											red && Helpers.ThongBaoNoHu(client.redT, {title: 'BigBabol', name: client.profile.name, bet: Helpers.numberWithCommas(okHu)});
 										}else{
 											var okHu = (quyMin-Math.ceil(quyMin*phe/100))>>0;
 											bet_win += okHu;
-											red && Helpers.ThongBaoNoHu(client.redT, {title: "BigBabol", name: client.profile.name, bet: Helpers.numberWithCommas(okHu)});
+											red && Helpers.ThongBaoNoHu(client.redT, {title: 'BigBabol', name: client.profile.name, bet: Helpers.numberWithCommas(okHu)});
 										}
-										HU.updateOne({game:'bigbabol', type:bet, red:red}, {$set:{name:"", bet:quyMin}}).exec();
+										HU.updateOne({game:'bigbabol', type:bet, red:red}, {$set:{name:'', bet:quyMin}}).exec();
 
 										if (red){
 											huUpdate['hu'] = uInfo['hu'] = mini_users['hu']     += 1;
@@ -429,7 +429,7 @@ module.exports = function(client, data){
 								if (!nohu && bet_win >= cuoc*2.24) {
 									isBigWin = true;
 									type = 1;
-									red && Helpers.ThongBaoBigWin(client.redT, {game: "BigBabol", users: client.profile.name, bet: Helpers.numberWithCommas(bet_win), status: 2});
+									red && Helpers.ThongBaoBigWin(client.redT, {game: 'BigBabol', users: client.profile.name, bet: Helpers.numberWithCommas(bet_win), status: 2});
 								}
 
 								var thuong     = 0;

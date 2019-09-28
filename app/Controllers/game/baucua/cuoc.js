@@ -15,7 +15,7 @@ module.exports = function(client, data){
 		}
 
 		if (cuoc < 100 || linhVat < 0 || linhVat > 5) {
-			client.red({mini:{baucua:{notice: "Cược thất bại..."}}});
+			client.red({mini:{baucua:{notice: 'Cược thất bại...'}}});
 		}else{
 			UserInfo.findOne({id: client.UID}, 'red xu', function(err, user){
 				if (!user || (red && user.red < cuoc) || (!red && user.xu < cuoc)) {
@@ -29,20 +29,20 @@ module.exports = function(client, data){
 					user.save();
 
 					var dataXu = [
-						"meXuHuou",
-						"meXuBau",
-						"meXuGa",
-						"meXuCa",
-						"meXuCua",
-						"meXuTom",
+						'meXuHuou',
+						'meXuBau',
+						'meXuGa',
+						'meXuCa',
+						'meXuCua',
+						'meXuTom',
 					]
 					var dataRed = [
-						"meRedHuou",
-						"meRedBau",
-						"meRedGa",
-						"meRedCa",
-						"meRedCua",
-						"meRedTom",
+						'meRedHuou',
+						'meRedBau',
+						'meRedGa',
+						'meRedCa',
+						'meRedCua',
+						'meRedTom',
 					]
 					var tab = red ? dataRed : dataXu;
 					var data = {};
@@ -108,7 +108,7 @@ module.exports = function(client, data){
 								obj.red(dataT);
 							}));
 
-							var addList = {uid:client.UID, name:client.profile.name, red:red, "0":0, "1":0, "2":0, "3":0, "4":0, "5":0};
+							var addList = {uid:client.UID, name:client.profile.name, red:red, '0':0, '1':0, '2':0, '3':0, '4':0, '5':0};
 							addList[linhVat] = cuoc;
 							io.baucua.ingame.unshift(addList);
 						}

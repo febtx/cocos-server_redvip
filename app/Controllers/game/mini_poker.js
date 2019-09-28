@@ -14,7 +14,7 @@ function spin(client, data){
 		var bet = data.cuoc>>0; // Mức cược
 		var red = !!data.red; // Loại tiền (Red: true, Xu: false)
 		if (!(bet == 100 || bet == 1000 || bet == 10000)) {
-			client.red({mini:{poker:{status:0}}, notice:{text: "DỮ LIỆU KHÔNG ĐÚNG...", title: "MINI POKER"}});
+			client.red({mini:{poker:{status:0}}, notice:{text: 'DỮ LIỆU KHÔNG ĐÚNG...', title: 'MINI POKER'}});
 		}else{
 			UserInfo.findOne({id:client.UID}, 'red xu name', function(err, user){
 				if (!user || (red && user.red < bet) || (!red && user.xu < bet)) {
@@ -82,7 +82,7 @@ function spin(client, data){
 						}
 					}
 
-					HU.findOne({game: "minipoker", type:bet, red:red}, 'name bet min toX balans x', function(err, dataHu){
+					HU.findOne({game: 'minipoker', type:bet, red:red}, 'name bet min toX balans x', function(err, dataHu){
 						var uInfo      = {};
 						var mini_users = {};
 						var huUpdate   = {bet:addQuy, toX:0, balans:0};
@@ -107,7 +107,7 @@ function spin(client, data){
 							if (toX < 1 && balans > 0) {
 								quyMin = quyMin*dataHu.x;
 							}
-							HU.updateOne({game: "minipoker", type:bet, red:red}, {$set:{name:"", bet:quyMin}}).exec();
+							HU.updateOne({game: 'minipoker', type:bet, red:red}, {$set:{name:'', bet:quyMin}}).exec();
 							if (checkName){
 								// đặt kết quả thành nổ hũ nếu người chơi được xác định thủ công
 								var randomType = (Math.random()*4)>>0;           // Ngẫu nhiên chất bài
@@ -128,7 +128,7 @@ function spin(client, data){
 							an   = (quyHu-Math.ceil(quyHu*phe/100))>>0;
 
 							if (red){
-								Helpers.ThongBaoNoHu(client.redT, {title: "MINI POKER", name: client.profile.name, bet: Helpers.numberWithCommas(an)});
+								Helpers.ThongBaoNoHu(client.redT, {title: 'MINI POKER', name: client.profile.name, bet: Helpers.numberWithCommas(an)});
 								huUpdate['hu']   = uInfo['hu']   = mini_users['hu']   = 1; // Cập nhật Số Hũ Red đã Trúng
 							}else{
 								huUpdate['huXu'] = uInfo['huXu'] = mini_users['huXu'] = 1; // Cập nhật Số Hũ Xu đã Trúng
@@ -143,13 +143,13 @@ function spin(client, data){
 							an   = (bet*1000);
 							text = 'Thắng Lớn';
 							code = 8;
-							red && Helpers.ThongBaoBigWin(client.redT, {game: "MINI POKER", users: client.profile.name, bet: Helpers.numberWithCommas(an), status: 2});
+							red && Helpers.ThongBaoBigWin(client.redT, {game: 'MINI POKER', users: client.profile.name, bet: Helpers.numberWithCommas(an), status: 2});
 						}else if (tuQuy != null) {
 							// x150     TỨ QUÝ (TỨ QUÝ)
 							an   = (bet*150);
 							text = 'Tứ Quý';
 							code = 7;
-							red && Helpers.ThongBaoBigWin(client.redT, {game: "MINI POKER", users: client.profile.name, bet: Helpers.numberWithCommas(an), status: 2});
+							red && Helpers.ThongBaoBigWin(client.redT, {game: 'MINI POKER', users: client.profile.name, bet: Helpers.numberWithCommas(an), status: 2});
 						}else if (bo3 && bo2 > 0) {
 							// x50      CÙ LŨ (1 BỘ 3 VÀ 1 BỘ 2)
 							an   = (bet*50);
@@ -228,7 +228,7 @@ function spin(client, data){
 									}
 								});
 							}
-							HU.updateOne({game: "minipoker", type:bet, red:red}, {$inc:huUpdate}).exec();
+							HU.updateOne({game: 'minipoker', type:bet, red:red}, {$inc:huUpdate}).exec();
 							UserInfo.updateOne({id:client.UID}, {$inc: uInfo}).exec();
 							miniPokerUsers.updateOne({'uid': client.UID}, {$set:{time: new Date()}, $inc: mini_users}).exec();
 						}, 10);
@@ -244,7 +244,7 @@ function log(client, data){
 		var page = data.page>>0; // trang
 		var red  = !!data.red;   // Loại tiền (Red: true, Xu: false)
 		if (page < 1) {
-			client.red({notice:{text: "DỮ LIỆU KHÔNG ĐÚNG...", title: "MINI POKER"}});
+			client.red({notice:{text: 'DỮ LIỆU KHÔNG ĐÚNG...', title: 'MINI POKER'}});
 		}else{
 			var kmess = 8;
 			if (red) {

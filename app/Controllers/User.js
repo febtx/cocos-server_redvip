@@ -116,26 +116,26 @@ let updateCoint = function(client){
 let signName = function(client, name){
 	if (!!name) {
 		name = ''+name+'';
-		let az09     = new RegExp("^[a-zA-Z0-9]+$");
+		let az09     = new RegExp('^[a-zA-Z0-9]+$');
 		let testName = az09.test(name);
 
 		if (!validator.isLength(name, {min: 3, max: 14})) {
-			client.red({notice: {title: "TÊN NHÂN VẬT", text: 'Độ dài từ 3 đến 14 ký tự !!'}});
+			client.red({notice: {title: 'TÊN NHÂN VẬT', text: 'Độ dài từ 3 đến 14 ký tự !!'}});
 		}else if (!testName) {
-			client.red({notice: {title: "TÊN NHÂN VẬT", text: 'Tên không chứa ký tự đặc biệt !!'}});
+			client.red({notice: {title: 'TÊN NHÂN VẬT', text: 'Tên không chứa ký tự đặc biệt !!'}});
 		} else{
 			UserInfo.findOne({id: client.UID}, 'name red xu ketSat UID phone email cmt security joinedOn', function(err, d){
 				if (!d) {
 					name = name.toLowerCase();
 					User.findOne({'_id':client.UID}, function(err, base){
-						var regex = new RegExp("^" + base.local.username + "$", 'i');
+						var regex = new RegExp('^' + base.local.username + '$', 'i');
 						var testBase = regex.test(name);
 						if (testBase) {
-							client.red({notice: {title: "TÊN NHÂN VẬT", text: "Tên nhân vật không được trùng với tên đăng nhập..."}});
+							client.red({notice: {title: 'TÊN NHÂN VẬT', text: 'Tên nhân vật không được trùng với tên đăng nhập...'}});
 						}else{
 							UserInfo.findOne({'name':name}, 'name', function(err, check){
 								if (!!check) {
-									client.red({notice: {title: "TÊN NHÂN VẬT", text: "Tên nhân vật đã tồn tại..."}});
+									client.red({notice: {title: 'TÊN NHÂN VẬT', text: 'Tên nhân vật đã tồn tại...'}});
 								}else{
 									try {
 										UserInfo.create({'id':client.UID, 'name':name, 'joinedOn':new Date()}, function(errC, user){
@@ -186,7 +186,7 @@ let signName = function(client, name){
 											}
 										});
 									} catch (error) {
-										client.red({notice: {title: "TÊN NHÂN VẬT", text: "Tên nhân vật đã tồn tại..."}});
+										client.red({notice: {title: 'TÊN NHÂN VẬT', text: 'Tên nhân vật đã tồn tại...'}});
 									}
 								}
 							})
@@ -203,20 +203,20 @@ let signName = function(client, name){
 let changePassword = function(client, data){
 	if (!!data && !!data.passOld && !!data.passNew && !!data.passNew2) {
 		if (!validator.isLength(data.passOld, {min: 6, max: 32})) {
-			client.red({notice: {title: "LỖI", text: 'Độ dài mật khẩu từ 6 đến 32 ký tự !!'}});
+			client.red({notice: {title: 'LỖI', text: 'Độ dài mật khẩu từ 6 đến 32 ký tự !!'}});
 		}else if (!validator.isLength(data.passNew, {min: 6, max: 32})) {
-			client.red({notice: {title: "LỖI", text: 'Độ dài mật khẩu từ 6 đến 32 ký tự !!'}});
+			client.red({notice: {title: 'LỖI', text: 'Độ dài mật khẩu từ 6 đến 32 ký tự !!'}});
 		}else if (!validator.isLength(data.passNew2, {min: 6, max: 32})) {
-			client.red({notice: {title: "LỖI", text: 'Độ dài mật khẩu từ 6 đến 32 ký tự !!'}});
+			client.red({notice: {title: 'LỖI', text: 'Độ dài mật khẩu từ 6 đến 32 ký tự !!'}});
 		} else if (data.passOld == data.passNew){
-			client.red({notice: {title: "LỖI", text: 'Mật khẩu mới không trùng với mật khẩu cũ.!!'}});
+			client.red({notice: {title: 'LỖI', text: 'Mật khẩu mới không trùng với mật khẩu cũ.!!'}});
 		} else if (data.passNew != data.passNew2){
-			client.red({notice: {title: "LỖI", text: 'Nhập lại mật khẩu không đúng.!!'}});
+			client.red({notice: {title: 'LỖI', text: 'Nhập lại mật khẩu không đúng.!!'}});
 		} else {
 			User.findOne({'_id': client.UID}, function(err, user){
 				if (!!user) {
 					if (user.local.username == data.passNew) {
-						client.red({notice: {title: "LỖI", text: 'Mật khẩu không được trùng với tên đăng nhập.!!'}});
+						client.red({notice: {title: 'LỖI', text: 'Mật khẩu không được trùng với tên đăng nhập.!!'}});
 					}else{
 						if (Helper.validPassword(data.passOld, user.local.password)) {
 							User.updateOne({'_id': client.UID}, {$set:{'local.password': Helper.generateHash(data.passNew)}}).exec();

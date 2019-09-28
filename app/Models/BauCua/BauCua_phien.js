@@ -11,4 +11,4 @@ let Schema = new mongoose.Schema({
 
 Schema.plugin(AutoIncrement.plugin, {modelName:'BauCua_phien', field:'id'});
 
-module.exports = mongoose.model("BauCua_phien", Schema);
+module.exports = mongoose.model('BauCua_phien', Schema);

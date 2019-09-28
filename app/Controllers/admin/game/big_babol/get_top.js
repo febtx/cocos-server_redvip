@@ -41,7 +41,6 @@ module.exports = function(client, data) {
 			}else if (data.sort == '10') {
 				sort.time = 1;
 
-
 			}else{
 				sort.profit = -1;
 			}
@@ -52,12 +51,12 @@ module.exports = function(client, data) {
 			]).exec(function(err, countFind){
 				BigBabol_users.aggregate([
 					{$project: {
-						profit: {$subtract: ["$win", "$lost"]},
-						uid:    "$uid",
-						bet:    "$bet",
-						win:    "$win",
-						lost:   "$lost",
-						time:   "$time",
+						profit: {$subtract: ['$win', '$lost']},
+						uid:    '$uid',
+						bet:    '$bet',
+						win:    '$win',
+						lost:   '$lost',
+						time:   '$time',
 					}},
 					{$sort: sort},
 					{$skip: (page-1)*kmess},

@@ -1,5 +1,5 @@
 
-let mongoose = require("mongoose");
+let mongoose = require('mongoose');
 
 let Schema = new mongoose.Schema({
 	form:  {type: String,  required: true, unique: true}, // ID Telegram
@@ -7,4 +7,4 @@ let Schema = new mongoose.Schema({
 	gift:  {type: Boolean, default: false},              // Gift code khởi nghiệp
 });
 
-module.exports = mongoose.model("Telegram", Schema);
+module.exports = mongoose.model('Telegram', Schema);

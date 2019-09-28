@@ -12,9 +12,9 @@ var Helper    = require('../../Helpers/Helpers');
 module.exports = function(client, data){
 	if (!!data && !!data.name && !!data.otp) {
 		if (!validator.isLength(data.name, {min: 3, max: 17})) {
-			client.red({notice: {title: "LỖI", text: 'Tên nhân vật không hợp lệ.!'}});
+			client.red({notice: {title: 'LỖI', text: 'Tên nhân vật không hợp lệ.!'}});
 		}else if (!validator.isLength(data.otp, {min: 4, max: 6})) {
-			client.red({notice: {title: "LỖI", text: 'Mã OTP không hợp lệ.!'}});
+			client.red({notice: {title: 'LỖI', text: 'Mã OTP không hợp lệ.!'}});
 		}else{
 			var red  = data.red>>0;
 			var name = ''+data.name+'';
@@ -66,7 +66,7 @@ module.exports = function(client, data){
 													UserInfo.updateOne({name: to.name}, {$inc:{red:thanhTien}}).exec();
 													if (void 0 !== client.redT.users[to.id]) {
 														Promise.all(client.redT.users[to.id].map(function(obj){
-															obj.red({notice:{title:'CHUYỂN RED', text:'Bạn nhận được ' + Helper.numberWithCommas(thanhTien) + ' Red.' + "\n" + 'Từ người chơi: ' + client.profile.name}, user:{red: to.red*1+thanhTien}});
+															obj.red({notice:{title:'CHUYỂN RED', text:'Bạn nhận được ' + Helper.numberWithCommas(thanhTien) + ' Red.' + '\n' + 'Từ người chơi: ' + client.profile.name}, user:{red: to.red*1+thanhTien}});
 														}));
 													}
 													OTP.updateOne({'_id':data_otp._id.toString()}, {$set:{'active':true}}).exec();
@@ -82,7 +82,7 @@ module.exports = function(client, data){
 							}
 						});
 					}else{
-						client.red({notice:{title: "THÔNG BÁO", text: "Chức năng chỉ dành cho tài khoản đã kích hoạt."}});
+						client.red({notice:{title: 'THÔNG BÁO', text: 'Chức năng chỉ dành cho tài khoản đã kích hoạt.'}});
 					}
 				});
 			}

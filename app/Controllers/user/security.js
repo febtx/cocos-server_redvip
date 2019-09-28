@@ -64,13 +64,13 @@ function sendOTP(client, phone){
 function regOTP(client, data){
 	if (!!data && !!data.phone && !!data.email && !!data.cmt && !!data.otp) {
 		if (!helper.checkPhoneValid(data.phone)) {
-			client.red({notice: {title: "LỖI", text: 'Số điện thoại không hợp lệ'}});
+			client.red({notice: {title:'LỖI', text: 'Số điện thoại không hợp lệ'}});
 		}else if (!helper.validateEmail(data.email)) {
-			client.red({notice: {title: "LỖI", text: 'Email không hợp lệ...'}});
+			client.red({notice: {title:'LỖI', text: 'Email không hợp lệ...'}});
 		} else if (!validator.isLength(data.cmt, {min: 9, max: 12})){
-			client.red({notice: {title: "LỖI", text: 'Số CMT không hợp lệ.!!'}});
+			client.red({notice: {title:'LỖI', text: 'Số CMT không hợp lệ.!!'}});
 		} else if (!validator.isLength(data.otp, {min: 4, max: 6})){
-			client.red({notice: {title: "LỖI", text: 'Mã OTP Không đúng!!'}});
+			client.red({notice: {title:'LỖI', text: 'Mã OTP Không đúng!!'}});
 		} else {
 			var phoneCrack = helper.phoneCrack(data.phone);
 			if (phoneCrack) {
@@ -99,7 +99,7 @@ function regOTP(client, data){
 														Phone.create({'uid':client.UID, 'phone':phoneCrack.phone, 'region':phoneCrack.region}, function(err, cP){
 															if (!!cP) {
 																UserInfo.updateOne({id:client.UID}, {$set:{email:data.email, cmt:data.cmt, otpGet:0}, $inc:{red:3000, xu:10000}}).exec();
-																client.red({notice:{title:'THÀNH CÔNG', text: 'Xác thực thành công.!' + "\n" + 'Bạn nhận được 3.000 Red và 10.000 Xu, chúc bạn chơi game vui vẻ...'}, user: {red: dU.red*1+3000, xu: dU.xu*1+10000, phone: helper.cutPhone(data.phone), email: helper.cutEmail(data.email), cmt: data.cmt}});
+																client.red({notice:{title:'THÀNH CÔNG', text: 'Xác thực thành công.!' + '\n' + 'Bạn nhận được 3.000 Red và 10.000 Xu, chúc bạn chơi game vui vẻ...'}, user: {red: dU.red*1+3000, xu: dU.xu*1+10000, phone: helper.cutPhone(data.phone), email: helper.cutEmail(data.email), cmt: data.cmt}});
 															}else{
 																client.red({notice:{title:'LỖI', text:'Số điện thoại đã tồn tại trên hệ thống.!'}});
 															}

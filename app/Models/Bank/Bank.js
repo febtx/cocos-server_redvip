@@ -1,5 +1,5 @@
 
-let mongoose = require("mongoose");
+let mongoose = require('mongoose');
 
 let Schema = new mongoose.Schema({
 	bank:   {type: String},               // Tên ngân hàng
@@ -8,4 +8,4 @@ let Schema = new mongoose.Schema({
 	branch: {type: String},               // Chi nhánh
 });
 
-module.exports = mongoose.model("Bank", Schema);
+module.exports = mongoose.model('Bank', Schema);

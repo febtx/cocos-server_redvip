@@ -8,11 +8,11 @@ var Helpers   = require('../Helpers/Helpers');
 module.exports = function(client, data){
 	if (!!data.captcha && !!data.code) {
 		if (!validator.isLength(data.captcha, {min: 4, max: 4})) {
-			client.red({notice: {title: "LỖI", text: 'Captcha không đúng...'}});
+			client.red({notice: {title: 'LỖI', text: 'Captcha không đúng...'}});
 		}else if (!validator.isLength(data.code, {min: 4, max: void 0})) {
-			client.red({notice: {title: "LỖI", text: 'GiftCode không tồn tại !!'}});
+			client.red({notice: {title: 'LỖI', text: 'GiftCode không tồn tại !!'}});
 		} else {
-			var checkCaptcha = new RegExp("^" + data.captcha + "$", 'i').test(client.captcha);
+			var checkCaptcha = new RegExp('^' + data.captcha + '$', 'i').test(client.captcha);
 			if (checkCaptcha) {
 				var code = ''+data.code+'';
 				code = code.toLowerCase();
@@ -23,7 +23,7 @@ module.exports = function(client, data){
 						var d2 = Date.parse(check.todate);
 						if (d2 > d1) {
 							if (void 0 !== check.uid) {
-								client.red({notice:{title:'THẤT BẠI',text:'Mã Gift Code đã qua sử dụng.' + "\n" + ' Hãy thử một mã khác...'}});
+								client.red({notice:{title:'THẤT BẠI',text:'Mã Gift Code đã qua sử dụng.' + '\n' + ' Hãy thử một mã khác...'}});
 							}else{
 								if (validator.isEmpty(check.type)) {
 									check.uid = client.UID;

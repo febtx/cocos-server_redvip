@@ -1,5 +1,5 @@
 
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const Schema = new mongoose.Schema({
 	uid:    {type: String, required: true, unique: true}, // ID Người chơi
@@ -17,4 +17,4 @@ const Schema = new mongoose.Schema({
 	time:   {type: Date},                                   // quay gần đây
 });
 //Schema.index({uid: 1}, {unique: true, background: true});
-module.exports = mongoose.model("BigBabol_users", Schema);
+module.exports = mongoose.model('BigBabol_users', Schema);

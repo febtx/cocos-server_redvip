@@ -162,9 +162,9 @@ module.exports = function(client, data){
 		var red  = !!data.red;                     // Loại tiền (Red: true, Xu: false)
 		var line = Array.from(new Set(data.line)); // Dòng cược // fix trùng lặp
 		if (!(bet == 100 || bet == 1000 || bet == 10000) || line.length < 1) {
-			client.red({VuongQuocRed:{status:0}, notice:{text: "DỮ LIỆU KHÔNG ĐÚNG...", title: "THẤT BẠI"}});
+			client.red({VuongQuocRed:{status:0}, notice:{text: 'DỮ LIỆU KHÔNG ĐÚNG...', title: 'THẤT BẠI'}});
 		}else{
-			client.VuongQuocRed = void 0 === client.VuongQuocRed ? {id: "", red: red, bet: bet, bonus: null, bonusX: 0, bonusL: 0, bonusWin: 0, free: 0} : client.VuongQuocRed;
+			client.VuongQuocRed = void 0 === client.VuongQuocRed ? {id: '', red: red, bet: bet, bonus: null, bonusX: 0, bonusL: 0, bonusWin: 0, free: 0} : client.VuongQuocRed;
 			client.VuongQuocRed.red = red;
 			client.VuongQuocRed.bet = bet;
 			var tongCuoc = bet*line.length;
@@ -490,12 +490,12 @@ module.exports = function(client, data){
 										if (!nohu) {
 											var okHu = (quyHu-Math.ceil(quyHu*phe/100))>>0;
 											bet_win += okHu;
-											HU.updateOne({game:'vuongquocred', type:bet, red:red}, {$set:{name:"", bet:dataHu.min}}).exec();
-											red && Helpers.ThongBaoNoHu(client.redT, {title: "VƯƠNG QUỐC RED", name: client.profile.name, bet: Helpers.numberWithCommas(okHu)});
+											HU.updateOne({game:'vuongquocred', type:bet, red:red}, {$set:{name:'', bet:dataHu.min}}).exec();
+											red && Helpers.ThongBaoNoHu(client.redT, {title: 'VƯƠNG QUỐC RED', name: client.profile.name, bet: Helpers.numberWithCommas(okHu)});
 										}else{
 											var okHu = (dataHu.min-Math.ceil(dataHu.min*phe/100))>>0;
 											bet_win += okHu;
-											red && Helpers.ThongBaoNoHu(client.redT, {title: "VƯƠNG QUỐC RED", name: client.profile.name, bet: Helpers.numberWithCommas(okHu)});
+											red && Helpers.ThongBaoNoHu(client.redT, {title: 'VƯƠNG QUỐC RED', name: client.profile.name, bet: Helpers.numberWithCommas(okHu)});
 										}
 										if (red){
 											huUpdate.hu += 1;
@@ -599,7 +599,7 @@ module.exports = function(client, data){
 								if (!nohu && bet_win >= tongCuoc*2.24) {
 									isBigWin = true;
 									type = 1;
-									red && Helpers.ThongBaoBigWin(client.redT, {game: "VƯƠNG QUỐC RED", users: client.profile.name, bet: Helpers.numberWithCommas(bet_win), status: 2});
+									red && Helpers.ThongBaoBigWin(client.redT, {game: 'VƯƠNG QUỐC RED', users: client.profile.name, bet: Helpers.numberWithCommas(bet_win), status: 2});
 								}
 								if (free > 0) {
 									client.VuongQuocRed.free += free;

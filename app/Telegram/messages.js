@@ -1,7 +1,7 @@
 
-let start   = require("./model/start");
-let otp     = require("./model/otp");
-let contact = require("./model/contact");
+let start   = require('./model/start');
+let otp     = require('./model/otp');
+let contact = require('./model/contact');
 
 module.exports = function(bot, msg) {
 	let text = msg.text;

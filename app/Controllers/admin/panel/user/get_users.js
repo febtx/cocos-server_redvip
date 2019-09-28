@@ -67,14 +67,14 @@ module.exports = function(client, data){
 							{$match: match},
 							{
 								$project:{
-									profit: {$subtract: ["$redWin", "$redLost"]},
-									id:       "$id",
-									UID:      "$UID",
-									name:     "$name",
-									red:      "$red",
-									xu:       "$xu",
-									phone:    "$phone",
-									type:     "$type",
+									profit: {$subtract: ['$redWin', '$redLost']},
+									id:       '$id',
+									UID:      '$UID',
+									name:     '$name',
+									red:      '$red',
+									xu:       '$xu',
+									phone:    '$phone',
+									type:     '$type',
 								}
 							},
 						]).exec(function(err, result2){
@@ -105,14 +105,14 @@ module.exports = function(client, data){
 								{$match: match},
 								{
 									$project:{
-										profit: {$subtract: ["$redWin", "$redLost"]},
-										id:       "$id",
-										UID:      "$UID",
-										name:     "$name",
-										red:      "$red",
-										xu:       "$xu",
-										phone:    "$phone",
-										type:     "$type",
+										profit: {$subtract: ['$redWin', '$redLost']},
+										id:       '$id',
+										UID:      '$UID',
+										name:     '$name',
+										red:      '$red',
+										xu:       '$xu',
+										phone:    '$phone',
+										type:     '$type',
 									}
 								},
 							]).exec(function(err, result2){
@@ -146,14 +146,14 @@ module.exports = function(client, data){
 						{$match: match},
 						{
 							$project:{
-								profit: {$subtract: ["$redWin", "$redLost"]},
-								id:       "$id",
-								UID:      "$UID",
-								name:     "$name",
-								red:      "$red",
-								xu:       "$xu",
-								phone:    "$phone",
-								type:     "$type",
+								profit: {$subtract: ['$redWin', '$redLost']},
+								id:       '$id',
+								UID:      '$UID',
+								name:     '$name',
+								red:      '$red',
+								xu:       '$xu',
+								phone:    '$phone',
+								type:     '$type',
 							}
 						},
 						{$sort: sort},

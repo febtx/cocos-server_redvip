@@ -1,5 +1,5 @@
 
-let mongoose = require("mongoose");
+let mongoose = require('mongoose');
 let Schema = mongoose.Schema;
 
 let MenhGiaSchema = new Schema({
@@ -9,4 +9,4 @@ let MenhGiaSchema = new Schema({
 	mua:    {type: Boolean, default: false}, // Áp dụng cho mua thẻ nạp
 });
 
-module.exports = mongoose.model("MenhGia", MenhGiaSchema);
+module.exports = mongoose.model('MenhGia', MenhGiaSchema);

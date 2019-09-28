@@ -16,7 +16,7 @@ module.exports = function(client, spin) {
 		var red  = !!spin.red;	  // Loại tiền đang chơi
 		if (!(cuoc == 100 || cuoc == 1000 || cuoc == 10000)) {
 			// Error
-			client.red({mini:{bacay:{status:0,notice: "Quay thất bại..."}}});
+			client.red({mini:{bacay:{status:0,notice: 'Quay thất bại...'}}});
 		}else{
 			// Spin
 			UserInfo.findOne({id:client.UID}, 'red xu name', function(err, user){
@@ -96,7 +96,7 @@ module.exports = function(client, spin) {
 
 						if (checkName || (bo3 && bo3_a === 0)) {
 							// NỔ HŨ (Bộ 3 Át Hoặc được xác định là nổ hũ)
-							HU.updateOne({game:'mini3cay', type:cuoc, red:red}, {$set:{name:"", bet:quyMin}}).exec();
+							HU.updateOne({game:'mini3cay', type:cuoc, red:red}, {$set:{name:'', bet:quyMin}}).exec();
 							if (checkName){
 								// đặt kết quả thành nổ hũ nếu người chơi được xác định thủ công
 								card = [...base_card.card]
@@ -113,7 +113,7 @@ module.exports = function(client, spin) {
 							code = 6;
 							if (red){
 								huUpdate['hu'] = uInfo['hu'] = mini_users['hu']     = 1; // Khởi tạo
-								Helpers.ThongBaoNoHu(client.redT, {title: "MINI 3 CÂY", name: client.profile.name, bet: Helpers.numberWithCommas(an)});
+								Helpers.ThongBaoNoHu(client.redT, {title: 'MINI 3 CÂY', name: client.profile.name, bet: Helpers.numberWithCommas(an)});
 							}else{
 								huUpdate['huXu'] = uInfo['huXu'] = mini_users['huXu'] = 1; // Khởi tạo
 							}
@@ -122,13 +122,13 @@ module.exports = function(client, spin) {
 							an   = cuoc*30;
 							text = 'Suốt';
 							code = 5;
-							red && Helpers.ThongBaoBigWin(client.redT, {game: "MINI 3 CÂY", users: client.profile.name, bet: Helpers.numberWithCommas(an), status: 2});
+							red && Helpers.ThongBaoBigWin(client.redT, {game: 'MINI 3 CÂY', users: client.profile.name, bet: Helpers.numberWithCommas(an), status: 2});
 						}else if (bo3) {
 							// x20      Sáp
 							an   = cuoc*20;
 							text = 'Sáp ' + (bo3_a+1);
 							code = 4;
-							red && Helpers.ThongBaoBigWin(client.redT, {game: "MINI 3 CÂY", users: client.profile.name, bet: Helpers.numberWithCommas(an), status: 2});
+							red && Helpers.ThongBaoBigWin(client.redT, {game: 'MINI 3 CÂY', users: client.profile.name, bet: Helpers.numberWithCommas(an), status: 2});
 						}else if (ADiamond && TongDiem == 10) {
 							// x10		Tổng 3 lá = 10, có Át rô
 							an   = cuoc*10;

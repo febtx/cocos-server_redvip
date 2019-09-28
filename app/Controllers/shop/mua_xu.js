@@ -8,10 +8,10 @@ var Helper    = require('../../Helpers/Helpers');
 module.exports = function(client, data){
 	if (!!data && !!data.captcha) {
 		if (!validator.isLength(data.captcha, {min: 4, max: 4})) {
-			client.red({notice: {title: "LỖI", text: 'Captcha không hợp lệ !!'}});
+			client.red({notice: {title: 'LỖI', text: 'Captcha không hợp lệ !!'}});
 		}else{
 			var red = data.red>>0;
-			var checkCaptcha = new RegExp("^" + data.captcha + "$", 'i');
+			var checkCaptcha = new RegExp('^' + data.captcha + '$', 'i');
 				checkCaptcha = checkCaptcha.test(client.captcha);
 			if (checkCaptcha) {
 				if (red < 100) {

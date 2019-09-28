@@ -52,12 +52,12 @@ module.exports = function(client, data) {
 			]).exec(function(err, countFind){
 				AngryBirds_user.aggregate([
 					{$project: {
-						profit: {$subtract: ["$win", "$lost"]},
-						uid:    "$uid",
-						bet:    "$bet",
-						win:    "$win",
-						lost:   "$lost",
-						time:   "$time",
+						profit: {$subtract: ['$win', '$lost']},
+						uid:    '$uid',
+						bet:    '$bet',
+						win:    '$win',
+						lost:   '$lost',
+						time:   '$time',
 					}},
 					{$sort: sort},
 					{$skip: (page-1)*kmess},

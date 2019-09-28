@@ -1,8 +1,6 @@
 
 module.exports = {
-	"URL":        "https://api.wavecell.com/sms/v1/thickcuk9_2cCDE_hq/single", // Bem68
-	//"URL":        "https://api.wavecell.com/sms/v1/thickcuk9_2cCDE_hq/single", // RedVip
-	"API_KEY":    "57691BC8E328DABB0A650F6B2A451C",
-	"SECRET_KEY": "303E7FA109BCC4A7F85B35FA74E209",
-	"Brandname":  "RedVip",
+	'URL':       'https://api.wavecell.com/sms/v1/thickcuk9_2cCDE_hq/single', // Bem68
+	'Author':    '6PlFs3sAeHs3gdPcqR8PKG3prgbDb0xd5VFZ0r0',
+	'Brandname': 'Bem68',
 }

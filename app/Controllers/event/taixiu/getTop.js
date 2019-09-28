@@ -6,9 +6,9 @@ module.exports = function(client){
 	var topWin = TaiXiu_User.aggregate([
 		{$match:{tLineWinRedH:{$gt:0}}},
 		{$project: {
-			uid: "$uid",
-			top: "$tLineWinRedH",
-			last: "$last",
+			uid: '$uid',
+			top: '$tLineWinRedH',
+			last: '$last',
 		}},
 		{$sort: {'top': -1, 'last': -1}},
 		{$limit: 20}
@@ -17,9 +17,9 @@ module.exports = function(client){
 	var topLost = TaiXiu_User.aggregate([
 		{$match:{tLineLostRedH:{$gt:0}}},
 		{$project: {
-			uid: "$uid",
-			top: "$tLineLostRedH",
-			last: "$last",
+			uid: '$uid',
+			top: '$tLineLostRedH',
+			last: '$last',
 		}},
 		{$sort: {'top': -1, 'last': -1}},
 		{$limit: 20}

@@ -15,4 +15,4 @@ const Schema = new mongoose.Schema({
 Schema.plugin(AutoIncrement.plugin, {modelName:'BigBabol_xu', field:'id'});
 //Schema.index({name: 1}, {background: true});
 
-module.exports = mongoose.model("BigBabol_xu", Schema);
+module.exports = mongoose.model('BigBabol_xu', Schema);

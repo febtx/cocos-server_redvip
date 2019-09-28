@@ -1,5 +1,5 @@
 
-let mongoose = require("mongoose");
+let mongoose = require('mongoose');
 
 let Schema = new mongoose.Schema({
 	game: {type: String,  required: true, index: true},                   // Tên game
@@ -26,4 +26,4 @@ let Schema = new mongoose.Schema({
 });
 
 //Schema.index({game: 1}, {background: true});
-module.exports = mongoose.model("hu", Schema);
+module.exports = mongoose.model('hu', Schema);

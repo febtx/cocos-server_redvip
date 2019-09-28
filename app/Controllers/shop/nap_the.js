@@ -22,7 +22,7 @@ module.exports = function(client, data){
 		}else if(validator.isEmpty(data.seri)) {
 			client.red({notice:{title:'LỖI', text:'Vui lòng nhập seri ...', load: false}});
 		}else{
-			var checkCaptcha = new RegExp("^" + data.captcha + "$", 'i');
+			var checkCaptcha = new RegExp('^' + data.captcha + '$', 'i');
 				checkCaptcha = checkCaptcha.test(client.captcha);
 			if (checkCaptcha) {
 				var nhaMang = data.nhamang;

@@ -16,4 +16,4 @@ let Schema = new mongoose.Schema({
 	type:     {type: Boolean, default: false},    // Bot = true | Users = false
 });
 
-module.exports = mongoose.model("TaiXiu_one", Schema);
+module.exports = mongoose.model('TaiXiu_one', Schema);

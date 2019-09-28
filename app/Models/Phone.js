@@ -1,5 +1,5 @@
 
-let mongoose = require("mongoose");
+let mongoose = require('mongoose');
 
 let Schema = new mongoose.Schema({
 	uid:      {type: String, required: true, unique: true}, // ID người dùng
@@ -7,4 +7,4 @@ let Schema = new mongoose.Schema({
 	region:   {type: String, required: true},               // Mã quốc gia
 });
 
-module.exports = mongoose.model("Phone", Schema);
+module.exports = mongoose.model('Phone', Schema);

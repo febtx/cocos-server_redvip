@@ -27,8 +27,8 @@ module.exports = function(client, data){
 		if (!!uData.xu && !validator.isEmpty(uData.xu)) {
 			update['xu'] = Helper.getOnlyNumberInString(uData.xu);
 		}
-		if (!!uData.type && uData.type != "0") {
-			update['type'] = uData.type == "1" ? true : false;
+		if (!!uData.type && uData.type != '0') {
+			update['type'] = uData.type == '1' ? true : false;
 		}
 
 		if (!!Object.entries(update).length) {

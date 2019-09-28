@@ -7,7 +7,7 @@ module.exports = function(client, data){
 		var red  = !!data.red;
 		var page = data.page>>0;
 		if (page < 1) {
-			client.red({notice:{text: "DỮ LIỆU KHÔNG ĐÚNG...", title: "THẤT BẠI"}});
+			client.red({notice:{text: 'DỮ LIỆU KHÔNG ĐÚNG...', title: 'THẤT BẠI'}});
 		}else{
 			var kmess = 8;
 			if (red) {

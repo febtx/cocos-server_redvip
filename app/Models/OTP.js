@@ -1,5 +1,5 @@
 
-let mongoose = require("mongoose");
+let mongoose = require('mongoose');
 
 let Schema = new mongoose.Schema({
 	uid:    {type: String,  required: true}, // ID người dùng
@@ -11,4 +11,4 @@ let Schema = new mongoose.Schema({
 
 Schema.index({uid: 1, phone: 1}, {background: true});
 
-module.exports = mongoose.model("OTP", Schema);
+module.exports = mongoose.model('OTP', Schema);

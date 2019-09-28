@@ -114,7 +114,7 @@ module.exports = function(client, data){
 		var red  = !!data.red;                     // Loại tiền (Red: true, Xu: false)
 
 		if (!(bet == 100 || bet == 1000 || bet == 10000)) {
-			client.red({mini:{arb:{status:0}}, notice:{text: "DỮ LIỆU KHÔNG ĐÚNG...", title: "THẤT BẠI"}});
+			client.red({mini:{arb:{status:0}}, notice:{text: 'DỮ LIỆU KHÔNG ĐÚNG...', title: 'THẤT BẠI'}});
 		}else{
 			UserInfo.findOne({id:client.UID}, red ? 'red name':'xu name', function(err, user){
 				if (!user || (red && user.red < bet) || (!red && user.xu < bet)) {
@@ -130,7 +130,7 @@ module.exports = function(client, data){
 
 					var config = require('../../../../config/angrybird.json');
 
-					HU.findOne({game: "arb", type:bet, red:red}, 'name bet min toX balans x', function(err, dataHu){
+					HU.findOne({game: 'arb', type:bet, red:red}, 'name bet min toX balans x', function(err, dataHu){
 						var uInfo      = {};
 						var mini_users = {};
 						var huUpdate   = {bet:addQuy, toX:0, balans:0};
@@ -477,7 +477,7 @@ module.exports = function(client, data){
 												var okHu = (quyHu-Math.ceil(quyHu*phe/100))>>0;
 												bet_win += okHu;
 												if (red){
-													Helpers.ThongBaoNoHu(client.redT, {title: "AngryBirds", name: client.profile.name, bet: Helpers.numberWithCommas(okHu)});
+													Helpers.ThongBaoNoHu(client.redT, {title: 'AngryBirds', name: client.profile.name, bet: Helpers.numberWithCommas(okHu)});
 													huUpdate['hu']   = uInfo['hu']   = mini_users['hu']  += 1; // Cập nhật Số Hũ Red đã Trúng
 												}else{
 													huUpdate['huXu'] = uInfo['huXu'] = mini_users['huXu'] += 1; // Cập nhật Số Hũ Xu đã Trúng
@@ -486,13 +486,13 @@ module.exports = function(client, data){
 												var okHu = (quyMin-Math.ceil(quyMin*phe/100))>>0;
 												bet_win += okHu;
 												if (red){
-													Helpers.ThongBaoNoHu(client.redT, {title: "AngryBirds", name: client.profile.name, bet: okHu});
+													Helpers.ThongBaoNoHu(client.redT, {title: 'AngryBirds', name: client.profile.name, bet: okHu});
 													huUpdate['hu']   = uInfo['hu']   = mini_users['hu']   += 1; // Cập nhật Số Hũ Red đã Trúng
 												}else{
 													huUpdate['huXu'] = uInfo['huXu'] = mini_users['huXu'] += 1; // Cập nhật Số Hũ Xu đã Trúng
 												}
 											}
-											HU.updateOne({game: "arb", type:bet, red:red}, {$set:{name:"", bet:quyMin}}).exec();
+											HU.updateOne({game: 'arb', type:bet, red:red}, {$set:{name:'', bet:quyMin}}).exec();
 										}else{
 											bet_win += bet*10;
 										}
@@ -515,7 +515,7 @@ module.exports = function(client, data){
 								if (!nohu && bet_win >= bet*10) {
 									isBigWin = true;          // Là thắng lớn
 									type = 1;
-									red && Helpers.ThongBaoBigWin(client.redT, {game: "AngryBirds", users: client.profile.name, bet: Helpers.numberWithCommas(bet_win), status: 2});
+									red && Helpers.ThongBaoBigWin(client.redT, {game: 'AngryBirds', users: client.profile.name, bet: Helpers.numberWithCommas(bet_win), status: 2});
 								}
 
 								var thuong     = 0;
@@ -558,7 +558,7 @@ module.exports = function(client, data){
 										}
 									});
 								}
-								HU.updateOne({game: "arb", type:bet, red:red}, {$inc:huUpdate}).exec();
+								HU.updateOne({game: 'arb', type:bet, red:red}, {$inc:huUpdate}).exec();
 								UserInfo.updateOne({id:client.UID}, {$inc:uInfo}).exec();
 								AngryBirds_user.updateOne({'uid':client.UID}, {$set:{time: new Date()}, $inc:mini_users}).exec();
 							})

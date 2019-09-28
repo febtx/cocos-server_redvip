@@ -1,5 +1,5 @@
 
-let mongoose = require("mongoose");
+let mongoose = require('mongoose');
 
 let Schema = new mongoose.Schema({
 	uid:    {type: String, index: true},         // Người Nạp gift code
@@ -14,4 +14,4 @@ let Schema = new mongoose.Schema({
 });
 
 Schema.index({uid:1, type:1}, {background: true});
-module.exports = mongoose.model("GiftCode", Schema);
+module.exports = mongoose.model('GiftCode', Schema);

@@ -8,7 +8,7 @@ let authenticate = function(client, data, callback) {
 	if (!!data && !!data.username && !!data.password) {
 		let username = ''+data.username+'';
 		let password = data.password;
-		let az09     = new RegExp("^[a-zA-Z0-9]+$");
+		let az09     = new RegExp('^[a-zA-Z0-9]+$');
 		let testName = az09.test(username);
 
 		if (!validator.isLength(username, {min: 3, max: 32})) {
@@ -51,7 +51,6 @@ module.exports = function(ws, redT){
 	}
 
 	ws.on('message', function(message) {
-		console.log(message);
 		try {
 			if (!!message) {
 				message = JSON.parse(message);
@@ -78,7 +77,6 @@ module.exports = function(ws, redT){
 				}
 			}
 		} catch (error) {
-			console.log(error)
 		}
 	});
 

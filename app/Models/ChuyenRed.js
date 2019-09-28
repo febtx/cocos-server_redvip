@@ -1,6 +1,6 @@
 
 let AutoIncrement = require('mongoose-auto-increment-reworked').MongooseAutoIncrementID;
-let mongoose      = require("mongoose");
+let mongoose      = require('mongoose');
 
 let Schema = new mongoose.Schema({
 	from:    {type: String, required: true}, // Tên người gửi
@@ -13,4 +13,4 @@ let Schema = new mongoose.Schema({
 
 Schema.plugin(AutoIncrement.plugin, {modelName: 'ChuyenRed', field:'id'});
 
-module.exports = mongoose.model("ChuyenRed", Schema);
+module.exports = mongoose.model('ChuyenRed', Schema);

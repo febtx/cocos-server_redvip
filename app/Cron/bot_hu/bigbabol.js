@@ -256,13 +256,13 @@ let spin = function(io, user){
 						if (!nohu) {
 							let okHu = Math.floor(quyHu-Math.ceil(quyHu*phe/100));
 							bet_win += okHu;
-							red && Helpers.ThongBaoNoHu(io, {title: "BigBabol", name: user.name, bet: Helpers.numberWithCommas(okHu)});
+							red && Helpers.ThongBaoNoHu(io, {title:'BigBabol', name: user.name, bet: Helpers.numberWithCommas(okHu)});
 						}else{
 							let okHu = Math.floor(quyMin-Math.ceil(quyMin*phe/100));
 							bet_win += okHu;
-							red && Helpers.ThongBaoNoHu(io, {title: "BigBabol", name: user.name, bet: Helpers.numberWithCommas(okHu)});
+							red && Helpers.ThongBaoNoHu(io, {title:'BigBabol', name: user.name, bet: Helpers.numberWithCommas(okHu)});
 						}
-						HU.updateOne({game:'bigbabol', type:bet, red:red}, {$set:{name:"", bet:quyMin}}).exec();
+						HU.updateOne({game:'bigbabol', type:bet, red:red}, {$set:{name:'', bet:quyMin}}).exec();
 
 						if (red){
 							huUpdate['hu'] = uInfo['hu'] = mini_users['hu']     += 1;
@@ -301,7 +301,7 @@ let spin = function(io, user){
 				if (!nohu && bet_win >= cuoc*2.24) {
 					isBigWin = true;
 					type = 1;
-					red && Helpers.ThongBaoBigWin(io, {game: "BigBabol", users: user.name, bet: Helpers.numberWithCommas(bet_win), status: 2});
+					red && Helpers.ThongBaoBigWin(io, {game:'BigBabol', users: user.name, bet: Helpers.numberWithCommas(bet_win), status: 2});
 				}
 
 				uInfo['red'] = tien;                                                 // Cập nhật Số dư Red trong tài khoản

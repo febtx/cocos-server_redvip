@@ -1,5 +1,5 @@
 
-let mongoose = require("mongoose");
+let mongoose = require('mongoose');
 
 let Schema = new mongoose.Schema({
 	uid:    {type: String, required: true, unique: true}, // ID Người chơi
@@ -18,4 +18,4 @@ let Schema = new mongoose.Schema({
 });
 //Schema.index({uid: 1}, {unique: true, background: true});
 
-module.exports = mongoose.model("LongLan_users", Schema);
+module.exports = mongoose.model('LongLan_users', Schema);

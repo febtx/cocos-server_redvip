@@ -8,8 +8,6 @@ let OTP      = require('./OTP');
 let Event    = require('./event/index');
 let message  = require('./Message');
 
-//var ControlAvatar  = require('./Avatar.js');
-
 module.exports = function(client, p){
 	if (!!p) {
 		if (!!p.signName){
@@ -36,7 +34,7 @@ module.exports = function(client, p){
 			Game(client, p.g);
 		}
 
-		if (!!p.scene && typeof p.scene === "string"){
+		if (!!p.scene && typeof p.scene === 'string'){
 			client.scene = p.scene;
 			User.next_scene(client);
 		}
@@ -52,9 +50,5 @@ module.exports = function(client, p){
 		if (!!p.message){
 			message(client, p.message);
 		}
-
-		//if (!!p.avatar)
-		//	ControlAvatar.upload(client, p.avatar);
-
 	}
 }

@@ -1,5 +1,5 @@
 
-let mongoose = require("mongoose");
+let mongoose = require('mongoose');
 
 let Schema = new mongoose.Schema({
 	date:   {type: String,  required: true}, // ngày sự kiện
@@ -14,4 +14,4 @@ let Schema = new mongoose.Schema({
 
 Schema.index({date: 1, win: 1}, {background: true});
 
-module.exports = mongoose.model("TaiXiu_event", Schema);
+module.exports = mongoose.model('TaiXiu_event', Schema);

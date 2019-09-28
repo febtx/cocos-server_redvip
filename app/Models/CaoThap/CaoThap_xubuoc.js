@@ -15,5 +15,5 @@ let Schema = new mongoose.Schema({
 });
 //Schema.index({uid: 1}, {background: true});
 
-module.exports = mongoose.model("CaoThap_xubuoc", Schema);
+module.exports = mongoose.model('CaoThap_xubuoc', Schema);
 

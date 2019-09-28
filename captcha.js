@@ -6,38 +6,38 @@ let Create     = function(client, name){
 	svg2img(captcha.data, function(error, buffer) {
 		client.captcha = captcha.text;
 		let data = {};
-		data['data'] = "data:image/png;base64," + buffer.toString('base64');
+		data['data'] = 'data:image/png;base64,' + buffer.toString('base64');
 		data['name'] = name;
 		client.red({captcha: data});
 	});
 }
 module.exports = function(data){
 	switch(data){
-		case "signUp":
+		case 'signUp':
 			Create(this, 'signUp');
 			break;
 
-		case "giftcode":
+		case 'giftcode':
 			Create(this, 'giftcode');
 			break;
 
-		case "forgotpass":
+		case 'forgotpass':
 			Create(this, 'forgotpass');
 			break;
 
-		case "transfer":
+		case 'transfer':
 			Create(this, 'transfer');
 			break;
 
-		case "chargeCard":
+		case 'chargeCard':
 			Create(this, 'chargeCard');
 			break;
 
-		case "withdrawXu":
+		case 'withdrawXu':
 			Create(this, 'withdrawXu');
 			break;
 
-		case "withdrawCard":
+		case 'withdrawCard':
 			Create(this, 'withdrawCard');
 			break;
 	}

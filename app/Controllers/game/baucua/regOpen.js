@@ -7,20 +7,20 @@ module.exports = function(client){
 	var data    = JSON.parse(JSON.stringify(client.redT.baucua.info));;
 
 	var dataMeXu = [
-		"meXuHuou",
-		"meXuBau",
-		"meXuGa",
-		"meXuCa",
-		"meXuCua",
-		"meXuTom",
+		'meXuHuou',
+		'meXuBau',
+		'meXuGa',
+		'meXuCa',
+		'meXuCua',
+		'meXuTom',
 	];
 	var dataMeRed = [
-		"meRedHuou",
-		"meRedBau",
-		"meRedGa",
-		"meRedCa",
-		"meRedCua",
-		"meRedTom",
+		'meRedHuou',
+		'meRedBau',
+		'meRedGa',
+		'meRedCa',
+		'meRedCua',
+		'meRedTom',
 	];
 
 	var active1 = Promise.all(client.redT.baucua.ingame.map(function(user){

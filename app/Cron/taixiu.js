@@ -99,28 +99,28 @@ let TopHu = function(){
 			.then(result => {
 				let temp_data = {TopHu: {
 					mini_poker: result.filter(function(mini_poker){
-						return (mini_poker.game == "minipoker")
+						return (mini_poker.game == 'minipoker')
 					}),
 					big_babol: result.filter(function(big_babol){
-						return (big_babol.game == "bigbabol")
+						return (big_babol.game == 'bigbabol')
 					}),
 					vq_red: result.filter(function(vq_red){
-						return (vq_red.game == "vuongquocred")
+						return (vq_red.game == 'vuongquocred')
 					}),
 					mini3cay: result.filter(function(mini3cay){
-						return (mini3cay.game == "mini3cay")
+						return (mini3cay.game == 'mini3cay')
 					}),
 					caothap: result.filter(function(caothap){
-						return (caothap.game == "caothap")
+						return (caothap.game == 'caothap')
 					}),
 					arb: result.filter(function(arb){
-						return (arb.game == "arb")
+						return (arb.game == 'arb')
 					}),
 					candy: result.filter(function(candy){
-						return (candy.game == "candy")
+						return (candy.game == 'candy')
 					}),
 					long: result.filter(function(long){
-						return (long.game == "long")
+						return (long.game == 'long')
 					}),
 				}};
 				io.broadcast(temp_data);
@@ -231,7 +231,7 @@ let setTaiXiu_user = function(phien, dice){
 							result = {news:{a:result}};
 							Promise.all(Object.values(io.users).map(function(users){
 								Promise.all(users.map(function(client){
-									if(client.scene == "home"){
+									if(client.scene == 'home'){
 										client.red(result);
 									}
 								}));
@@ -861,7 +861,7 @@ let thongtin_thanhtoan = function(game_id, dice = false){
 			Promise.all(users.map(function(client){
 				if (client.gameEvent !== void 0 && client.gameEvent.viewTaiXiu !== void 0 && client.gameEvent.viewTaiXiu){
 					client.red({taixiu: io.taixiu});
-				}else if(client.scene == "home"){
+				}else if(client.scene == 'home'){
 					client.red(home);
 				}
 			}));
@@ -900,7 +900,8 @@ let playGame = function(){
 				clearInterval(gameLoop);
 				io.TaiXiu_time = 0;
 
-				let file  = require(dataTaiXiu);
+				let file   = require(dataTaiXiu);
+				let config = require('../../config/taixiu.json');
 
 				let dice1 = parseInt(file.dice1 == 0 ? Math.floor(Math.random() * 6) + 1 : file.dice1);
 				let dice2 = parseInt(file.dice2 == 0 ? Math.floor(Math.random() * 6) + 1 : file.dice2);
@@ -909,10 +910,10 @@ let playGame = function(){
 				file.dice1  = 0;
 				file.dice2  = 0;
 				file.dice3  = 0;
-				file.uid    = "";
+				file.uid    = '';
 				file.rights = 2;
 
-				fs.writeFile(path.dirname(path.dirname(__dirname)) + "/data/taixiu.json", JSON.stringify(file), function(err){});
+				fs.writeFile(path.dirname(path.dirname(__dirname)) + '/data/taixiu.json', JSON.stringify(file), function(err){});
 
 				TXPhien.create({'dice1':dice1, 'dice2':dice2, 'dice3':dice3, 'time':new Date()}, function(err, create){
 					if (!!create) {
@@ -974,7 +975,6 @@ let playGame = function(){
 					list: []
 				};
 
-				let config = require('../../config/taixiu.json');
 				if (config.bot) {
 					// lấy danh sách tài khoản bot
 					let TList = bot.list();

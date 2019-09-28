@@ -4,9 +4,9 @@
  */
 
 let request = require('request');
-let config  = require("../config/sms");
+let config  = require('../config/sms');
+
 let sendOTP = function(phone, otp){
-	console.log(phone);
 	let form = {
 		  'source': 'Verify',
 		  'destination': phone,

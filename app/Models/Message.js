@@ -1,5 +1,5 @@
 
-let mongoose = require("mongoose");
+let mongoose = require('mongoose');
 
 let Schema = new mongoose.Schema({
 	uid:   {type: String, required: true, index: true}, // ID Người chơi
@@ -9,4 +9,4 @@ let Schema = new mongoose.Schema({
 	time:  {type: Date},                    // thời gian
 });
 
-module.exports = mongoose.model("Message", Schema);
+module.exports = mongoose.model('Message', Schema);

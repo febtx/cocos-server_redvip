@@ -17,4 +17,4 @@ let Schema = new mongoose.Schema({
 Schema.plugin(AutoIncrement.plugin, {modelName:'CaoThap_xu', field:'id'});
 //Schema.index({uid: 1}, {background: true});
 
-module.exports = mongoose.model("CaoThap_xu", Schema);
+module.exports = mongoose.model('CaoThap_xu', Schema);

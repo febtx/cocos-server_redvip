@@ -88,7 +88,7 @@ let spin = function(io, user){
 		}
 	}
 
-	HU.findOne({game: "minipoker", type:bet, red:red}, 'name bet min toX balans x', function(err, dataHu){
+	HU.findOne({game:'minipoker', type:bet, red:red}, 'name bet min toX balans x', function(err, dataHu){
 		let uInfo      = {};
 		let mini_users = {};
 		let huUpdate   = {bet:addQuy, toX:0, balans:0};
@@ -111,12 +111,12 @@ let spin = function(io, user){
 			if (toX < 1 && balans > 0) {
 				quyMin = quyMin*dataHu.x;
 			}
-			HU.updateOne({game: "minipoker", type:bet, red:red}, {$set:{name:"", bet:quyMin}}).exec();
+			HU.updateOne({game:'minipoker', type:bet, red:red}, {$set:{name:'', bet:quyMin}}).exec();
 
 			an   = Math.floor(quyHu-Math.ceil(quyHu*phe/100));
 
 			if (red){
-				Helpers.ThongBaoNoHu(io, {title: "MINI POKER", name: user.name, bet: Helpers.numberWithCommas(an)});
+				Helpers.ThongBaoNoHu(io, {title:'MINI POKER', name: user.name, bet: Helpers.numberWithCommas(an)});
 				huUpdate['hu']   = uInfo['hu']   = mini_users['hu']   = 1; // Cập nhật Số Hũ Red đã Trúng
 			}else{
 				huUpdate['huXu'] = uInfo['huXu'] = mini_users['huXu'] = 1; // Cập nhật Số Hũ Xu đã Trúng
@@ -129,13 +129,13 @@ let spin = function(io, user){
 			an   = (bet*1000);
 			text = 'Thắng Lớn';
 			code = 8;
-			red && Helpers.ThongBaoBigWin(io, {game: "MINI POKER", users: user.name, bet: Helpers.numberWithCommas(an), status: 2});
+			red && Helpers.ThongBaoBigWin(io, {game:'MINI POKER', users: user.name, bet: Helpers.numberWithCommas(an), status: 2});
 		}else if (tuQuy != null) {
 			// x150     TỨ QUÝ (TỨ QUÝ)
 			an   = (bet*150);
 			text = 'Tứ Quý';
 			code = 7;
-			red && Helpers.ThongBaoBigWin(io, {game: "MINI POKER", users: user.name, bet: Helpers.numberWithCommas(an), status: 2});
+			red && Helpers.ThongBaoBigWin(io, {game:'MINI POKER', users: user.name, bet: Helpers.numberWithCommas(an), status: 2});
 		}else if (bo3 && bo2 > 0) {
 			// x50      CÙ LŨ (1 BỘ 3 VÀ 1 BỘ 2)
 			an   = (bet*50);
@@ -182,7 +182,7 @@ let spin = function(io, user){
 				uInfo['hu'] = mini_users['hu'] = 1;         // Cập nhật Số Hũ Red đã Trúng
 			}
 			miniPokerRed.create({'name': user.name, 'win': an, 'bet': bet, 'type': code, 'kq': ketqua, 'time': new Date()}, function(err) {});
-			HU.updateOne({game: "minipoker", type:bet, red:red}, {$inc:huUpdate}).exec();
+			HU.updateOne({game:'minipoker', type:bet, red:red}, {$inc:huUpdate}).exec();
 			UserInfo.updateOne({id:user.id}, {$inc: uInfo}).exec();
 			miniPokerUsers.updateOne({'uid': user.id}, {$set:{time: new Date()}, $inc: mini_users}).exec();
 		}, 10);

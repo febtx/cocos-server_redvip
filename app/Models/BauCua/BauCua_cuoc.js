@@ -22,4 +22,4 @@ let Schema = new mongoose.Schema({
 
 //Schema.index({uid: 1}, {background: true});
 
-module.exports = mongoose.model("BauCua_cuoc", Schema);
+module.exports = mongoose.model('BauCua_cuoc', Schema);

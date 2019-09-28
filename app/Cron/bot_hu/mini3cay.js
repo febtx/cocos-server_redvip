@@ -88,7 +88,7 @@ let spin = function(io, user){
 
 		if (bo3 && bo3_a === 0) {
 			// NỔ HŨ
-			HU.updateOne({game:'mini3cay', type:cuoc, red:red}, {$set:{name:"", bet:quyMin}}).exec();
+			HU.updateOne({game:'mini3cay', type:cuoc, red:red}, {$set:{name:'', bet:quyMin}}).exec();
 
 			nohu = true;
 			an   = Math.floor(quyHu-Math.ceil(quyHu*phe/100));
@@ -96,7 +96,7 @@ let spin = function(io, user){
 			code = 6;
 			if (red){
 				huUpdate['hu'] = uInfo['hu'] = mini_users['hu']     = 1; // Khởi tạo
-				Helpers.ThongBaoNoHu(io, {title: "MINI 3 CÂY", name: user.name, bet: Helpers.numberWithCommas(an)});
+				Helpers.ThongBaoNoHu(io, {title:'MINI 3 CÂY', name: user.name, bet: Helpers.numberWithCommas(an)});
 			}else{
 				huUpdate['huXu'] = uInfo['huXu'] = mini_users['huXu'] = 1; // Khởi tạo
 			}
@@ -105,13 +105,13 @@ let spin = function(io, user){
 			an   = cuoc*30;
 			text = 'Suốt';
 			code = 5;
-			red && Helpers.ThongBaoBigWin(io, {game: "MINI 3 CÂY", users: user.name, bet: Helpers.numberWithCommas(an), status: 2});
+			red && Helpers.ThongBaoBigWin(io, {game:'MINI 3 CÂY', users: user.name, bet: Helpers.numberWithCommas(an), status: 2});
 		}else if (bo3) {
 			// x20      Sáp
 			an   = cuoc*20;
 			text = 'Sáp ' + (bo3_a+1);
 			code = 4;
-			red && Helpers.ThongBaoBigWin(io, {game: "MINI 3 CÂY", users: user.name, bet: Helpers.numberWithCommas(an), status: 2});
+			red && Helpers.ThongBaoBigWin(io, {game:'MINI 3 CÂY', users: user.name, bet: Helpers.numberWithCommas(an), status: 2});
 		}else if (ADiamond && TongDiem == 10) {
 			// x10		Tổng 3 lá = 10, có Át rô
 			an   = cuoc*10;

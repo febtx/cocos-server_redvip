@@ -55,8 +55,8 @@ function svg2img(svg, options, callback) {
     });
 }
 
-function convert(svgContent) {
-    var canvas = Canvas.createCanvas();
+function convert(svgContent,options) {
+    var canvas = Canvas.createCanvas(options.width||100, options.height||100);
     canvg(canvas, svgContent, { ignoreMouse: true, ignoreAnimation: true, ImageClass: Canvas.Image });
     return canvas;
 }

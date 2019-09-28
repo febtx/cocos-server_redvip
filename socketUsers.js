@@ -12,7 +12,7 @@ let authenticate = function(client, data, callback) {
 		let username = ''+data.username+'';
 		let password = data.password;
 		let register = !!data.register;
-		let az09     = new RegExp("^[a-zA-Z0-9]+$");
+		let az09     = new RegExp('^[a-zA-Z0-9]+$');
 		let testName = az09.test(username);
 
 		if (!validator.isLength(username, {min: 3, max: 32})) {
@@ -36,7 +36,7 @@ let authenticate = function(client, data, callback) {
 						client.c_captcha('signUp');
 						callback({title: 'ĐĂNG KÝ', text: 'Captcha không tồn tại.'}, false);	
 					}else{
-						let checkCaptcha = new RegExp("^" + client.captcha + "$", 'i');
+						let checkCaptcha = new RegExp('^' + client.captcha + '$', 'i');
 						checkCaptcha     = checkCaptcha.test(data.captcha);
 						if (checkCaptcha) {
 							User.findOne({'local.username':username}).exec(function(err, check){
@@ -94,7 +94,6 @@ module.exports = function(ws, redT){
 	}
 	socket.signMethod(ws);
 	ws.on('message', function(message) {
-		console.log("socketUser", message);
 		try {
 			if (!!message) {
 				message = JSON.parse(message);

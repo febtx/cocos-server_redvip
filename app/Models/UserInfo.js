@@ -42,4 +42,4 @@ let Schema = new mongoose.Schema({
 
 Schema.plugin(AutoIncrement.plugin, {modelName: 'UserInfo', field:'UID'});
 
-module.exports = mongoose.model("UserInfo", Schema);
+module.exports = mongoose.model('UserInfo', Schema);

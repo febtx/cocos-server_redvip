@@ -10,7 +10,7 @@ module.exports = function(bot, id) {
 				    remove_keyboard: true,
 			    }
 			};
-			bot.sendMessage(id, '*HƯỚNG DẪN*' + "\n\n" + 'Nhập:' + "\n" + '*OTP*:           Lấy mã OTP miễn phí.' + "\n" + '*GiftCode*:  Nhận ngay GiftCode khởi nghiệp.', opts);
+			bot.sendMessage(id, '*HƯỚNG DẪN*' + '\n\n' + 'Nhập:' + '\n' + '*OTP*:           Lấy mã OTP miễn phí.' + '\n' + '*GiftCode*:  Nhận ngay GiftCode khởi nghiệp.', opts);
 		}else{
 			let opts = {
 				parse_mode: 'markdown',

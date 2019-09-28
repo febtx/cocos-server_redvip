@@ -92,21 +92,21 @@ function get_top(client, data){
 		if (page > 0) {
 			// Project
 			var project = {};
-				project.uid      = "$uid";
+				project.uid      = '$uid';
 			if (red) { // Red
-				project.profitTX = {$subtract: ["$tWinRed", "$tLostRed"]};
-				project.profitCL = {$subtract: ["$cWinRed", "$cLostRed"]};
-				project.tWin     = "$tWinRed";
-				project.tLost    = "$tLostRed";
-				project.cWin     = "$cWinRed";
-				project.cLost    = "$cLostRed";
+				project.profitTX = {$subtract: ['$tWinRed', '$tLostRed']};
+				project.profitCL = {$subtract: ['$cWinRed', '$cLostRed']};
+				project.tWin     = '$tWinRed';
+				project.tLost    = '$tLostRed';
+				project.cWin     = '$cWinRed';
+				project.cLost    = '$cLostRed';
 			}else{ // Xu
-				project.profitTX = {$subtract: ["$tWinXu", "$tLostXu"]};
-				project.profitCL = {$subtract: ["$cWinXu", "$cLostXu"]};
-				project.tWin     = "$tWinXu";
-				project.tLost    = "$tLostXu";
-				project.cWin     = "$cWinXu";
-				project.cLost    = "$cLostXu";
+				project.profitTX = {$subtract: ['$tWinXu', '$tLostXu']};
+				project.profitCL = {$subtract: ['$cWinXu', '$cLostXu']};
+				project.tWin     = '$tWinXu';
+				project.tLost    = '$tLostXu';
+				project.cWin     = '$cWinXu';
+				project.cLost    = '$cLostXu';
 			}
 
 			// sort
