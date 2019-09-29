@@ -37,6 +37,21 @@ let init = function init(obj){
 		xuTom: 0,
 	};
 
+	io.baucua.infoAdmin = {
+		redBau: 0,
+		redCa: 0,
+		redCua: 0,
+		redGa: 0,
+		redHuou: 0,
+		redTom: 0,
+		xuBau: 0,
+		xuCa: 0,
+		xuCua: 0,
+		xuGa: 0,
+		xuHuou: 0,
+		xuTom: 0,
+	};
+
 	BauCua_phien.findOne({}, 'id', {sort:{'_id':-1}}, function(err, last) {
 		if (!!last){
 			io.BauCua_phien = last.id+1;
@@ -210,18 +225,10 @@ let thongtin_thanhtoan = function thongtin_thanhtoan(dice = null){
 							result = Helpers.shuffle(result);
 
 							Promise.all(result.map(function(obj){
-								return {users: obj.users, bet: Helpers.numberWithCommas(obj.bet), game: 'Bầu Cua'};
+								return {users:obj.users, bet:obj.bet, game:'Bầu Cua'};
 							}))
 							.then(results => {
-								results = {news:{a:results}};
-								Promise.all(Object.values(io.users).map(function(users){
-									Promise.all(users.map(function(client){
-										if(client.scene == 'home'){
-											client.red(results);
-										}
-									}));
-								}));
-								io.sendAllClient(results);
+								io.sendInHome({news:{a:results}});
 							});
 						}
 					})
@@ -238,7 +245,7 @@ let thongtin_thanhtoan = function thongtin_thanhtoan(dice = null){
 					client.red({mini:{baucua:{data: io.baucua.info}}});
 			}));
 		}));
-		let admin_data = {baucua:{info: io.baucua.info, ingame: io.baucua.ingame}};
+		let admin_data = {baucua:{info: io.baucua.infoAdmin, ingame: io.baucua.ingame}};
 		Promise.all(Object.values(io.admins).map(function(admin){
 			Promise.all(admin.map(function(client){
 				if (client.gameEvent !== void 0 && client.gameEvent.viewBauCua !== void 0 && client.gameEvent.viewBauCua)
@@ -277,15 +284,8 @@ let playGame = function(){
 				BauCua_phien.create({'dice1':dice1, 'dice2':dice2, 'dice3':dice3, 'time':new Date()}, function(err, create){
 					if (!!create) {
 						io.BauCua_phien = create.id+1;
-
 						thongtin_thanhtoan([dice1, dice2, dice3]);
-
-						Promise.all(Object.values(io.users).map(function(users){
-							Promise.all(users.map(function(client){
-								client.red({mini: {baucua: {finish:{dices:[create.dice1, create.dice2, create.dice3], phien:create.id}}}});
-							}));
-						}));
-
+						io.sendAllUser({mini: {baucua: {finish:{dices:[create.dice1, create.dice2, create.dice3], phien:create.id}}}});
 						Promise.all(Object.values(io.admins).map(function(admin){
 							Promise.all(admin.map(function(client){
 								client.red({baucua: {finish: true, dices:[create.dice1, create.dice2, create.dice3]}});
@@ -295,6 +295,20 @@ let playGame = function(){
 				});
 				io.baucua.ingame = [];
 				io.baucua.info = {
+					redBau: 0,
+					redCa: 0,
+					redCua: 0,
+					redGa: 0,
+					redHuou: 0,
+					redTom: 0,
+					xuBau: 0,
+					xuCa: 0,
+					xuCua: 0,
+					xuGa: 0,
+					xuHuou: 0,
+					xuTom: 0,
+				};
+				io.baucua.infoAdmin = {
 					redBau: 0,
 					redCa: 0,
 					redCua: 0,

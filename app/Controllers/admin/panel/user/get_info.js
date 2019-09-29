@@ -12,6 +12,8 @@ var Users_Candy        = require('../../../../Models/Candy/Candy_user');
 
 var Users    = require('../../../../Models/Users');
 var UserInfo = require('../../../../Models/UserInfo');
+let Phone    = require('../../../../Models/Phone');
+
 
 module.exports = function(client, id){
 	if (!!id) {
@@ -22,8 +24,11 @@ module.exports = function(client, id){
 						var temp = result._doc
 						delete temp._id;
 						delete temp.__v;
-						temp['username'] = result2.local.username;
-						resolve(temp)
+						temp['username'] = !!result2 ? result2.local.username : '';
+						Phone.findOne({'uid': result.id}, function(error2, result3){
+							temp['phone'] = !!result3 ? result3.region+result3.phone : '';
+							resolve(temp)
+						});
 					})
 				}else{
 					reject('RedT Err!!');

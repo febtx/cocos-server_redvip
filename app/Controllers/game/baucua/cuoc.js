@@ -51,30 +51,42 @@ module.exports = function(client, data){
 						if (red) {
 							if (linhVat == 0) {
 								io.baucua.info.redHuou += cuoc;
+								io.baucua.infoAdmin.redHuou += cuoc;
 							}else if (linhVat == 1) {
 								io.baucua.info.redBau += cuoc;
+								io.baucua.infoAdmin.redBau += cuoc;
 							}else if (linhVat == 2) {
 								io.baucua.info.redGa += cuoc;
+								io.baucua.infoAdmin.redGa += cuoc;
 							}else if (linhVat == 3) {
 								io.baucua.info.redCa += cuoc;
+								io.baucua.infoAdmin.redCa += cuoc;
 							}else if (linhVat == 4) {
 								io.baucua.info.redCua += cuoc;
+								io.baucua.infoAdmin.redCua += cuoc;
 							}else if (linhVat == 5) {
 								io.baucua.info.redTom += cuoc;
+								io.baucua.infoAdmin.redTom += cuoc;
 							}
 						}else{
 							if (linhVat == 0) {
 								io.baucua.info.xuHuou += cuoc;
+								io.baucua.infoAdmin.xuHuou += cuoc;
 							}else if (linhVat == 1) {
 								io.baucua.info.xuBau += cuoc;
+								io.baucua.infoAdmin.xuBau += cuoc;
 							}else if (linhVat == 2) {
 								io.baucua.info.xuGa += cuoc;
+								io.baucua.infoAdmin.xuGa += cuoc;
 							}else if (linhVat == 3) {
 								io.baucua.info.xuCa += cuoc;
+								io.baucua.infoAdmin.xuCa += cuoc;
 							}else if (linhVat == 4) {
 								io.baucua.info.xuCua += cuoc;
+								io.baucua.infoAdmin.xuCua += cuoc;
 							}else if (linhVat == 5) {
 								io.baucua.info.xuTom += cuoc;
+								io.baucua.infoAdmin.xuTom += cuoc;
 							}
 						}
 						if (checkOne){

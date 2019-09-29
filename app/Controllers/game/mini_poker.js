@@ -128,7 +128,7 @@ function spin(client, data){
 							an   = (quyHu-Math.ceil(quyHu*phe/100))>>0;
 
 							if (red){
-								Helpers.ThongBaoNoHu(client.redT, {title: 'MINI POKER', name: client.profile.name, bet: Helpers.numberWithCommas(an)});
+								client.redT.sendInHome({pushnohu:{title:'MINI POKER', name:client.profile.name, bet:an}});
 								huUpdate['hu']   = uInfo['hu']   = mini_users['hu']   = 1; // Cập nhật Số Hũ Red đã Trúng
 							}else{
 								huUpdate['huXu'] = uInfo['huXu'] = mini_users['huXu'] = 1; // Cập nhật Số Hũ Xu đã Trúng
@@ -136,20 +136,18 @@ function spin(client, data){
 
 							text = 'Nổ Hũ';
 							code = 9;
-						//}else if ((isDay && dongChat) || (isDay && AK[0].card === 0)) {
-						// x1000    THÙNG PHÁ SẢNH (DÂY ĐỒNG CHẤT HOẶC DÂY ĐẾN A)
 						}else if (isDay && dongChat) {
 							// x1000    THÙNG PHÁ SẢNH (DÂY ĐỒNG CHẤT)
 							an   = (bet*1000);
 							text = 'Thắng Lớn';
 							code = 8;
-							red && Helpers.ThongBaoBigWin(client.redT, {game: 'MINI POKER', users: client.profile.name, bet: Helpers.numberWithCommas(an), status: 2});
+							red && client.redT.sendInHome({news:{t:{game:'MINI POKER', users:client.profile.name, bet:an, status:2}}});
 						}else if (tuQuy != null) {
 							// x150     TỨ QUÝ (TỨ QUÝ)
 							an   = (bet*150);
 							text = 'Tứ Quý';
 							code = 7;
-							red && Helpers.ThongBaoBigWin(client.redT, {game: 'MINI POKER', users: client.profile.name, bet: Helpers.numberWithCommas(an), status: 2});
+							red && client.redT.sendInHome({news:{t:{game:'MINI POKER', users:client.profile.name, bet:an, status:2}}});
 						}else if (bo3 && bo2 > 0) {
 							// x50      CÙ LŨ (1 BỘ 3 VÀ 1 BỘ 2)
 							an   = (bet*50);

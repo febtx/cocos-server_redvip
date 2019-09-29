@@ -34,6 +34,14 @@ module.exports = function(io){
 			}
 		});
 	};
+	// Phát sóng tới tất cả người dùng
+	io.sendAllAdmin = function(data, noBroadcast = null){
+		this.clients.forEach(function(client){
+			if (client.admin === true && client.auth === true && noBroadcast !== client) {
+				client.red(data);
+			}
+		});
+	};
 	// Phát sóng tới tất cả khách
 	io.sendInHome = function(data){
 		io.clients.forEach(function(client){

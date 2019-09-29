@@ -1,12 +1,6 @@
 
-let HU                 = require('../../Models/HU');
-
-let VuongQuocRed_red   = require('../../Models/VuongQuocRed/VuongQuocRed_red');
-let VuongQuocRed_users = require('../../Models/VuongQuocRed/VuongQuocRed_users');
-
-let UserInfo           = require('../../Models/UserInfo');
-
-let Helpers            = require('../../Helpers/Helpers');
+let HU      = require('../../Models/HU');
+let Helpers = require('../../Helpers/Helpers');
 
 let random_cel2 = function(){
 	let a = Math.floor(Math.random()*28);
@@ -67,7 +61,6 @@ let check_win = function(data, line){
 
 let spin = function(io, user){
 	let bet = 100;
-	let red = true;
 
 	let line = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20];
 
@@ -86,31 +79,16 @@ let spin = function(io, user){
 
 	let tongCuoc = bet*line.length;  // Tiền cược
 
-	let phe = 2;    // Phế
 	let addQuy = Math.floor(tongCuoc*0.005);
 
-	let line_nohu = 0;
-	let bet_win  = 0;
-	let free     = 0;
-	let bonusX   = 0;
-	let type     = 0;   // Loại được ăn lớn nhất trong phiên
-	let isFree   = false;
-	let nohu     = false;
-	let isBigWin = false;
+	let bet_win = 0;
+	let nohu    = false;
 	// tạo kết quả
-	HU.findOne({game:'vuongquocred', type:bet, red:red}, {}, function(err2, dataHu){
-		let uInfo      = {};
-		let mini_users = {};
-		let huUpdate   = {bet:addQuy};
-		if (red){
-			huUpdate['hu'] = uInfo['hu'] = mini_users['hu']     = 0; // Khởi tạo
-		}else{
-			huUpdate['huXu'] = uInfo['huXu'] = mini_users['huXu'] = 0; // Khởi tạo
-		}
+	HU.findOne({game:'vuongquocred', type:bet, red:true}, {}, function(err2, dataHu){
+		let huUpdate = {bet:addQuy};
 
 		let aRwin = Math.floor(Math.random()*16);
 		let celSS = [];
-
 
 		if (aRwin == 15) {
 			// no hu
@@ -139,8 +117,6 @@ let spin = function(io, user){
 		let cel3 = [celSS[6],  celSS[7],  celSS[8]];  // Cột 3
 		let cel4 = [celSS[9],  celSS[10], celSS[11]]; // Cột 4
 		let cel5 = [celSS[12], celSS[13], celSS[14]]; // Cột 5
-
-		let quyHu     = dataHu.bet;
 
 		// kiểm tra kết quả
 		Promise.all(line.map(function(selectLine){
@@ -229,44 +205,20 @@ let spin = function(io, user){
 		.then(result => {
 			Promise.all(result.filter(function(line_win){
 				let checkWin = false;
-				if (line_win.win == 6) {
-					if (line_win.type === 5) {
-						checkWin = true;
-						// x8000
-						bet_win += bet*8000;
-					}else if (line_win.type === 4){
-						// Bonus x5
-						checkWin = true;
-						bonusX += 5;
-					}else if (line_win.type === 3){
-						// Bonus x1
-						checkWin = true;
-						bonusX += 1;
-					}
-				}else if(line_win.win == 5) {
+				if(line_win.win == 5) {
 					if (line_win.type === 5) {
 						checkWin = true;
 						// Nổ Hũ
-						type = 2;
+						let okHu = 0;
 						if (!nohu) {
-							let okHu = Math.floor(quyHu-Math.ceil(quyHu*phe/100));
+							okHu = Math.floor(dataHu.bet-Math.ceil(dataHu.bet*2/100));
 							bet_win += okHu;
-							HU.updateOne({game:'vuongquocred', type:bet, red:red}, {$set:{name:'', bet:dataHu.min}}).exec();
-							red && Helpers.ThongBaoNoHu(io, {title:'VƯƠNG QUỐC RED', name: user.name, bet: Helpers.numberWithCommas(okHu)});
+							HU.updateOne({game:'vuongquocred', type:bet, red:true}, {$set:{name:'', bet:dataHu.min}}).exec();
 						}else{
-							let okHu = Math.floor(dataHu.min-Math.ceil(dataHu.min*phe/100));
+							okHu = Math.floor(dataHu.min-Math.ceil(dataHu.min*2/100));
 							bet_win += okHu;
-							red && Helpers.ThongBaoNoHu(io, {title:'VƯƠNG QUỐC RED', name: user.name, bet: Helpers.numberWithCommas(okHu)});
 						}
-						if (red){
-							huUpdate.hu += 1;
-							uInfo.hu += 1;
-							mini_users.hu += 1;
-						}else{
-							huUpdate.huXu += 1;
-							uInfo.huXu += 1;
-							mini_users.huXu += 1;
-						}
+						io.sendInHome({pushnohu:{title:'VƯƠNG QUỐC RED', name:user.name, bet:okHu}});
 						nohu = true;
 					}else if (!nohu && line_win.type === 4){
 						// x30
@@ -276,23 +228,6 @@ let spin = function(io, user){
 						// x5
 						checkWin = true;
 						bet_win += bet*5;
-					}
-				}else if(line_win.win == 4) {
-					if (line_win.type === 5) {
-						checkWin = true;
-						// free x15
-						free += 15;
-						isFree = true;
-					}else if (line_win.type === 4){
-						// free x5
-						checkWin = true;
-						free += 5;
-						isFree = true;
-					}else if (line_win.type === 3){
-						// free x1
-						checkWin = true;
-						free += 1;
-						isFree = true;
 					}
 				}else if(!nohu && line_win.win == 3) {
 					if (line_win.type === 5) {
@@ -350,32 +285,10 @@ let spin = function(io, user){
 				return checkWin;
 			}))
 			.then(result2 => {
-				let tien = bet_win-tongCuoc;
 				if (!nohu && bet_win >= tongCuoc*2.24) {
-					isBigWin = true;
-					type = 1;
-					red && Helpers.ThongBaoBigWin(io, {game:'VƯƠNG QUỐC RED', users: user.name, bet: Helpers.numberWithCommas(bet_win), status: 2});
+					io.sendInHome({news:{t:{game:'VƯƠNG QUỐC RED', users:user.name, bet:bet_win, status:2}}});
 				}
-				uInfo.red = tien;
-				huUpdate.redPlay = tongCuoc;
-				uInfo.redPlay = tongCuoc;
-				mini_users.bet = tongCuoc;
-
-				if (tien > 0){
-					huUpdate.redWin = tien;
-					uInfo.redWin = tien;
-					mini_users.win = tien;         // Cập nhật Số Red đã Thắng
-				}
-				if (tien < 0){
-					let tienLost = tien*-1;
-					huUpdate.redLost = tienLost;
-					uInfo.redLost = tienLost;
-					mini_users.lost = tienLost; // Cập nhật Số Red đã Thua
-				}
-				VuongQuocRed_red.create({'name': user.name, 'type': type, 'win': bet_win, 'bet': bet, 'kq': result2.length, 'line': line.length, 'time': new Date()}, function(err) {});
-				HU.updateOne({game:'vuongquocred', type:bet, red:red}, {$inc:huUpdate}).exec();
-				UserInfo.updateOne({id:user.id},{$inc:uInfo}).exec();
-				VuongQuocRed_users.updateOne({'uid':user.id}, {$set:{time: new Date()}, $inc:mini_users}).exec();
+				HU.updateOne({game:'vuongquocred', type:bet, red:true}, {$inc:huUpdate}).exec();
 			})
 		})
 	})

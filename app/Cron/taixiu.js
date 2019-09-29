@@ -218,24 +218,16 @@ let setTaiXiu_user = function(phien, dice){
 							let action = new Promise((resolve, reject) => {
 								UserInfo.findOne({id: obj.uid}, 'name', function(err, users){
 									if (obj.taixiu) {
-										resolve({users: users.name, bet: Helpers.numberWithCommas(obj.betwin), game: 'Tài Xỉu'});
+										resolve({users:users.name, bet:obj.betwin, game:'Tài Xỉu'});
 									}else{
-										resolve({users: users.name, bet: Helpers.numberWithCommas(obj.betwin), game: 'Chẵn Lẻ'});
+										resolve({users:users.name, bet:obj.betwin, game:'Chẵn Lẻ'});
 									}
 								});
 							});
 							return action;
 						}))
 						.then(result => {
-							result = {news:{a:result}};
-							Promise.all(Object.values(io.users).map(function(users){
-								Promise.all(users.map(function(client){
-									if(client.scene == 'home'){
-										client.red(result);
-									}
-								}));
-							}));
-							io.sendAllClient(result);
+							io.sendInHome({news:{a:result}});
 						})
 					}
 				})
@@ -840,13 +832,15 @@ let thongtin_thanhtoan = function(game_id, dice = false){
 						return 1;
 					}))
 					.then(function(resultUpdate) {
+						/**
 						Promise.all(resultUpdate.map(function(okU){
 							return okU;
 						}))
 						.then(function(resultUpdateOk) {
+							*/
 							playGame();
 							setTaiXiu_user(game_id, dice);
-						});
+						//});
 					});
 				});
 			}else if (dice) {

@@ -1,6 +1,7 @@
 
-let User        = require('../Models/Users');
-let UserInfo    = require('../Models/UserInfo');
+let User     = require('../Models/Users');
+let UserInfo = require('../Models/UserInfo');
+let Phone    = require('../Models/Phone');
 
 // Game User
 let TaiXiu_User     = require('../Models/TaiXiu_user');
@@ -29,7 +30,7 @@ let nhanthuong  = require('./user/nhanthuong');
 let GameState = require('./GameState.js')
 
 let first = function(client){
-	UserInfo.findOne({id: client.UID}, 'name lastVip redPlay red xu ketSat UID phone cmt email security joinedOn', function(err, user) {
+	UserInfo.findOne({id: client.UID}, 'name lastVip redPlay red xu ketSat UID cmt email security joinedOn', function(err, user) {
 		if (!!user) {
 			user = user._doc;
 			let vipHT = ((user.redPlay-user.lastVip)/100000)>>0; // Điểm vip Hiện Tại
@@ -78,10 +79,6 @@ let first = function(client){
 			delete user.redPlay;
 			delete user.lastVip;
 
-			if (!Helper.isEmpty(user.phone)) {
-				user.phone = Helper.cutPhone(user.phone)
-			}
-
 			if (!Helper.isEmpty(user.email)) {
 				user.email = Helper.cutEmail(user.email)
 			}
@@ -90,15 +87,20 @@ let first = function(client){
 
 			addToListOnline(client);
 
-			let data = {
-				Authorized: true,
-				user:       user,
-			};
-			Message.countDocuments({uid:client.UID, read: false}).exec(function(errMess, countMess){
-				data.message = {news:countMess};
-				client.red(data);
-				GameState(client);
-			});
+			Phone.findOne({uid:client.UID}, {}, function(err2, dataP){
+				if (dataP) {
+					user.phone = Helper.cutPhone(dataP.region+dataP.phone);
+				}
+				let data = {
+					Authorized: true,
+					user:       user,
+				};
+				Message.countDocuments({uid:client.UID, read: false}).exec(function(errMess, countMess){
+					data.message = {news:countMess};
+					client.red(data);
+					GameState(client);
+				});
+			})
 		}else{
 			client.red({Authorized: false});
 		}
