@@ -2,8 +2,6 @@
 let TXCuoc      = require('../../Models/TaiXiu_cuoc');
 let TXCuocOne   = require('../../Models/TaiXiu_one');
 
-let UserInfo    = require('../../Models/UserInfo');
-
 /**
  * Ngẫu nhiên cược
  * return {number}
@@ -38,30 +36,10 @@ let random = function(){
 };
 
 /**
- * Danh sách bot
- * return {list}
-*/
-let list = function(){
-	return new Promise((a, b) => {
-		UserInfo.find({type: true}, 'id name', function(err, list){
-			Promise.all(list.map(function(user){
-				user = user._doc;
-				delete user._id;
-
-				return user;
-			}))
-			.then(result => {
-				a(result);
-			})
-		});
-	});
-}
-
-/**
  * Cược
 */
 // Tài Xỉu RED
-let bet = function(bot, io, taixiu = true, red = true){
+module.exports = function(bot, io, taixiu = true, red = true){
 	let cuoc   = random();
 	let select = !!((Math.random()*2)>>0);
 	if (select) {
@@ -73,9 +51,4 @@ let bet = function(bot, io, taixiu = true, red = true){
 	}
 	TXCuocOne.create({uid: bot.id, phien: io.TaiXiu_phien, taixiu:taixiu, select:select, red:red, bet:cuoc, type: true});
 	TXCuoc.create({uid:bot.id, name:bot.name, phien: io.TaiXiu_phien, bet:cuoc, taixiu:taixiu, select:select, red:red, type: true, time:new Date()});
-}
-
-module.exports = {
-	bet:  bet,
-	list: list,
 }

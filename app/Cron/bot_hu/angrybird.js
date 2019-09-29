@@ -1,12 +1,6 @@
 
-let HU              = require('../../Models/HU');
-
-let AngryBirds_red  = require('../../Models/AngryBirds/AngryBirds_red');
-let AngryBirds_user = require('../../Models/AngryBirds/AngryBirds_user');
-
-let UserInfo        = require('../../Models/UserInfo');
-
-let Helpers         = require('../../Helpers/Helpers');
+let HU      = require('../../Models/HU');
+let Helpers = require('../../Helpers/Helpers');
 
 let random_cel2 = function(){
 	let a = Math.floor(Math.random()*21);
@@ -91,8 +85,6 @@ let check_win = function(data, line){
 
 let spin = function(io, user){
 	let bet = 100;
-	let red = true;
-
 	let a = Math.floor(Math.random()*16);
 
 	if (a == 15) {
@@ -106,28 +98,13 @@ let spin = function(io, user){
 		bet = 100;
 	}
 
-	let phe = 2;    // Phế
-	let addQuy = Math.floor(bet*0.005);
-	if (bet === 100) {
-		addQuy = Math.floor(bet*0.01)
-	}
+	let addQuy  = Math.floor(bet*0.01);
+	let bet_win = 0;
 
-	let bet_win   = 0;
-	let type      = 0;   // Loại được ăn lớn nhất trong phiên
-
-	HU.findOne({game:'arb', type:bet, red:red}, 'name bet min toX balans x', function(err, dataHu){
-		let uInfo      = {};
-		let mini_users = {};
-		let huUpdate   = {bet:addQuy, toX:0, balans:0};
-		if (red){
-			huUpdate['hu'] = uInfo['hu'] = mini_users['hu']     = 0; // Khởi tạo
-		}else{
-			huUpdate['huXu'] = uInfo['huXu'] = mini_users['huXu'] = 0; // Khởi tạo
-		}
+	HU.findOne({game:'arb', type:bet, red:true}, 'name bet min toX balans x', function(err, dataHu){
+		let huUpdate = {bet:addQuy, toX:0, balans:0};
 
 		let nohu     = false;
-		let isBigWin = false;
-		let quyHu    = dataHu.bet;
 		let quyMin   = dataHu.min;
 
 		let toX      = dataHu.toX;
@@ -302,8 +279,6 @@ let spin = function(io, user){
 						// x10
 						if (heso == 100) {
 							// nổ hũ
-							type = 2;
-
 							if (toX > 0) {
 								toX -= 1;
 								huUpdate.toX -= 1;
@@ -314,28 +289,17 @@ let spin = function(io, user){
 							if (toX < 1 && balans > 0) {
 								quyMin = dataHu.min*dataHu.x;
 							}
-
+							let okHu = 0;
 							if (!nohu) {
 								nohu = true;
-								let okHu = Math.floor(quyHu-Math.ceil(quyHu*phe/100));
+								okHu = Math.floor(dataHu.bet-Math.ceil(dataHu.bet*2/100));
 								bet_win += okHu;
-								if (red){
-									Helpers.ThongBaoNoHu(io, {title:'AngryBirds', name: user.name, bet: Helpers.numberWithCommas(okHu)});
-									huUpdate['hu']   = uInfo['hu']   = mini_users['hu']  += 1; // Cập nhật Số Hũ Red đã Trúng
-								}else{
-									huUpdate['huXu'] = uInfo['huXu'] = mini_users['huXu'] += 1; // Cập nhật Số Hũ Xu đã Trúng
-								}
 							}else{
-								let okHu = Math.floor(quyMin-Math.ceil(quyMin*phe/100));
+								okHu = Math.floor(quyMin-Math.ceil(quyMin*2/100));
 								bet_win += okHu;
-								if (red){
-									Helpers.ThongBaoNoHu(io, {title:'AngryBirds', name: user.name, bet: okHu});
-									huUpdate['hu']   = uInfo['hu']   = mini_users['hu']   += 1; // Cập nhật Số Hũ Red đã Trúng
-								}else{
-									huUpdate['huXu'] = uInfo['huXu'] = mini_users['huXu'] += 1; // Cập nhật Số Hũ Xu đã Trúng
-								}
 							}
-							HU.updateOne({game:'arb', type:bet, red:red}, {$set:{name:'', bet:quyMin}}).exec();
+							io.sendInHome({pushnohu:{title:'AngryBirds', name:user.name, bet:okHu}});
+							HU.updateOne({game:'arb', type:bet, red:true}, {$set:{name:'', bet:quyMin}}).exec();
 						}else{
 							bet_win += bet*10;
 						}
@@ -354,26 +318,10 @@ let spin = function(io, user){
 			}))
 			.then(result2 => {
 				bet_win  = nohu ? bet_win : bet_win*heso; // Tổng tiền ăn đc (chưa cắt phế)
-				let tien = bet_win-bet;
 				if (!nohu && bet_win >= bet*10) {
-					isBigWin = true;          // Là thắng lớn
-					type = 1;
-					red && Helpers.ThongBaoBigWin(io, {game:'AngryBirds', users: user.name, bet: Helpers.numberWithCommas(bet_win), status: 2});
+					io.sendInHome({news:{t:{game:'AngryBirds', users:user.name, bet:bet_win, status:2}}});
 				}
-
-				uInfo['red'] = tien;                                   // Cập nhật Số dư Red trong tài khoản
-				huUpdate['redPlay'] = uInfo['redPlay'] = mini_users['bet'] = bet;            // Cập nhật Số Red đã chơi
-				if (tien > 0){
-					huUpdate['redWin'] = uInfo['redWin'] = mini_users['win'] = tien;        // Cập nhật Số Red đã Thắng
-				}
-				if (tien < 0){
-					huUpdate['redLost'] = uInfo['redLost'] = mini_users['lost'] = tien*(-1); // Cập nhật Số Red đã Thua
-				}
-
-				AngryBirds_red.create({'name': user.name, 'type': type, 'win': bet_win, 'bet': bet, 'time': new Date()}, function(err) {});
-				HU.updateOne({game:'arb', type:bet, red:red}, {$inc:huUpdate}).exec();
-				UserInfo.updateOne({id:user.id}, {$inc:uInfo}).exec();
-				AngryBirds_user.updateOne({'uid':user.id}, {$set:{time: new Date()}, $inc:mini_users}).exec();
+				HU.updateOne({game:'arb', type:bet, red:true}, {$inc:huUpdate}).exec();
 			})
 		})
 	})

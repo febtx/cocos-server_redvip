@@ -1,12 +1,6 @@
 
-let HU             = require('../../Models/HU');
-
-let BigBabol_red   = require('../../Models/BigBabol/BigBabol_red');
-let BigBabol_users = require('../../Models/BigBabol/BigBabol_users');
-
-let UserInfo       = require('../../Models/UserInfo');
-
-let Helpers        = require('../../Helpers/Helpers');
+let HU      = require('../../Models/HU');
+let Helpers = require('../../Helpers/Helpers');
 
 let random_cel2 = function(){
 	let a = Math.floor(Math.random()*21);
@@ -86,7 +80,6 @@ let check_win = function(data, line){
 
 let spin = function(io, user){
 	let bet = 100;
-	let red = true;
 
 	let line = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20];
 
@@ -104,22 +97,12 @@ let spin = function(io, user){
 	}
 
 	let cuoc = bet*line.length;  // Tiền cược
-	let phe = 2;    // Phế
 	let addQuy = Math.floor(cuoc*0.005);
 
 	let bet_win   = 0;
-	let type      = 0;   // Loại được ăn lớn nhất trong phiên
 	// tạo kết quả
-	HU.findOne({game:'bigbabol', type:bet, red:red}, 'name bet min toX balans x', function(err, dataHu){
-		let uInfo      = {};
-		let mini_users = {};
+	HU.findOne({game:'bigbabol', type:bet, red:true}, 'name bet min toX balans x', function(err, dataHu){
 		let huUpdate   = {bet:addQuy, toX:0, balans:0};
-		if (red){
-			huUpdate['hu'] = uInfo['hu'] = mini_users['hu']     = 0; // Khởi tạo
-		}else{
-			huUpdate['huXu'] = uInfo['huXu'] = mini_users['huXu'] = 0; // Khởi tạo
-		}
-
 
 		let celSS = [];
 		let aRwin = Math.floor(Math.random()*50);
@@ -147,8 +130,6 @@ let spin = function(io, user){
 		let cel3 = [celSS[6], celSS[7], celSS[8]]; // Cột 3
 
 		let nohu      = false;
-		let isBigWin  = false;
-		let quyHu     = dataHu.bet;
 		let quyMin    = dataHu.min;
 
 		let toX      = dataHu.toX;
@@ -253,24 +234,17 @@ let spin = function(io, user){
 						if (toX < 1 && balans > 0) {
 							quyMin = dataHu.min*dataHu.x;
 						}
+						let okHu = 0;
 						if (!nohu) {
-							let okHu = Math.floor(quyHu-Math.ceil(quyHu*phe/100));
+							okHu = Math.floor(dataHu.bet-Math.ceil(dataHu.bet*2/100));
 							bet_win += okHu;
-							red && Helpers.ThongBaoNoHu(io, {title:'BigBabol', name: user.name, bet: Helpers.numberWithCommas(okHu)});
 						}else{
-							let okHu = Math.floor(quyMin-Math.ceil(quyMin*phe/100));
+							okHu = Math.floor(quyMin-Math.ceil(quyMin*2/100));
 							bet_win += okHu;
-							red && Helpers.ThongBaoNoHu(io, {title:'BigBabol', name: user.name, bet: Helpers.numberWithCommas(okHu)});
 						}
-						HU.updateOne({game:'bigbabol', type:bet, red:red}, {$set:{name:'', bet:quyMin}}).exec();
-
-						if (red){
-							huUpdate['hu'] = uInfo['hu'] = mini_users['hu']     += 1;
-						}else{
-							huUpdate['huXu'] = uInfo['huXu'] = mini_users['huXu'] += 1;
-						}
+						io.sendInHome({pushnohu:{title:'BigBabol', name:user.name, bet:okHu}});
+						HU.updateOne({game:'bigbabol', type:bet, red:true}, {$set:{name:'', bet:quyMin}}).exec();
 						nohu = true;
-						type = 2;
 					}else if(!nohu && line_win.win == 4) {
 						// x80
 						bet_win += bet*80;
@@ -297,25 +271,10 @@ let spin = function(io, user){
 				return (line_win.type != null);
 			}))
 			.then(result2 => {
-				let tien = bet_win-cuoc;
 				if (!nohu && bet_win >= cuoc*2.24) {
-					isBigWin = true;
-					type = 1;
-					red && Helpers.ThongBaoBigWin(io, {game:'BigBabol', users: user.name, bet: Helpers.numberWithCommas(bet_win), status: 2});
+					io.sendInHome({news:{t:{game:'BigBabol', users:user.name, bet:bet_win, status:2}}});
 				}
-
-				uInfo['red'] = tien;                                                 // Cập nhật Số dư Red trong tài khoản
-				huUpdate['redPlay'] = uInfo['redPlay'] = mini_users['bet'] = cuoc;   // Cập nhật Số Red đã chơi
-				if (tien > 0){
-					huUpdate['redWin'] = uInfo['redWin'] = mini_users['win'] = tien; // Cập nhật Số Red đã Thắng
-				}
-				if (tien < 0){
-					huUpdate['redLost'] = uInfo['redLost'] = mini_users['lost'] = tien*(-1); // Cập nhật Số Red đã Thua
-				}
-				BigBabol_red.create({'name': user.name, 'type': type, 'win': bet_win, 'bet': bet, 'kq': result2.length, 'line': line.length, 'time': new Date()}, function(err) {});
-				HU.updateOne({game:'bigbabol', type:bet, red:red}, {$inc:huUpdate}).exec();
-				UserInfo.updateOne({id:user.id}, {$inc:uInfo}).exec();
-				BigBabol_users.updateOne({'uid':user.id}, {$set:{time: new Date()}, $inc:mini_users}).exec();
+				HU.updateOne({game:'bigbabol', type:bet, red:true}, {$inc:huUpdate}).exec();
 			})
 		})
 	})

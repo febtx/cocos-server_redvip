@@ -4,12 +4,11 @@ let mongoose      = require('mongoose');
 
 let Schema = new mongoose.Schema({
 	id:         {type: String, required: true, unique: true}, // ID đăng nhập
-	name:       {type: String, unique: true,   index: true},  // Tên nhân vật
+	name:       {type: String, required: true, unique: true},  // Tên nhân vật
 	avatar:     {type: String, default: ''},       // Tên avatar
 	joinedOn:   {type: Date, default: new Date()}, // Ngày tham gia
 
-	phone:      {type: String, default: '', index: true}, // SĐT
-	email:      {type: String, default: '', index: true}, // EMail
+	email:      {type: String, default: ''}, // EMail
 	cmt:        {type: String, default: ''}, // CMT
 
 	security:   {                            // Bảo Mật
@@ -35,7 +34,7 @@ let Schema = new mongoose.Schema({
 	hu:         {type: Number, default: 0},                         // Số lần Nổ Hũ REd
 	huXu:       {type: Number, default: 0},                         // Số lần Nổ Hũ Xu
 
-	type:       {type: Boolean, default: false},                    // Bot = true | Users = false
+	type:       {type: Boolean, default: false, index: true},       // Bot = true | Users = false
 
 	otpFirst:   {type: Boolean, default: false},                    // Kiểm tra lần đầu lấy mã OTP
 });

@@ -5,7 +5,7 @@ module.exports = {
 	'options': {
 		//'user':   'admin',
 		//'pass':   'MrT98TT2',
-		'dbName': 'red',
+		'dbName': 'admin',
 		'useNewUrlParser': false,
 		'useUnifiedTopology': false,
 		//'autoIndex':       false,

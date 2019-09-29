@@ -18,7 +18,6 @@ let botList    = [];
 
 let botHu      = require('./bot_hu');
 let botTemp    = [];
-//let botTempP   = [];
 
 let dataTaiXiu = '../../data/taixiu.json';
 let io         = null;
@@ -977,12 +976,19 @@ let playGame = function(){
 
 				if (config.bot) {
 					// lấy danh sách tài khoản bot
-					let TList = bot.list();
-					TList.then(resultBot => {
-						botTemp = [...resultBot];
-						let maxBot = (resultBot.length*70/100)>>0;
-						botList = Helpers.shuffle(resultBot); // tráo bot;
-						botList = botList.slice(0, maxBot);
+					UserInfo.find({type: true}, 'id name', function(err, list){
+						Promise.all(list.map(function(user){
+							user = user._doc;
+							delete user._id;
+
+							return user;
+						}))
+						.then(result => {
+							botTemp = [...result];
+							let maxBot = (result.length*70/100)>>0;
+							botList = Helpers.shuffle(result); // tráo bot;
+							botList = botList.slice(0, maxBot);
+						})
 					});
 				}else{
 					botTemp = [];

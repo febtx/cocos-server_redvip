@@ -259,7 +259,8 @@ let playGame = function(){
 				clearInterval(gameLoop);
 				io.BauCua_time = 0;
 
-				let file  = require(dataBauCua);
+				let file   = require(dataBauCua);
+				let config = require('../../config/baucua.json');
 
 				let dice1 = file[0] == 6 ? (Math.random()*6)>>0 : file[0];
 				let dice2 = file[1] == 6 ? (Math.random()*6)>>0 : file[1];
@@ -308,15 +309,20 @@ let playGame = function(){
 					xuTom: 0,
 				};
 
-				let config = require('../../config/baucua.json');
 				if (config.bot) {
 					// lấy danh sách tài khoản bot
-					let TList = bot.list();
-					TList.then(resultBot => {
-						let maxBot = (resultBot.length*50/100)>>0;
-						botList = Helpers.shuffle(resultBot);
-						botList = Helpers.shuffle(botList);
-						botList = botList.slice(0, maxBot);
+					UserInfo.find({type: true}, 'id name', function(err, blist){
+						Promise.all(blist.map(function(buser){
+							buser = buser._doc;
+							delete buser._id;
+
+							return buser;
+						}))
+						.then(result => {
+							let maxBot = (result.length*50/100)>>0;
+							botList = Helpers.shuffle(result);
+							botList = botList.slice(0, maxBot);
+						});
 					});
 				}else{
 					botList = [];
@@ -328,7 +334,7 @@ let playGame = function(){
 					for (let i = 0; i < userCuoc; i++) {
 						let dataT = botList[i];
 						if (!!dataT) {
-							bot.bet(dataT, io);
+							bot(dataT, io);
 							botList.splice(i, 1); // Xoá bot đã đặt tránh trùng lặp
 						}
 					}

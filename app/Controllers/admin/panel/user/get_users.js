@@ -73,7 +73,6 @@ module.exports = function(client, data){
 									name:     '$name',
 									red:      '$red',
 									xu:       '$xu',
-									phone:    '$phone',
 									type:     '$type',
 								}
 							},
@@ -82,7 +81,12 @@ module.exports = function(client, data){
 								Promise.all(result2.map(function(obj){
 									delete obj._id;
 									obj.username = result.local.username;
-									return obj;
+									return new Promise(function(resolve, reject) {
+										Phone.findOne({'uid':obj.id}, function(err3, result4){
+											obj.phone = !!result4 ? result4.region+result4.phone : '';
+											resolve(obj);
+										});
+									});
 								}))
 								.then(function(data){
 									client.red({users:{get_users:{data:data, page:page, kmess:10, total:1}}});
@@ -111,7 +115,6 @@ module.exports = function(client, data){
 										name:     '$name',
 										red:      '$red',
 										xu:       '$xu',
-										phone:    '$phone',
 										type:     '$type',
 									}
 								},
@@ -119,8 +122,13 @@ module.exports = function(client, data){
 								if (result2.length) {
 									Promise.all(result2.map(function(obj){
 										delete obj._id;
-										obj.username = result.local.username;
-										return obj;
+										obj.phone = result.region+result.phone;
+										return new Promise(function(resolve, reject) {
+											Users.findOne({'_id': obj.id}, function(error, result3){
+												obj.username = result3.local.username;
+												resolve(obj);
+											})
+										});
 									}))
 									.then(function(data){
 										client.red({users:{get_users:{data:data, page:page, kmess:10, total:1}}});
@@ -152,7 +160,6 @@ module.exports = function(client, data){
 								name:     '$name',
 								red:      '$red',
 								xu:       '$xu',
-								phone:    '$phone',
 								type:     '$type',
 							}
 						},
@@ -162,11 +169,14 @@ module.exports = function(client, data){
 					]).exec(function(err, result){
 						if (result.length) {
 							Promise.all(result.map(function(obj){
+								delete obj._id;
 								return new Promise(function(resolve, reject) {
 									Users.findOne({'_id': obj.id}, function(error, result2){
-										delete obj._id;
-										obj['username'] = result2.local.username;
-										resolve(obj);
+										obj.username = !!result2 ? result2.local.username : '';
+										Phone.findOne({'uid':obj.id}, function(err3, result3){
+											obj.phone = !!result3 ? result3.region+result3.phone : '';
+											resolve(obj);
+										});
 									})
 								})
 							}))

@@ -1,12 +1,6 @@
 
-let HU           = require('../../Models/HU');
-
-let LongLan_red  = require('../../Models/LongLan/LongLan_red');
-let LongLan_user = require('../../Models/LongLan/LongLan_user');
-
-let UserInfo     = require('../../Models/UserInfo');
-
-let Helpers      = require('../../Helpers/Helpers');
+let HU      = require('../../Models/HU');
+let Helpers = require('../../Helpers/Helpers');
 
 let random_T1 = function(){
 	let a = Math.floor(Math.random()*66);
@@ -181,8 +175,6 @@ let check_win = function(data, line){
 
 let spin = function(io, user){
 	let bet = 100;
-	let red = true;
-
 	let line = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25];
 
 	let a = Math.floor(Math.random()*16);
@@ -199,25 +191,12 @@ let spin = function(io, user){
 	}
 
 	let tongCuoc = bet*line.length;  // Tiền cược
-	let phe = red ? 2 : 4;    // Phế
 	let addQuy = Math.floor(tongCuoc*0.005);
 
 	let bet_win   = 0;
-	let type      = 0;   // Loại được ăn lớn nhất trong phiên
 	let nohu      = false;
-	let isBigWin  = false;
 	// tạo kết quả
-	HU.findOne({game:'long', type:bet, red:red}, {}, function(err2, dataHu){
-		let uInfo      = {};
-		let mini_users = {};
-		let huUpdate   = {bet:addQuy};
-		if (red){
-			huUpdate['hu'] = uInfo['hu'] = mini_users['hu']     = 0; // Khởi tạo
-		}else{
-			huUpdate['huXu'] = uInfo['huXu'] = mini_users['huXu'] = 0; // Khởi tạo
-		}
-
-
+	HU.findOne({game:'long', type:bet, red:true}, {}, function(err2, dataHu){
 		let aRwin = Math.floor(Math.random()*50);
 		let celSS = [];
 
@@ -248,8 +227,6 @@ let spin = function(io, user){
 		let cel3 = [celSS[6],  celSS[7],  celSS[8]];  // Cột 3
 		let cel4 = [celSS[9],  celSS[10], celSS[11]]; // Cột 4
 		let cel5 = [celSS[12], celSS[13], celSS[14]]; // Cột 5
-
-		let quyHu     = dataHu.bet;
 
 		// kiểm tra kết quả
 		Promise.all(line.map(function(selectLine){
@@ -380,26 +357,17 @@ let spin = function(io, user){
 					if (line_win.type === 5) {
 						checkWin = true;
 						// Nổ Hũ
-						type = 2;
+						let okHu = 0;
+
 						if (!nohu) {
-							let okHu = Math.floor(quyHu-Math.ceil(quyHu*phe/100));
+							okHu = Math.floor(dataHu.bet-Math.ceil(dataHu.bet*2/100));
 							bet_win += okHu;
-							HU.updateOne({game:'long', type:bet, red:red}, {$set:{name:'', bet:dataHu.min}}).exec();
-							red && Helpers.ThongBaoNoHu(io, {title:'LONG LÂN', name: user.name, bet: Helpers.numberWithCommas(okHu)});
+							HU.updateOne({game:'long', type:bet, red:true}, {$set:{name:'', bet:dataHu.min}}).exec();
 						}else{
-							let okHu = Math.floor(dataHu.min-Math.ceil(dataHu.min*phe/100));
+							okHu = Math.floor(dataHu.min-Math.ceil(dataHu.min*2/100));
 							bet_win += okHu;
-							red && Helpers.ThongBaoNoHu(io, {title:'LONG LÂN', name: user.name, bet: Helpers.numberWithCommas(okHu)});
 						}
-						if (red){
-							huUpdate.hu += 1;
-							uInfo.hu += 1;
-							mini_users.hu += 1;
-						}else{
-							huUpdate.huXu += 1;
-							uInfo.huXu += 1;
-							mini_users.huXu += 1;
-						}
+						io.sendInHome({pushnohu:{title:'LONG LÂN', name:user.name, bet:okHu}});
 						nohu = true;
 					}else if (!nohu && line_win.type === 4){
 						// x100
@@ -516,34 +484,10 @@ let spin = function(io, user){
 				return checkWin;
 			}))
 			.then(result2 => {
-				let tien = bet_win-tongCuoc;
 				if (!nohu && bet_win >= tongCuoc*2.24) {
-					isBigWin = true;
-					type = 1;
-					red && Helpers.ThongBaoBigWin(io, {game:'LONG LÂN', users: user.name, bet: Helpers.numberWithCommas(bet_win), status: 2});
+					io.sendInHome({news:{t:{game:'LONG LÂN', users:user.name, bet:bet_win, status:2}}});
 				}
-
-				uInfo.red = tien;
-				huUpdate.redPlay = tongCuoc;
-				uInfo.redPlay = tongCuoc;
-				mini_users.bet = tongCuoc;
-
-				if (tien > 0){
-					huUpdate.redWin = tien;
-					uInfo.redWin = tien;
-					mini_users.win = tien;         // Cập nhật Số Red đã Thắng
-				}
-				if (tien < 0){
-					let tienLost = tien*-1;
-					huUpdate.redLost = tienLost;
-					uInfo.redLost = tienLost;
-					mini_users.lost = tienLost; // Cập nhật Số Red đã Thua
-				}
-
-				LongLan_red.create({'name': user.name, 'type': type, 'win': bet_win, 'bet': bet, 'kq': result2.length, 'line': line.length, 'time': new Date()}, function(err) {});
-				HU.updateOne({game:'long', type:bet, red:red}, {$inc:huUpdate}).exec();
-				UserInfo.updateOne({id:user.id},{$inc:uInfo}).exec();
-				LongLan_user.updateOne({'uid':user.id}, {$set:{time: new Date()}, $inc:mini_users}).exec();
+				HU.updateOne({game:'long', type:bet, red:true}, {$inc:{bet:addQuy}}).exec();
 			});
 		});
 	});

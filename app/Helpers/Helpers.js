@@ -127,25 +127,19 @@ let shuffle = function(array) {
 }
 
 let ThongBaoNoHu = function(io, data){
-	Promise.all(Object.values(io.users).map(function(users){
-		Promise.all(users.map(function(client){
-			if(client.scene == 'home' && io.UID != client.UID){
-				client.red({pushnohu:data});
-			}
-		}));
-	}));
-	io.sendAllClient({pushnohu:data});
+	io.clients.forEach(function(client){
+		if (void 0 === client.admin && (client.auth === false || client.scene === 'home')) {
+			client.red({pushnohu:data});
+		}
+	});
 }
 
 let ThongBaoBigWin = function(io, data){
-	Promise.all(Object.values(io.users).map(function(users){
-		Promise.all(users.map(function(client){
-			if(client.scene == 'home' && io.UID != client.UID){
-				client.red({news:{t:data}});
-			}
-		}));
-	}));
-	io.sendAllClient({news:{t:data}});
+	io.clients.forEach(function(client){
+		if (void 0 === client.admin && (client.auth === false || client.scene === 'home')) {
+			client.red({news:{t:data}});
+		}
+	});
 }
 
 module.exports = {
