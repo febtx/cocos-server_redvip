@@ -10,7 +10,7 @@ let Schema = new mongoose.Schema({
 	branch:  {type: String},                                     // Chi nhánh
 	money:   {type: mongoose.Schema.Types.Long, required: true}, // Tiền
 	type:    {type: Number, default: 0},                         // Loại hóa đơn (0:nạp, 1:rút)
-	info:    {type: String},                                     // Bổ sung
+	info:    {type: String, default: ''},                        // Bổ sung
 	status:  {type: Number, default: 0},                         // Trạng thái nạp (0: chờ, 1: Thành công, 2:Thất bại)
 	time:    Date,                                               // Thời gian tạo
 });
