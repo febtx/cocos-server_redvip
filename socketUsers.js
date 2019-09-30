@@ -124,12 +124,10 @@ module.exports = function(ws, redT){
 	});
 	ws.on('close', function(message) {
 		if (this.UID !== null && void 0 !== this.redT.users[this.UID]) {
-			if (this.redT.users[this.UID].length == 1) {
-				if (this.redT.users[this.UID][0] == this) {
-					delete this.redT.users[this.UID];
-				}
+			if (this.redT.users[this.UID].length === 1 && this.redT.users[this.UID][0] === this) {
+				delete this.redT.users[this.UID];
 			}else{
-				let self = this;
+				var self = this;
 				Promise.all(this.redT.users[this.UID].map(function(obj, index){
 					if (obj === self) {
 						self.redT.users[self.UID].splice(index, 1);
@@ -137,7 +135,6 @@ module.exports = function(ws, redT){
 				}));
 			}
 		}
-		this.UID  = null;
 		this.auth = false;
 		void 0 !== this.TTClear && this.TTClear();
 	});

@@ -70,7 +70,7 @@ function remove(client, id){
 				.then(values => {
 					GiftCode.estimatedDocumentCount().exec(function(err, total){
 						GiftCode.find({}, {}, {sort:{'_id':-1}, skip: 0, limit: 10}, function(err, data){
-							client.red({giftcode:{get_data:{data:data, page:1, kmess:10, total:total}}, notice:{title:'GIFT CODE',text:'Xoá thành công...'}});
+							client.red({banklist:{remove:true}, giftcode:{get_data:{data:data, page:1, kmess:10, total:total}}, notice:{title:'GIFT CODE',text:'Xoá thành công...'}});
 						});
 					});
 				})
