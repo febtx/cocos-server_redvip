@@ -6,35 +6,34 @@ module.exports = function(app, redT) {
 	// Home
 	app.get('/', function(req, res) {
 		if (mobile({ua:req})){
-			res.redirect('/mobile/');
+			return res.redirect('/mobile/');
 		} else {
-			res.redirect('/web/');
+			return res.redirect('/web/');
 		}
 	});
 	app.get('/web/', function(req, res) {
 		if (mobile({ua:req})){
-			res.redirect('/mobile/');
+			return res.redirect('/mobile/');
 		} else {
-			res.render('index');
+			return res.render('index');
 		}
 	});
 	app.get('/mobile/', function(req, res) {
 		if (mobile({ua:req})){
-			res.render('index_mobile');
+			return res.render('index_mobile');
 		} else {
-			res.redirect('/web/');
+			return res.redirect('/web/');
 		}
 	});
 
 	// Admin
 	app.get('/68ClubA/', function(req, res) {
-		res.render('admin');
+		return res.render('admin');
 	});
 
 	// Admin
 	app.get('/fanpage/', function(req, res) {
-		let sys = require('./config/sys');
-		res.redirect(sys.fanpage);
+		return require('./routes/fanpage/redirect')(res);
 	});
 
 	// Sign API
