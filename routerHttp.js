@@ -31,9 +31,14 @@ module.exports = function(app, redT) {
 		return res.render('admin');
 	});
 
-	// Admin
+	// Fanpage
 	app.get('/fanpage/', function(req, res) {
 		return require('./routes/fanpage/redirect')(res);
+	});
+
+	// Help IOS
+	app.get('/help/ios/', function(req, res) {
+		return res.render('help/ios');
 	});
 
 	// Sign API

@@ -180,7 +180,7 @@ let signName = function(client, name){
 												Candy_user.create({'uid': client.UID});
 												LongLan_user.create({'uid': client.UID});
 
-												Message.create({'uid': client.UID, 'title':'Thành Viên Mới', 'text':'Chào mừng bạn đến với REDVip.Club, chúc bạn chơi game vui vẻ...', 'time':new Date()});
+												Message.create({'uid': client.UID, 'title':'Thành Viên Mới', 'text':'Chào mừng bạn đến với Bem68.com, chúc bạn chơi game vui vẻ...', 'time':new Date()});
 
 												GameState(client);
 												client.red(data);

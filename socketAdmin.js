@@ -62,8 +62,7 @@ module.exports = function(ws, redT){
 							if (void 0 !== ws.redT.admins[ws.UID]) {
 								ws.redT.admins[ws.UID].push(ws);
 							}else{
-								ws.redT.admins[ws.UID] = [];
-								ws.redT.admins[ws.UID].push(ws);
+								ws.redT.admins[ws.UID] = [ws];
 							}
 							socket.auth(ws);
 						} else if (!!err) {

@@ -21,7 +21,7 @@ module.exports = function(bot, id) {
 				    resize_keyboard: true,
 			    }
 			};
-			bot.sendMessage(id, '*RedVip.Club*  Đây là lần đầu tiên bạn sử dụng App OTP. Vui lòng ấn CHIA SẺ SỐ ĐIỆN THOẠI để lấy mã OTP miễn phí.', opts);
+			bot.sendMessage(id, '*Bem68.Com*  Đây là lần đầu tiên bạn sử dụng App OTP. Vui lòng ấn CHIA SẺ SỐ ĐIỆN THOẠI để lấy mã OTP miễn phí.', opts);
 		}
 	});
 }
