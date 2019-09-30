@@ -81,18 +81,16 @@ module.exports = function(ws, redT){
 	});
 
 	ws.on('close', function(message) {
-		if (this.UID !== null) {
-			if (void 0 !== this.redT.admins[this.UID]) {
-				if (this.redT.admins[this.UID].length == 1) {
-					delete this.redT.admins[this.UID];
-				}else{
-					let self = this;
-					Promise.all(this.redT.admins[this.UID].map(function(obj, index){
-						if (obj === self) {
-							self.redT.admins[self.UID].splice(index, 1);
-						}
-					}));
-				}
+		if (this.UID !== null && void 0 !== this.redT.admins[this.UID]) {
+			if (this.redT.admins[this.UID].length === 1 && this.redT.admins[this.UID][0] === this) {
+				delete this.redT.admins[this.UID];
+			}else{
+				var self = this;
+				Promise.all(this.redT.admins[this.UID].map(function(obj, index){
+					if (obj === self) {
+						self.redT.admins[self.UID].splice(index, 1);
+					}
+				}));
 			}
 		}
 		this.auth = false;

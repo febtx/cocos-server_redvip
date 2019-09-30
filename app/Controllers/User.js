@@ -88,9 +88,7 @@ let first = function(client){
 			addToListOnline(client);
 
 			Phone.findOne({uid:client.UID}, {}, function(err2, dataP){
-				if (dataP) {
-					user.phone = Helper.cutPhone(dataP.region+dataP.phone);
-				}
+				user.phone = dataP ? Helper.cutPhone(dataP.region+dataP.phone) : '';
 				let data = {
 					Authorized: true,
 					user:       user,
@@ -148,6 +146,7 @@ let signName = function(client, name){
 												user.level   = 1;
 												user.vipNext = 100;
 												user.vipHT   = 0;
+												user.phone   = '';
 
 												delete user._id;
 												delete user.redWin;

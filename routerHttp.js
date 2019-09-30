@@ -31,6 +31,12 @@ module.exports = function(app, redT) {
 		res.render('admin');
 	});
 
+	// Admin
+	app.get('/fanpage/', function(req, res) {
+		let sys = require('./config/sys');
+		res.redirect(sys.fanpage);
+	});
+
 	// Sign API
 	require('./routes/api')(app, redT);  // load routes API
 };

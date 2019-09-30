@@ -4,7 +4,7 @@ var UserInfo     = require('../../../Models/UserInfo');
 var OTP          = require('../../../Models/OTP');
 var Phone        = require('../../../Models/Phone');
 var validator    = require('validator');
-/**
+
 module.exports = function(client, data){
 	if (!!data.bank && !!data.number && !!data.name && !!data.branch && !!data.rut && !!data.otp) {
 		if (!validator.isLength(data.bank, {min: 4, max: 17})) {
@@ -57,8 +57,8 @@ module.exports = function(client, data){
 		client.red({notice:{title:'LỖI', text:'Nhập đầy đủ các thông tin.!'}});
 	}
 }
-*/
 
+/**
 module.exports = function(client, data){
 	if (!!data.bank && !!data.number && !!data.name && !!data.branch && !!data.rut && !!data.otp) {
 		if (!validator.isLength(data.bank, {min: 4, max: 17})) {
@@ -84,3 +84,4 @@ module.exports = function(client, data){
 		client.red({notice:{title:'LỖI', text:'Nhập đầy đủ các thông tin.!'}});
 	}
 }
+*/

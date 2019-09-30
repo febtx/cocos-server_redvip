@@ -996,7 +996,7 @@ let playGame = function(){
 					for (iH = 0; iH < userCuoc; iH++) {
 						let dataT = botList[iH];
 						if (!!dataT) {
-							bot.bet(dataT, io);
+							bot(dataT, io);
 							botList.splice(iH, 1); // Xoá bot đã đặt tránh trùng lặp
 						}
 					}
