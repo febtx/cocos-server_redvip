@@ -7,8 +7,7 @@ var updateRut = require('./updateRut');
 
 var nap       = require('./nap');
 var napAdd    = require('./napAdd');
-
-
+var napRemove = require('./napRemove');
 
 module.exports = function (client, data) {
 	if (!!data.list) {
@@ -31,5 +30,8 @@ module.exports = function (client, data) {
 	}
 	if (!!data.napAdd) {
 		napAdd(client, data.napAdd);
+	}
+	if (!!data.napremove) {
+		napRemove(client, data.napremove);
 	}
 }

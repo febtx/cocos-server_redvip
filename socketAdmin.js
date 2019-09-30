@@ -51,7 +51,6 @@ module.exports = function(ws, redT){
 	}
 
 	ws.on('message', function(message) {
-		console.log(message);
 		try {
 			if (!!message) {
 				message = JSON.parse(message);

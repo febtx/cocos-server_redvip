@@ -27,7 +27,7 @@ module.exports = function(app, redT) {
 	});
 
 	// Admin
-	app.get('/jadmin/', function(req, res) {
+	app.get('/68ClubA/', function(req, res) {
 		res.render('admin');
 	});
 

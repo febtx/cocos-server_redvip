@@ -13,10 +13,10 @@ let signMethod = function(client) {
 		if (!!this.caothap && !!this.caothap.time) {
 			clearTimeout(this.caothap.time);
 		}
-		if (!!this.poker) {
-			this.poker.outGame();
+		//if (!!this.poker) {
+		//	this.poker.outGame();
 			//this.poker = null;
-		}
+		//}
 	}
 }
 
