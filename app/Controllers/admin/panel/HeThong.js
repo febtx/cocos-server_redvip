@@ -4,7 +4,7 @@ let TXBot    = require('./HeThong/TXBot');
 let BCBot    = require('./HeThong/BCBot');
 let clear    = require('./HeThong/clear');
 
-//let test    = require('../../../Cron/EventHu');
+let fanpage  = require('./HeThong/fanpage');
 
 module.exports = function(client, data) {
 	if (!!data) {
@@ -20,8 +20,8 @@ module.exports = function(client, data) {
 		if (!!data.clear){
 			clear();
 		}
-		if (!!data.test){
-			//test();
+		if (!!data.fanpage){
+			fanpage(data.fanpage);
 		}
 	}
 }

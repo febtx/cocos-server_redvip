@@ -10,8 +10,8 @@ let sendOTP = function(phone, otp){
 	let form = {
 		  'source': 'Verify',
 		  'destination': phone,
-		  'text': config.Brandname + ': Ma OTP cua ban la ' + otp,
-		  'encoding': 'GSM7',
+		  'text': 'Verification Code: ' + otp,
+		  'encoding': 'AUTO',
 	};
 	request.post({
 		url: config.URL,

@@ -83,11 +83,17 @@ module.exports = function(ws, redT){
 		if (this.UID !== null && void 0 !== this.redT.admins[this.UID]) {
 			if (this.redT.admins[this.UID].length === 1 && this.redT.admins[this.UID][0] === this) {
 				delete this.redT.admins[this.UID];
+				if (this.redT) {
+					delete this.redT;
+				}
 			}else{
 				var self = this;
 				Promise.all(this.redT.admins[this.UID].map(function(obj, index){
 					if (obj === self) {
 						self.redT.admins[self.UID].splice(index, 1);
+						if (self.redT) {
+							delete self.redT;
+						}
 					}
 				}));
 			}

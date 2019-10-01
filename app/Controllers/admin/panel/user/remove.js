@@ -3,6 +3,9 @@
 var Users              = require('../../../../Models/Users');
 var UserInfo           = require('../../../../Models/UserInfo');
 
+var Phone              = require('../../../../Models/Phone');
+var Telegram           = require('../../../../Models/Telegram');
+
 // OTP
 var OTP                = require('../../../../Models/OTP');
 
@@ -77,6 +80,13 @@ module.exports = function(client, id){
 	UserInfo.findOne({'id': id}, 'name', function(err, data){
 		if (!!data) {
 			// thực hiện xóa @@
+
+			Phone.findOne({'uid':id}, 'phone', function(errP, dataP){
+				if (dataP) {
+					Telegram.deleteOne({'phone':dataP.phone}).exec();
+					dataP.remove();
+				}
+			});
 
 			Users.deleteOne({'_id': id}).exec();
 			UserInfo.deleteOne({'id': id}).exec();

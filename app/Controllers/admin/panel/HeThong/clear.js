@@ -16,6 +16,7 @@ var MuaThe_card        = require('../../../../Models/MuaThe_card');
 // Chuyển Red
 var ChuyenRed          = require('../../../../Models/ChuyenRed');
 */
+var Message          = require('../../../../Models/Message');
 
 // Gift Code
 var GiftCode         = require('../../../../Models/GiftCode');
@@ -72,6 +73,9 @@ module.exports = function() {
 	// GiftCode
 	var GiftCodeTime = new Date();     // GiftCode hết hạn
 	GiftCode.deleteMany({'todate':{$lt: GiftCodeTime}}).exec();
+
+	// Xóa mọi tin nhắn
+	Message.deleteMany({}).exec();
 
 	// Tài Xỉu
 	TaiXiu_phien.findOne({}, 'id', {sort:{'_id': -1}}, function(err, data){
