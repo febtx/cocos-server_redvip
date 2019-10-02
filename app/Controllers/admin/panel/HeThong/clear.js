@@ -2,20 +2,22 @@
 // OTP
 var OTP              = require('../../../../Models/OTP');
 
-/**
 // Mua Xu
-var MuaXu              = require('../../../../Models/MuaXu');
+var MuaXu            = require('../../../../Models/MuaXu');
 
 // Nạp Thẻ
-var NapThe             = require('../../../../Models/NapThe');
+var NapThe           = require('../../../../Models/NapThe');
 
 // Mua Thẻ
-var MuaThe             = require('../../../../Models/MuaThe');
-var MuaThe_card        = require('../../../../Models/MuaThe_card');
+var MuaThe           = require('../../../../Models/MuaThe');
+var MuaThe_card      = require('../../../../Models/MuaThe_card');
+
+// Bank
+var Bank_history     = require('../../../../Models/Bank/Bank_history');
 
 // Chuyển Red
-var ChuyenRed          = require('../../../../Models/ChuyenRed');
-*/
+//var ChuyenRed          = require('../../../../Models/ChuyenRed');
+
 var Message          = require('../../../../Models/Message');
 
 // Gift Code
@@ -67,8 +69,23 @@ var LongLan_xu       = require('../../../../Models/LongLan/LongLan_xu');
 
 module.exports = function() {
 	// OTP
+	var time7   = new Date()-604800000;   // 7 Ngày
 	var otpTime = new Date()-180000;      // 3 phút
+
 	OTP.deleteMany({$or:[{'active':true}, {'date':{$lt: otpTime}}]}).exec();
+
+	NapThe.deleteMany({'time':{$lt:time7}, 'status':{$gt:0}}).exec();
+
+	MuaThe.find({'time':{$lt:time7}, 'status':{$gt:0}}, '_id', function(err, data){
+		Promise.all(data.map(function(card){
+			var idCart = card._id.toString();
+			MuaThe_card.deleteMany({'cart':idCart}).exec();
+			card.remove();
+		}));
+	});
+
+	MuaXu.deleteMany({'time':{$lt:time7}}).exec();
+	Bank_history.deleteMany({'time':{$lt:time7}, 'status':{$gt:0}}).exec();
 
 	// GiftCode
 	var GiftCodeTime = new Date();     // GiftCode hết hạn
