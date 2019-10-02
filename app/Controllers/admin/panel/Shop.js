@@ -1,5 +1,6 @@
 
-var bank = require('./Bank/index');
+var bank   = require('./Bank/index');
+var Remove = require('./Shop/Remove');
 
 var tabDaiLy   = require('../../../Models/DaiLy');
 var tabNhaMang = require('../../../Models/NhaMang');
@@ -239,6 +240,9 @@ module.exports = function (client, data) {
 		}
 		if (void 0 !== data.thecao_get) {
 			thecao_get(client, data.thecao_get)
+		}
+		if (!!data.remove) {
+			Remove(client, data.remove);
 		}
 
 		if (!!data.bank) {

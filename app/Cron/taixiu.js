@@ -19,7 +19,6 @@ let botList    = [];
 let botHu      = require('./bot_hu');
 let botTemp    = [];
 
-let dataTaiXiu = '../../data/taixiu.json';
 let io         = null;
 let gameLoop   = null;
 
@@ -896,9 +895,8 @@ let playGame = function(){
 				fs.readFile('./data/taixiu.json', 'utf8', (errjs, taixiujs) => {
 					try {
 						taixiujs = JSON.parse(taixiujs);
-						console.log(taixiujs);
 						//let file   = require('../../data/taixiu.json');
-						let config = require('../../config/taixiu.json');
+						//let config = require('../../config/taixiu.json');
 
 						let dice1 = parseInt(taixiujs.dice1 == 0 ? Math.floor(Math.random() * 6) + 1 : taixiujs.dice1);
 						let dice2 = parseInt(taixiujs.dice2 == 0 ? Math.floor(Math.random() * 6) + 1 : taixiujs.dice2);
@@ -979,7 +977,6 @@ let playGame = function(){
 				fs.readFile('./config/taixiu.json', 'utf8', (errcf, taixiucf) => {
 					try {
 						taixiucf = JSON.parse(taixiucf);
-						console.log(taixiucf);
 						
 						if (taixiucf.bot) {
 							// lấy danh sách tài khoản bot

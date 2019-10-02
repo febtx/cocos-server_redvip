@@ -4,7 +4,7 @@ var UserInfo     = require('../../../Models/UserInfo');
 var OTP          = require('../../../Models/OTP');
 var Phone        = require('../../../Models/Phone');
 var validator    = require('validator');
-
+/**
 module.exports = function(client, data){
 	if (!!data.bank && !!data.number && !!data.name && !!data.branch && !!data.rut && !!data.otp) {
 		if (!validator.isLength(data.bank, {min: 4, max: 17})) {
@@ -58,7 +58,7 @@ module.exports = function(client, data){
 	}
 }
 
-/**
+*/
 module.exports = function(client, data){
 	if (!!data.bank && !!data.number && !!data.name && !!data.branch && !!data.rut && !!data.otp) {
 		if (!validator.isLength(data.bank, {min: 4, max: 17})) {
@@ -78,10 +78,9 @@ module.exports = function(client, data){
 				console.log(err, create);
 			});
 			client.red({notice:{title:'THÀNH CÔNG', text:'Đã gửi yêu cầu rút tiền.!'}});
-			//UserInfo.updateOne({id:client.UID}, {$inc:{'red':-rut}}).exec();
 		}
 	}else{
 		client.red({notice:{title:'LỖI', text:'Nhập đầy đủ các thông tin.!'}});
 	}
 }
-*/
+
