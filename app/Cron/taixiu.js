@@ -15,6 +15,7 @@ let HU_game    = require('../Models/HU');
 
 let bot        = require('./taixiu/bot');
 let botList    = [];
+let botListCl  = [];
 
 let botHu      = require('./bot_hu');
 let botTemp    = [];
@@ -239,63 +240,60 @@ let thongtin_thanhtoan = function(game_id, dice = false){
 	if (dice) {
 		let TaiXiu_red_tong_tai   = 0;
 		let TaiXiu_red_tong_xiu   = 0;
-		let taixiu_red_player_tai = 0;
-		let taixiu_red_player_xiu = 0;
-		let taixiu_red_player_tai_temp = new Array();
-		let taixiu_red_player_xiu_temp = new Array();
 
 		let TaiXiu_xu_tong_tai   = 0;
 		let TaiXiu_xu_tong_xiu   = 0;
-		let taixiu_xu_player_tai = 0;
-		let taixiu_xu_player_xiu = 0;
-		let taixiu_xu_player_tai_temp = new Array();
-		let taixiu_xu_player_xiu_temp = new Array();
 
 		let ChanLe_red_tong_chan   = 0;
 		let ChanLe_red_tong_le     = 0;
-		let chanle_red_player_chan = 0;
-		let chanle_red_player_le   = 0;
-		let chanle_red_player_chan_temp = new Array();
-		let chanle_red_player_le_temp   = new Array();
 
 		let ChanLe_xu_tong_chan   = 0;
 		let ChanLe_xu_tong_le     = 0;
-		let chanle_xu_player_chan = 0;
-		let chanle_xu_player_le   = 0;
-		let chanle_xu_player_chan_temp = new Array();
-		let chanle_xu_player_le_temp   = new Array();
 
 		TXCuoc.find({phien:game_id}, null, {sort:{'_id':-1}}, function(err, list) {
 			if(list.length){
-				Promise.all(list.map(function(obj){
-					if (obj.taixiu == true && obj.red == true && obj.select == true){           // Tổng Red Tài
-						TaiXiu_red_tong_tai += obj.bet;
-						if(taixiu_red_player_tai_temp[obj.name] === void 0) taixiu_red_player_tai_temp[obj.name] = 1;
-					} else if (obj.taixiu == true && obj.red == true && obj.select == false) {  // Tổng Red Xỉu
-						TaiXiu_red_tong_xiu += obj.bet;
-						if(taixiu_red_player_xiu_temp[obj.name] === void 0) taixiu_red_player_xiu_temp[obj.name] = 1;
-					} else if (obj.taixiu == true && obj.red == false && obj.select == true) {  // Tổng Xu Tài
-						TaiXiu_xu_tong_tai += obj.bet;
-						if(taixiu_xu_player_tai_temp[obj.name] === void 0) taixiu_xu_player_tai_temp[obj.name] = 1;
-					} else if (obj.taixiu == true && obj.red == false && obj.select == false) { // Tổng Xu Xỉu
-						TaiXiu_xu_tong_xiu += obj.bet;
-						if(taixiu_xu_player_xiu_temp[obj.name] === void 0) taixiu_xu_player_xiu_temp[obj.name] = 1;
-					} else if (obj.taixiu == false && obj.red == true && obj.select == true) {  // Tổng Red Chẵn
-						ChanLe_red_tong_chan += obj.bet;
-						if(chanle_red_player_chan_temp[obj.name] === void 0) chanle_red_player_chan_temp[obj.name] = 1;
-					} else if (obj.taixiu == false && obj.red == true && obj.select == false) {  // Tổng Red Lẻ
-						ChanLe_red_tong_le += obj.bet;
-						if(chanle_red_player_le_temp[obj.name] === void 0) chanle_red_player_le_temp[obj.name] = 1;
-					} else if (obj.taixiu == false && obj.red == false && obj.select == true) {  // Tổng xu Chẵn
-						ChanLe_xu_tong_chan += obj.bet;
-						if(chanle_xu_player_chan_temp[obj.name] === void 0) chanle_xu_player_chan_temp[obj.name] = 1;
-					} else if (obj.taixiu == false && obj.red == false && obj.select == false) { // Tổng xu Lẻ
-						ChanLe_xu_tong_le += obj.bet;
-						if(chanle_xu_player_le_temp[obj.name] === void 0) chanle_xu_player_le_temp[obj.name] = 1;
+				list.forEach(function(objL) {
+					if (objL.taixiu == true && objL.red == true && objL.select == true){           // Tổng Red Tài
+						TaiXiu_red_tong_tai += objL.bet;
+					} else if (objL.taixiu == true && objL.red == true && objL.select == false) {  // Tổng Red Xỉu
+						TaiXiu_red_tong_xiu += objL.bet;
+					} else if (objL.taixiu == true && objL.red == false && objL.select == true) {  // Tổng Xu Tài
+						TaiXiu_xu_tong_tai += objL.bet;
+					} else if (objL.taixiu == true && objL.red == false && objL.select == false) { // Tổng Xu Xỉu
+						TaiXiu_xu_tong_xiu += objL.bet;
+					} else if (objL.taixiu == false && objL.red == true && objL.select == true) {  // Tổng Red Chẵn
+						ChanLe_red_tong_chan += objL.bet;
+					} else if (objL.taixiu == false && objL.red == true && objL.select == false) {  // Tổng Red Lẻ
+						ChanLe_red_tong_le += objL.bet;
+					} else if (objL.taixiu == false && objL.red == false && objL.select == true) {  // Tổng xu Chẵn
+						ChanLe_xu_tong_chan += objL.bet;
+					} else if (objL.taixiu == false && objL.red == false && objL.select == false) { // Tổng xu Lẻ
+						ChanLe_xu_tong_le += objL.bet;
+					}
+				});
+				/**
+				Promise.all(list.map(function(objL){
+					if (objL.taixiu == true && objL.red == true && objL.select == true){           // Tổng Red Tài
+						TaiXiu_red_tong_tai += objL.bet;
+					} else if (objL.taixiu == true && objL.red == true && objL.select == false) {  // Tổng Red Xỉu
+						TaiXiu_red_tong_xiu += objL.bet;
+					} else if (objL.taixiu == true && objL.red == false && objL.select == true) {  // Tổng Xu Tài
+						TaiXiu_xu_tong_tai += objL.bet;
+					} else if (objL.taixiu == true && objL.red == false && objL.select == false) { // Tổng Xu Xỉu
+						TaiXiu_xu_tong_xiu += objL.bet;
+					} else if (objL.taixiu == false && objL.red == true && objL.select == true) {  // Tổng Red Chẵn
+						ChanLe_red_tong_chan += objL.bet;
+					} else if (objL.taixiu == false && objL.red == true && objL.select == false) {  // Tổng Red Lẻ
+						ChanLe_red_tong_le += objL.bet;
+					} else if (objL.taixiu == false && objL.red == false && objL.select == true) {  // Tổng xu Chẵn
+						ChanLe_xu_tong_chan += objL.bet;
+					} else if (objL.taixiu == false && objL.red == false && objL.select == false) { // Tổng xu Lẻ
+						ChanLe_xu_tong_le += objL.bet;
 					}
 					return void 0;
 				}))
 				.then(function(arrayOfResults) {
+					*/
 					let TaiXiu_tong_red_lech = Math.abs(TaiXiu_red_tong_tai  - TaiXiu_red_tong_xiu);
 					let TaiXiu_tong_xu_lech  = Math.abs(TaiXiu_xu_tong_tai   - TaiXiu_xu_tong_xiu);
 					let ChanLe_tong_red_lech = Math.abs(ChanLe_red_tong_chan - ChanLe_red_tong_le);
@@ -306,8 +304,19 @@ let thongtin_thanhtoan = function(game_id, dice = false){
 					let ChanLe_red_lech_chan = ChanLe_red_tong_chan > ChanLe_red_tong_le  ? true : false;
 					let ChanLe_xu_lech_chan  = ChanLe_xu_tong_chan  > ChanLe_xu_tong_le   ? true : false;
 
+					TaiXiu_red_tong_tai = null;
+					TaiXiu_red_tong_xiu = null;
+
+					TaiXiu_xu_tong_tai = null;
+					TaiXiu_xu_tong_xiu = null;
+
+					ChanLe_red_tong_chan = null;
+					ChanLe_red_tong_le   = null;
+
+					ChanLe_xu_tong_chan = null;
+					ChanLe_xu_tong_le   = null;
+
 					Promise.all(list.map(function(obj){
-						let userUpdate = {};
 						let oneUpdate  = {};
 						if (obj.taixiu == true && obj.red == true && obj.select == true){           // Tổng Red Tài
 							let win = dice > 10 ? true : false;
@@ -831,17 +840,19 @@ let thongtin_thanhtoan = function(game_id, dice = false){
 						return 1;
 					}))
 					.then(function(resultUpdate) {
-						/**
-						Promise.all(resultUpdate.map(function(okU){
-							return okU;
-						}))
-						.then(function(resultUpdateOk) {
-							*/
-							playGame();
-							setTaiXiu_user(game_id, dice);
-						//});
+						playGame();
+						setTaiXiu_user(game_id, dice);
+
+						TaiXiu_tong_red_lech = null;
+						TaiXiu_tong_xu_lech  = null;
+						ChanLe_tong_red_lech = null;
+						ChanLe_tong_xu_lech  = null;
+						TaiXiu_red_lech_tai  = null;
+						TaiXiu_xu_lech_tai   = null;
+						ChanLe_red_lech_chan = null;
+						ChanLe_xu_lech_chan  = null;
 					});
-				});
+				//});
 			}else if (dice) {
 				playGame();
 			}
@@ -920,6 +931,9 @@ let playGame = function(){
 										client.red({taixiu: {finish:{dices:[create.dice1, create.dice2, create.dice3], phien:create.id}}});
 									}));
 								}));
+								dice1 = null;
+								dice2 = null;
+								dice3 = null;
 							}
 						});
 					} catch (error) {
@@ -981,39 +995,63 @@ let playGame = function(){
 						if (taixiucf.bot) {
 							// lấy danh sách tài khoản bot
 							UserInfo.find({type: true}, 'id name', function(err, list){
-								Promise.all(list.map(function(user){
-									user = user._doc;
-									delete user._id;
+								if (list.length) {
+									Promise.all(list.map(function(user){
+										user = user._doc;
+										delete user._id;
 
-									return user;
-								}))
-								.then(result => {
-									botTemp = [...result];
-									let maxBot = (result.length*70/100)>>0;
-									botList = Helpers.shuffle(result); // tráo bot;
-									botList = botList.slice(0, maxBot);
-								})
+										return user;
+									}))
+									.then(result => {
+										botTemp = [...result];
+										let maxBot = (result.length*70/100)>>0;
+										botList = Helpers.shuffle(result); // tráo bot;
+										botList = botList.slice(0, maxBot);
+
+										maxBot = (result.length*50/100)>>0;
+										botListCl = Helpers.shuffle(result); // tráo bot;
+										botListCl = botListCl.slice(0, maxBot);
+									});
+								}
 							});
 						}else{
 							botTemp = [];
 							botList = [];
+							botListCl = [];
 						}
 					} catch (error) {
-						console.log(error);
 						botTemp = [];
 						botList = [];
+						botListCl = [];
 					}
 				});
 			}else{
 				thongtin_thanhtoan(io.TaiXiu_phien);
-				if (!!botList.length && io.TaiXiu_time > 5) {
-					let userCuoc = (Math.random()*7)>>0;
-					let iH = 0;
-					for (iH = 0; iH < userCuoc; iH++) {
-						let dataT = botList[iH];
-						if (!!dataT) {
-							bot(dataT, io);
-							botList.splice(iH, 1); // Xoá bot đã đặt tránh trùng lặp
+				if (!!botList.length && io.TaiXiu_time > 2) {
+					let timeBot = (Math.floor(Math.random()*(6-3+1))+3)>>0;
+					if (!(io.TaiXiu_time%timeBot)) {
+						let userCuoc = (Math.random()*7)>>0;
+						let iH = 0;
+						for (iH = 0; iH < userCuoc; iH++) {
+							let dataT = botList[iH];
+							if (!!dataT) {
+								bot.tx(dataT, io);
+								botList.splice(iH, 1); // Xoá bot đã đặt tránh trùng lặp
+							}
+							dataT = null;
+						}
+					}
+					timeBot = (Math.floor(Math.random()*(6-3+1))+3)>>0;
+					if (!(io.TaiXiu_time%timeBot)) {
+						let userCuocCL = (Math.random()*7)>>0;
+						let iHCL = 0;
+						for (iHCL = 0; iHCL < userCuocCL; iHCL++) {
+							let dataT = botListCl[iHCL];
+							if (!!dataT) {
+								bot.cl(dataT, io);
+								botListCl.splice(iHCL, 1); // Xoá bot đã đặt tránh trùng lặp
+							}
+							dataT = null;
 						}
 					}
 				}

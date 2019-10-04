@@ -65,12 +65,12 @@ module.exports = function(client, spin) {
 
 					var bo3     = false; // bộ ba (Kết quả có phải là bộ 3?)
 					var bo3_a   = null;  // Tên bộ 3
-					Promise.all(arrT.map(function(c, index){
+					arrT.forEach(function(c, index) {
 						if (c === 3) {
 							bo3   = true;
 							bo3_a = index;
 						}
-					}))
+					});
 
 					var type     = ketqua[0].type;                                     // Lấy ra chất đầu tiên trong bài
 					var dongChat = ketqua_temp.filter(type_card => type_card.type == type); // Lọc đồng chất

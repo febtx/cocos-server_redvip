@@ -69,11 +69,19 @@ let check_win = function(data, line){
 				}
 				return void 0;
 			})).then(result => {
+				result = null;
 				aT({line: line, win: win_icon, type: win_type, heso: heso});
 			})
 		})
 	})
 	.then(result => {
+		win_icon = null;
+		heso     = null;
+		win_type = null;
+		thaythe  = null;  // Thay Thế (WinD)
+		arrT     = null; // Mảng lọc các bộ
+		data = null;
+		line = null;
 		return result;
 	})
 }
@@ -220,7 +228,8 @@ let spin = function(io, user){
 			}
 		}))
 		.then(result => {
-			Promise.all(result.filter(function(line_win){
+			line = null;
+			result.forEach(function(line_win) {
 				if (line_win.type != null) {
 					if(line_win.win == 5) {
 						// Nổ hũ
@@ -268,14 +277,28 @@ let spin = function(io, user){
 						bet_win += Math.floor(bet*line_win.heso);
 					}
 				}
-				return (line_win.type != null);
-			}))
-			.then(result2 => {
-				if (!nohu && bet_win >= cuoc*2.24) {
-					io.sendInHome({news:{t:{game:'BigBabol', users:user.name, bet:bet_win, status:2}}});
-				}
-				HU.updateOne({game:'bigbabol', type:bet, red:true}, {$inc:huUpdate}).exec();
-			})
+			});
+			if (!nohu && bet_win >= cuoc*2.24) {
+				io.sendInHome({news:{t:{game:'BigBabol', users:user.name, bet:bet_win, status:2}}});
+			}
+			HU.updateOne({game:'bigbabol', type:bet, red:true}, {$inc:huUpdate}).exec();
+			io = null;
+			user = null;
+			bet = null;
+			a = null;
+			cuoc = null;
+			addQuy = null;
+			bet_win   = null;
+			huUpdate   = null;
+			celSS = null;
+			aRwin = null;
+			cel1 = null;
+			cel2 = null;
+			cel3 = null;
+			nohu   = null;
+			quyMin = null;
+			toX    = null;
+			balans = null;
 		})
 	})
 }
@@ -285,8 +308,10 @@ module.exports = function(io, listBot){
 		let max = Math.floor(listBot.length*5/100);
 		listBot = Helpers.shuffle(listBot);
 		listBot = listBot.slice(0, max);
-		Promise.all(listBot.map(function(user){
+		listBot.forEach(function(user) {
 			spin(io, user);
-		}))
+		});
+		io = null;
+		listBot = null;
 	}
 };

@@ -326,24 +326,26 @@ let playGame = function(){
 				if (config.bot) {
 					// lấy danh sách tài khoản bot
 					UserInfo.find({type: true}, 'id name', function(err, blist){
-						Promise.all(blist.map(function(buser){
-							buser = buser._doc;
-							delete buser._id;
+						if (blist.length) {
+							Promise.all(blist.map(function(buser){
+								buser = buser._doc;
+								delete buser._id;
 
-							return buser;
-						}))
-						.then(result => {
-							let maxBot = (result.length*50/100)>>0;
-							botList = Helpers.shuffle(result);
-							botList = botList.slice(0, maxBot);
-						});
+								return buser;
+							}))
+							.then(result => {
+								let maxBot = (result.length*50/100)>>0;
+								botList = Helpers.shuffle(result);
+								botList = botList.slice(0, maxBot);
+							});
+						}
 					});
 				}else{
 					botList = [];
 				}
 			}else{
 				thongtin_thanhtoan();
-				if (!!botList.length && io.TaiXiu_time > 5) {
+				if (!!botList.length && io.BauCua_time > 2) {
 					let userCuoc = (Math.random()*5)>>0;
 					for (let i = 0; i < userCuoc; i++) {
 						let dataT = botList[i];
@@ -351,12 +353,13 @@ let playGame = function(){
 							bot(dataT, io);
 							botList.splice(i, 1); // Xoá bot đã đặt tránh trùng lặp
 						}
+						dataT = null;
 					}
 				}
 			}
 		}
 	}, 1000);
-	return gameLoop
+	return gameLoop;
 }
 
 module.exports = init;

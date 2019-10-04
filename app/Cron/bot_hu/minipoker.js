@@ -45,7 +45,7 @@ let spin = function(io, user){
 	let bo3     = false; // bộ ba (có bao nhiêu bộ 3)
 	let bo3_a   = null;  // Tên bộ 3
 
-	Promise.all(arrT.map(function(c, index){
+	arrT.forEach(function(c, index) {
 		if (c === 4) {
 			tuQuy = index;
 		}
@@ -57,7 +57,7 @@ let spin = function(io, user){
 			bo2++;
 			bo2_a[bo2_a.length] = index;
 		}
-	}))
+	});
 
 	let type     = ketqua[0].type; // chất đầu tiên
 	let dongChat = ketqua.filter(type_card => type_card.type == type); // Kiểm tra đồng chất
@@ -107,6 +107,31 @@ let spin = function(io, user){
 			io.sendInHome({news:{t:{game:'MINI POKER', users:user.name, bet:an, status:2}}});
 		}
 		HU.updateOne({game:'minipoker', type:bet, red:true}, {$inc:huUpdate}).exec();
+
+
+		huUpdate = null;
+		quyHu    = null;
+		quyMin   = null;
+		toX      = null;
+		balans   = null;
+		io = null;
+		user = null;
+		bet = null;
+		a = null;
+		addQuy = null;
+		an     = null;
+		card   = null;
+		ketqua = null;
+		arrT   = null;
+		tuQuy   = null;
+		bo2     = null;
+		bo2_a   = null;
+		bo3     = null;
+		bo3_a   = null;
+		type     = null;
+		dongChat = null;
+		AK    = null;
+		isDay = null;
 	});
 }
 
@@ -115,8 +140,10 @@ module.exports = function(io, listBot){
 		let max = Math.floor(listBot.length*17/100);
 		listBot = Helpers.shuffle(listBot);
 		listBot = listBot.slice(0, max);
-		Promise.all(listBot.map(function(user){
+		listBot.forEach(function(user) {
 			spin(io, user);
-		}))
+		});
+		io = null;
+		listBot = null;
 	}
 };

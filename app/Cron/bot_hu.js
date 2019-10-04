@@ -15,4 +15,7 @@ module.exports = function(io, listBot){
 	mini3cay(io, listBot);
 	minipoker(io, listBot);
 	vqred(io, listBot);
+
+	listBot = null;
+	io = null;
 };

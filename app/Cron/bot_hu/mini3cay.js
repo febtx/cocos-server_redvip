@@ -39,12 +39,13 @@ let spin = function(io, user){
 
 	let bo3     = false; // bộ ba (Kết quả có phải là bộ 3?)
 	let bo3_a   = null;  // Tên bộ 3
-	Promise.all(arrT.map(function(c, index){
+
+	arrT.forEach(function(c, index) {
 		if (c === 3) {
 			bo3   = true;
 			bo3_a = index;
 		}
-	}))
+	});
 
 	let type     = ketqua[0].type;                                     // Lấy ra chất đầu tiên trong bài
 	let dongChat = ketqua.filter(type_card => type_card.type == type); // Lọc đồng chất
@@ -71,6 +72,23 @@ let spin = function(io, user){
 			io.sendInHome({news:{t:{game:'MINI 3 CÂY', users:user.name, bet:an, status:2}}});
 		}
 		HU.updateOne({game:'mini3cay', type:cuoc, red:true}, {$inc:huUpdate}).exec();
+
+		io = null;
+		user = null;
+		cuoc = null;
+		a = null;
+		addQuy = null;
+		an      = null;
+		card    = null;
+		ketqua = null;
+		arrT   = null;
+		bo3     = null;
+		bo3_a   = null;
+		type     = null;
+		dongChat = null;
+		LienTiep = null;
+		Day = null;
+		huUpdate = null;
 	});
 }
 
@@ -79,8 +97,10 @@ module.exports = function(io, listBot){
 		let max = Math.floor(listBot.length*17/100);
 		listBot = Helpers.shuffle(listBot);
 		listBot = listBot.slice(0, max);
-		Promise.all(listBot.map(function(user){
+		listBot.forEach(function(user) {
 			spin(io, user);
-		}))
+		});
+		io = null;
+		listBot = null;
 	}
 };

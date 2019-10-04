@@ -14,8 +14,6 @@ let Schema = new mongoose.Schema({
 	win:       {type: Boolean, default: false},	   // Thắng hoặc thua
 	betwin:    {type: Number,  default: 0},	       // Tiền thắng được
 	time:      {type: Date},                       // thời gian cược
-
-	type:      {type: Boolean, default: false},    // Bot = true | Users = false
 });
 
 Schema.index({uid:1, thanhtoan:1}, {background: true});

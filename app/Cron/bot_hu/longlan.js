@@ -169,6 +169,12 @@ let check_win = function(data, line){
 		})
 	})
 	.then(result => {
+		data = null;
+		line = null;
+		win_icon = null;
+		win_type = null;
+		thaythe  = null;
+		arrT     = null;
 		return result;
 	})
 }
@@ -333,32 +339,26 @@ let spin = function(io, user){
 			}
 		}))
 		.then(result => {
-			Promise.all(result.filter(function(line_win){
-				let checkWin = false;
+			line = null;
+			result.forEach(function(line_win) {
 				if(!nohu && line_win.win == 10) {
 					if (line_win.type === 5) {
 						// x8000
-						checkWin = true;
 						bet_win += bet*8000;
 					}else if (line_win.type === 4){
 						// x1000
-						checkWin = true;
 						bet_win += bet*1000;
 					}else if (line_win.type === 3){
 						// x50
-						checkWin = true;
 						bet_win += bet*50;
 					}else if (line_win.type === 2){
 						// x8
-						checkWin = true;
 						bet_win += bet*8;
 					}
 				} else if (line_win.win == 9) {
 					if (line_win.type === 5) {
-						checkWin = true;
 						// Nổ Hũ
 						let okHu = 0;
-
 						if (!nohu) {
 							okHu = Math.floor(dataHu.bet-Math.ceil(dataHu.bet*2/100));
 							bet_win += okHu;
@@ -371,124 +371,113 @@ let spin = function(io, user){
 						nohu = true;
 					}else if (!nohu && line_win.type === 4){
 						// x100
-						checkWin = true;
 						bet_win += bet*100;
 					}else if (!nohu && line_win.type === 3){
 						// x25
-						checkWin = true;
 						bet_win += bet*25;
 					}else if (!nohu && line_win.type === 2){
 						// x4
-						checkWin = true;
 						bet_win += bet*4;
 					}
 				}else if(!nohu && line_win.win == 6) {
 					if (line_win.type === 5) {
 						// x500
-						checkWin = true;
 						bet_win += bet*500;
 					}else if (line_win.type === 4){
 						// x75
-						checkWin = true;
 						bet_win += bet*75;
 					}else if (line_win.type === 3){
 						// x20
-						checkWin = true;
 						bet_win += bet*20;
 					}
 				}else if(!nohu && line_win.win == 5) {
 					if (line_win.type === 5) {
 						// x375
-						checkWin = true;
 						bet_win += bet*375;
 					}else if (line_win.type === 4){
 						// x60
-						checkWin = true;
 						bet_win += bet*60;
 					}else if (line_win.type === 3){
 						// x16
-						checkWin = true;
 						bet_win += bet*16;
 					}
 				}else if(line_win.win == 4) {
 					if (line_win.type === 5) {
 						// x275
-						checkWin = true;
 						bet_win += bet*275;
 					}else if (line_win.type === 4){
 						// x45
-						checkWin = true;
 						bet_win += bet*45;
 					}else if (line_win.type === 3){
 						// x12
-						checkWin = true;
 						bet_win += bet*12;
 					}
 				}else if(!nohu && line_win.win == 3) {
 					if (line_win.type === 5) {
 						// x150
-						checkWin = true;
 						bet_win += bet*150;
 					}else if (line_win.type === 4){
 						// x30
-						checkWin = true;
 						bet_win += bet*30;
 					}else if (line_win.type === 3){
 						// x10
-						checkWin = true;
 						bet_win += bet*10;
 					}
 				}else if(!nohu && line_win.win == 2) {
 					if (line_win.type === 5) {
 						// x50
-						checkWin = true;
 						bet_win += bet*50;
 					}else if (line_win.type === 4){
 						// x25
-						checkWin = true;
 						bet_win += bet*25;
 					}else if (line_win.type === 3){
 						// x5
-						checkWin = true;
 						bet_win += bet*5;
 					}
 				}else if(!nohu && line_win.win == 1) {
 					if (line_win.type === 5) {
 						// x25
-						checkWin = true;
 						bet_win += bet*25;
 					}else if (line_win.type === 4){
 						// x10
-						checkWin = true;
 						bet_win += bet*10;
 					}else if (line_win.type === 3){
 						// x5
-						checkWin = true;
 						bet_win += bet*5;
 					}
 				}else if(!nohu && line_win.win == 0) {
 					if (line_win.type === 5) {
 						// x10
-						checkWin = true;
 						bet_win += bet*10;
 					}else if (line_win.type === 4){
 						// x5
-						checkWin = true;
 						bet_win += bet*5;
 					}else if (line_win.type === 3){
 						// x2
-						checkWin = true;
 						bet_win += bet*2;
 					}
 				}
-				return checkWin;
-			}))
-			.then(result2 => {
-				if (!nohu && bet_win >= tongCuoc*2.24) {
-					io.sendInHome({news:{t:{game:'LONG LÂN', users:user.name, bet:bet_win, status:2}}});
-				}
-				HU.updateOne({game:'long', type:bet, red:true}, {$inc:{bet:addQuy}}).exec();
 			});
+			if (!nohu && bet_win >= tongCuoc*2.24) {
+				io.sendInHome({news:{t:{game:'LONG LÂN', users:user.name, bet:bet_win, status:2}}});
+			}
+			HU.updateOne({game:'long', type:bet, red:true}, {$inc:{bet:addQuy}}).exec();
+
+			io = null;
+			user = null
+			bet = null;
+			a = null;
+			tongCuoc = null;
+			addQuy  = null;
+			bet_win = null;
+			nohu    = null;
+			aRwin = null;
+			celSS = null;
+			cel1 = null;
+			cel2 = null;
+			cel3 = null;
+			cel4 = null;
+			cel5 = null;
 		});
 	});
 }
@@ -498,8 +487,10 @@ module.exports = function(io, listBot){
 		let max = Math.floor(listBot.length*5/100);
 		listBot = Helpers.shuffle(listBot);
 		listBot = listBot.slice(0, max);
-		Promise.all(listBot.map(function(user){
+		listBot.forEach(function(user) {
 			spin(io, user);
-		}));
+		});
+		io = null;
+		listBot = null;
 	}
 };

@@ -55,6 +55,9 @@ let check_win = function(data, line){
 		}
 		return void 0;
 	})).then(result => {
+		result = null;
+		data = null;
+		arrT= null;
 		return {line: line, win: win_icon, type: number_win};
 	})
 }
@@ -202,11 +205,10 @@ let spin = function(io, user){
 			}
 		}))
 		.then(result => {
-			Promise.all(result.filter(function(line_win){
-				let checkWin = false;
+			line = null;
+			result.forEach(function(line_win) {
 				if (line_win.win == 6) {
 					if (line_win.type === 5) {
-						checkWin = true;
 						// Nổ Hũ
 						let okHu = 0;
 						if (!nohu) {
@@ -222,71 +224,73 @@ let spin = function(io, user){
 					}
 				}else if(!nohu && line_win.win == 5) {
 					if (line_win.type === 5) {
-						checkWin = true;
 						// x5000
 						bet_win += bet*5000;
 					}else if (line_win.type === 4){
 						// x25
-						checkWin = true;
 						bet_win += bet*30;
 					}
 				}else if(!nohu && line_win.win == 3) {
 					if (line_win.type === 5) {
-						checkWin = true;
 						// x1000
 						bet_win += bet*1000;
 					}else if (line_win.type === 4){
 						// x20
-						checkWin = true;
 						bet_win += bet*20;
 					}
 				}else if(!nohu && line_win.win == 2) {
 					if (line_win.type === 5) {
-						checkWin = true;
 						// x200
 						bet_win += bet*200;
 					}else if (line_win.type === 4){
 						// x15
-						checkWin = true;
 						bet_win += bet*15;
 					}else if (line_win.type === 3){
 						// x3
-						checkWin = true;
 						bet_win += bet*3;
 					}
 				}else if(!nohu && line_win.win == 1) {
 					if (line_win.type === 5) {
-						checkWin = true;
 						// x80
 						bet_win += bet*80;
 					}else if (line_win.type === 4){
 						// x10
-						checkWin = true;
 						bet_win += bet*10;
 					}
 				}else if(!nohu && line_win.win == 0) {
 					if (line_win.type === 5) {
-						checkWin = true;
 						// x20
 						bet_win += bet*20;
 					}else if (line_win.type === 4){
 						// x6
-						checkWin = true;
 						bet_win += bet*6;
 					}else if (line_win.type === 3){
 						// x2
-						checkWin = true;
 						bet_win += bet*2;
 					}
 				}
-				return checkWin;
-			}))
-			.then(result2 => {
-				if (!nohu && bet_win >= tongCuoc*2.24) {
-					io.sendInHome({news:{t:{game:'Candy', users:user.name, bet:bet_win, status:2}}});
-				}
-				HU.updateOne({game:'candy', type:bet, red:true}, {$inc:huUpdate}).exec();
-			})
+			});
+			if (!nohu && bet_win >= tongCuoc*2.24) {
+				io.sendInHome({news:{t:{game:'Candy', users:user.name, bet:bet_win, status:2}}});
+			}
+			HU.updateOne({game:'candy', type:bet, red:true}, {$inc:huUpdate}).exec();
+
+			io = null
+			user = null;
+			bet = null;
+			a = null;
+			tongCuoc = null;
+			addQuy = null;
+			bet_win  = null;
+			nohu     = null;
+			huUpdate = null;
+			aRwin = null;
+			celSS = null;
+			cel1 = null;
+			cel2 = null;
+			cel3 = null;
+			cel4 = null;
+			cel5 = null;
 		})
 	})
 }
@@ -296,8 +300,10 @@ module.exports = function(io, listBot){
 		let max = Math.floor(listBot.length*5/100);
 		listBot = Helpers.shuffle(listBot);
 		listBot = listBot.slice(0, max);
-		Promise.all(listBot.map(function(user){
+		listBot.forEach(function(user) {
 			spin(io, user);
-		}))
+		});
+		io = null;
+		listBot = null;
 	}
 };

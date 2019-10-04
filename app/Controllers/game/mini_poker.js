@@ -54,7 +54,7 @@ function spin(client, data){
 					var bo3     = false; // bộ ba (có bao nhiêu bộ 3)
 					var bo3_a   = null;  // Tên bộ 3
 
-					Promise.all(arrT.map(function(c, index){
+					arrT.forEach(function(c, index) {
 						if (c === 4) {
 							tuQuy = index;
 						}
@@ -66,7 +66,7 @@ function spin(client, data){
 							bo2++;
 							bo2_a[bo2_a.length] = index;
 						}
-					}))
+					});
 
 					var type     = ketqua[0].type; // chất đầu tiên
 					var dongChat = ketqua_temp.filter(type_card => type_card.type == type); // Kiểm tra đồng chất

@@ -39,41 +39,30 @@ let random = function(){
 */
 
 // Bầu cua RED
-module.exports = function(bot, io, red = true){
+module.exports = function(bot, io){
 	let cuoc = random();
 	let userCuoc = (Math.random()*6)>>0;
 
-	if (red) {
-		if (userCuoc == 0) {
-			io.baucua.info.redHuou += cuoc;
-		}else if (userCuoc == 1) {
-			io.baucua.info.redBau  += cuoc;
-		}else if (userCuoc == 2) {
-			io.baucua.info.redGa   += cuoc;
-		}else if (userCuoc == 3) {
-			io.baucua.info.redCa   += cuoc;
-		}else if (userCuoc == 4) {
-			io.baucua.info.redCua  += cuoc;
-		}else if (userCuoc == 5) {
-			io.baucua.info.redTom  += cuoc;
-		}
-	}else{
-		if (userCuoc == 0) {
-			io.baucua.info.xuHuou += cuoc;
-		}else if (userCuoc == 1) {
-			io.baucua.info.xuBau  += cuoc;
-		}else if (userCuoc == 2) {
-			io.baucua.info.xuGa   += cuoc;
-		}else if (userCuoc == 3) {
-			io.baucua.info.xuCa   += cuoc;
-		}else if (userCuoc == 4) {
-			io.baucua.info.xuCua  += cuoc;
-		}else if (userCuoc == 5) {
-			io.baucua.info.xuTom  += cuoc;
-		}
+	if (userCuoc == 0) {
+		io.baucua.info.redHuou += cuoc;
+	}else if (userCuoc == 1) {
+		io.baucua.info.redBau  += cuoc;
+	}else if (userCuoc == 2) {
+		io.baucua.info.redGa   += cuoc;
+	}else if (userCuoc == 3) {
+		io.baucua.info.redCa   += cuoc;
+	}else if (userCuoc == 4) {
+		io.baucua.info.redCua  += cuoc;
+	}else if (userCuoc == 5) {
+		io.baucua.info.redTom  += cuoc;
 	}
 
-	let create = {uid: bot.id, name: bot.name, phien: io.BauCua_phien, red:red, time: new Date()};
+	let create = {uid: bot.id, name: bot.name, phien: io.BauCua_phien, red:true, time: new Date()};
 	create[userCuoc] = cuoc;
 	BauCua_cuoc.create(create);
+	bot = null;
+	io = null;
+	create = null;
+	cuoc = null;
+	userCuoc = null;
 }

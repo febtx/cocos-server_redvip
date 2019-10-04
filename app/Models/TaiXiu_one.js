@@ -12,8 +12,6 @@ let Schema = new mongoose.Schema({
 	thuong:   {type: Number,  default: 0},        // Thưởng Red khi chơi bằng xu
 	win:      {type: Boolean, default: false},	  // Thắng hoặc thua
 	betwin:   {type: Number,  default: 0},	      // Tiền thắng được
-
-	type:     {type: Boolean, default: false},    // Bot = true | Users = false
 });
 
 module.exports = mongoose.model('TaiXiu_one', Schema);

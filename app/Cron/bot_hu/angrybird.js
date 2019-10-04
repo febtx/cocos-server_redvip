@@ -74,11 +74,18 @@ let check_win = function(data, line){
 				}
 				return void 0;
 			})).then(result => {
-				aT({line: line, win: win_icon, type: win_type});
+				result = null;
+				aT({line:line, win:win_icon, type:win_type});
 			})
 		})
 	})
 	.then(result => {
+		data = null;
+		line = null;
+		win_icon = null;
+		win_type = null;
+		thaythe  = null;
+		arrT     = null;
 		return result;
 	})
 }
@@ -161,7 +168,8 @@ let spin = function(io, user){
 		}
 
 		// kiểm tra kết quả
-		Promise.all([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27].map(function(line){
+		let arrline = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27];
+		Promise.all(arrline.map(function(line){
 			switch(line){
 				case 1:
 					return check_win([cel1[0], cel2[0], cel3[0]], line);
@@ -273,7 +281,8 @@ let spin = function(io, user){
 			}
 		}))
 		.then(result => {
-			Promise.all(result.filter(function(line_win){
+			arrline = null;
+			result.forEach(function(line_win) {
 				if (line_win.type != null) {
 					if(line_win.win == 4) {
 						// x10
@@ -314,15 +323,33 @@ let spin = function(io, user){
 						bet_win += bet*0.1;
 					}
 				}
-				return (line_win.type != null);
-			}))
-			.then(result2 => {
-				bet_win  = nohu ? bet_win : bet_win*heso; // Tổng tiền ăn đc (chưa cắt phế)
-				if (!nohu && bet_win >= bet*10) {
-					io.sendInHome({news:{t:{game:'AngryBirds', users:user.name, bet:bet_win, status:2}}});
-				}
-				HU.updateOne({game:'arb', type:bet, red:true}, {$inc:huUpdate}).exec();
-			})
+			});
+			bet_win  = nohu ? bet_win : bet_win*heso; // Tổng tiền ăn đc (chưa cắt phế)
+			if (!nohu && bet_win >= bet*10) {
+				io.sendInHome({news:{t:{game:'AngryBirds', users:user.name, bet:bet_win, status:2}}});
+			}
+			HU.updateOne({game:'arb', type:bet, red:true}, {$inc:huUpdate}).exec();
+			io   = null;
+			user = null;
+			bet = null;
+			a = null;
+			addQuy   = null;
+			bet_win  = null;
+			huUpdate = null;
+			nohu     = null;
+			quyMin   = null;
+			toX      = null;
+			balans   = null;
+			aRwin = null;
+			celSS = null;
+			celSR = null;
+			cel1 = null;
+			cel2 = null;
+			cel3 = null;
+			celR1  = null;
+			celR2  = null;
+			heso_T = null;
+			heso   = null;
 		})
 	})
 }
@@ -332,8 +359,10 @@ module.exports = function(io, listBot){
 		let max = Math.floor(listBot.length*17/100);
 		listBot = Helpers.shuffle(listBot);
 		listBot = listBot.slice(0, max);
-		Promise.all(listBot.map(function(user){
+		listBot.forEach(function(user) {
 			spin(io, user);
-		}));
+		});
+		io = null;
+		listBot = null;
 	}
 };
