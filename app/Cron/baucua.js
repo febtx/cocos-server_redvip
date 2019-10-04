@@ -13,8 +13,6 @@ let BauCua_temp  = require('../Models/BauCua/BauCua_temp');
 let bot        = require('./baucua/bot');
 let botList    = [];
 
-let dataBauCua = '../../data/baucua.json';
-
 let io       = null;
 let gameLoop = null;
 
@@ -205,53 +203,74 @@ let thongtin_thanhtoan = function thongtin_thanhtoan(dice = null){
 						}else{
 							status = {mini:{baucua:{status:{win:false, bet: TongThua}}}};
 						}
-						Promise.all(io.users[cuoc.uid].map(function(client){
+						io.users[cuoc.uid].forEach(function(client){
 							client.red(status);
-						}));
+						});
+						status = null;
 					}
+					TongThua   = null;
+					TongThang  = null;
+					thuong     = null;
+					huou       = null;
+					bau        = null;
+					ga         = null;
+					ca         = null;
+					cua        = null;
+					tom        = null;
+					tongDat    = null;
+					update     = null;
+					updateGame = null;
 					return {users: cuoc.name, bet: TienThang, red: cuoc.red};
 				}))
 				.then(function(arrayOfResults) {
-					Promise.all(arrayOfResults.filter(function(st){
+					heSo  = null;
+					phien = null;
+					dice = null;
+					arrayOfResults = arrayOfResults.filter(function(st){
 						return (st.red && st.bet > 0);
-					}))
-					.then(result => {
-						if (result.length) {
-							result.sort(function(a, b){
-								return b.bet-a.bet;
-							});
+					});
+					if (arrayOfResults.length) {
+						arrayOfResults.sort(function(a, b){
+							return b.bet-a.bet;
+						});
 
-							result = result.slice(0, 10);
-							result = Helpers.shuffle(result);
+						arrayOfResults = arrayOfResults.slice(0, 10);
+						arrayOfResults = Helpers.shuffle(arrayOfResults);
 
-							Promise.all(result.map(function(obj){
-								return {users:obj.users, bet:obj.bet, game:'Bầu Cua'};
-							}))
-							.then(results => {
-								io.sendInHome({news:{a:results}});
-							});
-						}
-					})
+						Promise.all(arrayOfResults.map(function(obj){
+							return {users:obj.users, bet:obj.bet, game:'Bầu Cua'};
+						}))
+						.then(results => {
+							io.sendInHome({news:{a:results}});
+							results = null;
+						});
+					}
 					playGame();
 				});
 			}else{
+				heSo  = null;
+				phien = null;
+				dice = null;
 				playGame();
 			}
 		});
 	}else{
-		Promise.all(Object.values(io.users).map(function(users){
-			Promise.all(users.map(function(client){
-				if (client.gameEvent !== void 0 && client.gameEvent.viewBauCua !== void 0 && client.gameEvent.viewBauCua)
+		Object.values(io.users).forEach(function(users){
+			users.forEach(function(client){
+				if (client.gameEvent !== void 0 && client.gameEvent.viewBauCua !== void 0 && client.gameEvent.viewBauCua){
 					client.red({mini:{baucua:{data: io.baucua.info}}});
-			}));
-		}));
+				}
+			});
+		});
+
 		let admin_data = {baucua:{info: io.baucua.infoAdmin, ingame: io.baucua.ingame}};
-		Promise.all(Object.values(io.admins).map(function(admin){
-			Promise.all(admin.map(function(client){
-				if (client.gameEvent !== void 0 && client.gameEvent.viewBauCua !== void 0 && client.gameEvent.viewBauCua)
+		Object.values(io.admins).forEach(function(admin){
+			admin.forEach(function(client){
+				if (client.gameEvent !== void 0 && client.gameEvent.viewBauCua !== void 0 && client.gameEvent.viewBauCua){
 					client.red(admin_data);
-			}));
-		}));
+				}
+			});
+		});
 	}
 }
 
@@ -266,31 +285,36 @@ let playGame = function(){
 				clearInterval(gameLoop);
 				io.BauCua_time = 0;
 
-				let file   = require(dataBauCua);
-				let config = require('../../config/baucua.json');
+				fs.readFile('./data/baucua.json', 'utf8', (errjs, bcjs) => {
+					try {
+						bcjs = JSON.parse(bcjs);
 
-				let dice1 = file[0] == 6 ? (Math.random()*6)>>0 : file[0];
-				let dice2 = file[1] == 6 ? (Math.random()*6)>>0 : file[1];
-				let dice3 = file[2] == 6 ? (Math.random()*6)>>0 : file[2];
+						let dice1 = bcjs[0] == 6 ? (Math.random()*6)>>0 : bcjs[0];
+						let dice2 = bcjs[1] == 6 ? (Math.random()*6)>>0 : bcjs[1];
+						let dice3 = bcjs[2] == 6 ? (Math.random()*6)>>0 : bcjs[2];
 
-				file[0]     = 6;
-				file[1]     = 6;
-				file[2]     = 6;
-				file.uid    = '';
-				file.rights = 2;
+						bcjs[0]     = 6;
+						bcjs[1]     = 6;
+						bcjs[2]     = 6;
+						bcjs.uid    = '';
+						bcjs.rights = 2;
 
-				fs.writeFile(path.dirname(path.dirname(__dirname)) + '/data/baucua.json', JSON.stringify(file), function(err){});
+						fs.writeFile('./data/baucua.json', JSON.stringify(bcjs), function(err){});
 
-				BauCua_phien.create({'dice1':dice1, 'dice2':dice2, 'dice3':dice3, 'time':new Date()}, function(err, create){
-					if (!!create) {
-						io.BauCua_phien = create.id+1;
-						thongtin_thanhtoan([dice1, dice2, dice3]);
-						io.sendAllUser({mini: {baucua: {finish:{dices:[create.dice1, create.dice2, create.dice3], phien:create.id}}}});
-						Promise.all(Object.values(io.admins).map(function(admin){
-							Promise.all(admin.map(function(client){
-								client.red({baucua: {finish: true, dices:[create.dice1, create.dice2, create.dice3]}});
-							}));
-						}));
+						BauCua_phien.create({'dice1':dice1, 'dice2':dice2, 'dice3':dice3, 'time':new Date()}, function(err, create){
+							if (!!create) {
+								io.BauCua_phien = create.id+1;
+								thongtin_thanhtoan([dice1, dice2, dice3]);
+								io.sendAllUser({mini: {baucua: {finish:{dices:[create.dice1, create.dice2, create.dice3], phien:create.id}}}});
+
+								Object.values(io.admins).forEach(function(admin){
+									admin.forEach(function(client){
+										client.red({baucua: {finish: true, dices:[create.dice1, create.dice2, create.dice3]}});
+									});
+								});
+							}
+						});
+					} catch (error) {
 					}
 				});
 				io.baucua.ingame = [];
@@ -323,26 +347,33 @@ let playGame = function(){
 					xuTom: 0,
 				};
 
-				if (config.bot) {
-					// lấy danh sách tài khoản bot
-					UserInfo.find({type: true}, 'id name', function(err, blist){
-						if (blist.length) {
-							Promise.all(blist.map(function(buser){
-								buser = buser._doc;
-								delete buser._id;
+				fs.readFile('./config/baucua.json', 'utf8', (errcf, bccf) => {
+					try {
+						bccf = JSON.parse(bccf);
+						if (bccf.bot) {
+							// lấy danh sách tài khoản bot
+							UserInfo.find({type: true}, 'id name', function(err, blist){
+								if (blist.length) {
+									Promise.all(blist.map(function(buser){
+										buser = buser._doc;
+										delete buser._id;
 
-								return buser;
-							}))
-							.then(result => {
-								let maxBot = (result.length*50/100)>>0;
-								botList = Helpers.shuffle(result);
-								botList = botList.slice(0, maxBot);
+										return buser;
+									}))
+									.then(result => {
+										let maxBot = (result.length*50/100)>>0;
+										botList = Helpers.shuffle(result);
+										botList = botList.slice(0, maxBot);
+									});
+								}
 							});
+						}else{
+							botList = [];
 						}
-					});
-				}else{
-					botList = [];
-				}
+					} catch (error) {
+						botList = [];
+					}
+				});
 			}else{
 				thongtin_thanhtoan();
 				if (!!botList.length && io.BauCua_time > 2) {

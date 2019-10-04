@@ -131,14 +131,14 @@ module.exports = function(ws, redT){
 				}
 			}else{
 				var self = this;
-				Promise.all(this.redT.users[this.UID].map(function(obj, index){
+				this.redT.users[this.UID].forEach(function(obj, index){
 					if (obj === self) {
 						self.redT.users[self.UID].splice(index, 1);
 						if (self.redT) {
 							delete self.redT;
 						}
 					}
-				}));
+				});
 			}
 		}
 		this.auth = false;
