@@ -1,19 +1,19 @@
 
-var Mini3Cay_red  = require('../../../Models/Mini3Cay/Mini3Cay_red');
-var Mini3Cay_xu   = require('../../../Models/Mini3Cay/Mini3Cay_xu');
+let Mini3Cay_red  = require('../../../Models/Mini3Cay/Mini3Cay_red');
+let Mini3Cay_xu   = require('../../../Models/Mini3Cay/Mini3Cay_xu');
 
-var Mini3Cay_user = require('../../../Models/Mini3Cay/Mini3Cay_user');
-var HU            = require('../../../Models/HU');
+let Mini3Cay_user = require('../../../Models/Mini3Cay/Mini3Cay_user');
+let HU            = require('../../../Models/HU');
 
-var UserInfo      = require('../../../Models/UserInfo');
+let UserInfo      = require('../../../Models/UserInfo');
 
-var Helpers       = require('../../../Helpers/Helpers');
-var base_card     = require('../../../../data/card');
+let Helpers       = require('../../../Helpers/Helpers');
+let base_card     = require('../../../../data/card');
 
 module.exports = function(client, spin) {
 	if (!!spin && !!spin.cuoc) {
-		var cuoc = spin.cuoc>>0;  // Tiền cược
-		var red  = !!spin.red;	  // Loại tiền đang chơi
+		let cuoc = spin.cuoc>>0;  // Tiền cược
+		let red  = !!spin.red;	  // Loại tiền đang chơi
 		if (!(cuoc == 100 || cuoc == 1000 || cuoc == 10000)) {
 			// Error
 			client.red({mini:{bacay:{status:0,notice: 'Quay thất bại...'}}});
@@ -23,36 +23,34 @@ module.exports = function(client, spin) {
 				if (!user || (red && user.red < cuoc) || (!red && user.xu < cuoc)) {
 					client.red({mini:{bacay:{status:0, notice: 'Bạn không đủ ' + (red ? 'RED':'XU') + ' để quay.!!'}}});
 				}else{
-					var config = require('../../../../config/mini3cay.json');
-					var phe = red ? 2 : 4;    // Phế
-					var addQuy = (cuoc*0.01)>>0;
+					let phe = red ? 2 : 4;    // Phế
+					let addQuy = (cuoc*0.01)>>0;
 					// Sử lý bài
-					var an      = 0;
-					var code    = 0;
-					var text    = '';
-					var thuong  = 0;
-					var nohu    = false;
-					var card    = [...base_card.card]
+					let an      = 0;
+					let code    = 0;
+					let text    = '';
+					let thuong  = 0;
+					let nohu    = false;
+					let card    = [...base_card.card]
 						.slice(0, 36);
-					// card.slice(0, 36)
+
+					card.splice((Math.random()*4)>>0, 1);
+					card.splice((Math.random()*3)>>0, 1);
+
 					// tráo bài
-					if (config.chedo == 1) {
-						card.splice((Math.random()*4)>>0, 1);
-						card.splice((Math.random()*3)>>0, 1);
-					}
 					card = Helpers.shuffle(card); // tráo bài lần 1
 					card = Helpers.shuffle(card); // tráo bài lần 2
 					card = Helpers.shuffle(card); // tráo bài lần 3
 
-					var ketqua = card.slice(0, 3); // bốc 3 thẻ đầu tiên
-					var ketqua_temp = [...ketqua]; // copy kết quả để sử lý, (tránh sắp sếp, mất tính ngẫu nhiên)
+					let ketqua = card.slice(0, 3); // bốc 3 thẻ đầu tiên
+					let ketqua_temp = [...ketqua]; // copy kết quả để sử lý, (tránh sắp sếp, mất tính ngẫu nhiên)
 					
 
-					var ADiamond = false;       // Có Át rô trong bài?
+					let ADiamond = false;       // Có Át rô trong bài?
 
-					var arrT   = [];           // Mảng lọc các bộ 2 trong bài
-					for (var i = 0; i < 3; i++) {
-						var dataT = ketqua[i];
+					let arrT   = [];           // Mảng lọc các bộ 2 trong bài
+					for (let i = 0; i < 3; i++) {
+						let dataT = ketqua[i];
 						if (void 0 === arrT[dataT.card]) {
 							arrT[dataT.card] = 1;
 						}else{
@@ -63,8 +61,8 @@ module.exports = function(client, spin) {
 						}
 					}
 
-					var bo3     = false; // bộ ba (Kết quả có phải là bộ 3?)
-					var bo3_a   = null;  // Tên bộ 3
+					let bo3     = false; // bộ ba (Kết quả có phải là bộ 3?)
+					let bo3_a   = null;  // Tên bộ 3
 					arrT.forEach(function(c, index) {
 						if (c === 3) {
 							bo3   = true;
@@ -72,27 +70,27 @@ module.exports = function(client, spin) {
 						}
 					});
 
-					var type     = ketqua[0].type;                                     // Lấy ra chất đầu tiên trong bài
-					var dongChat = ketqua_temp.filter(type_card => type_card.type == type); // Lọc đồng chất
+					let type     = ketqua[0].type;                                     // Lấy ra chất đầu tiên trong bài
+					let dongChat = ketqua_temp.filter(type_card => type_card.type == type); // Lọc đồng chất
 					dongChat     = dongChat.length == 3 ? true : false;                // Dây là đồng chất
 
-					var TongDiem = (ketqua[0].card + ketqua[1].card + ketqua[2].card + 3)%10;     // Tổng điểm
+					let TongDiem = (ketqua[0].card + ketqua[1].card + ketqua[2].card + 3)%10;     // Tổng điểm
 					TongDiem = TongDiem === 0 ? 10 : TongDiem;
-					var LienTiep   = ketqua_temp.sort(function(a,b){return a.card - b.card});
-					var Day        = LienTiep[2].card - LienTiep[0].card === 2 && LienTiep[2].card != LienTiep[1].card && LienTiep[1].card != LienTiep[0].card ? true : false; // Bộ liên tiếp
+					let LienTiep   = ketqua_temp.sort(function(a,b){return a.card - b.card});
+					let Day        = LienTiep[2].card - LienTiep[0].card === 2 && LienTiep[2].card != LienTiep[1].card && LienTiep[1].card != LienTiep[0].card ? true : false; // Bộ liên tiếp
 
 					// Kết thúc Sử lý bài
 
 					// Kiểm tra kết quả
 					HU.findOne({game:'mini3cay', type:cuoc, red:red}, {}, function(err, data){
-						var uInfo      = {};
-						var mini_users = {};
-						var huUpdate   = {bet:addQuy};
+						let uInfo      = {};
+						let mini_users = {};
+						let huUpdate   = {bet:addQuy};
 
-						var quyHu     = data.bet;
-						var quyMin    = data.min+addQuy;
+						let quyHu     = data.bet;
+						let quyMin    = data.min+addQuy;
 
-						var checkName = (client.profile.name == data.name);
+						let checkName = (client.profile.name == data.name);
 
 						if (checkName || (bo3 && bo3_a === 0)) {
 							// NỔ HŨ (Bộ 3 Át Hoặc được xác định là nổ hũ)
@@ -146,7 +144,7 @@ module.exports = function(client, spin) {
 							code = 1;
 						}
 
-						var tien = an-cuoc;
+						let tien = an-cuoc;
 
 						if (red){
 							uInfo['red'] = tien;         // Cập nhật Số dư Red trong tài khoản
@@ -178,6 +176,41 @@ module.exports = function(client, spin) {
 						HU.updateOne({game:'mini3cay', type:cuoc, red:red}, {$inc:huUpdate}).exec();
 						UserInfo.updateOne({id:client.UID}, {$inc: uInfo}).exec();
 						Mini3Cay_user.updateOne({'uid': client.UID}, {$set:{time: new Date()}, $inc: mini_users}).exec();
+
+
+						data = null;
+						uInfo      = null;
+						mini_users = null;
+						huUpdate   = null;
+						quyHu     = null;
+						quyMin    = null;
+						checkName = null;
+						tien      = null;
+
+						client = null;
+						spin = null;
+						cuoc = null;
+						red  = null;
+						config = null;
+						phe = null;
+						addQuy = null;
+						an      = null;
+						code    = null;
+						text    = null;
+						thuong  = null;
+						nohu    = null;
+						card    = null;
+						ketqua = null;
+						ketqua_temp = null;
+						ADiamond = null;
+						arrT   = null;
+						bo3     = null;
+						bo3_a   = null;
+						type     = null;
+						dongChat = null;
+						TongDiem = null;
+						LienTiep   = null;
+						Day        = null;
 					});
 				}
 			});

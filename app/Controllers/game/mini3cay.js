@@ -1,7 +1,7 @@
 
-var spin = require('./mini3cay/spin');
-var logs = require('./mini3cay/logs');
-var tops = require('./mini3cay/tops');
+let spin = require('./mini3cay/spin');
+let logs = require('./mini3cay/logs');
+let tops = require('./mini3cay/tops');
 
 module.exports = function(client, data){
 	if (!!data.spin) {
