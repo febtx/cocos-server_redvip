@@ -1,19 +1,19 @@
 
-var HU              = require('../../../Models/HU');
+let HU              = require('../../../Models/HU');
 
-var AngryBirds_red  = require('../../../Models/AngryBirds/AngryBirds_red');
-var AngryBirds_xu   = require('../../../Models/AngryBirds/AngryBirds_xu');
-var AngryBirds_user = require('../../../Models/AngryBirds/AngryBirds_user');
+let AngryBirds_red  = require('../../../Models/AngryBirds/AngryBirds_red');
+let AngryBirds_xu   = require('../../../Models/AngryBirds/AngryBirds_xu');
+let AngryBirds_user = require('../../../Models/AngryBirds/AngryBirds_user');
 
-var UserInfo     = require('../../../Models/UserInfo');
-var Helpers      = require('../../../Helpers/Helpers');
+let UserInfo     = require('../../../Models/UserInfo');
+let Helpers      = require('../../../Helpers/Helpers');
 
 function random_cel3(){
 	return (Math.random()*6)>>0;
 }
 
 function random_cel2(){
-	var a = (Math.random()*21)>>0;
+	let a = (Math.random()*21)>>0;
 	if (a == 20) {
 		// 20
 		return 5;
@@ -37,7 +37,7 @@ function random_cel2(){
 
 
 function random_celR3(){
-	var a = random_cel3();
+	let a = random_cel3();
 	if (a == 5) {
 		// 5
 		return 2;
@@ -51,7 +51,7 @@ function random_celR3(){
 }
 
 function random_celR(){
-	var a = (Math.random()*10)>>0;
+	let a = (Math.random()*10)>>0;
 	if (a == 9) {
 		// 9
 		return 3;
@@ -68,13 +68,13 @@ function random_celR(){
 }
 
 function check_win(data, line){
-	var win_icon = 0;
-	var win_type = null;
-	var thaythe  = 0;  // Thay Thế (WinD)
-	var arrT     = []; // Mảng lọc các bộ
+	let win_icon = 0;
+	let win_type = null;
+	let thaythe  = 0;  // Thay Thế (WinD)
+	let arrT     = []; // Mảng lọc các bộ
 
-	for (var i = 0; i < 3; i++) {
-		var dataT = data[i];
+	for (let i = 0; i < 3; i++) {
+		let dataT = data[i];
 		if (dataT == 5) {
 			++thaythe;
 		}
@@ -85,12 +85,29 @@ function check_win(data, line){
 		}
 	}
 
+	arrT.forEach(function(c, index) {
+		if (index != 5 && index != 4) {
+			arrT[index] += thaythe;
+		}
+	});
+
+	arrT.forEach(function(c, index) {
+		if (c === 3 && index !== 0) {
+			win_icon = index;
+			win_type = 3;
+		}
+	});
+
+	return {line:line, win:win_icon, type:win_type};
+
+
+	/**
 	return new Promise((aT, bT) => {
 		Promise.all(arrT.map(function(c, index){
 			if (index != 5 && index != 4) {
 				arrT[index] += thaythe;
 			}
-			return index != 5 ? c+thaythe : c;
+			return index != 5 ? c+thaythe :c;
 		})).then(temp1 => {
 			Promise.all(arrT.map(function(c, index){
 				if (c === 3 && index !== 0) {
@@ -99,72 +116,74 @@ function check_win(data, line){
 				}
 				return void 0;
 			})).then(result => {
-				aT({line: line, win: win_icon, type: win_type});
+				aT({line:line, win:win_icon, type:win_type});
 			})
 		})
 	})
 	.then(result => {
 		return result;
 	})
+	*/
 }
 
 module.exports = function(client, data){
 	if (!!data && !!data.cuoc) {
-		var bet  = data.cuoc>>0;                   // Mức cược
-		var red  = !!data.red;                     // Loại tiền (Red: true, Xu: false)
+		let bet  = data.cuoc>>0;                   // Mức cược
+		let red  = !!data.red;                     // Loại tiền (Red:true, Xu:false)
 
 		if (!(bet == 100 || bet == 1000 || bet == 10000)) {
-			client.red({mini:{arb:{status:0}}, notice:{text: 'DỮ LIỆU KHÔNG ĐÚNG...', title: 'THẤT BẠI'}});
+			client.red({mini:{arb:{status:0}}, notice:{text:'DỮ LIỆU KHÔNG ĐÚNG...', title:'THẤT BẠI'}});
 		}else{
 			UserInfo.findOne({id:client.UID}, red ? 'red name':'xu name', function(err, user){
 				if (!user || (red && user.red < bet) || (!red && user.xu < bet)) {
-					client.red({mini:{arb:{status:0, notice: 'Bạn không đủ ' + (red ? 'RED':'XU') + ' để quay.!!'}}});
+					client.red({mini:{arb:{status:0, notice:'Bạn không đủ ' + (red ? 'RED':'XU') + ' để quay.!!'}}});
 				}else{
-					var phe = red ? 2 : 4;    // Phế
-					var addQuy = (bet*0.01)>>0;
+					let phe = red ? 2 :4;    // Phế
+					let addQuy = (bet*0.01)>>0;
 
-					var line_nohu = 0;
-					var win_arr   = null;
-					var bet_win   = 0;
-					var type      = 0;   // Loại được ăn lớn nhất trong phiên
+					let line_nohu = 0;
+					let win_arr   = null;
+					let bet_win   = 0;
+					let type      = 0;   // Loại được ăn lớn nhất trong phiên
 
-					var config = require('../../../../config/angrybird.json');
+					let config = require('../../../../config/angrybird.json');
 
-					HU.findOne({game: 'arb', type:bet, red:red}, 'name bet min toX balans x', function(err, dataHu){
-						var uInfo      = {};
-						var mini_users = {};
-						var huUpdate   = {bet:addQuy, toX:0, balans:0};
+					HU.findOne({game:'arb', type:bet, red:red}, 'name bet min toX balans x', function(err, dataHu){
+						let uInfo      = {};
+						let mini_users = {};
+						let huUpdate   = {bet:addQuy, toX:0, balans:0};
 						if (red){
 							huUpdate['hu'] = uInfo['hu'] = mini_users['hu']     = 0; // Khởi tạo
 						}else{
 							huUpdate['huXu'] = uInfo['huXu'] = mini_users['huXu'] = 0; // Khởi tạo
 						}
 
-						var nohu     = false;
-						var isBigWin = false;
-						var quyHu    = dataHu.bet;
-						var quyMin   = dataHu.min;
+						let nohu     = false;
+						let isBigWin = false;
+						let quyHu    = dataHu.bet;
+						let quyMin   = dataHu.min;
 
-						var toX      = dataHu.toX;
-						var balans   = dataHu.balans;
+						let toX      = dataHu.toX;
+						let balans   = dataHu.balans;
 
+						let celSS = null;
 						if (config.chedo == 0) {
 							// khó
-							var celSS = [
+							celSS = [
 								random_cel2(), random_cel2(), random_cel2(),
 								random_cel2(), random_celR(), random_celR(),
 								1,             0,             0,
 							];
 						}else if (config.chedo == 1) {
 							// trung bình
-							var celSS = [
+							celSS = [
 								random_cel2(), random_cel2(), random_cel2(),
 								random_cel2(), random_celR(), random_celR(),
 								1,             1,              0,
 							];
 						}else{
 							// dễ
-							var celSS = [
+							celSS = [
 								random_cel2(), random_cel2(), random_cel2(),
 								random_cel2(), random_celR(), random_celR(),
 								random_celR(), 1,              0,
@@ -174,12 +193,12 @@ module.exports = function(client, data){
 						celSS = Helpers.shuffle(celSS); // tráo bài lần 1
 						celSS = Helpers.shuffle(celSS); // tráo bài lần 2
 
-						var cel1 = [celSS[0], celSS[1], celSS[2]]; // Cột 1
-						var cel2 = [celSS[3], celSS[4], celSS[5]]; // Cột 2
-						var cel3 = [celSS[6], celSS[7], celSS[8]]; // Cột 3
+						let cel1 = [celSS[0], celSS[1], celSS[2]]; // Cột 1
+						let cel2 = [celSS[3], celSS[4], celSS[5]]; // Cột 2
+						let cel3 = [celSS[6], celSS[7], celSS[8]]; // Cột 3
 
 						// Tạo kết quả 2 Hàng sau
-						var celSR = [
+						let celSR = [
 							random_celR(),  random_celR(), random_celR3(),
 							random_celR3(), 0,             0,
 						]; // Super
@@ -187,10 +206,10 @@ module.exports = function(client, data){
 						celSR = Helpers.shuffle(celSR); // tráo bài lần 1
 						celSR = Helpers.shuffle(celSR); // tráo bài lần 2
 
-						var celR1  = [celSR[0], celSR[1], celSR[2]]; // Cột 1
-						var celR2  = [celSR[3], celSR[4], celSR[5]]; // Cột 2
+						let celR1  = [celSR[0], celSR[1], celSR[2]]; // Cột 1
+						let celR2  = [celSR[3], celSR[4], celSR[5]]; // Cột 2
 
-						var checkName = (client.profile.name == dataHu.name);
+						let checkName = (client.profile.name == dataHu.name);
 
 						if (checkName) {
 							line_nohu = Math.floor(Math.random()*(27-1+1))+1;
@@ -199,8 +218,8 @@ module.exports = function(client, data){
 							celR2[1] = 3;
 						}
 
-						var heso_T = [1, 3, 5, 10];                  // He so an
-						var heso   = 1;
+						let heso_T = [1, 3, 5, 10];                  // He so an
+						let heso   = 1;
 						if (celR1[1] != 0) {
 							heso = heso_T[celR1[1]]*heso_T[celR2[1]];
 						}
@@ -453,7 +472,7 @@ module.exports = function(client, data){
 							}
 						}))
 						.then(result => {
-							Promise.all(result.filter(function(line_win){
+							result = result.filter(function(line_win){
 								if (line_win.type != null) {
 									if(line_win.win == 4) {
 										// x10
@@ -474,7 +493,7 @@ module.exports = function(client, data){
 
 											if (!nohu) {
 												nohu = true;
-												var okHu = (quyHu-Math.ceil(quyHu*phe/100))>>0;
+												let okHu = (quyHu-Math.ceil(quyHu*phe/100))>>0;
 												bet_win += okHu;
 												if (red){
 													client.redT.sendInHome({pushnohu:{title:'AngryBirds', name:client.profile.name, bet:okHu}});
@@ -483,7 +502,7 @@ module.exports = function(client, data){
 													huUpdate['huXu'] = uInfo['huXu'] = mini_users['huXu'] += 1; // Cập nhật Số Hũ Xu đã Trúng
 												}
 											}else{
-												var okHu = (quyMin-Math.ceil(quyMin*phe/100))>>0;
+												let okHu = (quyMin-Math.ceil(quyMin*phe/100))>>0;
 												bet_win += okHu;
 												if (red){
 													client.redT.sendInHome({pushnohu:{title:'AngryBirds', name:client.profile.name, bet:okHu}});
@@ -492,7 +511,7 @@ module.exports = function(client, data){
 													huUpdate['huXu'] = uInfo['huXu'] = mini_users['huXu'] += 1; // Cập nhật Số Hũ Xu đã Trúng
 												}
 											}
-											HU.updateOne({game: 'arb', type:bet, red:red}, {$set:{name:'', bet:quyMin}}).exec();
+											HU.updateOne({game:'arb', type:bet, red:red}, {$set:{name:'', bet:quyMin}}).exec();
 										}else{
 											bet_win += bet*10;
 										}
@@ -508,60 +527,59 @@ module.exports = function(client, data){
 									}
 								}
 								return (line_win.type != null);
-							}))
-							.then(result2 => {
-								bet_win  = nohu ? bet_win : bet_win*heso; // Tổng tiền ăn đc (chưa cắt phế)
-								var tien = bet_win-bet;
-								if (!nohu && bet_win >= bet*10) {
-									isBigWin = true;          // Là thắng lớn
-									type = 1;
-									red && client.redT.sendInHome({news:{t:{game:'AngryBirds', users:client.profile.name, bet:bet_win, status:2}}});
+							});
+
+							bet_win  = nohu ? bet_win :bet_win*heso; // Tổng tiền ăn đc (chưa cắt phế)
+							let tien = bet_win-bet;
+							if (!nohu && bet_win >= bet*10) {
+								isBigWin = true;          // Là thắng lớn
+								type = 1;
+								red && client.redT.sendInHome({news:{t:{game:'AngryBirds', users:client.profile.name, bet:bet_win, status:2}}});
+							}
+
+							let thuong     = 0;
+							if (red) {
+								uInfo['red'] = tien;                                   // Cập nhật Số dư Red trong tài khoản
+								huUpdate['redPlay'] = uInfo['redPlay'] = mini_users['bet'] = bet;            // Cập nhật Số Red đã chơi
+								if (tien > 0){
+									huUpdate['redWin'] = uInfo['redWin'] = mini_users['win'] = tien;        // Cập nhật Số Red đã Thắng
+								}
+								if (tien < 0){
+									huUpdate['redLost'] = uInfo['redLost'] = mini_users['lost'] = tien*(-1); // Cập nhật Số Red đã Thua
+								}
+								
+								AngryBirds_red.create({'name':client.profile.name, 'type':type, 'win':bet_win, 'bet':bet, 'time':new Date()}, function (err, small) {
+									if (err){
+										client.red({mini:{arb:{status:0, notice:'Có lỗi sảy ra, vui lòng thử lại.!!'}}});
+									}else{
+										client.red({mini:{arb:{status:1, cel:[cel1, cel2, cel3], celR:[celR1, celR2], line_win:result, nohu:nohu, isBigWin:isBigWin, win:bet_win}}, user:{red:user.red-bet}});
+									}
+								});
+							}else{
+								thuong = (bet_win*0.039589)>>0;
+								uInfo['xu'] = tien;                               // Cập nhật Số dư XU trong tài khoản
+								huUpdate['xuPlay'] = uInfo['xuPlay'] = mini_users['betXu'] = bet;     // Cập nhật Số XU đã chơi
+								if (thuong > 0){
+									uInfo['red'] = uInfo['thuong'] = mini_users['thuong'] = thuong;  // Cập nhật Số dư Red trong tài khoản // Cập nhật Số Red được thưởng do chơi XU
+								}
+								if (tien > 0){
+									huUpdate['xuWin'] = uInfo['xuWin'] = mini_users['winXu'] = tien;         // Cập nhật Số Red đã Thắng
+								}
+								if (tien < 0){
+									huUpdate['xuLost'] = uInfo['xuLost'] = mini_users['lostXu'] = tien*(-1); // Cập nhật Số Red đã Thua
 								}
 
-								var thuong     = 0;
-								if (red) {
-									uInfo['red'] = tien;                                   // Cập nhật Số dư Red trong tài khoản
-									huUpdate['redPlay'] = uInfo['redPlay'] = mini_users['bet'] = bet;            // Cập nhật Số Red đã chơi
-									if (tien > 0){
-										huUpdate['redWin'] = uInfo['redWin'] = mini_users['win'] = tien;        // Cập nhật Số Red đã Thắng
+								AngryBirds_xu.create({'name':client.profile.name, 'type':type, 'win':bet_win, 'bet':bet, 'time':new Date()}, function (err, small) {
+									if (err){
+										client.red({mini:{arb:{status:0, notice:'Có lỗi sảy ra, vui lòng thử lại.!!'}}});
+									}else{
+										client.red({mini:{arb:{status:1, cel:[cel1, cel2, cel3], celR:[celR1, celR2], line_win:result, nohu:nohu, isBigWin:isBigWin, win:bet_win, thuong:thuong}}, user:{xu:user.xu-bet}});
 									}
-									if (tien < 0){
-										huUpdate['redLost'] = uInfo['redLost'] = mini_users['lost'] = tien*(-1); // Cập nhật Số Red đã Thua
-									}
-									
-									AngryBirds_red.create({'name': client.profile.name, 'type': type, 'win': bet_win, 'bet': bet, 'time': new Date()}, function (err, small) {
-										if (err){
-											client.red({mini:{arb:{status:0, notice: 'Có lỗi sảy ra, vui lòng thử lại.!!'}}});
-										}else{
-											client.red({mini:{arb:{status:1, cel:[cel1, cel2, cel3], celR: [celR1, celR2], line_win: result2, nohu: nohu, isBigWin: isBigWin, win: bet_win}}, user:{red:user.red-bet}});
-										}
-									});
-								}else{
-									thuong = (bet_win*0.039589)>>0;
-									uInfo['xu'] = tien;                               // Cập nhật Số dư XU trong tài khoản
-									huUpdate['xuPlay'] = uInfo['xuPlay'] = mini_users['betXu'] = bet;     // Cập nhật Số XU đã chơi
-									if (thuong > 0){
-										uInfo['red'] = uInfo['thuong'] = mini_users['thuong'] = thuong;  // Cập nhật Số dư Red trong tài khoản // Cập nhật Số Red được thưởng do chơi XU
-									}
-									if (tien > 0){
-										huUpdate['xuWin'] = uInfo['xuWin'] = mini_users['winXu'] = tien;         // Cập nhật Số Red đã Thắng
-									}
-									if (tien < 0){
-										huUpdate['xuLost'] = uInfo['xuLost'] = mini_users['lostXu'] = tien*(-1); // Cập nhật Số Red đã Thua
-									}
-
-									AngryBirds_xu.create({'name': client.profile.name, 'type': type, 'win': bet_win, 'bet': bet, 'time': new Date()}, function (err, small) {
-										if (err){
-											client.red({mini:{arb:{status:0, notice: 'Có lỗi sảy ra, vui lòng thử lại.!!'}}});
-										}else{
-											client.red({mini:{arb:{status:1, cel:[cel1, cel2, cel3], celR: [celR1, celR2], line_win: result2, nohu: nohu, isBigWin: isBigWin, win: bet_win, thuong:thuong}}, user:{xu:user.xu-bet}});
-										}
-									});
-								}
-								HU.updateOne({game: 'arb', type:bet, red:red}, {$inc:huUpdate}).exec();
-								UserInfo.updateOne({id:client.UID}, {$inc:uInfo}).exec();
-								AngryBirds_user.updateOne({'uid':client.UID}, {$set:{time: new Date()}, $inc:mini_users}).exec();
-							})
+								});
+							}
+							HU.updateOne({game:'arb', type:bet, red:red}, {$inc:huUpdate}).exec();
+							UserInfo.updateOne({id:client.UID}, {$inc:uInfo}).exec();
+							AngryBirds_user.updateOne({'uid':client.UID}, {$set:{time:new Date()}, $inc:mini_users}).exec();
 						})
 					})
 				}

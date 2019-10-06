@@ -1,10 +1,10 @@
 
-var UserInfo = require('../Models/UserInfo');
-var OTP      = require('../Models/OTP');
-var Phone    = require('../Models/Phone');
+let UserInfo = require('../Models/UserInfo');
+let OTP      = require('../Models/OTP');
+let Phone    = require('../Models/Phone');
 let telegram = require('../Models/Telegram');
 
-var smsOTP   = require('../sms').sendOTP;
+let smsOTP   = require('../sms').sendOTP;
 
 function createOTP(client, type){
 	type = type>>0;
@@ -15,7 +15,7 @@ function createOTP(client, type){
 					// Tạo mã OTP mới
 					UserInfo.findOne({'id': client.UID}, 'red', function(err2, user){
 						if (user) {
-							var otp = (Math.random()*(9999-1000+1)+1000)>>0; // OTP từ 1000 đến 9999
+							let otp = (Math.random()*(9999-1000+1)+1000)>>0; // OTP từ 1000 đến 9999
 							if (type == '1') {
 								// App OTP
 								telegram.findOne({'phone':check.phone}, 'form', function(err3, teleCheck){

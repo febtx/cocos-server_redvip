@@ -1,6 +1,5 @@
 
 var BauCua_cuoc = require('../../../Models/BauCua/BauCua_cuoc');
-
 var UserInfo    = require('../../../Models/UserInfo');
 
 module.exports = function(client, data){

@@ -51,4 +51,6 @@ module.exports = function(client, p){
 			message(client, p.message);
 		}
 	}
+	client = null;
+	p = null;
 }

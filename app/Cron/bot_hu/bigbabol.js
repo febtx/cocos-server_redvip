@@ -46,44 +46,33 @@ let check_win = function(data, line){
 		}
 	}
 
-	return new Promise((aT, bT) => {
-		Promise.all(arrT.map(function(c, index){
-			if (index != 5) {
-				arrT[index] += thaythe;
+	arrT.forEach(function(c, index) {
+		if (index != 5) {
+			arrT[index] += thaythe;
+		}
+	});
+
+	arrT.forEach(function(c, index) {
+		if (c === 3) {
+			win_icon = index;
+			win_type = 3;
+		}
+		if (c === 2 && (index == 0 || index == 1)) {
+			win_icon = index;
+			win_type = 2;
+			if (index == 0) {
+				heso += 0.4;
+			}else{
+				heso += 0.8;
 			}
-			return index != 5 ? c+thaythe : c;
-		})).then(resultA1 => {
-			Promise.all(arrT.map(function(c, index){
-				if (c === 3) {
-					win_icon = index;
-					win_type = 3;
-				}
-				if (c === 2 && (index == 0 || index == 1)) {
-					win_icon = index;
-					win_type = 2;
-					if (index == 0) {
-						heso += 0.4;
-					}else{
-						heso += 0.8;
-					}
-				}
-				return void 0;
-			})).then(result => {
-				result = null;
-				aT({line: line, win: win_icon, type: win_type, heso: heso});
-			})
-		})
-	})
-	.then(result => {
-		win_icon = null;
-		heso     = null;
-		win_type = null;
-		thaythe  = null;  // Thay Thế (WinD)
-		arrT     = null; // Mảng lọc các bộ
-		data = null;
-		line = null;
-		return result;
-	})
+		}
+	});
+
+	data = null;
+	thaythe = null;
+	arrT    = null;
+
+	return {line:line, win:win_icon, type:win_type, heso:heso};
 }
 
 let spin = function(io, user){

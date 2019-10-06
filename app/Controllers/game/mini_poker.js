@@ -12,15 +12,15 @@ let base_card = require('../../../data/card');
 function spin(client, data){
 	if (!!data && !!data.cuoc) {
 		let bet = data.cuoc>>0; // Mức cược
-		let red = !!data.red; // Loại tiền (Red: true, Xu: false)
+		let red = !!data.red; // Loại tiền (Red:true, Xu:false)
 		if (!(bet == 100 || bet == 1000 || bet == 10000)) {
-			client.red({mini:{poker:{status:0}}, notice:{text: 'DỮ LIỆU KHÔNG ĐÚNG...', title: 'MINI POKER'}});
+			client.red({mini:{poker:{status:0}}, notice:{text:'DỮ LIỆU KHÔNG ĐÚNG...', title:'MINI POKER'}});
 		}else{
 			UserInfo.findOne({id:client.UID}, 'red xu name', function(err, user){
 				if (!user || (red && user.red < bet) || (!red && user.xu < bet)) {
-					client.red({mini:{poker:{status:0, notice: 'Bạn không đủ ' + (red ? 'RED':'XU') + ' để quay.!!'}}});
+					client.red({mini:{poker:{status:0, notice:'Bạn không đủ ' + (red ? 'RED':'XU') + ' để quay.!!'}}});
 				}else{
-					let phe     = red ? 2 : 4;    // Phế
+					let phe     = red ? 2 :4;    // Phế
 					let addQuy  = (bet*0.01)>>0;
 					let an      = 0;
 					let code    = 0;
@@ -71,7 +71,7 @@ function spin(client, data){
 
 					let type     = ketqua[0].type; // chất đầu tiên
 					let dongChat = ketqua_temp.filter(type_card => type_card.type == type); // Kiểm tra đồng chất
-					dongChat     = dongChat.length == 5 ? true : false;  // Dây là đồng chất
+					dongChat     = dongChat.length == 5 ? true :false;  // Dây là đồng chất
 
 					let AK    = ketqua_temp.sort(function(a, b){return a.card - b.card}); // sắp sếp từ A đến K (A23...JQK)
 					let isDay = false; // là 1 dây
@@ -83,7 +83,7 @@ function spin(client, data){
 						}
 					}
 
-					HU.findOne({game: 'minipoker', type:bet, red:red}, 'name bet min toX balans x', function(err, dataHu){
+					HU.findOne({game:'minipoker', type:bet, red:red}, 'name bet min toX balans x', function(err, dataHu){
 						let uInfo      = {};
 						let mini_users = {};
 						let huUpdate   = {bet:addQuy, toX:0, balans:0};
@@ -108,7 +108,7 @@ function spin(client, data){
 							if (toX < 1 && balans > 0) {
 								quyMin = quyMin*dataHu.x;
 							}
-							HU.updateOne({game: 'minipoker', type:bet, red:red}, {$set:{name:'', bet:quyMin}}).exec();
+							HU.updateOne({game:'minipoker', type:bet, red:red}, {$set:{name:'', bet:quyMin}}).exec();
 							if (checkName){
 								// đặt kết quả thành nổ hũ nếu người chơi được xác định thủ công
 								let randomType = (Math.random()*4)>>0;           // Ngẫu nhiên chất bài
@@ -195,12 +195,12 @@ function spin(client, data){
 							if (code == 9){
 								uInfo['hu'] = mini_users['hu'] = 1;         // Cập nhật Số Hũ Red đã Trúng
 							}
-							miniPokerRed.create({'name': client.profile.name, 'win': an, 'bet': bet, 'type': code, 'kq': ketqua, 'time': new Date()}, function (err, small) {
+							miniPokerRed.create({'name':client.profile.name, 'win':an, 'bet':bet, 'type':code, 'kq':ketqua, 'time':new Date()}, function (err, small) {
 								if (err){
-									client.red({mini:{poker:{status:0, notice: 'Có lỗi sảy ra, vui lòng thử lại.!!'}}});
+									client.red({mini:{poker:{status:0, notice:'Có lỗi sảy ra, vui lòng thử lại.!!'}}});
 								}else{
-									client.red({mini:{poker:{status:1, card:ketqua, phien: small.id, win: an, text: text, code: code}}, user:{red: user.red-bet, xu: user.xu}});
-								 }
+									client.red({mini:{poker:{status:1, card:ketqua, phien:small.id, win:an, text:text, code:code}}, user:{red:user.red-bet, xu:user.xu}});
+								}
 							});
 						}else{
 							thuong = (an*0.039589)>>0;
@@ -219,50 +219,17 @@ function spin(client, data){
 								uInfo['huXu'] = mini_users['huXu'] = 1;      // Cập nhật Số Hũ Xu đã Trúng
 							}
 
-							miniPokerXu.create({'name': client.profile.name, 'win': an, 'bet': bet, 'type': code, 'kq': ketqua, 'time': new Date()}, function (err, small) {
+							miniPokerXu.create({'name':client.profile.name, 'win':an, 'bet':bet, 'type':code, 'kq':ketqua, 'time':new Date()}, function (err, small) {
 								if (err){
-									client.red({mini:{poker:{status:0, notice: 'Có lỗi sảy ra, vui lòng thử lại.!!'}}});
+									client.red({mini:{poker:{status:0, notice:'Có lỗi sảy ra, vui lòng thử lại.!!'}}});
 								}else{
-									client.red({mini:{poker:{status:1, card:ketqua, phien: small.id, win: an, thuong: thuong, text: text, code: code}}, user:{red: user.red, xu: user.xu-bet}});
+									client.red({mini:{poker:{status:1, card:ketqua, phien:small.id, win:an, thuong:thuong, text:text, code:code}}, user:{red:user.red, xu:user.xu-bet}});
 								}
 							});
 						}
-						HU.updateOne({game: 'minipoker', type:bet, red:red}, {$inc:huUpdate}).exec();
-						UserInfo.updateOne({id:client.UID}, {$inc: uInfo}).exec();
-						miniPokerUsers.updateOne({'uid': client.UID}, {$set:{time: new Date()}, $inc: mini_users}).exec();
-
-
-						bet = null;
-						red = null;
-						phe     = null;
-						addQuy  = null;
-						an      = null;
-						code    = null;
-						text    = null;
-						thuong  = null;
-						card    = null;
-						ketqua      = null;
-						ketqua_temp = null;
-						arrT   = null;
-						tuQuy   = null;
-						bo2     = null;
-						bo2_a   = null;
-						bo3     = false;
-						bo3_a   = null;
-						type     = null;
-						dongChat = null;
-						AK    = null;
-						isDay = null;
-						dataHu = null;
-						uInfo      = null;
-						mini_users = null;
-						huUpdate   = null;
-						quyHu     = null;
-						quyMin    = null;
-						toX       = null;
-						balans    = null;
-						checkName = null;
-						tien = null;
+						HU.updateOne({game:'minipoker', type:bet, red:red}, {$inc:huUpdate}).exec();
+						UserInfo.updateOne({id:client.UID}, {$inc:uInfo}).exec();
+						miniPokerUsers.updateOne({'uid':client.UID}, {$set:{time:new Date()}, $inc:mini_users}).exec();
 					});
 				}
 			});
@@ -273,14 +240,14 @@ function spin(client, data){
 function log(client, data){
 	if (!!data && !!data.page) {
 		let page = data.page>>0; // trang
-		let red  = !!data.red;   // Loại tiền (Red: true, Xu: false)
+		let red  = !!data.red;   // Loại tiền (Red:true, Xu:false)
 		if (page < 1) {
-			client.red({notice:{text: 'DỮ LIỆU KHÔNG ĐÚNG...', title: 'MINI POKER'}});
+			client.red({notice:{text:'DỮ LIỆU KHÔNG ĐÚNG...', title:'MINI POKER'}});
 		}else{
 			let kmess = 8;
 			if (red) {
-				miniPokerRed.countDocuments({name: client.profile.name}).exec(function(err, total){
-					miniPokerRed.find({name: client.profile.name}, 'id win bet kq time', {sort:{'_id':-1}, skip: (page-1)*kmess, limit: kmess}, function(err, result) {
+				miniPokerRed.countDocuments({name:client.profile.name}).exec(function(err, total){
+					miniPokerRed.find({name:client.profile.name}, 'id win bet kq time', {sort:{'_id':-1}, skip:(page-1)*kmess, limit:kmess}, function(err, result) {
 						Promise.all(result.map(function(obj){
 							obj = obj._doc;
 							delete obj._id;
@@ -292,8 +259,8 @@ function log(client, data){
 					});
 				})
 			}else{
-				miniPokerXu.countDocuments({name: client.profile.name}).exec(function(err, total){
-					miniPokerXu.find({name: client.profile.name}, 'id win bet kq time', {sort:{'_id':-1}, skip: (page-1)*kmess, limit: kmess}, function(err, result) {
+				miniPokerXu.countDocuments({name:client.profile.name}).exec(function(err, total){
+					miniPokerXu.find({name:client.profile.name}, 'id win bet kq time', {sort:{'_id':-1}, skip:(page-1)*kmess, limit:kmess}, function(err, result) {
 						Promise.all(result.map(function(obj){
 							obj = obj._doc;
 							delete obj._id;
@@ -310,9 +277,9 @@ function log(client, data){
 }
 
 function top(client, data){
-	let red = !!data; // Loại tiền (Red: true, Xu: false)
+	let red = !!data; // Loại tiền (Red:true, Xu:false)
 	if (red) {
-		miniPokerRed.find({type:{$gte:7}}, 'name win bet time type', {sort:{'_id':-1}, limit: 50}, function(err, result) {
+		miniPokerRed.find({type:{$gte:7}}, 'name win bet time type', {sort:{'_id':-1}, limit:50}, function(err, result) {
 			Promise.all(result.map(function(obj){
 				obj = obj._doc;
 				delete obj.__v;
@@ -324,7 +291,7 @@ function top(client, data){
 			})
 		});
 	}else{
-		miniPokerXu.find({type:{$gte:7}}, 'name win bet time type', {sort:{'_id':-1}, limit: 50}, function(err, result) {
+		miniPokerXu.find({type:{$gte:7}}, 'name win bet time type', {sort:{'_id':-1}, limit:50}, function(err, result) {
 			Promise.all(result.map(function(obj){
 				obj = obj._doc;
 				delete obj.__v;

@@ -1,14 +1,14 @@
 
-var HU           = require('../../../Models/HU');
-var LongLan_red  = require('../../../Models/LongLan/LongLan_red');
-var LongLan_xu   = require('../../../Models/LongLan/LongLan_xu');
-var LongLan_user = require('../../../Models/LongLan/LongLan_user');
+let HU           = require('../../../Models/HU');
+let LongLan_red  = require('../../../Models/LongLan/LongLan_red');
+let LongLan_xu   = require('../../../Models/LongLan/LongLan_xu');
+let LongLan_user = require('../../../Models/LongLan/LongLan_user');
 
-var UserInfo  = require('../../../Models/UserInfo');
-var Helpers   = require('../../../Helpers/Helpers');
+let UserInfo  = require('../../../Models/UserInfo');
+let Helpers   = require('../../../Helpers/Helpers');
 
 function random_T1(){
-	var a = (Math.random()*66)>>0;
+	let a = (Math.random()*66)>>0;
 	if (a == 65) {
 		// 65
 		return 10;
@@ -46,7 +46,7 @@ function random_T1(){
 }
 
 function random_T2(){
-	var a = (Math.random()*2)>>0;
+	let a = (Math.random()*2)>>0;
 	if (a == 1) {
 		return 8;
 	}else{
@@ -55,7 +55,7 @@ function random_T2(){
 }
 
 function random_cel2(){
-	var a = (Math.random()*28)>>0;
+	let a = (Math.random()*28)>>0;
 	if (a == 27) {
 		// 27
 		return 6;
@@ -81,13 +81,13 @@ function random_cel2(){
 }
 
 function check_win(data, line){
-	var win_icon = 0;
-	var win_type = null;
-	var thaythe  = 0;  // Thay Thế (WinD)
-	var arrT     = []; // Mảng lọc các bộ
+	let win_icon = 0;
+	let win_type = null;
+	let thaythe  = 0;  // Thay Thế (WinD)
+	let arrT     = []; // Mảng lọc các bộ
 
-	for (var i = 0; i < 5; i++) {
-		var dataT = data[i];
+	for (let i = 0; i < 5; i++) {
+		let dataT = data[i];
 		if (dataT == 10) {
 			++thaythe;
 		}
@@ -98,6 +98,118 @@ function check_win(data, line){
 		}
 	}
 
+	arrT.forEach(function(c, index) {
+		if (index != 7 && index != 8 && index != 10) {
+			arrT[index] += thaythe;
+		}
+	});
+	arrT = arrT.map(function(c, index){
+		let X = 0;
+		if (index == 10) {
+			if (c == 2) {
+				X = 8;
+			}else if(c == 3){
+				X = 50;
+			}else if(c == 4){
+				X = 1000;
+			}else if(c == 5){
+				X = 8000;
+			}
+		}else if (index == 9) {
+			if (c == 2) {
+				X = 4;
+			}else if(c == 3){
+				X = 25;
+			}else if(c == 4){
+				X = 100;
+			}else if(c == 5){
+				X = 5000;
+			}
+		}else if (index == 8) {
+			if(c == 3){
+				X = 75;
+			}else if(c == 4){
+				X = 150;
+			}else if(c == 5){
+				X = 450;
+			}
+		}else if (index == 7) {
+			if(c == 3){
+				X = 75;
+			}else if(c == 4){
+				X = 150;
+			}else if(c == 5){
+				X = 450;
+			}
+		}else if (index == 6) {
+			if(c == 3){
+				X = 20;
+			}else if(c == 4){
+				X = 75;
+			}else if(c == 5){
+				X = 500;
+			}
+		}else if (index == 5) {
+			if(c == 3){
+				X = 16;
+			}else if(c == 4){
+				X = 60;
+			}else if(c == 5){
+				X = 375;
+			}
+		}else if (index == 4) {
+			if(c == 3){
+				X = 12;
+			}else if(c == 4){
+				X = 45;
+			}else if(c == 5){
+				X = 275;
+			}
+		}else if (index == 3) {
+			if(c == 3){
+				X = 10;
+			}else if(c == 4){
+				X = 30;
+			}else if(c == 5){
+				X = 150;
+			}
+		}else if (index == 2) {
+			if(c == 3){
+				X = 5;
+			}else if(c == 4){
+				X = 25;
+			}else if(c == 5){
+				X = 50;
+			}
+		}else if (index == 1) {
+			if(c == 3){
+				X = 5;
+			}else if(c == 4){
+				X = 10;
+			}else if(c == 5){
+				X = 25;
+			}
+		}else if (index == 0) {
+			if(c == 3){
+				X = 2;
+			}else if(c == 4){
+				X = 5;
+			}else if(c == 5){
+				X = 10;
+			}
+		}
+		return {icon:index, lanve:c, x:X};
+	});
+	arrT.sort(function(a, b){return b.x-a.x});
+	let win = arrT[0];
+	data = null;
+	win_icon = null;
+	win_type = null;
+	thaythe  = null;
+	arrT     = null;
+	return {line:line, win:win.icon, type:win.lanve};
+
+	/**
 	return new Promise((aT, bT) => {
 		Promise.all(arrT.map(function(c, index){
 			if (index != 7 && index != 8 && index != 10) {
@@ -200,17 +312,18 @@ function check_win(data, line){
 						X = 10;
 					}
 				}
-				return {icon: index, lanve: c, x: X};
+				return {icon:index, lanve:c, x:X};
 			})).then(result => {
 				result = result.sort(function(a, b){return b.x-a.x});
 				var win = result[0];
-				aT({line: line, win: win.icon, type: win.lanve});
+				aT({line:line, win:win.icon, type:win.lanve});
 			})
 		})
 	})
 	.then(result => {
 		return result;
 	})
+	*/
 }
 
 function gameBonusX(bet, x){
@@ -222,7 +335,7 @@ function gameBonusX(bet, x){
 }
 
 function gameBonus(client, bet){
-	var map = [
+	let map = [
 		gameBonusX(bet, 0),
 		gameBonusX(bet, 0),
 		gameBonusX(bet, 0),
@@ -240,7 +353,7 @@ function gameBonus(client, bet){
 	map = Helpers.shuffle(map); // tráo bài lần 3
 
 	Promise.all(map.map(function(obj){
-		return {isOpen: false, bet: obj};
+		return {isOpen:false, bet:obj};
 	}))
 	.then(result => {
 		client.LongLan.bonus = result;
@@ -249,45 +362,46 @@ function gameBonus(client, bet){
 
 module.exports = function(client, data){
 	if (!!data && !!data.cuoc && Array.isArray(data.line)) {
-		var bet  = data.cuoc>>0;                   // Mức cược
-		var red  = !!data.red;                     // Loại tiền (Red: true, Xu: false)
-		var line = Array.from(new Set(data.line)); // Dòng cược // fix trùng lặp
+		let bet  = data.cuoc>>0;                   // Mức cược
+		let red  = !!data.red;                     // Loại tiền (Red:true, Xu:false)
+		let line = Array.from(new Set(data.line)); // Dòng cược // fix trùng lặp
 		if (!(bet == 100 || bet == 1000 || bet == 10000) || line.length < 1) {
-			client.red({longlan:{status:0}, notice:{text: 'DỮ LIỆU KHÔNG ĐÚNG...', title: 'THẤT BẠI'}});
+			client.red({longlan:{status:0}, notice:{text:'DỮ LIỆU KHÔNG ĐÚNG...', title:'THẤT BẠI'}});
 		}else{
-			client.LongLan = void 0 === client.LongLan ? {id: '', red: red, bet: bet, bonus: null, bonusL: 0, bonusWin: 0, free: 0} : client.LongLan;
+			client.LongLan = void 0 === client.LongLan ? {id:'', red:red, bet:bet, bonus:null, bonusL:0, bonusWin:0, free:0} :client.LongLan;
 			client.LongLan.red = red;
 			client.LongLan.bet = bet;
-			var tongCuoc = bet*line.length;
+			let tongCuoc = bet*line.length;
 			UserInfo.findOne({id:client.UID}, red ? 'red name':'xu name', function(err, user){
 				if (client.LongLan.free === 0 && ((red && user.red < tongCuoc) || (!red && user.xu < tongCuoc))) {
-					client.red({longlan:{status:0, notice: 'Bạn không đủ ' + (red ? 'RED':'XU') + ' để quay.!!'}});
+					client.red({longlan:{status:0, notice:'Bạn không đủ ' + (red ? 'RED':'XU') + ' để quay.!!'}});
 				}else{
-					var config = require('../../../../config/LongLan.json');
-					var phe = red ? 2 : 4;    // Phế
-					var addQuy = (tongCuoc*0.005)>>0;
+					let config = require('../../../../config/LongLan.json');
+					let phe = red ? 2 :4;    // Phế
+					let addQuy = (tongCuoc*0.005)>>0;
 
-					var line_nohu = 0;
-					var bet_win   = 0;
-					var free      = 0;
-					var type      = 0;   // Loại được ăn lớn nhất trong phiên
-					var isFree    = false;
-					var nohu      = false;
-					var isBigWin  = false;
+					let line_nohu = 0;
+					let bet_win   = 0;
+					let free      = 0;
+					let type      = 0;   // Loại được ăn lớn nhất trong phiên
+					let isFree    = false;
+					let nohu      = false;
+					let isBigWin  = false;
 					// tạo kết quả
 					HU.findOne({game:'long', type:bet, red:red}, {}, function(err2, dataHu){
-						var uInfo      = {};
-						var mini_users = {};
-						var huUpdate   = {bet:addQuy};
+						let uInfo      = {};
+						let mini_users = {};
+						let huUpdate   = {bet:addQuy};
 						if (red){
 							huUpdate['hu'] = uInfo['hu'] = mini_users['hu']     = 0; // Khởi tạo
 						}else{
 							huUpdate['huXu'] = uInfo['huXu'] = mini_users['huXu'] = 0; // Khởi tạo
 						}
 
+						let celSS = null;
 						if (config.chedo == 0) {
 							// chế độ khó
-							var celSS = [
+							celSS = [
 								random_T1(), random_T1(), random_T1(),
 								random_T1(), random_T1(), 3,
 								random_T2(), 0,           2,
@@ -296,7 +410,7 @@ module.exports = function(client, data){
 							];
 						}else if(config.chedo == 1){
 							// trung bình
-							var celSS = [
+							celSS = [
 								random_T1(),   random_T1(), random_T1(),
 								random_T1(),   random_T1(), random_T1(),
 								random_cel2(), 0,           2,
@@ -304,7 +418,7 @@ module.exports = function(client, data){
 								0, 0, 0,
 							];
 						}else{
-							var celSS = [
+							celSS = [
 								random_T1(),   random_T1(),   random_T1(),
 								random_T1(),   random_T1(),   random_T1(),
 								random_cel2(), random_cel2(), 2,
@@ -317,29 +431,29 @@ module.exports = function(client, data){
 						celSS = Helpers.shuffle(celSS); // tráo bài lần 2
 						celSS = Helpers.shuffle(celSS); // tráo bài lần 3
 
-						var cel1 = [celSS[0],  celSS[1],  celSS[2]];  // Cột 1
-						var cel2 = [celSS[3],  celSS[4],  celSS[5]];  // Cột 2
-						var cel3 = [celSS[6],  celSS[7],  celSS[8]];  // Cột 3
-						var cel4 = [celSS[9],  celSS[10], celSS[11]]; // Cột 4
-						var cel5 = [celSS[12], celSS[13], celSS[14]]; // Cột 5
+						let cel1 = [celSS[0],  celSS[1],  celSS[2]];  // Cột 1
+						let cel2 = [celSS[3],  celSS[4],  celSS[5]];  // Cột 2
+						let cel3 = [celSS[6],  celSS[7],  celSS[8]];  // Cột 3
+						let cel4 = [celSS[9],  celSS[10], celSS[11]]; // Cột 4
+						let cel5 = [celSS[12], celSS[13], celSS[14]]; // Cột 5
 
-						var freeCel1 = cel1.filter(function(cell){
+						let freeCel1 = cel1.filter(function(cell){
 							return (cell == 7)
 						})
-						var freeCel2 = cel2.filter(function(cell){
+						let freeCel2 = cel2.filter(function(cell){
 							return (cell == 7)
 						})
-						var freeCel3 = cel3.filter(function(cell){
+						let freeCel3 = cel3.filter(function(cell){
 							return (cell == 7)
 						})
-						var freeCel4 = cel4.filter(function(cell){
+						let freeCel4 = cel4.filter(function(cell){
 							return (cell == 7)
 						})
-						var freeCel5 = cel5.filter(function(cell){
+						let freeCel5 = cel5.filter(function(cell){
 							return (cell == 7)
 						})
 
-						var freeScreen = [freeCel1, freeCel2, freeCel3, freeCel4, freeCel5];
+						let freeScreen = [freeCel1, freeCel2, freeCel3, freeCel4, freeCel5];
 						freeScreen = freeScreen.filter(function(cell){
 							return (cell.length > 0);
 						});
@@ -362,23 +476,23 @@ module.exports = function(client, data){
 						}
 
 
-						var bonusCel1 = cel1.filter(function(cell){
+						let bonusCel1 = cel1.filter(function(cell){
 							return (cell == 8)
 						})
-						var bonusCel2 = cel2.filter(function(cell){
+						let bonusCel2 = cel2.filter(function(cell){
 							return (cell == 8)
 						})
-						var bonusCel3 = cel3.filter(function(cell){
+						let bonusCel3 = cel3.filter(function(cell){
 							return (cell == 8)
 						})
-						var bonusCel4 = cel4.filter(function(cell){
+						let bonusCel4 = cel4.filter(function(cell){
 							return (cell == 8)
 						})
-						var bonusCel5 = cel5.filter(function(cell){
+						let bonusCel5 = cel5.filter(function(cell){
 							return (cell == 8)
 						})
 
-						var bonusScreen = [bonusCel1, bonusCel2, bonusCel3, bonusCel4, bonusCel5];
+						let bonusScreen = [bonusCel1, bonusCel2, bonusCel3, bonusCel4, bonusCel5];
 						bonusScreen = bonusScreen.filter(function(cell){
 							return (cell.length > 0);
 						});
@@ -397,8 +511,8 @@ module.exports = function(client, data){
 							gameBonus(client, bet);
 						}
 
-						var quyHu     = dataHu.bet;
-						var checkName = (client.profile.name == dataHu.name);
+						let quyHu     = dataHu.bet;
+						let checkName = (client.profile.name == dataHu.name);
 
 						if (checkName) {
 							line_nohu = ((Math.random()*line.length)>>0);
@@ -684,8 +798,8 @@ module.exports = function(client, data){
 							}
 						}))
 						.then(result => {
-							Promise.all(result.filter(function(line_win){
-								var checkWin = false;
+							result = result.filter(function(line_win){
+								let checkWin = false;
 								if(!nohu && line_win.win == 10) {
 									if (line_win.type === 5) {
 										// x8000
@@ -710,12 +824,12 @@ module.exports = function(client, data){
 										// Nổ Hũ
 										type = 2;
 										if (!nohu) {
-											var okHu = (quyHu-Math.ceil(quyHu*phe/100))>>0;
+											let okHu = (quyHu-Math.ceil(quyHu*phe/100))>>0;
 											bet_win += okHu;
 											HU.updateOne({game:'long', type:bet, red:red}, {$set:{name:'', bet:dataHu.min}}).exec();
 											red && client.redT.sendInHome({pushnohu:{title:'LONG LÂN', name:client.profile.name, bet:okHu}});
 										}else{
-											var okHu = (dataHu.min-Math.ceil(dataHu.min*phe/100))>>0;
+											let okHu = (dataHu.min-Math.ceil(dataHu.min*phe/100))>>0;
 											bet_win += okHu;
 											red && client.redT.sendInHome({pushnohu:{title:'LONG LÂN', name:client.profile.name, bet:okHu}});
 										}
@@ -842,79 +956,77 @@ module.exports = function(client, data){
 									}
 								}
 								return checkWin;
-							}))
-							.then(result2 => {
-								var tien = 0;
-								if (client.LongLan.free > 0) {
-									tien = bet_win;
-									client.LongLan.free -= 1;
-								}else{
-									tien = bet_win-tongCuoc;
+							});
+							let tien = 0;
+							if (client.LongLan.free > 0) {
+								tien = bet_win;
+								client.LongLan.free -= 1;
+							}else{
+								tien = bet_win-tongCuoc;
+							}
+							if (!nohu && bet_win >= tongCuoc*2.24) {
+								isBigWin = true;
+								type = 1;
+								red && client.redT.sendInHome({news:{t:{game:'LONG LÂN', users:client.profile.name, bet:bet_win, status:2}}});
+							}
+							if (free > 0) {
+								client.LongLan.free += free;
+							}
+
+							let thuong = 0;
+							if (red) {
+								uInfo.red = tien;
+								huUpdate.redPlay = tongCuoc;
+								uInfo.redPlay = tongCuoc;
+								mini_users.bet = tongCuoc;
+
+								if (tien > 0){
+									huUpdate.redWin = tien;
+									uInfo.redWin = tien;
+									mini_users.win = tien;         // Cập nhật Số Red đã Thắng
 								}
-								if (!nohu && bet_win >= tongCuoc*2.24) {
-									isBigWin = true;
-									type = 1;
-									red && client.redT.sendInHome({news:{t:{game:'LONG LÂN', users:client.profile.name, bet:bet_win, status:2}}});
-								}
-								if (free > 0) {
-									client.LongLan.free += free;
+								if (tien < 0){
+									let tienLost = tien*-1;
+									huUpdate.redLost = tienLost;
+									uInfo.redLost = tienLost;
+									mini_users.lost = tienLost; // Cập nhật Số Red đã Thua
 								}
 
-								var thuong = 0;
-								if (red) {
-									uInfo.red = tien;
-									huUpdate.redPlay = tongCuoc;
-									uInfo.redPlay = tongCuoc;
-									mini_users.bet = tongCuoc;
-
-									if (tien > 0){
-										huUpdate.redWin = tien;
-										uInfo.redWin = tien;
-										mini_users.win = tien;         // Cập nhật Số Red đã Thắng
-									}
-									if (tien < 0){
-										var tienLost = tien*-1;
-										huUpdate.redLost = tienLost;
-										uInfo.redLost = tienLost;
-										mini_users.lost = tienLost; // Cập nhật Số Red đã Thua
-									}
-
-									LongLan_red.create({'name': client.profile.name, 'type': type, 'win': bet_win, 'bet': bet, 'kq': result2.length, 'line': line.length, 'time': new Date()}, function (err4, small) {
-										client.red({longlan:{status:1, cel:[cel1, cel2, cel3, cel4, cel5], line_win: result2, win: bet_win, free: client.LongLan.free, isFree: isFree, isBonus: client.LongLan.bonusL, isNoHu: nohu, isBigWin: isBigWin, phien: small.id}, user:{red:user.red-tongCuoc}});
-										client.LongLan.id = small._id.toString();
-									});
-								}else{
-									thuong = (bet_win*0.039589)>>0;
-									uInfo.xu = tien;         // Cập nhật Số dư XU trong tài khoản
-									huUpdate.xuPlay = tongCuoc;
-									uInfo.xuPlay = tongCuoc;
-									mini_users.betXu = tongCuoc; // Cập nhật Số XU đã chơi
-									if (thuong > 0){
-										uInfo.red = thuong;
-										uInfo.thuong = thuong;
-										mini_users.thuong = thuong;    // Cập nhật Số dư Xu trong tài khoản // Cập nhật Số Red được thưởng do chơi XU
-									}
-									if (tien > 0){
-										huUpdate.xuWin = tien;
-										uInfo.xuWin = tien;
-										mini_users.winXu = tien;   // Cập nhật Số Xu đã Thắng
-									}
-									if (tien < 0){
-										var tienLost = tien*-1;
-										huUpdate.xuLost = tienLost;
-										uInfo.xuLost = tienLost;
-										mini_users.lostXu = tienLost;
-									}
-
-									LongLan_xu.create({'name': client.profile.name, 'type': type, 'win': bet_win, 'bet': bet, 'kq': result2.length, 'line': line.length, 'time': new Date()}, function (err4, small) {
-										client.red({longlan:{status:1, cel:[cel1, cel2, cel3, cel4, cel5], line_win: result2, win: bet_win, free: client.LongLan.free, isFree: isFree, isBonus: !!client.LongLan.bonusX, isNoHu: nohu, isBigWin: isBigWin, thuong:thuong, phien: small.id}, user:{xu:user.xu-tongCuoc}});
-										client.LongLan.id = small._id.toString();
-									});
+								LongLan_red.create({'name':client.profile.name, 'type':type, 'win':bet_win, 'bet':bet, 'kq':result.length, 'line':line.length, 'time':new Date()}, function (err4, small) {
+									client.red({longlan:{status:1, cel:[cel1, cel2, cel3, cel4, cel5], line_win:result, win:bet_win, free:client.LongLan.free, isFree:isFree, isBonus:client.LongLan.bonusL, isNoHu:nohu, isBigWin:isBigWin, phien:small.id}, user:{red:user.red-tongCuoc}});
+									client.LongLan.id = small._id.toString();
+								});
+							}else{
+								thuong = (bet_win*0.039589)>>0;
+								uInfo.xu = tien;         // Cập nhật Số dư XU trong tài khoản
+								huUpdate.xuPlay = tongCuoc;
+								uInfo.xuPlay = tongCuoc;
+								mini_users.betXu = tongCuoc; // Cập nhật Số XU đã chơi
+								if (thuong > 0){
+									uInfo.red = thuong;
+									uInfo.thuong = thuong;
+									mini_users.thuong = thuong;    // Cập nhật Số dư Xu trong tài khoản // Cập nhật Số Red được thưởng do chơi XU
 								}
-								HU.updateOne({game:'long', type:bet, red:red}, {$inc:huUpdate}).exec();
-								UserInfo.updateOne({id:client.UID},{$inc:uInfo}).exec();
-								LongLan_user.updateOne({'uid':client.UID}, {$set:{time: new Date()}, $inc:mini_users}).exec();
-							})
+								if (tien > 0){
+									huUpdate.xuWin = tien;
+									uInfo.xuWin = tien;
+									mini_users.winXu = tien;   // Cập nhật Số Xu đã Thắng
+								}
+								if (tien < 0){
+									let tienLost = tien*-1;
+									huUpdate.xuLost = tienLost;
+									uInfo.xuLost = tienLost;
+									mini_users.lostXu = tienLost;
+								}
+
+								LongLan_xu.create({'name':client.profile.name, 'type':type, 'win':bet_win, 'bet':bet, 'kq':result.length, 'line':line.length, 'time':new Date()}, function (err4, small) {
+									client.red({longlan:{status:1, cel:[cel1, cel2, cel3, cel4, cel5], line_win:result, win:bet_win, free:client.LongLan.free, isFree:isFree, isBonus:!!client.LongLan.bonusX, isNoHu:nohu, isBigWin:isBigWin, thuong:thuong, phien:small.id}, user:{xu:user.xu-tongCuoc}});
+									client.LongLan.id = small._id.toString();
+								});
+							}
+							HU.updateOne({game:'long', type:bet, red:red}, {$inc:huUpdate}).exec();
+							UserInfo.updateOne({id:client.UID},{$inc:uInfo}).exec();
+							LongLan_user.updateOne({'uid':client.UID}, {$set:{time:new Date()}, $inc:mini_users}).exec();
 						})
 					})
 				}

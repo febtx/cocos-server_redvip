@@ -6,6 +6,8 @@ let auth = function(client) {
 	client.gameEvent = {};
 	client.scene = 'home';
 	first(client);
+	client = null;
+	first  = null;
 }
 
 let signMethod = function(client) {
@@ -18,6 +20,7 @@ let signMethod = function(client) {
 			//this.poker = null;
 		//}
 	}
+	client = null;
 }
 
 module.exports = {

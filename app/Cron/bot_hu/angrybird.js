@@ -60,6 +60,23 @@ let check_win = function(data, line){
 		}
 	}
 
+	arrT.forEach(function(c, index) {
+		if (index != 5 && index != 4) {
+			arrT[index] += thaythe;
+		}
+	});
+
+	arrT.forEach(function(c, index) {
+		if (c === 3 && index !== 0) {
+			win_icon = index;
+			win_type = 3;
+		}
+	});
+
+	return {line:line, win:win_icon, type:win_type};
+
+
+	/**
 	return new Promise((aT, bT) => {
 		Promise.all(arrT.map(function(c, index){
 			if (index != 5 && index != 4) {
@@ -88,6 +105,7 @@ let check_win = function(data, line){
 		arrT     = null;
 		return result;
 	})
+	*/
 }
 
 let spin = function(io, user){
