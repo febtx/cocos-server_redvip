@@ -7,7 +7,6 @@ let auth = function(client) {
 	client.scene = 'home';
 	first(client);
 	client = null;
-	first  = null;
 }
 
 let signMethod = function(client) {

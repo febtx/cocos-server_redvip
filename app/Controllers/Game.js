@@ -3,39 +3,42 @@
  * Mini Game
  */
 // Mini Poker
-const mini_poker = require('./game/mini_poker');
+let mini_poker = require('./game/mini_poker');
 
 // Big Babol
-const big_babol  = require('./game/big_babol');
+let big_babol  = require('./game/big_babol');
 
 
 // Bầu Cua
-const baucua     = require('./game/baucua');
+let baucua     = require('./game/baucua');
 
 // Mini 3 Cây
-const mini3cay   = require('./game/mini3cay');
+let mini3cay   = require('./game/mini3cay');
 
 // Cao Thấp
-const caothap    = require('./game/caothap');
+let caothap    = require('./game/caothap');
 
 // AngryBirds
-const angrybird  = require('./game/angrybird');
+let angrybird  = require('./game/angrybird');
 
 
 /**
  * Game
  */
 // Vương Quốc Red
-const vq_red  = require('./game/vuong_quoc_red');
+let vq_red  = require('./game/vuong_quoc_red');
 
 // Candy
-const Candy   = require('./game/candy');
+let Candy   = require('./game/candy');
 
 // Poker
-//const Poker   = require('./game/poker');
+let Poker   = require('./game/poker');
 
 // Long Lân
-const LongLan = require('./game/longlan');
+let LongLan = require('./game/longlan');
+
+// Reg game
+let reg     = require('./game/reg');
 
 
 module.exports = function(client, data){
@@ -60,9 +63,10 @@ module.exports = function(client, data){
 	if (!!data.angrybird) {
 		angrybird(client, data.angrybird);
 	}
-	//if (!!data.poker) {
-	//	Poker(client, data.poker);
-	//}
+	if (!!data.poker) {
+		Poker(client, data.poker);
+	}
+
 	if (!!data.candy) {
 		Candy(client, data.candy);
 	}
@@ -70,4 +74,10 @@ module.exports = function(client, data){
 	if (!!data.longlan) {
 		LongLan(client, data.longlan);
 	}
+	if (!!data.reg) {
+		reg(client, data.reg);
+	}
+
+	client = null;
+	data = null;
 }

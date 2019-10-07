@@ -27,7 +27,7 @@ module.exports = function(client, data){
 			var min = room*20;
 			var max = room*200;
 			if (balans < min || balans > max) {
-				client.red({notice:{title:'THẤT bẠI', text:'Dữ liệu không đúng...', load: false}});
+				client.red({notice:{title:'THẤT BẠI', text:'Dữ liệu không đúng...', load: false}});
 			}else{
 				var inGame = false;
 				Promise.all(client.redT.users[client.UID].map(function(obj){
@@ -41,7 +41,7 @@ module.exports = function(client, data){
 					}else{
 						UserInfo.findOne({id: client.UID}, 'red xu name', function(err, user){
 							if (!user || (red && user.red < min) || (!red && user.xu < min)) {
-								client.red({notice:{title:'THẤT bẠI', text:'Bạn cần tối thiểu ' + Helpers.numberWithCommas(min) + (red ? ' RED':' XU') + ' để vào phòng.!!', load: false}});
+								client.red({notice:{title:'THẤT BẠI', text:'Bạn cần tối thiểu ' + Helpers.numberWithCommas(min) + (red ? ' RED':' XU') + ' để vào phòng.!!', load: false}});
 							}else{
 								if ((red && user.red < balans) || (!red && user.xu < balans)) {
 									var minMang = (red ? user.red : user.xu);
@@ -50,8 +50,9 @@ module.exports = function(client, data){
 									}else{
 										minMang = (((minMang/min)*2)>>0)*(min/2);
 									}
-									client.red({notice:{title:'THẤT bẠI', text:'Bạn chỉ có thể mang tối đa ' + Helpers.numberWithCommas(minMang) + (red ? ' RED':' XU') + ' vào phòng chơi.!!', load: false}});
+									client.red({notice:{title:'THẤT BẠI', text:'Bạn chỉ có thể mang tối đa ' + Helpers.numberWithCommas(minMang) + (red ? ' RED':' XU') + ' vào phòng chơi.!!', load: false}});
 								}else{
+									/**
 									if (red){
 										user.red -= balans;
 									}else{
@@ -60,6 +61,9 @@ module.exports = function(client, data){
 									user.save();
 									client.poker = new Player(client, room, balans, red, auto);
 									client.red({toGame:'Poker'});
+									*/
+
+									client.red({notice:{title:'BẢO TRÌ', text:'Game đang bảo trì...', load: false}});
 								}
 							}
 						});
@@ -67,7 +71,7 @@ module.exports = function(client, data){
 				})
 			}
 		}else{
-			client.red({notice:{title:'THẤT bẠI', text:'Dữ liệu không đúng...', load: false}});
+			client.red({notice:{title:'THẤT BẠI', text:'Dữ liệu không đúng...', load: false}});
 		}
 	}
 };

@@ -97,6 +97,7 @@ module.exports = function(ws, redT){
 		try {
 			if (!!message) {
 				message = JSON.parse(message);
+				console.log(message);
 				if (!!message.captcha) {
 					this.c_captcha(message.captcha);
 				}
@@ -111,8 +112,10 @@ module.exports = function(ws, redT){
 							socket.auth(this);
 						} else if (!!err) {
 							this.red({unauth: err});
+							//this.close();
 						} else {
 							this.red({unauth: {message: 'Authentication failure'}});
+							//this.close();
 						}
 					}.bind(this));
 				}else if(!!this.auth){

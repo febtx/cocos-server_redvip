@@ -6,10 +6,10 @@ module.exports = function(client, data){
 	if (!!data.reg) {
 		reg(client, data.reg);
 	}
-	if (!!data.ingame) {
-		ingame(client);
-	}
-	if (!!data.outgame && !!client.poker) {
-		client.poker.outGame();
-	}
+	//if (!!data.ingame) {
+		//ingame(client);
+	//}
+	//if (!!data.outgame && !!client.poker) {
+	//	client.poker.outGame();
+	//}
 };
