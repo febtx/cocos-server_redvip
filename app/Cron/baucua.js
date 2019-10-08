@@ -55,7 +55,7 @@ let init = function init(obj){
 			io.BauCua_phien = last.id+1;
 		}
 		playGame();
-	})
+	});
 }
 
 let thongtin_thanhtoan = function thongtin_thanhtoan(dice = null){

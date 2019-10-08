@@ -18,4 +18,8 @@ let Schema = new mongoose.Schema({
 
 Schema.index({uid:1, thanhtoan:1}, {background: true});
 
+// Schema.index({uid:1, thanhtoan:1, taixiu:1, red:1}, {background: true});
+
+Schema.index({phien:1, taixiu:1, red:1}, {background: true});
+
 module.exports = mongoose.model('TaiXiu_cuoc', Schema);
