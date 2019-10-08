@@ -21,33 +21,33 @@ let init = function init(obj){
 	io.BauCua_phien = 1;
 	io.baucua = {ingame:[]};
 	io.baucua.info = {
-		redBau: 0,
-		redCa: 0,
-		redCua: 0,
-		redGa: 0,
-		redHuou: 0,
-		redTom: 0,
-		xuBau: 0,
-		xuCa: 0,
-		xuCua: 0,
-		xuGa: 0,
-		xuHuou: 0,
-		xuTom: 0,
+		redBau:0,
+		redCa:0,
+		redCua:0,
+		redGa:0,
+		redHuou:0,
+		redTom:0,
+		xuBau:0,
+		xuCa:0,
+		xuCua:0,
+		xuGa:0,
+		xuHuou:0,
+		xuTom:0,
 	};
 
 	io.baucua.infoAdmin = {
-		redBau: 0,
-		redCa: 0,
-		redCua: 0,
-		redGa: 0,
-		redHuou: 0,
-		redTom: 0,
-		xuBau: 0,
-		xuCa: 0,
-		xuCua: 0,
-		xuGa: 0,
-		xuHuou: 0,
-		xuTom: 0,
+		redBau:0,
+		redCa:0,
+		redCua:0,
+		redGa:0,
+		redHuou:0,
+		redTom:0,
+		xuBau:0,
+		xuCa:0,
+		xuCua:0,
+		xuGa:0,
+		xuHuou:0,
+		xuTom:0,
 	};
 
 	BauCua_phien.findOne({}, 'id', {sort:{'_id':-1}}, function(err, last) {
@@ -76,8 +76,8 @@ let thongtin_thanhtoan = function thongtin_thanhtoan(dice = null){
 			}
 		}
 		let phien = io.BauCua_phien-1;
-		BauCua_temp.updateOne({}, {$inc: updateLog}).exec();
-		BauCua_cuoc.find({phien: phien}, {}, function(err, list) {
+		BauCua_temp.updateOne({}, {$inc:updateLog}).exec();
+		BauCua_cuoc.find({phien:phien}, {}, function(err, list) {
 			if (list.length) {
 				Promise.all(list.map(function(cuoc){
 					let TienThang = 0; // Số tiền thắng (chưa tính gốc)
@@ -176,7 +176,7 @@ let thongtin_thanhtoan = function thongtin_thanhtoan(dice = null){
 						update['redPlay'] = updateGame['redPlay'] = tongDat;
 
 						UserInfo.updateOne({id:cuoc.uid}, {$inc:update}).exec();
-						BauCua_user.updateOne({uid: cuoc.uid}, {$inc:updateGame}).exec();
+						BauCua_user.updateOne({uid:cuoc.uid}, {$inc:updateGame}).exec();
 					}else{
 						//XU
 						if (TongThang > 0) {
@@ -194,14 +194,14 @@ let thongtin_thanhtoan = function thongtin_thanhtoan(dice = null){
 						update['xuPlay'] = updateGame['xuPlay'] = tongDat;
 
 						UserInfo.updateOne({id:cuoc.uid}, {$inc:update}).exec();
-						BauCua_user.updateOne({uid: cuoc.uid}, {$inc:updateGame}).exec();
+						BauCua_user.updateOne({uid:cuoc.uid}, {$inc:updateGame}).exec();
 					}
 					if(void 0 !== io.users[cuoc.uid]){
 						let status = {};
 						if (TongThang > 0) {
-							status = {mini:{baucua:{status:{win:true, bet: TongThang, thuong: thuong}}}};
+							status = {mini:{baucua:{status:{win:true, bet:TongThang, thuong:thuong}}}};
 						}else{
-							status = {mini:{baucua:{status:{win:false, bet: TongThua}}}};
+							status = {mini:{baucua:{status:{win:false, bet:TongThua}}}};
 						}
 						io.users[cuoc.uid].forEach(function(client){
 							client.red(status);
@@ -220,7 +220,7 @@ let thongtin_thanhtoan = function thongtin_thanhtoan(dice = null){
 					tongDat    = null;
 					update     = null;
 					updateGame = null;
-					return {users: cuoc.name, bet: TienThang, red: cuoc.red};
+					return {users:cuoc.name, bet:TienThang, red:cuoc.red};
 				}))
 				.then(function(arrayOfResults) {
 					heSo  = null;
@@ -258,12 +258,12 @@ let thongtin_thanhtoan = function thongtin_thanhtoan(dice = null){
 		Object.values(io.users).forEach(function(users){
 			users.forEach(function(client){
 				if (client.gameEvent !== void 0 && client.gameEvent.viewBauCua !== void 0 && client.gameEvent.viewBauCua){
-					client.red({mini:{baucua:{data: io.baucua.info}}});
+					client.red({mini:{baucua:{data:io.baucua.info}}});
 				}
 			});
 		});
 
-		let admin_data = {baucua:{info: io.baucua.infoAdmin, ingame: io.baucua.ingame}};
+		let admin_data = {baucua:{info:io.baucua.infoAdmin, ingame:io.baucua.ingame}};
 		Object.values(io.admins).forEach(function(admin){
 			admin.forEach(function(client){
 				if (client.gameEvent !== void 0 && client.gameEvent.viewBauCua !== void 0 && client.gameEvent.viewBauCua){
@@ -289,9 +289,9 @@ let playGame = function(){
 					try {
 						bcjs = JSON.parse(bcjs);
 
-						let dice1 = bcjs[0] == 6 ? (Math.random()*6)>>0 : bcjs[0];
-						let dice2 = bcjs[1] == 6 ? (Math.random()*6)>>0 : bcjs[1];
-						let dice3 = bcjs[2] == 6 ? (Math.random()*6)>>0 : bcjs[2];
+						let dice1 = bcjs[0] == 6 ? (Math.random()*6)>>0 :bcjs[0];
+						let dice2 = bcjs[1] == 6 ? (Math.random()*6)>>0 :bcjs[1];
+						let dice3 = bcjs[2] == 6 ? (Math.random()*6)>>0 :bcjs[2];
 
 						bcjs[0]     = 6;
 						bcjs[1]     = 6;
@@ -305,11 +305,11 @@ let playGame = function(){
 							if (!!create) {
 								io.BauCua_phien = create.id+1;
 								thongtin_thanhtoan([dice1, dice2, dice3]);
-								io.sendAllUser({mini: {baucua: {finish:{dices:[create.dice1, create.dice2, create.dice3], phien:create.id}}}});
+								io.sendAllUser({mini:{baucua:{finish:{dices:[create.dice1, create.dice2, create.dice3], phien:create.id}}}});
 
 								Object.values(io.admins).forEach(function(admin){
 									admin.forEach(function(client){
-										client.red({baucua: {finish: true, dices:[create.dice1, create.dice2, create.dice3]}});
+										client.red({baucua:{finish:true, dices:[create.dice1, create.dice2, create.dice3]}});
 									});
 								});
 							}
@@ -319,32 +319,32 @@ let playGame = function(){
 				});
 				io.baucua.ingame = [];
 				io.baucua.info = {
-					redBau: 0,
-					redCa: 0,
-					redCua: 0,
-					redGa: 0,
-					redHuou: 0,
-					redTom: 0,
-					xuBau: 0,
-					xuCa: 0,
-					xuCua: 0,
-					xuGa: 0,
-					xuHuou: 0,
-					xuTom: 0,
+					redBau:0,
+					redCa:0,
+					redCua:0,
+					redGa:0,
+					redHuou:0,
+					redTom:0,
+					xuBau:0,
+					xuCa:0,
+					xuCua:0,
+					xuGa:0,
+					xuHuou:0,
+					xuTom:0,
 				};
 				io.baucua.infoAdmin = {
-					redBau: 0,
-					redCa: 0,
-					redCua: 0,
-					redGa: 0,
-					redHuou: 0,
-					redTom: 0,
-					xuBau: 0,
-					xuCa: 0,
-					xuCua: 0,
-					xuGa: 0,
-					xuHuou: 0,
-					xuTom: 0,
+					redBau:0,
+					redCa:0,
+					redCua:0,
+					redGa:0,
+					redHuou:0,
+					redTom:0,
+					xuBau:0,
+					xuCa:0,
+					xuCua:0,
+					xuGa:0,
+					xuHuou:0,
+					xuTom:0,
 				};
 
 				fs.readFile('./config/baucua.json', 'utf8', (errcf, bccf) => {
@@ -352,7 +352,7 @@ let playGame = function(){
 						bccf = JSON.parse(bccf);
 						if (bccf.bot) {
 							// lấy danh sách tài khoản bot
-							UserInfo.find({type: true}, 'id name', function(err, blist){
+							UserInfo.find({type:true}, 'id name', function(err, blist){
 								if (blist.length) {
 									Promise.all(blist.map(function(buser){
 										buser = buser._doc;

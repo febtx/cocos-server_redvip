@@ -14,4 +14,6 @@ let Schema = new mongoose.Schema({
 	betwin:   {type: Number,  default: 0},	      // Tiền thắng được
 });
 
+Schema.index({uid:1, phien:1, taixiu:1, red:1}, {background: true});
+
 module.exports = mongoose.model('TaiXiu_one', Schema);
