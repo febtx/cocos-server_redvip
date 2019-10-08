@@ -41,6 +41,9 @@ let LongLan = require('./game/longlan');
 let reg     = require('./game/reg');
 
 
+// Xoc Xoc
+let XocXoc     = require('./game/XocXoc');
+
 module.exports = function(client, data){
 	if (!!data.mini_poker) {
 		mini_poker(client, data.mini_poker);
@@ -74,8 +77,13 @@ module.exports = function(client, data){
 	if (!!data.longlan) {
 		LongLan(client, data.longlan);
 	}
+
 	if (!!data.reg) {
 		reg(client, data.reg);
+	}
+
+	if (!!data.xocxoc) {
+		XocXoc(client, data.xocxoc);
 	}
 
 	client = null;

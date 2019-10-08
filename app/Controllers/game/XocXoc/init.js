@@ -1,4 +1,6 @@
 
+let fs           = require('fs');
+
 let XocXoc_phien = require('../../../Models/XocXoc/XocXoc_phien');
 let XocXoc_cuoc  = require('../../../Models/XocXoc/XocXoc_cuoc');
 let XocXoc_user  = require('../../../Models/XocXoc/XocXoc_user');
@@ -67,7 +69,7 @@ XocXoc.prototype.play = function(){
 	console.log('play');
 
 	//this.time = 41;
-	self.time = 15;
+	this.time = 15;
 
 	let self = this;
 
@@ -117,14 +119,14 @@ XocXoc.prototype.play = function(){
 						let red3 = xocxocjs.red3 == 2 ? !!((Math.random()*2)>>0) : xocxocjs.red3;
 						let red4 = xocxocjs.red4 == 2 ? !!((Math.random()*2)>>0) : xocxocjs.red4;
 
-						xocxocjs.red1   = 2;
-						xocxocjs.red2   = 2;
-						xocxocjs.red3   = 2;
-						xocxocjs.red4   = 2;
+						xocxocjs.red1 = 2;
+						xocxocjs.red2 = 2;
+						xocxocjs.red3 = 2;
+						xocxocjs.red4 = 2;
 
 						fs.writeFile('./data/xocxoc.json', JSON.stringify(xocxocjs), function(err){});
 
-						XocXoc_phien.create({'red1':red1, 'red2':red2, 'red3':red3, , 'red3':red4, 'time':new Date()}, function(err, create){
+						XocXoc_phien.create({'red1':red1, 'red2':red2, 'red3':red3, 'red4':red4, 'time':new Date()}, function(err, create){
 							if (!!create) {
 								self.phien = create.id+1;
 								self.thanhtoan([red1, red2, red3, red4]);

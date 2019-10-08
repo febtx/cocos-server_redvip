@@ -9,5 +9,6 @@ module.exports = function(client){
 		xocxoc.clients[client.UID] = client;
 		client.red({toGame:'XocXoc'});
 	}
+	xocxoc = null;
 	client = null;
 };
