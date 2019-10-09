@@ -131,7 +131,6 @@ XocXoc.prototype.play = function(){
 								self.phien = create.id+1;
 								self.thanhtoan([red1, red2, red3, red4]);
 								self.timeInterval = null;
-								self              = null;
 								xocxocjs          = null;
 								Object.values(self.clients).forEach(function(client){
 									client.red({xocxoc:{phien:create.id, finish:[red1, red2, red3, red4]}});
@@ -141,6 +140,7 @@ XocXoc.prototype.play = function(){
 										client.red({xocxoc:{finish:true, dices:[red1, red2, red3, red4]}});
 									});
 								});
+								self = null;
 							}
 						});
 					} catch (error) {
