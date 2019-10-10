@@ -68,47 +68,20 @@ XocXoc.prototype.play = function(){
 	// chạy thời gian
 	console.log('play');
 
-	//this.time = 41;
-	this.time = 15;
+	this.time = 41;
 
 	let self = this;
 
 	this.timeInterval = setInterval(function(){
-		self.time--;
-		if (self.time <= 60) {
+		console.log(self.time);
+		if (self.time < 30) {
 			if (self.time < 0) {
 				clearInterval(self.timeInterval);
 				self.time = 0;
 
-				self.ingame = [];
+				self.resetData();
 
-				self.data.red.chan =   0;
-				self.data.red.le =     0;
-				self.data.red.red3 =   0;
-				self.data.red.red4 =   0;
-				self.data.red.white3 = 0;
-				self.data.red.white4 = 0;
-
-				self.data.xu.chan =   0;
-				self.data.xu.le =     0;
-				self.data.xu.red3 =   0;
-				self.data.xu.red4 =   0;
-				self.data.xu.white3 = 0;
-				self.data.xu.white4 = 0;
-
-				self.dataAdmin.red.chan =   0;
-				self.dataAdmin.red.le =     0;
-				self.dataAdmin.red.red3 =   0;
-				self.dataAdmin.red.red4 =   0;
-				self.dataAdmin.red.white3 = 0;
-				self.dataAdmin.red.white4 = 0;
-
-				self.dataAdmin.xu.chan =   0;
-				self.dataAdmin.xu.le =     0;
-				self.dataAdmin.xu.red3 =   0;
-				self.dataAdmin.xu.red4 =   0;
-				self.dataAdmin.xu.white3 = 0;
-				self.dataAdmin.xu.white4 = 0;
+				self.resetDataAdmin();
 
 				fs.readFile('./data/xocxoc.json', 'utf8', (errjs, xocxocjs) => {
 					try {
@@ -193,6 +166,7 @@ XocXoc.prototype.play = function(){
 				*/
 			}
 		}
+		self.time--;
 	}, 1000);
 	return void 0;
 }
@@ -417,5 +391,39 @@ XocXoc.prototype.thanhtoan = function(dice = null){
 	*/
 	}
 }
+
+XocXoc.prototype.resetData = function(){
+	this.data.red.chan =   0;
+	this.data.red.le =     0;
+	this.data.red.red3 =   0;
+	this.data.red.red4 =   0;
+	this.data.red.white3 = 0;
+	this.data.red.white4 = 0;
+
+	this.data.xu.chan =   0;
+	this.data.xu.le =     0;
+	this.data.xu.red3 =   0;
+	this.data.xu.red4 =   0;
+	this.data.xu.white3 = 0;
+	this.data.xu.white4 = 0;
+};
+
+XocXoc.prototype.resetDataAdmin = function(){
+	this.ingame = [];
+
+	this.dataAdmin.red.chan =   0;
+	this.dataAdmin.red.le =     0;
+	this.dataAdmin.red.red3 =   0;
+	this.dataAdmin.red.red4 =   0;
+	this.dataAdmin.red.white3 = 0;
+	this.dataAdmin.red.white4 = 0;
+
+	this.dataAdmin.xu.chan =   0;
+	this.dataAdmin.xu.le =     0;
+	this.dataAdmin.xu.red3 =   0;
+	this.dataAdmin.xu.red4 =   0;
+	this.dataAdmin.xu.white3 = 0;
+	this.dataAdmin.xu.white4 = 0;
+};
 
 module.exports = XocXoc;
