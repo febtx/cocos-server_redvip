@@ -9,10 +9,10 @@ let random = function(){
 	let a = (Math.random()*35)>>0;
 	if (a == 34) {
 		// 34
-		return (Math.floor(Math.random()*(500-450+1))+450)*1000;
+		return (Math.floor(Math.random()*(50-45+1))+45)*10000;
 	}else if (a >= 32 && a < 34) {
 		// 32 33
-		return (Math.floor(Math.random()*(450-100+1))+100)*1000;
+		return (Math.floor(Math.random()*(45-10+1))+10)*10000;
 	}else if (a >= 30 && a < 32) {
 		// 30 31 32
 		return (Math.floor(Math.random()*(100-20+1))+20)*1000;

@@ -1,11 +1,11 @@
 
-const HU                 = require('../../../Models/HU');
+let HU                 = require('../../../Models/HU');
 
-const VuongQuocRed_red   = require('../../../Models/VuongQuocRed/VuongQuocRed_red');
-const VuongQuocRed_xu    = require('../../../Models/VuongQuocRed/VuongQuocRed_xu');
-const VuongQuocRed_users = require('../../../Models/VuongQuocRed/VuongQuocRed_users');
+let VuongQuocRed_red   = require('../../../Models/VuongQuocRed/VuongQuocRed_red');
+let VuongQuocRed_xu    = require('../../../Models/VuongQuocRed/VuongQuocRed_xu');
+let VuongQuocRed_users = require('../../../Models/VuongQuocRed/VuongQuocRed_users');
 
-const UserInfo           = require('../../../Models/UserInfo');
+let UserInfo           = require('../../../Models/UserInfo');
 
 function onSelectBox(client, box){
 	box = box>>0;
@@ -13,21 +13,21 @@ function onSelectBox(client, box){
 		client.VuongQuocRed.bonus !== null &&
 		client.VuongQuocRed.bonusL > 0)
 	{
-		var index = box-1;
+		let index = box-1;
 		if (void 0 !== client.VuongQuocRed.bonus[index]) {
 			if (!client.VuongQuocRed.bonus[index].isOpen) {
 				client.VuongQuocRed.bonusL -= 1;
 				client.VuongQuocRed.bonus[index].isOpen = true;
 
-				var bet = client.VuongQuocRed.bonus[index].bet;
+				let bet = client.VuongQuocRed.bonus[index].bet;
 				client.VuongQuocRed.bonusWin += bet;
 				client.red({VuongQuocRed:{bonus:{bonus: client.VuongQuocRed.bonusL, box: index, bet: bet}}});
 				if (!client.VuongQuocRed.bonusL) {
-					var betWin = client.VuongQuocRed.bonusWin*client.VuongQuocRed.bonusX;
+					let betWin = client.VuongQuocRed.bonusWin*client.VuongQuocRed.bonusX;
 
-					var uInfo    = {};
-					var gInfo    = {};
-					var huUpdate = {};
+					let uInfo    = {};
+					let gInfo    = {};
+					let huUpdate = {};
 
 					if (client.VuongQuocRed.red) {
 						huUpdate.redWin = betWin;
@@ -41,7 +41,7 @@ function onSelectBox(client, box){
 						uInfo.xuWin    = betWin;
 						gInfo.winXu    = betWin;
 
-						var thuong = (betWin*0.039589)>>0;
+						let thuong = (betWin*0.039589)>>0;
 						uInfo.red      = thuong;
 						uInfo.thuong   = thuong;
 						gInfo.thuong   = thuong;
@@ -60,10 +60,13 @@ function onSelectBox(client, box){
 							}else{
 								client.red({VuongQuocRed:{bonus:{win: betWin}}, user:{xu:user.xu*1+betWin}});
 							}
+							client = null;
 						}, 700);
 					});
 					HU.updateOne({game:'vuongquocred', type:client.VuongQuocRed.bet, red:client.VuongQuocRed.red}, {$inc:huUpdate}).exec();
 					VuongQuocRed_users.updateOne({'uid':client.UID}, {$inc:gInfo}).exec();
+				}else{
+					client = null;
 				}
 			}
 		}

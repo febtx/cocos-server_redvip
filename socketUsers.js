@@ -129,17 +129,11 @@ module.exports = function(ws, redT){
 		if (this.UID !== null && void 0 !== this.redT.users[this.UID]) {
 			if (this.redT.users[this.UID].length === 1 && this.redT.users[this.UID][0] === this) {
 				delete this.redT.users[this.UID];
-				if (this.redT) {
-					delete this.redT;
-				}
 			}else{
 				var self = this;
 				this.redT.users[this.UID].forEach(function(obj, index){
 					if (obj === self) {
 						self.redT.users[self.UID].splice(index, 1);
-						if (self.redT) {
-							delete self.redT;
-						}
 					}
 				});
 			}
