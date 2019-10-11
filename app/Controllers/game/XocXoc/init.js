@@ -408,10 +408,17 @@ XocXoc.prototype.resetData = function(){
 	this.data.xu.red4 =   0;
 	this.data.xu.white3 = 0;
 	this.data.xu.white4 = 0;
+
+	this.chip['1000'] = 0;
+	this.chip['10000'] = 0;
+	this.chip['50000'] = 0;
+	this.chip['100000'] = 0;
+	this.chip['1000000'] = 0;
 };
 
 XocXoc.prototype.resetDataAdmin = function(){
-	this.ingame = [];
+	this.ingame.red = {};
+	this.ingame.xu  = {};
 
 	this.dataAdmin.red.chan =   0;
 	this.dataAdmin.red.le =     0;
