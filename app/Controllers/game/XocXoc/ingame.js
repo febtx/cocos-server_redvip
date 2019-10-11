@@ -12,8 +12,6 @@ module.exports = function(client){
 		data.time   = xocxoc.time;
 		data.data   = xocxoc.data;
 		data.client = Object.keys(xocxoc.clients).length;
-		// 48 log
-		// 20 chat
 
 		var active1 = new Promise((resolve, reject) => {
 			XocXoc_phien.find({}, 'red1 red2 red3 red4', {sort:{'_id':-1}, limit:48}, function(err, logs) {
@@ -58,15 +56,23 @@ module.exports = function(client){
 			data.logs  = values[0];
 			data.chats = values[1];
 			data.cuoc  = values[2];
+			data.me = {};
+			if (xocxoc.ingame.red[client.profile.name]) {
+				data.me.red = xocxoc.ingame.red[client.profile.name]
+			}
+			if (xocxoc.ingame.xu[client.profile.name]) {
+				data.me.xu = xocxoc.ingame.xu[client.profile.name]
+			}
 			client.red({xocxoc:{ingame:data}});
 			values = null;
 			data   = null;
 			client = null;
+			xocxoc = null;
 		});
 	}else{
 		// trở lại màn hình trang chủ
 		client.red({toGame:'MainGame'});
 		client = null;
+		xocxoc = null;
 	}
-	xocxoc = null;
 };

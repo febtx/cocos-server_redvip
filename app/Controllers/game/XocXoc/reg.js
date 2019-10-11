@@ -8,6 +8,12 @@ module.exports = function(client){
 		// Vào Phòng chơi
 		xocxoc.clients[client.UID] = client;
 		client.red({toGame:'XocXoc'});
+
+		Object.values(xocxoc.clients).forEach(function(users){
+			if (client !== client) {
+				users.red({xocxoc:{ingame:{client:Object.keys(xocxoc.clients).length}}});
+			}
+		});
 	}
 	xocxoc = null;
 	client = null;

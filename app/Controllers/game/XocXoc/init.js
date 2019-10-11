@@ -152,8 +152,8 @@ XocXoc.prototype.play = function(){
 				});
 				*/
 			}else{
-				/**
 				self.thanhtoan();
+				/**
 				if (!!botList.length && self.time > 2) {
 					let userCuoc = (Math.random()*5)>>0;
 					for (let i = 0; i < userCuoc; i++) {
@@ -373,15 +373,12 @@ XocXoc.prototype.thanhtoan = function(dice = null){
 			}
 		});
 	}else{
-		/**
-		Object.values(self.io.users).forEach(function(users){
-			users.forEach(function(client){
-				if (client.gameEvent !== void 0 && client.gameEvent.viewBauCua !== void 0 && client.gameEvent.viewBauCua){
-					client.red({mini:{baucua:{data:io.baucua.info}}});
-				}
-			});
+		// console.log(self.data);
+		Object.values(this.clients).forEach(function(client){
+			client.red({xocxoc:{client:self.data}});
 		});
 
+		/**
 		let admin_data = {baucua:{info:io.baucua.infoAdmin, ingame:io.baucua.ingame}};
 		Object.values(io.admins).forEach(function(admin){
 			admin.forEach(function(client){
@@ -390,7 +387,8 @@ XocXoc.prototype.thanhtoan = function(dice = null){
 				}
 			});
 		});
-	*/
+		*/
+		self = null;
 	}
 }
 

@@ -37,14 +37,6 @@ module.exports = function(client, data){
 						if (checkOne){
 							checkOne[box] += cuoc;
 							checkOne.save();
-
-							Object.values(xocxoc.clients).forEach(function(users){
-								if (client !== users) {
-									users.red({xocxoc:{chip:{box:box, cuoc:cuoc}}});
-								}else{
-									users.red({xocxoc:{mechip:{box:box, cuoc:cuoc}}, user:{red:user.red, xu:user.xu}});
-								}
-							});
 						}else{
 							var create = {uid:client.UID,name: client.profile.name, phien:xocxoc.phien, red:red, time: new Date()};
 							create[box] = cuoc;
@@ -84,7 +76,7 @@ module.exports = function(client, data){
 							if (client !== users) {
 								users.red({xocxoc:{chip:{box:box, cuoc:cuoc}}});
 							}else{
-								users.red({xocxoc:{mechip:{box:box, cuoc:cuoc}, me:me_cuoc}, user:{red:user.red, xu:user.xu}});
+								users.red({xocxoc:{mechip:{box:box, cuoc:data.cuoc}, me:me_cuoc}, user:{red:user.red, xu:user.xu}});
 							}
 						});
 
