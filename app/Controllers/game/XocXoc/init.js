@@ -15,7 +15,9 @@ let XocXoc = function(io){
 	this.timeInterval = null;
 	this.phien        = 1;
 
-	this.ingame = [];
+	this.ingame = {red:{}, xu:{}};
+
+	this.chip = {'1000':0, '10000':0, '50000':0, '100000':0, '1000000':0};
 
 	this.data = {
 		'red': {
@@ -68,7 +70,7 @@ XocXoc.prototype.play = function(){
 	// chạy thời gian
 	console.log('play');
 
-	this.time = 41;
+	this.time = 43;
 
 	let self = this;
 
