@@ -210,6 +210,7 @@ XocXoc.prototype.thanhtoan = function(dice = null){
 		XocXoc_cuoc.find({phien:phien}, {}, function(err, list) {
 			if (list.length) {
 				Promise.all(list.map(function(cuoc){
+					console.log(cuoc);
 					let tongDat   = cuoc.chan+cuoc.le+cuoc.red3+cuoc.red4+cuoc.white3+cuoc.white4;
 					let TienThang = 0; // Số tiền thắng (chưa tính gốc)
 					let TongThua  = 0; // Số tiền thua
@@ -236,7 +237,7 @@ XocXoc.prototype.thanhtoan = function(dice = null){
 					}
 					// 3 đỏ
 					if (cuoc.red3 > 0) {
-						if (!red3) {
+						if (red3) {
 							TienThang += cuoc.red3;
 							TongThang += cuoc.red3*4;
 						}else{
@@ -245,7 +246,7 @@ XocXoc.prototype.thanhtoan = function(dice = null){
 					}
 					// 4 đỏ
 					if (cuoc.red4 > 0) {
-						if (!red4) {
+						if (red4) {
 							TienThang += cuoc.red4;
 							TongThang += cuoc.red4*11;
 						}else{
@@ -254,7 +255,7 @@ XocXoc.prototype.thanhtoan = function(dice = null){
 					}
 					// 3 trắng
 					if (cuoc.white3 > 0) {
-						if (!white3) {
+						if (white3) {
 							TienThang += cuoc.white3;
 							TongThang += cuoc.white3*4;
 						}else{
@@ -263,7 +264,7 @@ XocXoc.prototype.thanhtoan = function(dice = null){
 					}
 					// 4 trắng
 					if (cuoc.white4 > 0) {
-						if (!white4) {
+						if (white4) {
 							TienThang += cuoc.white4;
 							TongThang += cuoc.white4*11;
 						}else{
