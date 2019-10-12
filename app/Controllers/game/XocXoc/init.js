@@ -313,16 +313,14 @@ XocXoc.prototype.thanhtoan = function(dice = null){
 						UserInfo.updateOne({id:cuoc.uid}, {$inc:update}).exec();
 						XocXoc_user.updateOne({uid:cuoc.uid}, {$inc:updateGame}).exec();
 					}
-					if(void 0 !== self.io.users[cuoc.uid]){
+					if(void 0 !== self.clients[cuoc.uid]){
 						let status = {};
 						if (TongThang > 0) {
 							status = {xocxoc:{status:{win:true, bet:TongThang, thuong:thuong}}};
 						}else{
 							status = {xocxoc:{status:{win:false, bet:TongThua}}};
 						}
-						self.io.users[cuoc.uid].forEach(function(client){
-							client.red(status);
-						});
+						self.clients[cuoc.uid].red(status);
 						status = null;
 					}
 
