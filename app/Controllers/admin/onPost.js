@@ -1,22 +1,23 @@
 
-var Admin    = require('./Admin');
-var Users    = require('./panel/Users');
-var NapThe   = require('./panel/NapThe');
-var MuaThe   = require('./panel/MuaThe');
-var Shop     = require('./panel/Shop');
-var GiftCode = require('./panel/GiftCode');
-var HeThong  = require('./panel/HeThong');
+let Admin    = require('./Admin');
+let Users    = require('./panel/Users');
+let NapThe   = require('./panel/NapThe');
+let MuaThe   = require('./panel/MuaThe');
+let Shop     = require('./panel/Shop');
+let GiftCode = require('./panel/GiftCode');
+let HeThong  = require('./panel/HeThong');
 
-var TaiXiu       = require('./game/taixiu');
-var BauCua       = require('./game/baucua');
-var MiniPoker    = require('./game/mini_poker');
-var BigBabol     = require('./game/big_babol');
-var VuongQuocRed = require('./game/vq_red');
-var mini3cay     = require('./game/mini3cay');
-var angrybirds   = require('./game/angrybirds');
+let TaiXiu       = require('./game/taixiu');
+let BauCua       = require('./game/baucua');
+let MiniPoker    = require('./game/mini_poker');
+let BigBabol     = require('./game/big_babol');
+let VuongQuocRed = require('./game/vq_red');
+let mini3cay     = require('./game/mini3cay');
+let angrybirds   = require('./game/angrybirds');
+let XocXoc       = require('./game/xocxoc');
 
-var candy        = require('./game/candy');
-var longlan      = require('./game/longlan');
+let candy        = require('./game/candy');
+let longlan      = require('./game/longlan');
 
 module.exports = function(client, data) {
 	if (!!data) {
@@ -51,6 +52,9 @@ module.exports = function(client, data) {
 		}
 		if (!!data.longlan) {
 			longlan(client, data.longlan)
+		}
+		if (!!data.xocxoc) {
+			XocXoc(client, data.xocxoc)
 		}
 		// End Game
 

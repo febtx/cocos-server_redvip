@@ -119,7 +119,7 @@ XocXoc.prototype.play = function(){
 								});
 								Object.values(self.io.admins).forEach(function(admin){
 									admin.forEach(function(client){
-										client.red({xocxoc:{finish:true, dices:[red1, red2, red3, red4]}});
+										client.red({xocxoc:{finish:[red1, red2, red3, red4]}});
 									});
 								});
 								self = null;
@@ -384,16 +384,16 @@ XocXoc.prototype.thanhtoan = function(dice = null){
 			client.red({xocxoc:{client:self.data}});
 		});
 
-		/**
-		let admin_data = {baucua:{info:io.baucua.infoAdmin, ingame:io.baucua.ingame}};
-		Object.values(io.admins).forEach(function(admin){
+		///**
+		let admin_data = {xocxoc:{info:this.dataAdmin, ingame:this.ingame}};
+		Object.values(this.io.admins).forEach(function(admin){
 			admin.forEach(function(client){
-				if (client.gameEvent !== void 0 && client.gameEvent.viewBauCua !== void 0 && client.gameEvent.viewBauCua){
+				if (client.gameEvent !== void 0 && client.gameEvent.viewXocXoc !== void 0 && client.gameEvent.viewXocXoc){
 					client.red(admin_data);
 				}
 			});
 		});
-		*/
+		//*/
 		self = null;
 	}
 }
