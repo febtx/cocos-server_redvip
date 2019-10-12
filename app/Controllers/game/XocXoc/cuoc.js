@@ -31,7 +31,7 @@ module.exports = function(client, data){
 
 					let xocxoc = client.redT.game.xocxoc;
 
-					xocxoc.chip[cuoc] += 1;
+					xocxoc.chip[box][cuoc] += 1;
 
 					XocXoc_cuoc.findOne({uid:client.UID, phien:xocxoc.phien, red:red}, function(err, checkOne) {
 						if (checkOne){

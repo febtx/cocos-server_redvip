@@ -10,7 +10,7 @@ module.exports = function(client){
 		client.red({toGame:'XocXoc'});
 
 		Object.values(xocxoc.clients).forEach(function(users){
-			if (client !== client) {
+			if (client !== users) {
 				users.red({xocxoc:{ingame:{client:Object.keys(xocxoc.clients).length}}});
 			}
 		});

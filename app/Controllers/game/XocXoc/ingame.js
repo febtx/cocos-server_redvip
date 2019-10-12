@@ -11,6 +11,7 @@ module.exports = function(client){
 		let data = {};
 		data.time   = xocxoc.time;
 		data.data   = xocxoc.data;
+		data.chip   = xocxoc.chip;
 		data.client = Object.keys(xocxoc.clients).length;
 
 		var active1 = new Promise((resolve, reject) => {

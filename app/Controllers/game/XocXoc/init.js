@@ -17,7 +17,14 @@ let XocXoc = function(io){
 
 	this.ingame = {red:{}, xu:{}};
 
-	this.chip = {'1000':0, '10000':0, '50000':0, '100000':0, '1000000':0};
+	this.chip = {
+		'chan':   {'1000':0, '10000':0, '50000':0, '100000':0, '1000000':0},
+		'le':     {'1000':0, '10000':0, '50000':0, '100000':0, '1000000':0},
+		'red3':   {'1000':0, '10000':0, '50000':0, '100000':0, '1000000':0},
+		'red4':   {'1000':0, '10000':0, '50000':0, '100000':0, '1000000':0},
+		'white3': {'1000':0, '10000':0, '50000':0, '100000':0, '1000000':0},
+		'white4': {'1000':0, '10000':0, '50000':0, '100000':0, '1000000':0},
+	};
 
 	this.data = {
 		'red': {
@@ -407,11 +414,41 @@ XocXoc.prototype.resetData = function(){
 	this.data.xu.white3 = 0;
 	this.data.xu.white4 = 0;
 
-	this.chip['1000'] = 0;
-	this.chip['10000'] = 0;
-	this.chip['50000'] = 0;
-	this.chip['100000'] = 0;
-	this.chip['1000000'] = 0;
+	this.chip.chan['1000']    = 0;
+	this.chip.chan['10000']   = 0;
+	this.chip.chan['50000']   = 0;
+	this.chip.chan['100000']  = 0;
+	this.chip.chan['1000000'] = 0;
+
+	this.chip.le['1000']    = 0;
+	this.chip.le['10000']   = 0;
+	this.chip.le['50000']   = 0;
+	this.chip.le['100000']  = 0;
+	this.chip.le['1000000'] = 0;
+
+	this.chip.red3['1000']    = 0;
+	this.chip.red3['10000']   = 0;
+	this.chip.red3['50000']   = 0;
+	this.chip.red3['100000']  = 0;
+	this.chip.red3['1000000'] = 0;
+
+	this.chip.red4['1000']    = 0;
+	this.chip.red4['10000']   = 0;
+	this.chip.red4['50000']   = 0;
+	this.chip.red4['100000']  = 0;
+	this.chip.red4['1000000'] = 0;
+
+	this.chip.white3['1000']    = 0;
+	this.chip.white3['10000']   = 0;
+	this.chip.white3['50000']   = 0;
+	this.chip.white3['100000']  = 0;
+	this.chip.white3['1000000'] = 0;
+
+	this.chip.white4['1000']    = 0;
+	this.chip.white4['10000']   = 0;
+	this.chip.white4['50000']   = 0;
+	this.chip.white4['100000']  = 0;
+	this.chip.white4['1000000'] = 0;
 };
 
 XocXoc.prototype.resetDataAdmin = function(){
