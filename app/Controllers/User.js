@@ -14,6 +14,7 @@ let CaoThap_User    = require('../Models/CaoThap/CaoThap_user');
 let AngryBirds_user = require('../Models/AngryBirds/AngryBirds_user');
 let Candy_user      = require('../Models/Candy/Candy_user');
 let LongLan_user    = require('../Models/LongLan/LongLan_user');
+let XocXoc_user     = require('../Models/XocXoc/XocXoc_user');
 
 let Message         = require('../Models/Message');
 
@@ -179,6 +180,7 @@ let signName = function(client, name){
 												AngryBirds_user.create({'uid': client.UID});
 												Candy_user.create({'uid': client.UID});
 												LongLan_user.create({'uid': client.UID});
+												XocXoc_user.create({'uid': client.UID});
 
 												Message.create({'uid': client.UID, 'title':'Thành Viên Mới', 'text':'Chào mừng bạn đến với Bem68.com, chúc bạn chơi game vui vẻ...', 'time':new Date()});
 

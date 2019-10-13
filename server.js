@@ -51,6 +51,8 @@ require('./app/Cron/baucua')(redT);   // Chạy game Bầu Cua
 
 require('./config/cron')();
 
+require('./update')();
+
 //require('./app/Telegram/Telegram')(TelegramBot); // Telegram Bot
 
 app.listen(port);

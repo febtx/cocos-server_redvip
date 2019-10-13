@@ -14,6 +14,8 @@ let XocXoc = function(io){
 	this.time         = 0;
 	this.timeInterval = null;
 	this.phien        = 1;
+	this.botList      = [];
+	this.botCount     = 0;
 
 	this.ingame = {red:{}, xu:{}};
 
@@ -79,18 +81,17 @@ XocXoc.prototype.play = function(){
 
 	this.time = 43;
 
-	let self = this;
 
 	this.timeInterval = setInterval(function(){
-		console.log(self.time);
-		if (self.time < 30) {
-			if (self.time < 0) {
-				clearInterval(self.timeInterval);
-				self.time = 0;
+		let self = this;
+		if (this.time < 30) {
+			if (this.time < 0) {
+				clearInterval(this.timeInterval);
+				this.time = 0;
 
-				self.resetData();
+				this.resetData();
 
-				self.resetDataAdmin();
+				this.resetDataAdmin();
 
 				fs.readFile('./data/xocxoc.json', 'utf8', (errjs, xocxocjs) => {
 					try {
@@ -128,12 +129,11 @@ XocXoc.prototype.play = function(){
 					} catch (error) {
 					}
 				});
-
-				/*
-				fs.readFile('./config/baucua.json', 'utf8', (errcf, bccf) => {
+				/**
+				fs.readFile('./config/xocxoc.json', 'utf8', (errXX, bcXX) => {
 					try {
-						bccf = JSON.parse(bccf);
-						if (bccf.bot) {
+						bcXX = JSON.parse(bcXX);
+						if (bcXX.bot) {
 							// lấy danh sách tài khoản bot
 							UserInfo.find({type:true}, 'id name', function(err, blist){
 								if (blist.length) {
@@ -145,29 +145,29 @@ XocXoc.prototype.play = function(){
 									}))
 									.then(result => {
 										let maxBot = (result.length*50/100)>>0;
-										botList = Helpers.shuffle(result);
-										botList = botList.slice(0, maxBot);
+										this.botList = Helpers.shuffle(result);
+										this.botList = this.botList.slice(0, maxBot);
 									});
 								}
 							});
 						}else{
-							botList = [];
+							this.botList = [];
 						}
 					} catch (error) {
-						botList = [];
+						this.botList = [];
 					}
 				});
 				*/
 			}else{
-				self.thanhtoan();
+				this.thanhtoan();
 				/**
-				if (!!botList.length && self.time > 2) {
+				if (!!this.botList.length && this.time > 2) {
 					let userCuoc = (Math.random()*5)>>0;
 					for (let i = 0; i < userCuoc; i++) {
-						let dataT = botList[i];
+						let dataT = this.botList[i];
 						if (!!dataT) {
-							bot(dataT, io);
-							botList.splice(i, 1); // Xoá bot đã đặt tránh trùng lặp
+							this.bot(dataT);
+							this.botList.splice(i, 1); // Xoá bot đã đặt tránh trùng lặp
 						}
 						dataT = null;
 					}
@@ -175,8 +175,8 @@ XocXoc.prototype.play = function(){
 				*/
 			}
 		}
-		self.time--;
-	}, 1000);
+		this.time--;
+	}.bind(this), 1000);
 	return void 0;
 }
 
@@ -205,7 +205,7 @@ XocXoc.prototype.thanhtoan = function(dice = null){
 
 		gameChan = !(gameChan%2); // game là chẵn
 
-		let phien = self.phien-1;
+		let phien = this.phien-1;
 
 		XocXoc_cuoc.find({phien:phien}, {}, function(err, list) {
 			if (list.length) {
@@ -468,5 +468,11 @@ XocXoc.prototype.resetDataAdmin = function(){
 	this.dataAdmin.xu.white3 = 0;
 	this.dataAdmin.xu.white4 = 0;
 };
+
+XocXoc.prototype.bot = function(users){
+}
+
+XocXoc.prototype.updateUsers = function(){
+}
 
 module.exports = XocXoc;
