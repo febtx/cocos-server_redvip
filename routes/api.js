@@ -16,11 +16,14 @@ module.exports = function(app, redT) {
 	});
 	app.post('/api/callback/prepaid_card', function(req, res) {
 		try {
+			//console.log('callback');
+			//console.log(req.body);
+			//var data = JSON.parse(body);
 			let data = req.body;
-			if (!!data && !!data.error_code && !!data.ref_code) {
-				if (data.error_code == '00') {
+			if (!!data && !!data.status && !!data.request_id) {
+				if (data.status == '1') {
 					// thành công
-					tab_NapThe.findOneAndUpdate({'_id': data.ref_code}, {$set:{status:1}}, function(err, napthe) {
+					tab_NapThe.findOneAndUpdate({'_id': data.request_id}, {$set:{status:1}}, function(err, napthe) {
 						if (!!napthe && napthe.nhan == 0) {
 							let nhan = napthe.menhGia-(napthe.menhGia*config.extract/100);
 							UserInfo.findOneAndUpdate({'id': napthe.uid}, {$inc:{red:nhan}}, function(err2, user) {
@@ -30,16 +33,16 @@ module.exports = function(app, redT) {
 									}));
 								}
 							});
-							tab_NapThe.updateOne({'_id': data.ref_code}, {$set:{nhan:nhan}}).exec();
+							tab_NapThe.updateOne({'_id': data.request_id}, {$set:{nhan:nhan}}).exec();
 						}
 					});
 				}else{
 					// thất bại
-					tab_NapThe.findOneAndUpdate({'_id': data.ref_code}, {$set:{status:2}}, function(err, napthe) {
+					tab_NapThe.findOneAndUpdate({'_id': data.request_id}, {$set:{status:2}}, function(err, napthe) {
 						if (!!napthe) {
 							if (void 0 !== redT.users[napthe.uid]) {
 								Promise.all(redT.users[napthe.uid].map(function(obj){
-									obj.red({notice:{title:'THẤT BẠI', text: config[data.error_code], load: false}});
+									obj.red({notice:{title:'THẤT BẠI', text: config[data.status], load: false}});
 								}));
 							}
 						}

@@ -77,10 +77,8 @@ let XocXoc = function(io){
 
 XocXoc.prototype.play = function(){
 	// chạy thời gian
-	console.log('play');
 
 	this.time = 43;
-
 
 	this.timeInterval = setInterval(function(){
 		let self = this;

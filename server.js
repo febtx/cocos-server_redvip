@@ -1,9 +1,10 @@
 
 // server.js
 
+require('dotenv').config();
+
 let Telegram      = require('node-telegram-bot-api');
 //let TelegramToken = '987211295:AAGlIN124PtI_g3VXSWXczTrc_ri9BBx-ek';
-
 let TelegramToken = '819726159:AAFMBPuQ5AAZJ60kFaQfEzqZrp_dyTE7mwI';
 
 //let TelegramBot   = new Telegram(TelegramToken, {polling: true});
@@ -51,7 +52,7 @@ require('./app/Cron/baucua')(redT);   // Chạy game Bầu Cua
 
 require('./config/cron')();
 
-require('./update')();
+//require('./update')();
 
 //require('./app/Telegram/Telegram')(TelegramBot); // Telegram Bot
 

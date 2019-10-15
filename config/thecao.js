@@ -1,10 +1,19 @@
 
 module.exports = {
 	'extract':      0,                                         // Chiết khẩu 0%
-	'URL':          'http://redpay.vn/api/service/chargeCard', // URL API
-	'APP_ID':       1,                                         // id app
-    'APP_PASSWORD': '76cc1038407439dc874e37ebd9377925',        // pass app
+	//'URL':          'http://redpay.vn/api/service/chargeCard', // URL APIhttps://naptudong.com/chargingws/v2
+	'URL':          'https://naptudong.com/chargingws/v2', // URL API
 
+	'APP_ID':       '3551401751',                              // id app
+    'APP_PASSWORD': '57d41d9a9243109318964393c01fb15d',        // pass app
+
+    '99': 'Đang nạp...',
+    '1': 'Nạp thẻ cào thành công.',
+    '2': 'Thẻ cào sai mệnh giá.',
+    '3': 'Thẻ nỗi.',
+    '4': 'Hệ thống đang bảo trì, giữ lại thẻ và quay lại sau.',
+
+/**
     '00': 'Nạp thẻ cào thành công.',
 	'99': 'Hệ thống đang bảo trì, giữ lại thẻ và quay lại sau.',
 	'01': 'Hệ thống đang bảo trì, giữ lại thẻ và quay lại sau.',
@@ -29,4 +38,5 @@ module.exports = {
 	'20': 'Đã gửi yêu cầu nạp thẻ.',
 	'21': 'Hệ thống đang bảo trì, giữ lại thẻ và quay lại sau.',
 	'22': 'Mệnh giá thẻ không hợp lệ.',
+	*/
 };
