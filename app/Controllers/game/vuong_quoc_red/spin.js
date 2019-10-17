@@ -198,7 +198,7 @@ module.exports = function(client, data){
 						}
 
 						let celSS = null;
-						if (config.chedo == 0) {
+						if (config.chedo == 0 || !red) {
 							// chế độ khó
 							celSS = [
 								random_cel3(), random_cel3(), random_cel2(),

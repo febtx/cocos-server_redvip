@@ -167,7 +167,7 @@ module.exports = function(client, data){
 						let balans   = dataHu.balans;
 
 						let celSS = null;
-						if (config.chedo == 0) {
+						if (config.chedo == 0 || !red) {
 							// khó
 							celSS = [
 								random_cel2(), random_cel2(), random_cel2(),

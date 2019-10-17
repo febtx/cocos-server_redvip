@@ -1,13 +1,15 @@
 
-let UserInfo    = require('./app/Models//UserInfo');
-let XocXoc_user = require('./app/Models/XocXoc/XocXoc_user');
+let UserInfo = require('./app/Models//UserInfo');
+let Phone    = require('./app/Models//Phone');
+var Telegram = require('./app/Models/Telegram');
 
 module.exports = function(){
-	UserInfo.find({}, {}, function(err, users){
-		users.forEach(function(user){
-			XocXoc_user.findOne({uid:user.id}, '_id', function(err2, data){
-				if (!data) {
-					XocXoc_user.create({'uid': user.id});
+	Phone.find({}, {}, function(err, dataP){
+		dataP.forEach(function(phoneT){
+			UserInfo.findOne({id:phoneT.uid}, '_id', function(err2, user){
+				if (!user) {
+					Telegram.deleteOne({'phone':phoneT.phone}).exec();
+					Phone.deleteOne({'_id': phoneT._id}).exec();
 				}
 			});
 		});

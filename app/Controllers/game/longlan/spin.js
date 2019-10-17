@@ -208,122 +208,6 @@ function check_win(data, line){
 	thaythe  = null;
 	arrT     = null;
 	return {line:line, win:win.icon, type:win.lanve};
-
-	/**
-	return new Promise((aT, bT) => {
-		Promise.all(arrT.map(function(c, index){
-			if (index != 7 && index != 8 && index != 10) {
-				arrT[index] += thaythe;
-			}
-			return void 0;
-		})).then(temp1 => {
-			Promise.all(arrT.map(function(c, index){
-				let X = 0;
-				if (index == 10) {
-					if (c == 2) {
-						X = 8;
-					}else if(c == 3){
-						X = 50;
-					}else if(c == 4){
-						X = 1000;
-					}else if(c == 5){
-						X = 8000;
-					}
-				}else if (index == 9) {
-					if (c == 2) {
-						X = 4;
-					}else if(c == 3){
-						X = 25;
-					}else if(c == 4){
-						X = 100;
-					}else if(c == 5){
-						X = 5000;
-					}
-				}else if (index == 8) {
-					if(c == 3){
-						X = 75;
-					}else if(c == 4){
-						X = 150;
-					}else if(c == 5){
-						X = 450;
-					}
-				}else if (index == 7) {
-					if(c == 3){
-						X = 75;
-					}else if(c == 4){
-						X = 150;
-					}else if(c == 5){
-						X = 450;
-					}
-				}else if (index == 6) {
-					if(c == 3){
-						X = 20;
-					}else if(c == 4){
-						X = 75;
-					}else if(c == 5){
-						X = 500;
-					}
-				}else if (index == 5) {
-					if(c == 3){
-						X = 16;
-					}else if(c == 4){
-						X = 60;
-					}else if(c == 5){
-						X = 375;
-					}
-				}else if (index == 4) {
-					if(c == 3){
-						X = 12;
-					}else if(c == 4){
-						X = 45;
-					}else if(c == 5){
-						X = 275;
-					}
-				}else if (index == 3) {
-					if(c == 3){
-						X = 10;
-					}else if(c == 4){
-						X = 30;
-					}else if(c == 5){
-						X = 150;
-					}
-				}else if (index == 2) {
-					if(c == 3){
-						X = 5;
-					}else if(c == 4){
-						X = 25;
-					}else if(c == 5){
-						X = 50;
-					}
-				}else if (index == 1) {
-					if(c == 3){
-						X = 5;
-					}else if(c == 4){
-						X = 10;
-					}else if(c == 5){
-						X = 25;
-					}
-				}else if (index == 0) {
-					if(c == 3){
-						X = 2;
-					}else if(c == 4){
-						X = 5;
-					}else if(c == 5){
-						X = 10;
-					}
-				}
-				return {icon:index, lanve:c, x:X};
-			})).then(result => {
-				result = result.sort(function(a, b){return b.x-a.x});
-				var win = result[0];
-				aT({line:line, win:win.icon, type:win.lanve});
-			})
-		})
-	})
-	.then(result => {
-		return result;
-	})
-	*/
 }
 
 function gameBonusX(bet, x){
@@ -399,7 +283,7 @@ module.exports = function(client, data){
 						}
 
 						let celSS = null;
-						if (config.chedo == 0) {
+						if (config.chedo == 0 || !red) {
 							// chế độ khó
 							celSS = [
 								random_T1(), random_T1(), random_T1(),
