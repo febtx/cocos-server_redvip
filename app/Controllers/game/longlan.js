@@ -1,8 +1,8 @@
 
-const spin  = require('./longlan/spin');
-const bonus = require('./longlan/bonus');
-const log   = require('./longlan/log');
-const top   = require('./longlan/top');
+let spin  = require('./longlan/spin');
+let bonus = require('./longlan/bonus');
+let log   = require('./longlan/log');
+let top   = require('./longlan/top');
 
 module.exports = function(client, data){
 	if (!!data.bonus) {

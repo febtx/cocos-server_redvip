@@ -21,6 +21,8 @@ let caothap    = require('./game/caothap');
 // AngryBirds
 let angrybird  = require('./game/angrybird');
 
+let megaj      = require('./game/megaj');
+
 
 /**
  * Game
@@ -66,6 +68,11 @@ module.exports = function(client, data){
 	if (!!data.angrybird) {
 		angrybird(client, data.angrybird);
 	}
+	if (!!data.megaj) {
+		megaj(client, data.megaj);
+	}
+
+
 	if (!!data.poker) {
 		Poker(client, data.poker);
 	}

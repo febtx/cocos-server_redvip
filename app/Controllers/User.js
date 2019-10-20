@@ -16,6 +16,8 @@ let Candy_user      = require('../Models/Candy/Candy_user');
 let LongLan_user    = require('../Models/LongLan/LongLan_user');
 let XocXoc_user     = require('../Models/XocXoc/XocXoc_user');
 
+let MegaJP_user     = require('../Models/MegaJP/MegaJP_user');
+
 let Message         = require('../Models/Message');
 
 let validator   = require('validator');
@@ -181,6 +183,7 @@ let signName = function(client, name){
 												Candy_user.create({'uid': client.UID});
 												LongLan_user.create({'uid': client.UID});
 												XocXoc_user.create({'uid': client.UID});
+												MegaJP_user.create({'uid': client.UID});
 
 												Message.create({'uid': client.UID, 'title':'Thành Viên Mới', 'text':'Chào mừng bạn đến với Bem68.com, chúc bạn chơi game vui vẻ...', 'time':new Date()});
 

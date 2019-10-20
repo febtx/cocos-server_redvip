@@ -1,15 +1,13 @@
 
-let UserInfo = require('./app/Models//UserInfo');
-let Phone    = require('./app/Models//Phone');
-var Telegram = require('./app/Models/Telegram');
+let UserInfo    = require('./app/Models/UserInfo');
+let MegaJP_user = require('./app/Models/MegaJP/MegaJP_user');
 
 module.exports = function(){
-	Phone.find({}, {}, function(err, dataP){
-		dataP.forEach(function(phoneT){
-			UserInfo.findOne({id:phoneT.uid}, '_id', function(err2, user){
-				if (!user) {
-					Telegram.deleteOne({'phone':phoneT.phone}).exec();
-					Phone.deleteOne({'_id': phoneT._id}).exec();
+	UserInfo.find({}, '_id', function(err, users){
+		users.forEach(function(user){
+			MegaJP_user.findOne({uid:user._id}, {}, function(err2, dataP){
+				if (!dataP) {
+					MegaJP_user.create({'uid':user._id});
 				}
 			});
 		});
