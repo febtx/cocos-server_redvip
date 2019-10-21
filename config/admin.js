@@ -363,3 +363,24 @@ HU.findOne({game:'long', type:10000, red: false}, {}, function(err, data){
 		HU.create({'game':'long', 'type': 10000, red: false, 'bet': 50000000, 'min': 50000000});
 	}
 })
+
+
+// thiết lập Hũ MegaJackpot
+// red
+HU.findOne({game:'megaj', type:100, red: true}, {}, function(err, data){
+	if (!data) {
+		HU.create({'game':'megaj', 'type': 100, red: true, 'bet': 5000000, 'min': 5000000});
+	}
+})
+
+HU.findOne({game:'megaj', type:1000, red: true}, {}, function(err, data){
+	if (!data) {
+		HU.create({'game':'megaj', 'type': 1000, red: true, 'bet': 50000000, 'min': 50000000});
+	}
+})
+
+HU.findOne({game:'megaj', type:10000, red: true}, {}, function(err, data){
+	if (!data) {
+		HU.create({'game':'megaj', 'type': 10000, red: true, 'bet': 200000000, 'min': 200000000});
+	}
+})

@@ -1,8 +1,12 @@
 
 let HU             = require('../../../Models/HU');
+
 let BigBabol_red   = require('../../../Models/BigBabol/BigBabol_red');
 let BigBabol_xu    = require('../../../Models/BigBabol/BigBabol_xu');
 let BigBabol_users = require('../../../Models/BigBabol/BigBabol_users');
+
+let MegaJP_user    = require('../../../Models/MegaJP/MegaJP_user');
+let MegaJP_nhan    = require('../../../Models/MegaJP/MegaJP_nhan');
 
 let UserInfo     = require('../../../Models/UserInfo');
 let Helpers      = require('../../../Helpers/Helpers');
@@ -427,24 +431,43 @@ module.exports = function(client, data){
 							if (!nohu && bet_win >= cuoc*2.24) {
 								isBigWin = true;
 								type = 1;
-								red && client.redT.sendInHome({news:{t:{game:'BigBabol', users:client.profile.name, bet:bet_win, status:2}}});
+								if (red) {
+									client.redT.sendInHome({news:{t:{game:'BigBabol', users:client.profile.name, bet:bet_win, status:2}}});
+								}
 							}
 
 							let thuong     = 0;
 							if (red) {
+								let dataMegaJ = {};
 								uInfo['red'] = tien;                                                 // Cập nhật Số dư Red trong tài khoản
 								huUpdate['redPlay'] = uInfo['redPlay'] = mini_users['bet'] = cuoc;   // Cập nhật Số Red đã chơi
 								if (tien > 0){
 									huUpdate['redWin'] = uInfo['redWin'] = mini_users['win'] = tien; // Cập nhật Số Red đã Thắng
+									dataMegaJ['win'+bet] = tien;
 								}
 								if (tien < 0){
 									huUpdate['redLost'] = uInfo['redLost'] = mini_users['lost'] = tien*(-1); // Cập nhật Số Red đã Thua
+									dataMegaJ['lost'+bet] = tien*(-1);
 								}
 								BigBabol_red.create({'name':client.profile.name, 'type':type, 'win':bet_win, 'bet':bet, 'kq':result.length, 'line':line.length, 'time':new Date()}, function (err, small) {
 									if (err){
 										client.red({mini:{big_babol:{status:0, notice:'Có lỗi sảy ra, vui lòng thử lại.!!'}}});
 									}else{
 										client.red({mini:{big_babol:{status:1, cel:[cel1, cel2, cel3], line_win:result, nohu:nohu, isBigWin:isBigWin, win:bet_win, phien:small.id}}, user:{red:user.red-cuoc}});
+									}
+								});
+								MegaJP_user.findOneAndUpdate({uid:client.UID}, {$inc:dataMegaJ}, function(err, updateMega){
+									if (!!updateMega) {
+										let MWin    = updateMega['win'+bet];
+										let MLost   = updateMega['lost'+bet];
+										let MUpdate = updateMega['last'+bet];
+										let RedHuong = MLost-MWin-MUpdate;
+										if (RedHuong > bet*5000) {
+											updateMega[bet] += 1;
+											updateMega['last'+bet] += RedHuong;
+											updateMega.save();
+											MegaJP_nhan.create({'uid':client.UID, 'room':bet, 'to':101, 'sl':1, 'status':true, 'time':new Date()});
+										}
 									}
 								});
 							}else{

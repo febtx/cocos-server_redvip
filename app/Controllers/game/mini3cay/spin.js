@@ -5,6 +5,9 @@ let Mini3Cay_xu   = require('../../../Models/Mini3Cay/Mini3Cay_xu');
 let Mini3Cay_user = require('../../../Models/Mini3Cay/Mini3Cay_user');
 let HU            = require('../../../Models/HU');
 
+let MegaJP_user   = require('../../../Models/MegaJP/MegaJP_user');
+let MegaJP_nhan   = require('../../../Models/MegaJP/MegaJP_nhan');
+
 let UserInfo      = require('../../../Models/UserInfo');
 
 let Helpers       = require('../../../Helpers/Helpers');
@@ -120,13 +123,17 @@ module.exports = function(client, spin) {
 							an   = cuoc*30;
 							text = 'Suốt';
 							code = 5;
-							red && client.redT.sendInHome({news:{t:{game:'MINI 3 CÂY', users:client.profile.name, bet:an, status:2}}});
+							if (red) {
+								client.redT.sendInHome({news:{t:{game:'MINI 3 CÂY', users:client.profile.name, bet:an, status:2}}});
+							}
 						}else if (bo3) {
 							// x20      Sáp
 							an   = cuoc*20;
 							text = 'Sáp ' + (bo3_a+1);
 							code = 4;
-							red && client.redT.sendInHome({news:{t:{game:'MINI 3 CÂY', users:client.profile.name, bet:an, status:2}}});
+							if (red) {
+								client.redT.sendInHome({news:{t:{game:'MINI 3 CÂY', users:client.profile.name, bet:an, status:2}}});
+							}
 						}else if (ADiamond && TongDiem == 10) {
 							// x10		Tổng 3 lá = 10, có Át rô
 							an   = cuoc*10;
@@ -147,16 +154,33 @@ module.exports = function(client, spin) {
 						let tien = an-cuoc;
 
 						if (red){
+							let dataMegaJ = {};
 							uInfo['red'] = tien;         // Cập nhật Số dư Red trong tài khoản
 							huUpdate['redPlay'] = uInfo['redPlay'] = mini_users['bet'] = cuoc;     // Cập nhật Số Red đã chơi
 							if (tien > 0){
 								huUpdate['redWin'] = uInfo['redWin'] = mini_users['win'] = tien;    // Cập nhật Số Red đã Thắng
+								dataMegaJ['win'+cuoc] = tien;
 							}
 							if (tien < 0){
 								huUpdate['redLost'] = uInfo['redLost'] = mini_users['lost'] = tien*(-1); // Cập nhật Số Red đã Thua
+								dataMegaJ['lost'+cuoc] = tien*(-1);
 							}
 							Mini3Cay_red.create({'uid': client.UID, 'win': an, 'bet': cuoc, 'type': code, 'kq': ketqua, 'time': new Date()});
 							client.red({mini:{bacay:{status:1, card:ketqua, win: an, text: text, code: code}}, user:{red: user.red-cuoc, xu: user.xu}});
+							MegaJP_user.findOneAndUpdate({uid:client.UID}, {$inc:dataMegaJ}, function(err, updateMega){
+								if (!!updateMega) {
+									let MWin    = updateMega['win'+cuoc];
+									let MLost   = updateMega['lost'+cuoc];
+									let MUpdate = updateMega['last'+cuoc];
+									let RedHuong = MLost-MWin-MUpdate;
+									if (RedHuong > cuoc*5000) {
+										updateMega[cuoc] += 1;
+										updateMega['last'+cuoc] += RedHuong;
+										updateMega.save();
+										MegaJP_nhan.create({'uid':client.UID, 'room':cuoc, 'to':104, 'sl':1, 'status':true, 'time':new Date()});
+									}
+								}
+							});
 						} else{
 							thuong = (an*0.039589)>>0;
 							uInfo['xu'] = tien;         // Cập nhật Số dư XU trong tài khoản
@@ -186,9 +210,9 @@ module.exports = function(client, spin) {
 						checkName = null;
 						tien      = null;
 
-						client = null;
+						//client = null;
 						spin = null;
-						cuoc = null;
+						//cuoc = null;
 						red  = null;
 						config = null;
 						phe = null;

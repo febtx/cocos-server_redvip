@@ -1,8 +1,12 @@
 
 let HU         = require('../../../Models/HU');
+
 let Candy_red  = require('../../../Models/Candy/Candy_red');
 let Candy_xu   = require('../../../Models/Candy/Candy_xu');
 let Candy_user = require('../../../Models/Candy/Candy_user');
+
+let MegaJP_user = require('../../../Models/MegaJP/MegaJP_user');
+let MegaJP_nhan = require('../../../Models/MegaJP/MegaJP_nhan');
 
 let UserInfo  = require('../../../Models/UserInfo');
 let Helpers   = require('../../../Helpers/Helpers');
@@ -593,7 +597,9 @@ module.exports = function(client, data){
 							if (!nohu && bet_win >= tongCuoc*2.24) {
 								isBigWin = true;
 								type = 1;
-								red && client.redT.sendInHome({news:{t:{game:'Candy', users:client.profile.name, bet:bet_win, status:2}}});
+								if (red) {
+									client.redT.sendInHome({news:{t:{game:'Candy', users:client.profile.name, bet:bet_win, status:2}}});
+								}
 							}
 							if (free > 0) {
 								client.Candy.free += free;
@@ -606,6 +612,7 @@ module.exports = function(client, data){
 
 							let thuong = 0;
 							if (red) {
+								let dataMegaJ = {};
 								uInfo.red = tien;
 								huUpdate.redPlay = tongCuoc;
 								uInfo.redPlay = tongCuoc;
@@ -615,17 +622,34 @@ module.exports = function(client, data){
 									huUpdate.redWin = tien;
 									uInfo.redWin = tien;
 									mini_users.win = tien;         // Cập nhật Số Red đã Thắng
+									dataMegaJ['win'+bet] = tien;
 								}
 								if (tien < 0){
 									let tienLost = tien*-1;
 									huUpdate.redLost = tienLost;
 									uInfo.redLost = tienLost;
 									mini_users.lost = tienLost; // Cập nhật Số Red đã Thua
+									dataMegaJ['lost'+bet] = tienLost;
 								}
 
 								client.red({candy:{status:1, cel:[cel1, cel2, cel3, cel4, cel5], line_win:result, win:bet_win, free:client.Candy.free, isFree:isFree, isBonus:!!client.Candy.bonusX, isNoHu:nohu, isBigWin:isBigWin}, user:{red:user.red-tongCuoc}});
 								Candy_red.create({'name':client.profile.name, 'type':type, 'win':bet_win, 'bet':bet, 'kq':result.length, 'line':line.length, 'time':new Date()}, function (err4, small) {
 									client.Candy.id = small._id.toString();
+								});
+
+								MegaJP_user.findOneAndUpdate({uid:client.UID}, {$inc:dataMegaJ}, function(err, updateMega){
+									if (!!updateMega) {
+										let MWin    = updateMega['win'+bet];
+										let MLost   = updateMega['lost'+bet];
+										let MUpdate = updateMega['last'+bet];
+										let RedHuong = MLost-MWin-MUpdate;
+										if (RedHuong > bet*5000) {
+											updateMega[bet] += 1;
+											updateMega['last'+bet] += RedHuong;
+											updateMega.save();
+											MegaJP_nhan.create({'uid':client.UID, 'room':bet, 'to':102, 'sl':1, 'status':true, 'time':new Date()});
+										}
+									}
 								});
 							}else{
 								thuong = (bet_win*0.039589)>>0;

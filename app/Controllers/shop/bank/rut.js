@@ -36,7 +36,7 @@ module.exports = function(client, data){
 											if (dU.red >= rut) {
 												Bank_history.create({uid:client.UID, bank:data.bank, number:data.number, name:data.name, branch:data.branch, money:rut, type:1, time:new Date()});
 												UserInfo.updateOne({id:client.UID}, {$inc:{'red':-rut}}).exec();
-												client.red({notice:{title:'THÀNH CÔNG', text:'Đã gửi yêu cầu rút tiền.!'}});
+												client.red({notice:{title:'THÀNH CÔNG', text:'Đã gửi yêu cầu rút tiền.!'}, user:{red:dU.red-rut}});
 											}else{
 												client.red({notice:{title:'THẤT BẠI', text:'Sô dư không khả dụng.!'}});
 											}

@@ -98,28 +98,31 @@ let TopHu = function(){
 			.then(result => {
 				let temp_data = {TopHu: {
 					mini_poker: result.filter(function(mini_poker){
-						return (mini_poker.game == 'minipoker')
+						return (mini_poker.game === 'minipoker')
 					}),
 					big_babol: result.filter(function(big_babol){
-						return (big_babol.game == 'bigbabol')
+						return (big_babol.game === 'bigbabol')
 					}),
 					vq_red: result.filter(function(vq_red){
-						return (vq_red.game == 'vuongquocred')
+						return (vq_red.game === 'vuongquocred')
 					}),
 					mini3cay: result.filter(function(mini3cay){
-						return (mini3cay.game == 'mini3cay')
+						return (mini3cay.game === 'mini3cay')
 					}),
 					caothap: result.filter(function(caothap){
-						return (caothap.game == 'caothap')
+						return (caothap.game === 'caothap')
 					}),
 					arb: result.filter(function(arb){
-						return (arb.game == 'arb')
+						return (arb.game === 'arb')
 					}),
 					candy: result.filter(function(candy){
-						return (candy.game == 'candy')
+						return (candy.game === 'candy')
 					}),
 					long: result.filter(function(long){
-						return (long.game == 'long')
+						return (long.game === 'long')
+					}),
+					megaj: result.filter(function(megaj){
+						return (megaj.game === 'megaj')
 					}),
 				}};
 				io.broadcast(temp_data);
@@ -137,7 +140,7 @@ let setTaiXiu_user = function(phien, dice){
 						let bet_thua = obj.bet-obj.tralai;
 						let bet = obj.win ? obj.betwin+obj.bet : bet_thua;
 						let update = {};
-						if (obj.taixiu == true && obj.red == true && bet_thua >= 10000) {          // Red Tài Xỉu
+						if (obj.taixiu === true && obj.red === true && bet_thua >= 10000) {          // Red Tài Xỉu
 							update = {
 								tLineWinRed:   obj.win && data.tLineWinRed < data.tLineWinRedH+1 ? data.tLineWinRedH+1 : data.tLineWinRed,
 								tLineLostRed:  !obj.win && data.tLineLostRed < data.tLineLostRedH+1 ? data.tLineLostRedH+1 : data.tLineLostRed,
@@ -154,21 +157,21 @@ let setTaiXiu_user = function(phien, dice){
 									update.first = phien;
 								}
 							}
-						} else if (obj.taixiu == true && obj.red == false && bet_thua >= 10000) { // Xu Tài Xỉu
+						} else if (obj.taixiu === true && obj.red === false && bet_thua >= 10000) { // Xu Tài Xỉu
 							update = {
 								tLineWinXu:   obj.win && data.tLineWinXu < data.tLineWinXuH+1 ? data.tLineWinXuH+1 : data.tLineWinXu,
 								tLineLostXu:  !obj.win && data.tLineLostXu < data.tLineLostXuH+1 ? data.tLineLostXuH+1 : data.tLineLostXu,
 								tLineWinXuH:  obj.win ? data.tLineWinXuH+1 : 0,
 								tLineLostXuH: obj.win ? 0 : data.tLineLostXuH+1,
 							}
-						} else if (obj.taixiu == false && obj.red == true && bet_thua >= 10000) { // Red Chẵn Lẻ
+						} else if (obj.taixiu === false && obj.red === true && bet_thua >= 10000) { // Red Chẵn Lẻ
 							update = {
 								cLineWinRed:   obj.win && data.cLineWinRed < data.cLineWinRedH+1 ? data.cLineWinRedH+1 : data.cLineWinRed,
 								cLineLostRed:  !obj.win && data.cLineLostRed < data.cLineLostRedH+1 ? data.cLineLostRedH+1 : data.cLineLostRed,
 								cLineWinRedH:  obj.win ? data.cLineWinRedH+1 : 0,
 								cLineLostRedH: obj.win ? 0 : data.cLineLostRedH+1,
 							}
-						} else if (obj.taixiu == false && obj.red == false && bet_thua >= 10000) { // Xu Chẵn Lẻ
+						} else if (obj.taixiu === false && obj.red === false && bet_thua >= 10000) { // Xu Chẵn Lẻ
 							update = {
 								cLineWinXu:   obj.win && data.cLineWinXu < data.cLineWinXuH+1 ? data.cLineWinXuH+1 : data.cLineWinXu,
 								cLineLostXu:  !obj.win && data.cLineLostXu < data.cLineLostXuH+1 ? data.cLineLostXuH+1 : data.cLineLostXu,
@@ -250,21 +253,21 @@ let thongtin_thanhtoan = function(game_id, dice = false){
 		TXCuoc.find({phien:game_id}, null, {sort:{'_id':-1}}, function(err, list) {
 			if(list.length){
 				list.forEach(function(objL) {
-					if (objL.taixiu == true && objL.red == true && objL.select == true){           // Tổng Red Tài
+					if (objL.taixiu === true && objL.red === true && objL.select === true){           // Tổng Red Tài
 						TaiXiu_red_tong_tai += objL.bet;
-					} else if (objL.taixiu == true && objL.red == true && objL.select == false) {  // Tổng Red Xỉu
+					} else if (objL.taixiu === true && objL.red === true && objL.select === false) {  // Tổng Red Xỉu
 						TaiXiu_red_tong_xiu += objL.bet;
-					} else if (objL.taixiu == true && objL.red == false && objL.select == true) {  // Tổng Xu Tài
+					} else if (objL.taixiu === true && objL.red === false && objL.select === true) {  // Tổng Xu Tài
 						TaiXiu_xu_tong_tai += objL.bet;
-					} else if (objL.taixiu == true && objL.red == false && objL.select == false) { // Tổng Xu Xỉu
+					} else if (objL.taixiu === true && objL.red === false && objL.select === false) { // Tổng Xu Xỉu
 						TaiXiu_xu_tong_xiu += objL.bet;
-					} else if (objL.taixiu == false && objL.red == true && objL.select == true) {  // Tổng Red Chẵn
+					} else if (objL.taixiu === false && objL.red === true && objL.select === true) {  // Tổng Red Chẵn
 						ChanLe_red_tong_chan += objL.bet;
-					} else if (objL.taixiu == false && objL.red == true && objL.select == false) {  // Tổng Red Lẻ
+					} else if (objL.taixiu === false && objL.red === true && objL.select === false) {  // Tổng Red Lẻ
 						ChanLe_red_tong_le += objL.bet;
-					} else if (objL.taixiu == false && objL.red == false && objL.select == true) {  // Tổng xu Chẵn
+					} else if (objL.taixiu === false && objL.red === false && objL.select === true) {  // Tổng xu Chẵn
 						ChanLe_xu_tong_chan += objL.bet;
-					} else if (objL.taixiu == false && objL.red == false && objL.select == false) { // Tổng xu Lẻ
+					} else if (objL.taixiu === false && objL.red === false && objL.select === false) { // Tổng xu Lẻ
 						ChanLe_xu_tong_le += objL.bet;
 					}
 				});
@@ -292,7 +295,7 @@ let thongtin_thanhtoan = function(game_id, dice = false){
 
 				Promise.all(list.map(function(obj){
 					let oneUpdate  = {};
-					if (obj.taixiu == true && obj.red == true && obj.select == true){           // Tổng Red Tài
+					if (obj.taixiu === true && obj.red === true && obj.select === true){           // Tổng Red Tài
 						let win = dice > 10 ? true : false;
 						if (TaiXiu_red_lech_tai && TaiXiu_tong_red_lech > 0) {
 							if (TaiXiu_tong_red_lech >= obj.bet) {
@@ -352,7 +355,7 @@ let thongtin_thanhtoan = function(game_id, dice = false){
 								TaiXiu_User.updateOne({uid: obj.uid}, {$inc:{tLostRed:obj.bet, tRedPlay:obj.bet}}).exec();
 							}
 						}
-					} else if (obj.taixiu == true && obj.red == true && obj.select == false) {  // Tổng Red Xỉu
+					} else if (obj.taixiu === true && obj.red === true && obj.select === false) {  // Tổng Red Xỉu
 						let win = dice > 10 ? false : true;
 						if (!TaiXiu_red_lech_tai && TaiXiu_tong_red_lech > 0) {
 							if (TaiXiu_tong_red_lech >= obj.bet) {
@@ -412,7 +415,7 @@ let thongtin_thanhtoan = function(game_id, dice = false){
 								TaiXiu_User.updateOne({uid: obj.uid}, {$inc:{tLostRed:obj.bet, tRedPlay:obj.bet}}).exec();
 							}
 						}
-					} else if (obj.taixiu == true && obj.red == false && obj.select == true) {  // Tổng Xu Tài
+					} else if (obj.taixiu === true && obj.red === false && obj.select === true) {  // Tổng Xu Tài
 						let win = dice > 10 ? true : false;
 						if (TaiXiu_xu_lech_tai && TaiXiu_tong_xu_lech > 0) {
 							if (TaiXiu_tong_xu_lech >= obj.bet) {
@@ -482,7 +485,7 @@ let thongtin_thanhtoan = function(game_id, dice = false){
 								TaiXiu_User.updateOne({uid: obj.uid}, {$inc:{tLostXu:obj.bet, tXuPlay: obj.bet}}).exec();
 							}
 						}
-					} else if (obj.taixiu == true && obj.red == false && obj.select == false) { // Tổng Xu Xỉu
+					} else if (obj.taixiu === true && obj.red === false && obj.select === false) { // Tổng Xu Xỉu
 						let win = dice > 10 ? false : true;
 						if (!TaiXiu_xu_lech_tai && TaiXiu_tong_xu_lech > 0) {
 							if (TaiXiu_tong_xu_lech >= obj.bet) {
@@ -552,7 +555,7 @@ let thongtin_thanhtoan = function(game_id, dice = false){
 								TaiXiu_User.updateOne({uid: obj.uid}, {$inc:{tLostXu:obj.bet, tXuPlay:obj.bet}}).exec();
 							}
 						}
-					} else if (obj.taixiu == false && obj.red == true && obj.select == true) {  // Tổng Red Chẵn
+					} else if (obj.taixiu === false && obj.red === true && obj.select === true) {  // Tổng Red Chẵn
 						let win = dice%2 ? false : true;
 						if (ChanLe_red_lech_chan && ChanLe_tong_red_lech > 0) {
 							if (ChanLe_tong_red_lech >= obj.bet) {
@@ -612,7 +615,7 @@ let thongtin_thanhtoan = function(game_id, dice = false){
 								TaiXiu_User.updateOne({uid: obj.uid}, {$inc:{cLostRed:obj.bet, cRedPlay: obj.bet}}).exec();
 							}
 						}
-					} else if (obj.taixiu == false && obj.red == true && obj.select == false) {  // Tổng Red Lẻ
+					} else if (obj.taixiu === false && obj.red === true && obj.select === false) {  // Tổng Red Lẻ
 						let win = dice%2 ? true : false;
 						if (!ChanLe_red_lech_chan && ChanLe_tong_red_lech > 0) {
 							if (ChanLe_tong_red_lech >= obj.bet) {
@@ -672,7 +675,7 @@ let thongtin_thanhtoan = function(game_id, dice = false){
 								TaiXiu_User.updateOne({uid: obj.uid}, {$inc:{cLostRed:obj.bet, cRedPlay:obj.bet}}).exec();
 							}
 						}
-					} else if (obj.taixiu == false && obj.red == false && obj.select == true) {  // Tổng xu Chẵn
+					} else if (obj.taixiu === false && obj.red === false && obj.select === true) {  // Tổng xu Chẵn
 						let win = dice%2 ? false : true;
 						if (ChanLe_xu_lech_chan && ChanLe_tong_xu_lech > 0) {
 							if (ChanLe_tong_xu_lech >= obj.bet) {
@@ -741,7 +744,7 @@ let thongtin_thanhtoan = function(game_id, dice = false){
 								TaiXiu_User.updateOne({uid: obj.uid}, {$inc:{cLostXu:obj.bet, cXuPlay:obj.bet}}).exec();
 							}
 						}
-					} else if (obj.taixiu == false && obj.red == false && obj.select == false) { // Tổng xu Lẻ
+					} else if (obj.taixiu === false && obj.red === false && obj.select === false) { // Tổng xu Lẻ
 						let win = dice%2 ? true : false;
 						if (!ChanLe_xu_lech_chan && ChanLe_tong_xu_lech > 0) {
 							if (ChanLe_tong_xu_lech >= obj.bet) {
