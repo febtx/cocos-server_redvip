@@ -7,7 +7,7 @@ module.exports = {
 		4:  {thuong:150000,  position:118},
 		5:  {thuong:0,       position:209}, // Thêm lượt
 		6:  {thuong:200000,  position:149},
-		7:  {thuong:50,      position:179}, // 50% hũ
+		7:  {thuong:3000000, position:179}, // 50% hũ
 		8:  {thuong:500000,  position:240.5},
 		9:  {thuong:1000000, position:270.5},
 		10: {thuong:1500000, position:300.5},
@@ -20,7 +20,7 @@ module.exports = {
 		4:  {thuong:1500000,  position:118},
 		5:  {thuong:0,        position:209}, // Thêm lượt
 		6:  {thuong:2000000,  position:149},
-		7:  {thuong:50,       position:179}, // 50% hũ
+		7:  {thuong:30000000, position:179}, // 50% hũ
 		8:  {thuong:5000000,  position:240.5},
 		9:  {thuong:10000000, position:270.5},
 		10: {thuong:15000000, position:300.5},
@@ -33,7 +33,7 @@ module.exports = {
 		4:  {thuong:6000000,  position:118},
 		5:  {thuong:0,        position:209}, // Thêm lượt
 		6:  {thuong:8000000,  position:149},
-		7:  {thuong:50,       position:179}, // 50% hũ
+		7:  {thuong:100000000,position:179}, // 50% hũ
 		8:  {thuong:20000000, position:240.5},
 		9:  {thuong:40000000, position:270.5},
 		10: {thuong:60000000, position:300.5},

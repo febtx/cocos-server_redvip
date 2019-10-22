@@ -1,5 +1,4 @@
 
-let AutoIncrement = require('mongoose-auto-increment-reworked').MongooseAutoIncrementID;
 let mongoose      = require('mongoose');
 
 let Schema = new mongoose.Schema({
@@ -11,7 +10,5 @@ let Schema = new mongoose.Schema({
 
 	time: {type: Date,   default: new Date()},
 });
-
-Schema.plugin(AutoIncrement.plugin, {modelName:'MegaJP_spin', field:'id'});
 
 module.exports = mongoose.model('MegaJP_spin', Schema);
