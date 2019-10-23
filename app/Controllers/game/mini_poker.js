@@ -211,7 +211,6 @@ function spin(client, data){
 							});
 
 							MegaJP_user.findOne({uid:client.UID}, {}, function(err, updateMega){
-								console.log(updateMega);
 								if (!!updateMega) {
 									if (tien > 0){
 										updateMega['win'+bet] += tien;
