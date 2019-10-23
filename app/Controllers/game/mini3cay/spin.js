@@ -154,31 +154,45 @@ module.exports = function(client, spin) {
 						let tien = an-cuoc;
 
 						if (red){
-							let dataMegaJ = {};
 							uInfo['red'] = tien;         // Cập nhật Số dư Red trong tài khoản
 							huUpdate['redPlay'] = uInfo['redPlay'] = mini_users['bet'] = cuoc;     // Cập nhật Số Red đã chơi
 							if (tien > 0){
 								huUpdate['redWin'] = uInfo['redWin'] = mini_users['win'] = tien;    // Cập nhật Số Red đã Thắng
-								dataMegaJ['win'+cuoc] = tien;
 							}
 							if (tien < 0){
 								huUpdate['redLost'] = uInfo['redLost'] = mini_users['lost'] = tien*(-1); // Cập nhật Số Red đã Thua
-								dataMegaJ['lost'+cuoc] = tien*(-1);
 							}
 							Mini3Cay_red.create({'uid': client.UID, 'win': an, 'bet': cuoc, 'type': code, 'kq': ketqua, 'time': new Date()});
 							client.red({mini:{bacay:{status:1, card:ketqua, win: an, text: text, code: code}}, user:{red: user.red-cuoc, xu: user.xu}});
-							MegaJP_user.findOneAndUpdate({uid:client.UID}, {$inc:dataMegaJ}, function(err, updateMega){
+
+							MegaJP_user.findOne({uid:client.UID}, {}, function(err, updateMega){
+								console.log(updateMega);
 								if (!!updateMega) {
+									if (tien > 0){
+										updateMega['win'+cuoc] += tien;
+									}
+									if (tien < 0){
+										updateMega['lost'+cuoc] += tien*-1;
+									}
+
 									let MWin    = updateMega['win'+cuoc];
 									let MLost   = updateMega['lost'+cuoc];
 									let MUpdate = updateMega['last'+cuoc];
 									let RedHuong = MLost-MWin-MUpdate;
-									if (RedHuong > cuoc*5000) {
-										updateMega[cuoc] += 1;
-										updateMega['last'+cuoc] += RedHuong;
-										updateMega.save();
-										MegaJP_nhan.create({'uid':client.UID, 'room':cuoc, 'to':104, 'sl':1, 'status':true, 'time':new Date()});
+									if (cuoc !== 10000) {
+										if (RedHuong > cuoc*4000) {
+											updateMega[cuoc] += 1;
+											updateMega['last'+cuoc] += RedHuong;
+											MegaJP_nhan.create({'uid':client.UID, 'room':cuoc, 'to':104, 'sl':1, 'status':true, 'time':new Date()});
+										}
+									}else{
+										if (RedHuong > cuoc*1000) {
+											updateMega[cuoc] += 1;
+											updateMega['last'+cuoc] += RedHuong;
+											MegaJP_nhan.create({'uid':client.UID, 'room':cuoc, 'to':104, 'sl':1, 'status':true, 'time':new Date()});
+										}
 									}
+									updateMega.save();
 								}
 							});
 						} else{
