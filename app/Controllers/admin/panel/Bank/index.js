@@ -4,6 +4,7 @@ var remove    = require('./remove');
 var list      = require('./list');
 var rut       = require('./rut');
 var updateRut = require('./updateRut');
+var updateNap = require('./updateNap');
 
 var nap       = require('./nap');
 var napAdd    = require('./napAdd');
@@ -24,6 +25,9 @@ module.exports = function (client, data) {
 	}
 	if (!!data.updateRut) {
 		updateRut(client, data.updateRut);
+	}
+	if (!!data.updateNap) {
+		updateNap(client, data.updateNap);
 	}
 	if (!!data.nap) {
 		nap(client, data.nap);

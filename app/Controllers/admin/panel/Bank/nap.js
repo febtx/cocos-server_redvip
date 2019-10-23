@@ -3,7 +3,7 @@ var Bank_history = require('../../../../Models/Bank/Bank_history');
 var UserInfo     = require('../../../../Models/UserInfo');
 
 module.exports = function (client, data) {
-	if(!!data.page){
+	if(!!data.status && !!data.page){
 		var kmess = 10;
 		var page  = data.page>>0;
 		if (!!data.find) {
@@ -31,16 +31,17 @@ module.exports = function (client, data) {
 				});
 			});
 		}else{
-			Bank_history.countDocuments({type:0, status:1}).exec(function(err, total){
-				Bank_history.find({type:0, status:1}, {}, {sort:{'_id':-1}, skip:(page-1)*kmess, limit:kmess}, function(err, search){
+			Bank_history.countDocuments({type:0, status:data.status}).exec(function(err, total){
+				Bank_history.find({type:0, status:data.status}, {}, {sort:{'_id':-1}, skip:(page-1)*kmess, limit:kmess}, function(err, search){
 					if (search) {
 						Promise.all(search.map(function(obj){
 							obj = obj._doc;
 							delete obj.__v;
 							delete obj.type;
 							return new Promise(function(resolve, reject) {
-								UserInfo.findOne({'id': obj.uid}, function(error, result3){
+								UserInfo.findOne({'id':obj.uid}, 'UID name', function(error, result3){
 									obj.nick = !!result3 ? result3.name : '';
+									obj.uid  = !!result3 ? result3.UID : '';
 									resolve(obj);
 								})
 							});
