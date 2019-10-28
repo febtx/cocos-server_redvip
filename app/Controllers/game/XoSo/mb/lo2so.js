@@ -12,7 +12,7 @@ module.exports = function(client, data){
 			banDate.setHours(18, 0, 0, 0, 0);
 			console.log(banDate);
 			let timeCL = banDate - new Date();
-			if(timeCL > 0){
+			//if(timeCL > 0){
 				let res = data.so.split(',');
 				res = res.map(function(obj){
 					obj = obj.trim();
@@ -45,7 +45,6 @@ module.exports = function(client, data){
 							users = null;
 							tongTien = null;
 							diem = null;
-							numberPad = null;
 						}else{
 							client.red({XoSo:{notice:'Số dư không khả dụng...'}});
 						}
@@ -53,9 +52,9 @@ module.exports = function(client, data){
 						client = null;
 					});
 				}
-			}else{
-				client.red({XoSo:{notice:'Thời gian chọn số đã kết thúc, quay lại vào ngày mai...'}});
-			}
+			//}else{
+			//	client.red({XoSo:{notice:'Thời gian chọn số đã kết thúc, quay lại vào ngày mai...'}});
+			//}
 		}else{
 			client.red({XoSo:{notice:'Số điểm tối đa là 1.000.000'}});
 		}
