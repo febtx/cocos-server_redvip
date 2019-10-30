@@ -9,172 +9,249 @@ module.exports = function(client, date) {
 			if (data.pay) {
 				client.red({xs:{mb:{kq:{notice:'Phiên đã Trả thưởng...'}}}});
 			}else{
-				client.red({xs:{mb:{kq:{notice:'Trả thưởng thành công...'}}}});
 				xsmb_cuoc.find({date:date}, {}, function(errC, cuoc){
 					if (cuoc.length > 0) {
 						// tách lô 2 số
-						let lo2so = [data.g1.substring(data.g1.length-2), data.gdb.substring(data.gdb.length-2)];
-						let temp2 = data.g2.map(function(obj){
-							return obj.substring(obj.length-2);
+						let lo2so = [data.g1.substring(data.g1.length-2), data.gdb.substring(data.gdb.length-2), ...data.g2.map(function(obj){return obj.substring(obj.length-2)}), ...data.g3.map(function(obj){return obj.substring(obj.length-2)}), ...data.g4.map(function(obj){return obj.substring(obj.length-2)}), ...data.g5.map(function(obj){return obj.substring(obj.length-2)}), ...data.g6.map(function(obj){return obj.substring(obj.length-2)}), ...data.g7.map(function(obj){return obj.substring(obj.length-2)})];
+						lo2so = lo2so.filter(function(obj){
+							return obj !== '';
 						});
-						let temp3 = data.g3.map(function(obj){
-							return obj.substring(obj.length-2);
-						});
-						let temp4 = data.g4.map(function(obj){
-							return obj.substring(obj.length-2);
-						});
-						let temp5 = data.g5.map(function(obj){
-							return obj.substring(obj.length-2);
-						});
-						let temp6 = data.g6.map(function(obj){
-							return obj.substring(obj.length-2);
-						});
-						let temp7 = data.g7.map(function(obj){
-							return obj.substring(obj.length-2);
-						});
-						lo2so.concat(temp2, temp3, temp4, temp5, temp6, temp7);
+						if (lo2so.length !== 27) {
+							client.red({xs:{mb:{kq:{notice:'Hãy lưu đầy đủ các giải để tiến hàng trả thưởng...'}}}});
+						}else{
+							client.red({xs:{mb:{kq:{notice:'Trả thưởng thành công...'}}}});
+							// tách lô 3 số
+							let lo3so = [data.g1.substring(data.g1.length-3), data.gdb.substring(data.gdb.length-3), ...data.g2.map(function(obj){return obj.substring(obj.length-3)}), ...data.g3.map(function(obj){return obj.substring(obj.length-3)}), ...data.g4.map(function(obj){return obj.substring(obj.length-3)}), ...data.g5.map(function(obj){return obj.substring(obj.length-3)}), ...data.g6.map(function(obj){return obj.substring(obj.length-3)})];
 
+							// tách lô 4 số
+							let lo4so = [data.g1.substring(data.g1.length-4), data.gdb.substring(data.gdb.length-4), ...data.g2.map(function(obj){return obj.substring(obj.length-4)}), ...data.g3.map(function(obj){return obj.substring(obj.length-4)}), ...data.g4.map(function(obj){return obj.substring(obj.length-4)}), ...data.g5.map(function(obj){return obj.substring(obj.length-4)})];
 
-						// tách lô 3 số
-						let lo3so = [data.g1.substring(data.g1.length-3), data.gdb.substring(data.gdb.length-3)];
-						temp2 = data.g2.map(function(obj){
-							return obj.substring(obj.length-3);
-						});
-						temp3 = data.g3.map(function(obj){
-							return obj.substring(obj.length-3);
-						});
-						temp4 = data.g4.map(function(obj){
-							return obj.substring(obj.length-3);
-						});
-						temp5 = data.g5.map(function(obj){
-							return obj.substring(obj.length-3);
-						});
-						temp6 = data.g6.map(function(obj){
-							return obj.substring(obj.length-3);
-						});
-						lo3so.concat(temp2, temp3, temp4, temp5, temp6);
+							let de      = data.gdb.substring(data.gdb.length-2);
+							let daude   = data.gdb.substring(0, 2);
+							let degiai7 = [...new Set(data.g7)];
+							let degiai1 = data.g1.substring(data.g1.length-2)
+							let cang3   = data.gdb.substring(data.gdb.length-3);
+							let cang4   = data.gdb.substring(data.gdb.length-4);
+							let dau     = data.gdb.charAt();
+							let duoi    = data.gdb.charAt(data.gdb.length-1);
 
+							let lo2soNot2 = [...new Set(lo2so)]; // loại bỏ trùng nặp lô 2 số
+							let tongCuoc = 0;
+							let tongTra  = 0;
 
-						// tách lô 4 số
-						let lo4so = [data.g1.substring(data.g1.length-4), data.gdb.substring(data.gdb.length-4)];
-						temp2 = data.g2.map(function(obj){
-							return obj.substring(obj.length-4);
-						});
-						temp3 = data.g3.map(function(obj){
-							return obj.substring(obj.length-4);
-						});
-						temp4 = data.g4.map(function(obj){
-							return obj.substring(obj.length-4);
-						});
-						temp5 = data.g5.map(function(obj){
-							return obj.substring(obj.length-4);
-						});
-						lo4so.concat(temp2, temp3, temp4, temp5, temp6);
+							data.pay = true;
 
-						let de      = data.gdb.substring(data.gdb.length-2);
-						let daude   = data.gdb.substring(0, 2);
-						let degiai7 = data.g7.substring(data.g7.length-2)
-						let degiai1 = data.g1.substring(data.g1.length-2)
-						let cang3   = data.gdb.substring(data.gdb.length-3);
-						let cang4   = data.gdb.substring(data.gdb.length-4);
-						let dau     = data.gdb.charAt();
-						let duoi    = data.gdb.charAt(data.gdb.length-1);
-
-						cuoc.forEach(function(objC){
-							let diem = objC.diem;
-							let win = 0;
-							console.log('start');
-							objC.thanhtoan = true;
-							switch(objC.type) {
-								case 'lo2':
-									// 'Lô 2 Số'
-									console.log('start forEach');
-									objC.so.forEach(function(so){
-										lo2so.forEach(function(item2so){
-											if (so === item2so) {
-												win += diem*80000;
+							cuoc.forEach(function(objC){
+								tongCuoc += objC.cuoc*1;
+								let diem = objC.diem;
+								let win = 0;
+								let trung = 0;
+								objC.thanhtoan = true;
+								switch(objC.type) {
+									case 'lo2':
+										// 'Lô 2 Số'
+										objC.so.forEach(function(so){
+											lo2so.forEach(function(item){
+												if (so === item) {
+													win += diem*80000;
+												}
+											});
+										});
+										break;
+									case 'lo21k':
+										// 'Lô 2 Số 1k'
+										objC.so.forEach(function(so){
+											lo2so.forEach(function(item){
+												if (so === item) {
+													win += diem*3636;
+												}
+											});
+										});
+										break;
+									case 'lo3':
+										// 'Lô 3 Số'
+										objC.so.forEach(function(so){
+											lo3so.forEach(function(item){
+												if (so === item) {
+													win += diem*960000;
+												}
+											});
+										});
+										break;
+									case 'lo4':
+										// 'Lô 4 Số'
+										objC.so.forEach(function(so){
+											lo4so.forEach(function(item){
+												if (so === item) {
+													win += diem*8880000;
+												}
+											});
+										});
+										break;
+									case 'xien2':
+										// 'Xiên 2'
+										trung = 0;
+										objC.so.forEach(function(so){
+											lo2soNot2.forEach(function(item){
+												if (so === item) {
+													trung++;
+												}
+											});
+										});
+										if (trung === 2) {
+											win += diem*16000;
+										}
+										break;
+									case 'xien3':
+										// 'Xiên 3'
+										trung = 0;
+										objC.so.forEach(function(so){
+											lo2soNot2.forEach(function(item){
+												if (so === item) {
+													trung++;
+												}
+											});
+										});
+										if (trung === 3) {
+											win += diem*65000;
+										}
+										break;
+									case 'xien4':
+										// 'Xiên 4'
+										trung = 0;
+										objC.so.forEach(function(so){
+											lo2soNot2.forEach(function(item){
+												if (so === item) {
+													trung++;
+												}
+											});
+										});
+										if (trung === 4) {
+											win += diem*180000;
+										}
+										break;
+									case 'de':
+										// 'Đề'
+										objC.so.forEach(function(so){
+											if (so === de) {
+												win += diem*99000;
 											}
 										});
-									});
-									console.log('end forEach');
-									break;
-								case 'lo21k':
-									// 'Lô 2 Số 1k'
-									console.log('start forEach 1K');
-									objC.so.forEach(function(so){
-										lo2so.forEach(function(item2so){
-											if (so === item2so) {
-												win += diem*3636;
+										break;
+									case 'daude':
+										// 'Đầu Đề'
+										objC.so.forEach(function(so){
+											if (so === daude) {
+												win += diem*99000;
 											}
 										});
-									});
-									console.log('end forEach 1K');
-									break;
-								case 'lo3':
-									// 'Lô 3 Số'
-									break;
-								case 'lo4':
-									// 'Lô 4 Số'
-									break;
-								case 'xien2':
-									// 'Xiên 2'
-									break;
-								case 'xien3':
-									// 'Xiên 3'
-									break;
-								case 'xien4':
-									// 'Xiên 4'
-									break;
-								case 'de':
-									// data.gdb.substring(data.gdb.length-2);
-									// 'Đề'
-									break;
-								case 'daude':
-									// data.gdb.substring(0, 2);
-									// 'Đầu Đề'
-									break;
-								case 'degiai7':
-									// data.g7
-									// 'Đề Giải 7'
-									break;
-								case 'degiai1':
-									// data.g1
-									// 'Đề Giải Nhất'
-									break;
-								case '3cang':
-									// data.gdb.substring(data.gdb.length-3);
-									// '3 Càng'
-									break;
-								case '4cang':
-									// data.gdb.substring(data.gdb.length-4);
-									// '4 Càng'
-									break;
-								case 'dau':
-									// data.gdb.charAt();
-									// 'Đầu'
-									break;
-								case 'duoi':
-									// data.gdb.charAt(data.gdb.length-1);
-									// 'Đuôi'
-									break;
-								case 'truot4':
-									// 'Trượt 4'
-									break;
-								case 'truot8':
-									// 'Trượt 8'
-									break;
-								case 'truot10':
-									// 'Trượt 10'
-									break;
-							}
-							console.log('end game');
-							if (win > 0) {
-								objC.win = win;
-								UserInfo.updateOne({name:objC.name}, {$inc:{red:win}}).exec();
-								//UserInfo.updateOne({name:objC.name});
-							}
-							objC.save();
-						});
+										break;
+									case 'degiai7':
+										// 'Đề Giải 7'
+										objC.so.forEach(function(so){
+											degiai7.forEach(function(item){
+												if (so === item) {
+													win += diem*98000;
+												}
+											});
+										});
+										break;
+									case 'degiai1':
+										// 'Đề Giải Nhất'
+										objC.so.forEach(function(so){
+											if (so === degiai1) {
+												win += diem*98000;
+											}
+										});
+										break;
+									case '3cang':
+										// '3 Càng'
+										objC.so.forEach(function(so){
+											if (so === cang3) {
+												win += diem*960000;
+											}
+										});
+										break;
+									case '4cang':
+										// '4 Càng'
+										objC.so.forEach(function(so){
+											if (so === cang4) {
+												win += diem*8880000;
+											}
+										});
+										break;
+									case 'dau':
+										// 'Đầu'
+										objC.so.forEach(function(so){
+											if (so === dau) {
+												win += diem*9800;
+											}
+										});
+										break;
+									case 'duoi':
+										// 'Đuôi'
+										objC.so.forEach(function(so){
+											if (so === duoi) {
+												win += diem*9800;
+											}
+										});
+										break;
+									case 'truot4':
+										// 'Trượt 4'
+										trung = 0;
+										objC.so.forEach(function(so){
+											lo2soNot2.forEach(function(item){
+												if (so === item) {
+													trung++;
+												}
+											});
+										});
+										if (trung === 0) {
+											win += diem*2300;
+										}
+										break;
+									case 'truot8':
+										// 'Trượt 8'
+										trung = 0;
+										objC.so.forEach(function(so){
+											lo2soNot2.forEach(function(item){
+												if (so === item) {
+													trung++;
+												}
+											});
+										});
+										if (trung === 0) {
+											win += diem*8000;
+										}
+										break;
+									case 'truot10':
+										// 'Trượt 10'
+										trung = 0;
+										objC.so.forEach(function(so){
+											lo2soNot2.forEach(function(item){
+												if (so === item) {
+													trung++;
+												}
+											});
+										});
+										if (trung === 0) {
+											win += diem*12000;
+										}
+										break;
+								}
+								if (win > 0) {
+									tongTra += win;
+									objC.win = win;
+									UserInfo.updateOne({name:objC.name}, {$inc:{red:win}}).exec();
+								}
+								objC.save();
+							});
+							data.cuoc = tongCuoc;
+							data.tra = tongTra;
+							data.save();
+						}
+					}else{
+						client.red({xs:{mb:{kq:{notice:'Không có người cược...'}}}});
 					}
 				});
 			}
