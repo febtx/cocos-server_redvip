@@ -4,7 +4,6 @@ let UserInfo    = require('../../../Models/UserInfo');
 
 module.exports = function(client, data){
 	if (!!data.cuoc && !!data.box) {
-		console.log(data);
 		let cuoc = data.cuoc>>0;
 		let red  = !!data.red;
 		let box  = data.box;

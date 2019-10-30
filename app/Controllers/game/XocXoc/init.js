@@ -208,7 +208,6 @@ XocXoc.prototype.thanhtoan = function(dice = null){
 		XocXoc_cuoc.find({phien:phien}, {}, function(err, list) {
 			if (list.length) {
 				Promise.all(list.map(function(cuoc){
-					console.log(cuoc);
 					let tongDat   = cuoc.chan+cuoc.le+cuoc.red3+cuoc.red4+cuoc.white3+cuoc.white4;
 					let TienThang = 0; // Số tiền thắng (chưa tính gốc)
 					let TongThua  = 0; // Số tiền thua
@@ -377,7 +376,6 @@ XocXoc.prototype.thanhtoan = function(dice = null){
 			}
 		});
 	}else{
-		// console.log(self.data);
 		Object.values(this.clients).forEach(function(client){
 			client.red({xocxoc:{client:self.data}});
 		});

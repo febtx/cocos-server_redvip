@@ -166,7 +166,6 @@ module.exports = function(client, spin) {
 							client.red({mini:{bacay:{status:1, card:ketqua, win: an, text: text, code: code}}, user:{red: user.red-cuoc, xu: user.xu}});
 
 							MegaJP_user.findOne({uid:client.UID}, {}, function(err, updateMega){
-								console.log(updateMega);
 								if (!!updateMega) {
 									if (tien > 0){
 										updateMega['win'+cuoc] += tien;

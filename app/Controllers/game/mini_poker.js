@@ -125,7 +125,6 @@ function spin(client, data){
 									return false;
 								})
 								ketqua = Helpers.shuffle(card); // tráo bài
-								console.log(ketqua);
 								randomType = null;
 								randomMin = null;
 							}

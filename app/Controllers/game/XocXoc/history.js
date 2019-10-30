@@ -3,7 +3,6 @@ let XocXoc_cuoc  = require('../../../Models/XocXoc/XocXoc_cuoc');
 let XocXoc_phien = require('../../../Models/XocXoc/XocXoc_phien');
 
 module.exports = function(client, data){
-	console.log(data);
 	if (!!data.page) {
 		let red = !!data.red;
 		let page = data.page>>0;

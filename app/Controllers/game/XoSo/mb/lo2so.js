@@ -9,7 +9,7 @@ module.exports = function(client, data){
 		let diem = data.diem>>0;
 		if (diem > 0 && diem < 1000000) {
 			let banDate = new Date();
-			banDate.setHours(18, 0, 0, 0, 0);
+			banDate.setHours(18, 0, 0, 0);
 			let timeCL = banDate - new Date();
 			if(timeCL > 0){
 				let res = data.so.split(',');
