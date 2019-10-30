@@ -3,8 +3,8 @@ let mongoose = require('mongoose');
 
 let Schema = new mongoose.Schema({
 	date:    {type: String, required:true, unique:true},     // Ngày sổ
-	db:      {type: String},                                 // Giải Đặc Biệt
-	g1:      {type: Array},                                  // Giải Nhất
+	gdb:     {type: String},                                 // Giải Đặc Biệt
+	g1:      {type: String},                                 // Giải Nhất
 	g2:      {type: Array},                                  // Giải Nhì
 	g3:      {type: Array},                                  // Giải 3
 	g4:      {type: Array},                                  // Giải 4

@@ -2,7 +2,7 @@
 let mongoose = require('mongoose');
 
 let Schema = new mongoose.Schema({
-	uid:       {type: String, required:true, index:true},      // ID người chơi
+	name:      {type: String, required:true, index:true},      // ID người chơi
 	date:      {type: String, required:true, index:true},      // cược Ngày
 	type:      {type: String},                                 // Loại cược
 	so:        {type: Array},                                  // Số chọn
@@ -13,6 +13,6 @@ let Schema = new mongoose.Schema({
 	time:      {type: Date},                                   // thời gian
 });
 
-//Schema.index({uid:1, date:1}, {background: true});
+//Schema.index({name:1, date:1}, {background: true});
 
 module.exports = mongoose.model('xsmb_cuoc', Schema);

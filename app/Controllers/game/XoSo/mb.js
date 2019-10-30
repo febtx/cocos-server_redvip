@@ -18,12 +18,17 @@ let truot4  = require('./mb/truot4');
 let truot8  = require('./mb/truot8');
 let truot10 = require('./mb/truot10');
 
+let kq      = require('./mb/kq');
 let history = require('./mb/history');
 
 module.exports = function(client, data){
 	if (!!data.history) {
 		history(client, data.history);
 	}
+	if (!!data.kq) {
+		kq(client, data.kq);
+	}
+
 	if (!!data.lo2) {
 		lo2(client, data.lo2);
 	}

@@ -18,6 +18,7 @@ let XocXoc       = require('./game/xocxoc');
 
 let candy        = require('./game/candy');
 let longlan      = require('./game/longlan');
+let xs           = require('./game/xs');
 
 module.exports = function(client, data) {
 	if (!!data) {
@@ -75,6 +76,9 @@ module.exports = function(client, data) {
 		}
 		if (!!data.sys){
 			HeThong(client, data.sys);
+		}
+		if (!!data.xs){
+			xs(client, data.xs);
 		}
 	}
 }

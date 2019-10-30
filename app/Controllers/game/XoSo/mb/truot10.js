@@ -37,7 +37,7 @@ module.exports = function(client, data){
 							let date = new Date();
 							let stringTime = numberPad(date.getDate(), 2) + '/' + numberPad(date.getMonth()+1, 2) + '/' + date.getFullYear();
 
-							xsmb_cuoc.create({uid:client.UID, date:stringTime, type:'truot10', so:res, diem:diem, cuoc:tongTien, time:new Date()});
+							xsmb_cuoc.create({name:client.profile.name, date:stringTime, type:'truot10', so:res, diem:diem, cuoc:tongTien, time:new Date()});
 							client.red({notice:{text:'CƯỢC THÀNH CÔNG...', title:'THÀNH CÔNG'}, user:{red:users.red-tongTien}});
 							date = null;
 							stringTime = null;
