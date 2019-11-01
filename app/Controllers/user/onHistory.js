@@ -15,10 +15,10 @@ var Helper      = require('../../Helpers/Helpers');
 function historyNapRed(client, data){
 	if(!!data && !!data.page){
 		var page  = data.page>>0;
-		var kmess = 10;
+		var kmess = 8;
 		if (page > 0) {
 			NapThe.countDocuments({'uid': client.UID}).exec(function(err, total){
-				NapThe.find({'uid': client.UID}, 'GD menhGia nhaMang nhan seri status time', {sort:{'_id':-1}, skip: (page-1)*kmess, limit: kmess}, function(err, result) {
+				NapThe.find({'uid': client.UID}, 'menhGia nhaMang nhan maThe seri status time', {sort:{'_id':-1}, skip: (page-1)*kmess, limit: kmess}, function(err, result) {
 					client.red({profile:{history:{nap_red:result, page:page, kmess:kmess, total:total}}});
 				});
 			});
@@ -29,7 +29,7 @@ function historyNapRed(client, data){
 function historyMuaThe(client, data){
 	if(!!data && !!data.page){
 		var page  = data.page>>0;
-		var kmess = 10;
+		var kmess = 8;
 		if (page > 0) {
 			MuaThe.countDocuments({'uid': client.UID}).exec(function(err, total){
 				MuaThe.find({'uid': client.UID}, {}, {sort:{'_id':-1}, skip: (page-1)*kmess, limit: kmess}, function(err, result) {
@@ -57,7 +57,7 @@ function historyMuaXu(client, data){
 function historyChuyenRed(client, data){
 	if(!!data && !!data.page){
 		var page  = data.page>>0;
-		var kmess = 10;
+		var kmess = 8;
 		if (page > 0) {
 			ChuyenRed.countDocuments({$or:[{'from':client.profile.name}, {'to':client.profile.name}]}).exec(function(err, total){
 				ChuyenRed.find({$or:[{'from':client.profile.name}, {'to':client.profile.name}]}, {}, {sort:{'_id':-1}, skip: (page-1)*kmess, limit: kmess}, function(err, result) {

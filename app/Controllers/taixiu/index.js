@@ -378,7 +378,7 @@ var get_phien = function(client, data){
 var get_log = function(client, data){
 	if (!!data && !!data.page) {
 		var page  = data.page>>0;
-		var kmess = 11;
+		var kmess = 9;
 		if (page > 0) {
 			TXCuoc.countDocuments({uid:client.UID, thanhtoan:true}).exec(function(err, total){
 				var getCuoc = TXCuoc.find({uid:client.UID, thanhtoan:true}, {}, {sort:{'_id':-1}, skip:(page-1)*kmess, limit:kmess}, function(error, result){
@@ -433,7 +433,7 @@ var get_top = async function(client, data){
 			{$project:project},
 			{$match:{'profit':{$gt:0}}},
 			{$sort:{'profit':-1}},
-			{$limit:100}
+			{$limit:10}
 		]).exec(function(err, result){
 			Promise.all(result.map(function(obj){
 				return new Promise(function(resolve, reject) {
