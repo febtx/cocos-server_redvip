@@ -1,5 +1,4 @@
 
-let AutoIncrement = require('mongoose-auto-increment-reworked').MongooseAutoIncrementID;
 let mongoose      = require('mongoose');
 
 let Schema = new mongoose.Schema({
@@ -8,8 +7,5 @@ let Schema = new mongoose.Schema({
 	xu:      {type: Number, required: true}, // Xu nhận được
 	time:    Date,                           // Thời gian mua
 });
-
-Schema.plugin(AutoIncrement.plugin, {modelName: 'MuaXu', field:'id'});
-//Schema.index({uid: 1}, {background: true});
 
 module.exports = mongoose.model('MuaXu', Schema);

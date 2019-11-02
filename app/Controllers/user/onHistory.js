@@ -59,8 +59,8 @@ function historyChuyenRed(client, data){
 		var page  = data.page>>0;
 		var kmess = 8;
 		if (page > 0) {
-			ChuyenRed.countDocuments({$or:[{'from':client.profile.name}, {'to':client.profile.name}]}).exec(function(err, total){
-				ChuyenRed.find({$or:[{'from':client.profile.name}, {'to':client.profile.name}]}, {}, {sort:{'_id':-1}, skip: (page-1)*kmess, limit: kmess}, function(err, result) {
+			ChuyenRed.countDocuments({uid: client.UID}).exec(function(err, total){
+				ChuyenRed.find({uid: client.UID}, {}, {sort:{'_id':-1}, skip: (page-1)*kmess, limit: kmess}, function(err, result) {
 					client.red({profile:{history:{chuyen_red:result, page:page, kmess:kmess, total:total}}});
 				});
 			});

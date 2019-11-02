@@ -1,5 +1,4 @@
 
-let AutoIncrement = require('mongoose-auto-increment-reworked').MongooseAutoIncrementID;
 let mongoose      = require('mongoose');
 
 let Schema = new mongoose.Schema({
@@ -12,8 +11,5 @@ let Schema = new mongoose.Schema({
 	status:  {type: Number, default: 0, index: true}, // Trạng thái nạp (0: chờ, 1: Thành công, 2:Thất bại)
 	time:    Date,                           // Thời gian nạp
 });
-
-Schema.plugin(AutoIncrement.plugin, {modelName: 'NapThe', field:'GD'});
-//Schema.index({uid: 1}, {background: true});
 
 module.exports = mongoose.model('NapThe', Schema);

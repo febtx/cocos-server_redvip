@@ -58,12 +58,19 @@ module.exports = function(client, data){
 													UserInfo.updateOne({id: client.UID}, {$inc:{red:-red}}).exec();
 													client.red({notice:{title:'CHUYỂN RED', text: 'Giao dịch thành công.!!'}, user:{red:user.red-red}});
 													var thanhTien = !!daily ? red : Helper.anPhanTram(red, 1, 2);
-													var create = {'from':client.profile.name, 'to':to.name, 'red':red, 'red_c':thanhTien, 'time': new Date()};
+													var create = {'uid':client.UID, 'from':client.profile.name, 'to':to.name, 'red':red, 'red_c':thanhTien, 'time': new Date()};
 													if (void 0 !== data.message && !validator.isEmpty(data.message.trim())) {
 														create = Object.assign(create, {message: data.message});
 													}
 													ChuyenRed.create(create);
-													UserInfo.updateOne({name: to.name}, {$inc:{red:thanhTien}}).exec();
+
+													var createTo = {'uid':to.id, 'from':client.profile.name, 'to':to.name, 'red':red, 'red_c':thanhTien, 'time': new Date()};
+													if (void 0 !== data.message && !validator.isEmpty(data.message.trim())) {
+														createTo = Object.assign(createTo, {message: data.message});
+													}
+													ChuyenRed.create(createTo);
+
+													UserInfo.updateOne({name:to.name}, {$inc:{red:thanhTien}}).exec();
 													if (void 0 !== client.redT.users[to.id]) {
 														Promise.all(client.redT.users[to.id].map(function(obj){
 															obj.red({notice:{title:'CHUYỂN RED', text:'Bạn nhận được ' + Helper.numberWithCommas(thanhTien) + ' Red.' + '\n' + 'Từ người chơi: ' + client.profile.name}, user:{red: to.red*1+thanhTien}});

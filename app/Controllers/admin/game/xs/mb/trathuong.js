@@ -69,7 +69,7 @@ module.exports = function(client, date) {
 											objC.so.forEach(function(so){
 												lo2so.forEach(function(item){
 													if (so === item) {
-														win += diem*3636;
+														win += diem*3478;
 													}
 												});
 											});
@@ -140,7 +140,7 @@ module.exports = function(client, date) {
 											// 'Đề'
 											objC.so.forEach(function(so){
 												if (so === de) {
-													win += diem*99000;
+													win += diem*70000;
 												}
 											});
 											break;
@@ -148,7 +148,7 @@ module.exports = function(client, date) {
 											// 'Đầu Đề'
 											objC.so.forEach(function(so){
 												if (so === daude) {
-													win += diem*99000;
+													win += diem*70000;
 												}
 											});
 											break;
@@ -157,7 +157,7 @@ module.exports = function(client, date) {
 											objC.so.forEach(function(so){
 												degiai7.forEach(function(item){
 													if (so === item) {
-														win += diem*98000;
+														win += diem*69000;
 													}
 												});
 											});
@@ -166,7 +166,7 @@ module.exports = function(client, date) {
 											// 'Đề Giải Nhất'
 											objC.so.forEach(function(so){
 												if (so === degiai1) {
-													win += diem*98000;
+													win += diem*70000;
 												}
 											});
 											break;

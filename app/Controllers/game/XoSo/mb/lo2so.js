@@ -28,7 +28,7 @@ module.exports = function(client, data){
 				}else if (res.length > 10) {
 					client.red({XoSo:{notice:'1 Vé cược tối đa 10 Số...'}});
 				}else{
-					let tongTien = res.length*diem*22000;
+					let tongTien = res.length*diem*23000;
 					UserInfo.findOne({id:client.UID}, 'red', function(err, users){
 						if (!!users && users.red >= tongTien) {
 							users.red -= tongTien;

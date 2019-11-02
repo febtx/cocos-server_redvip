@@ -1,5 +1,4 @@
 
-let AutoIncrement = require('mongoose-auto-increment-reworked').MongooseAutoIncrementID;
 let mongoose = require('mongoose');
 
 let Schema = new mongoose.Schema({
@@ -11,8 +10,5 @@ let Schema = new mongoose.Schema({
 	status:  {type: Number, default:  0, index: true},    // Trạng thái mua
 	time:    Date,                           // Thời gian mua
 });
-
-Schema.plugin(AutoIncrement.plugin, {modelName: 'MuaThe', field:'GD'});
-//Schema.index({status: 1}, {background: true});
 
 module.exports = mongoose.model('MuaThe', Schema);
