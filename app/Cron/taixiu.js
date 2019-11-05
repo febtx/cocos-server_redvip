@@ -984,21 +984,21 @@ let playGame = function(){
 										botList = Helpers.shuffle(result); // tráo bot;
 										botList = botList.slice(0, maxBot);
 
-										maxBot = (result.length*50/100)>>0;
-										botListCl = Helpers.shuffle(result); // tráo bot;
-										botListCl = botListCl.slice(0, maxBot);
+										//maxBot = (result.length*50/100)>>0;
+										//botListCl = Helpers.shuffle(result); // tráo bot;
+										//botListCl = botListCl.slice(0, maxBot);
 									});
 								}
 							});
 						}else{
 							botTemp = [];
 							botList = [];
-							botListCl = [];
+							//botListCl = [];
 						}
 					} catch (error) {
 						botTemp = [];
 						botList = [];
-						botListCl = [];
+						//botListCl = [];
 					}
 				});
 			}else{
@@ -1017,6 +1017,7 @@ let playGame = function(){
 							dataT = null;
 						}
 					}
+					/**
 					timeBot = (Math.floor(Math.random()*(6-2+1))+2)>>0;
 					if (!(io.TaiXiu_time%timeBot)) {
 						let userCuocCL = (Math.random()*7)>>0;
@@ -1030,6 +1031,7 @@ let playGame = function(){
 							dataT = null;
 						}
 					}
+					*/
 				}
 			}
 		}

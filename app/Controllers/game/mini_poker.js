@@ -280,7 +280,7 @@ function log(client, data){
 		if (page < 1) {
 			client.red({notice:{text:'DỮ LIỆU KHÔNG ĐÚNG...', title:'MINI POKER'}});
 		}else{
-			let kmess = 8;
+			let kmess = 9;
 			if (red) {
 				miniPokerRed.countDocuments({name:client.profile.name}).exec(function(err, total){
 					miniPokerRed.find({name:client.profile.name}, 'id win bet kq time', {sort:{'_id':-1}, skip:(page-1)*kmess, limit:kmess}, function(err, result) {

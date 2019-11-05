@@ -715,11 +715,11 @@ module.exports = function(client, data){
 											let okHu = (quyHu-Math.ceil(quyHu*phe/100))>>0;
 											bet_win += okHu;
 											HU.updateOne({game:'long', type:bet, red:red}, {$set:{name:'', bet:dataHu.min}}).exec();
-											red && client.redT.sendInHome({pushnohu:{title:'LONG LÂN', name:client.profile.name, bet:okHu}});
+											red && client.redT.sendInHome({pushnohu:{title:'Đập Hũ', name:client.profile.name, bet:okHu}});
 										}else{
 											let okHu = (dataHu.min-Math.ceil(dataHu.min*phe/100))>>0;
 											bet_win += okHu;
-											red && client.redT.sendInHome({pushnohu:{title:'LONG LÂN', name:client.profile.name, bet:okHu}});
+											red && client.redT.sendInHome({pushnohu:{title:'Đập Hũ', name:client.profile.name, bet:okHu}});
 										}
 										if (red){
 											huUpdate.hu += 1;
@@ -856,7 +856,7 @@ module.exports = function(client, data){
 								isBigWin = true;
 								type = 1;
 								if (red) {
-									client.redT.sendInHome({news:{t:{game:'LONG LÂN', users:client.profile.name, bet:bet_win, status:2}}});
+									client.redT.sendInHome({news:{t:{game:'Đập Hũ', users:client.profile.name, bet:bet_win, status:2}}});
 								}
 							}
 							if (free > 0) {

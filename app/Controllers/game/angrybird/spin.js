@@ -39,16 +39,30 @@ function random_cel2(){
 }
 
 
-function random_celR3(){
-	let a = random_cel3();
-	if (a == 5) {
-		// 5
+function random_celR2(){
+	let a = (Math.random()*21)>>0;
+	if (a >= 19) {
+		return 4;
+	}else if (a >= 17 && a < 19) {
+		return 3;
+	}else if (a >= 14 && a < 17) {
 		return 2;
-	}else if (a >= 3 && a < 5) {
-		// 3 4
+	}else if (a >= 6 && a < 14) {
 		return 1;
 	}else{
-		// 0 1 2
+		return 0;
+	}
+}
+
+function random_celR3(){
+	let a = (Math.random()*11)>>0;
+	if (a === 10) {
+		return 3;
+	}else if (a === 9) {
+		return 2;
+	}else if (a >= 6 && a < 9) {
+		return 1;
+	}else{
 		return 0;
 	}
 }
@@ -202,7 +216,7 @@ module.exports = function(client, data){
 
 						// Tạo kết quả 2 Hàng sau
 						let celSR = [
-							random_celR(),  random_celR(), random_celR3(),
+							random_celR2(),  random_celR2(), random_celR3(),
 							random_celR3(), 0,             0,
 						]; // Super
 
@@ -217,11 +231,11 @@ module.exports = function(client, data){
 						if (checkName) {
 							line_nohu = Math.floor(Math.random()*(27-1+1))+1;
 
-							celR1[1] = 3;
-							celR2[1] = 3;
+							celR1[1] = 4;
+							celR2[1] = 4;
 						}
 
-						let heso_T = [1, 3, 5, 10];                  // He so an
+						let heso_T = [1, 2, 3, 5, 10];                  // He so an
 						let heso   = 1;
 						if (celR1[1] != 0) {
 							heso = heso_T[celR1[1]]*heso_T[celR2[1]];
@@ -499,7 +513,7 @@ module.exports = function(client, data){
 												let okHu = (quyHu-Math.ceil(quyHu*phe/100))>>0;
 												bet_win += okHu;
 												if (red){
-													client.redT.sendInHome({pushnohu:{title:'AngryBirds', name:client.profile.name, bet:okHu}});
+													client.redT.sendInHome({pushnohu:{title:'Thiên Thú', name:client.profile.name, bet:okHu}});
 													huUpdate['hu']   = uInfo['hu']   = mini_users['hu']  += 1; // Cập nhật Số Hũ Red đã Trúng
 												}else{
 													huUpdate['huXu'] = uInfo['huXu'] = mini_users['huXu'] += 1; // Cập nhật Số Hũ Xu đã Trúng
@@ -508,7 +522,7 @@ module.exports = function(client, data){
 												let okHu = (quyMin-Math.ceil(quyMin*phe/100))>>0;
 												bet_win += okHu;
 												if (red){
-													client.redT.sendInHome({pushnohu:{title:'AngryBirds', name:client.profile.name, bet:okHu}});
+													client.redT.sendInHome({pushnohu:{title:'Thiên Thú', name:client.profile.name, bet:okHu}});
 													huUpdate['hu']   = uInfo['hu']   = mini_users['hu']   += 1; // Cập nhật Số Hũ Red đã Trúng
 												}else{
 													huUpdate['huXu'] = uInfo['huXu'] = mini_users['huXu'] += 1; // Cập nhật Số Hũ Xu đã Trúng
@@ -538,7 +552,7 @@ module.exports = function(client, data){
 								isBigWin = true;          // Là thắng lớn
 								type = 1;
 								if (red) {
-									client.redT.sendInHome({news:{t:{game:'AngryBirds', users:client.profile.name, bet:bet_win, status:2}}});
+									client.redT.sendInHome({news:{t:{game:'Thiên Thú', users:client.profile.name, bet:bet_win, status:2}}});
 								}
 							}
 

@@ -386,11 +386,11 @@ module.exports = function(client, data){
 										if (!nohu) {
 											var okHu = (quyHu-Math.ceil(quyHu*phe/100))>>0;
 											bet_win += okHu;
-											red && client.redT.sendInHome({pushnohu:{title:'BigBabol', name:client.profile.name, bet:okHu}});
+											red && client.redT.sendInHome({pushnohu:{title:'Thỉnh Kinh', name:client.profile.name, bet:okHu}});
 										}else{
 											var okHu = (quyMin-Math.ceil(quyMin*phe/100))>>0;
 											bet_win += okHu;
-											red && client.redT.sendInHome({pushnohu:{title:'BigBabol', name:client.profile.name, bet:okHu}});
+											red && client.redT.sendInHome({pushnohu:{title:'Thỉnh Kinh', name:client.profile.name, bet:okHu}});
 										}
 										HU.updateOne({game:'bigbabol', type:bet, red:red}, {$set:{name:'', bet:quyMin}}).exec();
 
@@ -432,7 +432,7 @@ module.exports = function(client, data){
 								isBigWin = true;
 								type = 1;
 								if (red) {
-									client.redT.sendInHome({news:{t:{game:'BigBabol', users:client.profile.name, bet:bet_win, status:2}}});
+									client.redT.sendInHome({news:{t:{game:'Thỉnh Kinh', users:client.profile.name, bet:bet_win, status:2}}});
 								}
 							}
 

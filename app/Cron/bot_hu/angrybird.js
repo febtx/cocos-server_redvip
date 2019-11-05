@@ -325,7 +325,7 @@ let spin = function(io, user){
 								okHu = Math.floor(quyMin-Math.ceil(quyMin*2/100));
 								bet_win += okHu;
 							}
-							io.sendInHome({pushnohu:{title:'AngryBirds', name:user.name, bet:okHu}});
+							io.sendInHome({pushnohu:{title:'Thiên Thú', name:user.name, bet:okHu}});
 							HU.updateOne({game:'arb', type:bet, red:true}, {$set:{name:'', bet:quyMin}}).exec();
 						}else{
 							bet_win += bet*10;
@@ -344,7 +344,7 @@ let spin = function(io, user){
 			});
 			bet_win  = nohu ? bet_win : bet_win*heso; // Tổng tiền ăn đc (chưa cắt phế)
 			if (!nohu && bet_win >= bet*10) {
-				io.sendInHome({news:{t:{game:'AngryBirds', users:user.name, bet:bet_win, status:2}}});
+				io.sendInHome({news:{t:{game:'Thiên Thú', users:user.name, bet:bet_win, status:2}}});
 			}
 			HU.updateOne({game:'arb', type:bet, red:true}, {$inc:huUpdate}).exec();
 			io   = null;

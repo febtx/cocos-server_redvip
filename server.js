@@ -48,7 +48,7 @@ require('./routerHttp')(app, redT);   // load các routes HTTP
 require('./routerSocket')(app, redT); // load các routes WebSocket
 
 require('./app/Cron/taixiu')(redT);   // Chạy game Tài Xỉu
-require('./app/Cron/baucua')(redT);   // Chạy game Bầu Cua
+//require('./app/Cron/baucua')(redT);   // Chạy game Bầu Cua
 
 require('./config/cron')();
 

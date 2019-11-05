@@ -359,7 +359,7 @@ let spin = function(io, user){
 							okHu = Math.floor(dataHu.min-Math.ceil(dataHu.min*2/100));
 							bet_win += okHu;
 						}
-						io.sendInHome({pushnohu:{title:'LONG LÂN', name:user.name, bet:okHu}});
+						io.sendInHome({pushnohu:{title:'Đập Hũ', name:user.name, bet:okHu}});
 						nohu = true;
 					}else if (!nohu && line_win.type === 4){
 						// x100
@@ -451,7 +451,7 @@ let spin = function(io, user){
 				}
 			});
 			if (!nohu && bet_win >= tongCuoc*2.24) {
-				io.sendInHome({news:{t:{game:'LONG LÂN', users:user.name, bet:bet_win, status:2}}});
+				io.sendInHome({news:{t:{game:'Đập Hũ', users:user.name, bet:bet_win, status:2}}});
 			}
 			HU.updateOne({game:'long', type:bet, red:true}, {$inc:{bet:addQuy}}).exec();
 

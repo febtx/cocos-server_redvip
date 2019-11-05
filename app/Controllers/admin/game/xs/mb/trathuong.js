@@ -190,7 +190,7 @@ module.exports = function(client, date) {
 											// 'Đầu'
 											objC.so.forEach(function(so){
 												if (so === dau) {
-													win += diem*9800;
+													win += diem*7000;
 												}
 											});
 											break;
@@ -198,7 +198,7 @@ module.exports = function(client, date) {
 											// 'Đuôi'
 											objC.so.forEach(function(so){
 												if (so === duoi) {
-													win += diem*9800;
+													win += diem*7000;
 												}
 											});
 											break;

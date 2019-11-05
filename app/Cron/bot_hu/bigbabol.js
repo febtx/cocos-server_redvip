@@ -240,7 +240,7 @@ let spin = function(io, user){
 							okHu = Math.floor(quyMin-Math.ceil(quyMin*2/100));
 							bet_win += okHu;
 						}
-						io.sendInHome({pushnohu:{title:'BigBabol', name:user.name, bet:okHu}});
+						io.sendInHome({pushnohu:{title:'Thỉnh Kinh', name:user.name, bet:okHu}});
 						HU.updateOne({game:'bigbabol', type:bet, red:true}, {$set:{name:'', bet:quyMin}}).exec();
 						nohu = true;
 					}else if(!nohu && line_win.win == 4) {
@@ -268,7 +268,7 @@ let spin = function(io, user){
 				}
 			});
 			if (!nohu && bet_win >= cuoc*2.24) {
-				io.sendInHome({news:{t:{game:'BigBabol', users:user.name, bet:bet_win, status:2}}});
+				io.sendInHome({news:{t:{game:'Thỉnh Kinh', users:user.name, bet:bet_win, status:2}}});
 			}
 			HU.updateOne({game:'bigbabol', type:bet, red:true}, {$inc:huUpdate}).exec();
 			io = null;

@@ -9,7 +9,7 @@ module.exports = function(client, data){
 		if (page < 1) {
 			client.red({notice:{text: 'DỮ LIỆU KHÔNG ĐÚNG...', title: 'THẤT BẠI'}});
 		}else{
-			var kmess = 8;
+			var kmess = 7;
 			if (red) {
 				CaoThap_red.countDocuments({uid: client.UID}).exec(function(err, total){
 					CaoThap_red.find({uid: client.UID}, {}, {sort:{'_id':-1}, skip: (page-1)*kmess, limit: kmess}, function(err, result) {

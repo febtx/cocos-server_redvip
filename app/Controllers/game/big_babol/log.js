@@ -8,7 +8,7 @@ module.exports = function(client, data){
 	if (page < 1) {
 		client.red({notice:{text: 'DỮ LIỆU KHÔNG ĐÚNG...', title: 'THẤT BẠI'}});
 	}else{
-		var kmess = 8;
+		var kmess = 9;
 		if (red) {
 			BigBabol_red.countDocuments({name: client.profile.name}).exec(function(err, total){
 				BigBabol_red.find({name: client.profile.name}, 'id win bet kq time', {sort:{'_id':-1}, skip: (page-1)*kmess, limit: kmess}, function(err, result) {
