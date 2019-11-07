@@ -8,9 +8,9 @@ module.exports = function(client, data){
 		spin(client, data.spin);
 	}
 	if (!!data.log) {
-		log(client, data.log)
+		log(client, data.log);
 	}
 	if (void 0 !== data.top) {
-		top(client, data.top)
+		top(client);
 	}
 };

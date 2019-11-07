@@ -27,6 +27,7 @@ function spin(client, data){
 					let addQuy  = (bet*0.01)>>0;
 					let an      = 0;
 					let code    = 0;
+					let type    = 0;
 					let text    = '';
 					let thuong  = 0;
 					let card    = [...base_card.card];
@@ -140,11 +141,12 @@ function spin(client, data){
 
 							text = 'Nổ Hũ';
 							code = 2;
+							type = 2;
 						}else if (isDay && dongChat) {
 							// x1000    THÙNG PHÁ SẢNH (DÂY ĐỒNG CHẤT)
 							an   = (bet*1000);
 							text = 'Thắng Lớn';
-							//code = 1;
+							code = 1;
 							if (red) {
 								client.redT.sendInHome({news:{t:{game:'MINI POKER', users:client.profile.name, bet:an, status:2}}});
 							}
@@ -152,7 +154,7 @@ function spin(client, data){
 							// x150     TỨ QUÝ (TỨ QUÝ)
 							an   = (bet*150);
 							text = 'Tứ Quý';
-							//code = 1;
+							code = 1;
 							if (red) {
 								client.redT.sendInHome({news:{t:{game:'MINI POKER', users:client.profile.name, bet:an, status:2}}});
 							}
@@ -195,11 +197,11 @@ function spin(client, data){
 							if (code === 2){
 								uInfo['hu'] = mini_users['hu'] = 1;         // Cập nhật Số Hũ Red đã Trúng
 							}
-							miniPokerRed.create({'name':client.profile.name, 'win':an, 'bet':bet, 'type':code, 'kq':ketqua, 'time':new Date()}, function (err, small) {
+							miniPokerRed.create({'name':client.profile.name, 'win':an, 'bet':bet, 'type':type, 'kq':ketqua, 'time':new Date()}, function (err, small) {
 								if (err){
 									client.red({mini:{poker:{status:0, notice:'Có lỗi sảy ra, vui lòng thử lại.!!'}}});
 								}else{
-									client.red({mini:{poker:{status:1, card:ketqua, phien:small.id, win:an, text:text}}, user:{red:user.red-bet, xu:user.xu}});
+									client.red({mini:{poker:{status:1, card:ketqua, phien:small.id, win:an, text:text, code:code}}, user:{red:user.red-bet, xu:user.xu}});
 								}
 							});
 
@@ -249,11 +251,11 @@ function spin(client, data){
 								uInfo['huXu'] = mini_users['huXu'] = 1;      // Cập nhật Số Hũ Xu đã Trúng
 							}
 
-							miniPokerXu.create({'name':client.profile.name, 'win':an, 'bet':bet, 'type':code, 'kq':ketqua, 'time':new Date()}, function (err, small) {
+							miniPokerXu.create({'name':client.profile.name, 'win':an, 'bet':bet, 'type':type, 'kq':ketqua, 'time':new Date()}, function (err, small) {
 								if (err){
 									client.red({mini:{poker:{status:0, notice:'Có lỗi sảy ra, vui lòng thử lại.!!'}}});
 								}else{
-									client.red({mini:{poker:{status:1, card:ketqua, phien:small.id, win:an, thuong:thuong, text:text}}, user:{red:user.red, xu:user.xu-bet}});
+									client.red({mini:{poker:{status:1, card:ketqua, phien:small.id, win:an, thuong:thuong, text:text, code:code}}, user:{red:user.red, xu:user.xu-bet}});
 								}
 							});
 						}
@@ -306,45 +308,28 @@ function log(client, data){
 	}
 }
 
-function top(client, data){
-	let red = !!data; // Loại tiền (Red:true, Xu:false)
-	if (red) {
-		miniPokerRed.find({type:{$gte:7}}, 'name win bet time type', {sort:{'_id':-1}, limit:50}, function(err, result) {
-			Promise.all(result.map(function(obj){
-				obj = obj._doc;
-				delete obj.__v;
-				delete obj._id;
-				return obj;
-			}))
-			.then(function(arrayOfResults) {
-				client.red({mini:{poker:{top:arrayOfResults}}});
-			})
-		});
-	}else{
-		miniPokerXu.find({type:{$gte:7}}, 'name win bet time type', {sort:{'_id':-1}, limit:50}, function(err, result) {
-			Promise.all(result.map(function(obj){
-				obj = obj._doc;
-				delete obj.__v;
-				delete obj._id;
-				return obj;
-			}))
-			.then(function(arrayOfResults) {
-				client.red({mini:{poker:{top:arrayOfResults}}});
-			})
-		});
-	}
+function top(client){
+	miniPokerRed.find({type:2}, 'name win bet time type', {sort:{'_id':-1}, limit:50}, function(err, result) {
+		Promise.all(result.map(function(obj){
+			obj = obj._doc;
+			delete obj.__v;
+			delete obj._id;
+			return obj;
+		}))
+		.then(function(arrayOfResults) {
+			client.red({mini:{poker:{top:arrayOfResults}}});
+		})
+	});
 }
 
 module.exports = function(client, data){
-	if (!!data) {
-		if (!!data.spin) {
-			spin(client, data.spin)
-		}
-		if (!!data.log) {
-			log(client, data.log)
-		}
-		if (void 0 !== data.top) {
-			top(client, data.top)
-		}
-	};
+	if (!!data.spin) {
+		spin(client, data.spin);
+	}
+	if (!!data.log) {
+		log(client, data.log);
+	}
+	if (void 0 !== data.top) {
+		top(client);
+	}
 }
