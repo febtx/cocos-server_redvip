@@ -1,6 +1,7 @@
 
-let HU      = require('../../Models/HU');
-let Helpers = require('../../Helpers/Helpers');
+let HU           = require('../../Models/HU');
+let BigBabol_red = require('../../Models/BigBabol/BigBabol_red');
+let Helpers      = require('../../Helpers/Helpers');
 
 let random_cel2 = function(){
 	let a = Math.floor(Math.random()*21);
@@ -242,6 +243,7 @@ let spin = function(io, user){
 						}
 						io.sendInHome({pushnohu:{title:'Thỉnh Kinh', name:user.name, bet:okHu}});
 						HU.updateOne({game:'bigbabol', type:bet, red:true}, {$set:{name:'', bet:quyMin}}).exec();
+						BigBabol_red.create({'name':user.name, 'type':2, 'win':bet_win, 'bet':bet, 'kq':1, 'line':1, 'time':new Date()});
 						nohu = true;
 					}else if(!nohu && line_win.win == 4) {
 						// x80

@@ -4,11 +4,11 @@ let mongoose      = require('mongoose');
 
 let Schema = new mongoose.Schema({
 	name: {type: String, required: true, index: true},
-	type: {type: Number, default: 0},         // Loại được ăn lớn nhất trong phiên
-	win:  {type: Number, default: 0},         // Tiền thắng
-	bet:  {type: Number, default: 0},         // Mức cược
-	line: {type: Number, default: 0},         // Số dòng chọn
-	kq:   {type: Number, default: 0},         // Số dòng ăn
+	type: {type: Number, default: 0, index: true},    // Loại được ăn lớn nhất trong phiên
+	win:  {type: Number, default: 0},                 // Tiền thắng
+	bet:  {type: Number, default: 0},                 // Mức cược
+	line: {type: Number, default: 0},                 // Số dòng chọn
+	kq:   {type: Number, default: 0},                 // Số dòng ăn
 	time: {type: Date,   default: new Date()},
 });
 

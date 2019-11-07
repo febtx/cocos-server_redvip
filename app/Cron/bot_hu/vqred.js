@@ -1,5 +1,6 @@
 
-let HU      = require('../../Models/HU');
+let HU               = require('../../Models/HU');
+let VuongQuocRed_red = require('../../Models/VuongQuocRed/VuongQuocRed_red');
 let Helpers = require('../../Helpers/Helpers');
 
 let random_cel2 = function(){
@@ -221,6 +222,7 @@ let spin = function(io, user){
 						}
 						io.sendInHome({pushnohu:{title:'Ngộ Không', name:user.name, bet:okHu}});
 						nohu = true;
+						VuongQuocRed_red.create({'name':user.name, 'type':2, 'win':bet_win, 'bet':bet, 'kq':1, 'line':1, 'time':new Date()});
 					}else if (!nohu && line_win.type === 4){
 						// x30
 						bet_win += bet*30;

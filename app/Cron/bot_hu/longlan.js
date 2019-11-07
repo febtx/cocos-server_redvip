@@ -1,5 +1,6 @@
 
-let HU      = require('../../Models/HU');
+let HU          = require('../../Models/HU');
+let LongLan_red = require('../../Models/LongLan/LongLan_red');
 let Helpers = require('../../Helpers/Helpers');
 
 let random_T1 = function(){
@@ -361,6 +362,7 @@ let spin = function(io, user){
 						}
 						io.sendInHome({pushnohu:{title:'Đập Hũ', name:user.name, bet:okHu}});
 						nohu = true;
+						LongLan_red.create({'name':user.name, 'type':2, 'win':bet_win, 'bet':bet, 'kq':1, 'line':1, 'time':new Date()});
 					}else if (!nohu && line_win.type === 4){
 						// x100
 						bet_win += bet*100;

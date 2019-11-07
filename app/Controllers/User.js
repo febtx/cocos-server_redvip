@@ -33,8 +33,13 @@ let nhanthuong  = require('./user/nhanthuong');
 let GameState = require('./GameState.js')
 
 let first = function(client){
-	UserInfo.findOne({id: client.UID}, 'name lastVip redPlay red xu ketSat UID cmt email security joinedOn', function(err, user) {
+	UserInfo.findOne({id:client.UID}, 'name lastVip redPlay red xu ketSat UID cmt email security joinedOn', function(err, user) {
 		if (!!user) {
+			// Tạo token mới
+			let txtTH = new Date()+'';
+			let token = Helper.generateHash(txtTH);
+			User.updateOne({'_id':client.UID}, {$set:{'local.token':token}}).exec();
+
 			user = user._doc;
 			let vipHT = ((user.redPlay-user.lastVip)/100000)>>0; // Điểm vip Hiện Tại
 			// Cấp vip hiện tại
@@ -77,6 +82,7 @@ let first = function(client){
 			user.level   = vipLevel;
 			user.vipNext = vipNext-vipPre;
 			user.vipHT   = vipHT-vipPre;
+			user.token   = token;
 
 			delete user._id;
 			delete user.redPlay;
@@ -96,7 +102,7 @@ let first = function(client){
 					Authorized: true,
 					user:       user,
 				};
-				Message.countDocuments({uid:client.UID, read: false}).exec(function(errMess, countMess){
+				Message.countDocuments({uid:client.UID, read:false}).exec(function(errMess, countMess){
 					data.message = {news:countMess};
 					client.red(data);
 					GameState(client);
@@ -145,11 +151,18 @@ let signName = function(client, name){
 											if (!!errC) {
 												client.red({notice:{load: 0, title: 'LỖI', text: 'Tên nhân vật đã tồn tại.'}});
 											}else{
+												// Tạo token mới
+												let txtTH = new Date()+'';
+												let token = Helper.generateHash(txtTH);
+												base.local.token = token;
+												base.save();
+
 												user = user._doc;
 												user.level   = 1;
 												user.vipNext = 100;
 												user.vipHT   = 0;
 												user.phone   = '';
+												user.token   = token;
 
 												delete user._id;
 												delete user.redWin;
@@ -293,7 +306,10 @@ function addToListOnline(client){
 		client.redT.users[client.UID] = [client];
 	}
 }
-
+function signOut(client){
+	User.updateOne({'_id':client.UID}, {$set:{'local.token':''}}).exec();
+	client.terminate();
+}
 function onData(client, data) {
 	if (!!data) {
 		if (!!data.doi_pass) {
@@ -316,6 +332,9 @@ function onData(client, data) {
 		}
 		if (!!data.security) {
 			security(client, data.security);
+		}
+		if (!!data.signOut) {
+			signOut(client);
 		}
 	}
 }

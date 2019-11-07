@@ -139,12 +139,12 @@ function spin(client, data){
 							}
 
 							text = 'Nổ Hũ';
-							code = 9;
+							code = 2;
 						}else if (isDay && dongChat) {
 							// x1000    THÙNG PHÁ SẢNH (DÂY ĐỒNG CHẤT)
 							an   = (bet*1000);
 							text = 'Thắng Lớn';
-							code = 8;
+							//code = 1;
 							if (red) {
 								client.redT.sendInHome({news:{t:{game:'MINI POKER', users:client.profile.name, bet:an, status:2}}});
 							}
@@ -152,7 +152,7 @@ function spin(client, data){
 							// x150     TỨ QUÝ (TỨ QUÝ)
 							an   = (bet*150);
 							text = 'Tứ Quý';
-							code = 7;
+							//code = 1;
 							if (red) {
 								client.redT.sendInHome({news:{t:{game:'MINI POKER', users:client.profile.name, bet:an, status:2}}});
 							}
@@ -160,32 +160,26 @@ function spin(client, data){
 							// x50      CÙ LŨ (1 BỘ 3 VÀ 1 BỘ 2)
 							an   = (bet*50);
 							text = 'Cù Lũ';
-							code = 6;
 						}else if (dongChat) {
 							// x20		THÙNG (ĐỒNG CHẤT)
 							an   = (bet*20);
 							text = 'Thùng';
-							code = 5;
 						}else if (isDay && !dongChat) {
 							// x13		SẢNH (DÂY)
 							an   = (bet*13);
 							text = 'Sảnh';
-							code = 4;
 						}else if (bo3 && bo2 == 0) {
 							// x8 		SÁM CÔ (1 BỘ 3)
 							an   = (bet*8);
 							text = 'Sám Cô';
-							code = 3;
 						}else if (bo2 > 1) {
 							// x5	 	THÚ (2 ĐÔI)
 							an   = (bet*5);
 							text = 'Thú';
-							code = 2;
 						}else if (bo2 == 1 && (bo2_a[0] > 9 || bo2_a[0] == 0)) {
 							// x2.5	 	1 ĐÔI > J
 							an   = (bet*2.5);
 							text = 'Đôi ' + base_card.name[bo2_a[0]];
-							code = 1;
 						}
 
 						let tien = an-bet;
@@ -198,14 +192,14 @@ function spin(client, data){
 							if (tien < 0){
 								huUpdate['redLost'] = uInfo['redLost'] = mini_users['lost'] = tien*(-1); // Cập nhật Số Red đã Thua
 							}
-							if (code == 9){
+							if (code === 2){
 								uInfo['hu'] = mini_users['hu'] = 1;         // Cập nhật Số Hũ Red đã Trúng
 							}
 							miniPokerRed.create({'name':client.profile.name, 'win':an, 'bet':bet, 'type':code, 'kq':ketqua, 'time':new Date()}, function (err, small) {
 								if (err){
 									client.red({mini:{poker:{status:0, notice:'Có lỗi sảy ra, vui lòng thử lại.!!'}}});
 								}else{
-									client.red({mini:{poker:{status:1, card:ketqua, phien:small.id, win:an, text:text, code:code}}, user:{red:user.red-bet, xu:user.xu}});
+									client.red({mini:{poker:{status:1, card:ketqua, phien:small.id, win:an, text:text}}, user:{red:user.red-bet, xu:user.xu}});
 								}
 							});
 
@@ -251,7 +245,7 @@ function spin(client, data){
 							if (tien < 0){
 								huUpdate['xuLost'] = uInfo['xuLost'] = mini_users['lostXu'] = tien*(-1); // Cập nhật Số xu đã Thua
 							}
-							if (code == 9){
+							if (code === 2){
 								uInfo['huXu'] = mini_users['huXu'] = 1;      // Cập nhật Số Hũ Xu đã Trúng
 							}
 
@@ -259,7 +253,7 @@ function spin(client, data){
 								if (err){
 									client.red({mini:{poker:{status:0, notice:'Có lỗi sảy ra, vui lòng thử lại.!!'}}});
 								}else{
-									client.red({mini:{poker:{status:1, card:ketqua, phien:small.id, win:an, thuong:thuong, text:text, code:code}}, user:{red:user.red, xu:user.xu-bet}});
+									client.red({mini:{poker:{status:1, card:ketqua, phien:small.id, win:an, thuong:thuong, text:text}}, user:{red:user.red, xu:user.xu-bet}});
 								}
 							});
 						}

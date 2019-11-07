@@ -37,6 +37,10 @@ let Schema = new mongoose.Schema({
 	type:       {type: Boolean, default: false, index: true},       // Bot = true | Users = false
 
 	otpFirst:   {type: Boolean, default: false},                    // Kiểm tra lần đầu lấy mã OTP
+
+	gitCode:    {type: Number,  default: 0},                        // Số lần Lấy mã GiftCode thành công
+	gitRed:     {type: Number,  default: 0},                        // Tiền lấy đc từ GiftCode
+	gitTime:    {type: Date},                                       // Ngày tham gia
 });
 
 Schema.plugin(AutoIncrement.plugin, {modelName: 'UserInfo', field:'UID'});

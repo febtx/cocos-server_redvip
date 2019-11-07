@@ -89,7 +89,7 @@ module.exports = function(client, data){
 							}
 						});
 					}else{
-						client.red({notice:{title: 'THÔNG BÁO', text: 'Chức năng chỉ dành cho tài khoản đã kích hoạt.'}});
+						client.red({notice:{title:'THÔNG BÁO', text:'Chức năng chỉ dành cho tài khoản đã kích hoạt.', button:{text:'KÍCH HOẠT', type:'reg_otp'}}});
 					}
 				});
 			}

@@ -1,6 +1,7 @@
 
-let HU      = require('../../Models/HU');
-let Helpers = require('../../Helpers/Helpers');
+let HU             = require('../../Models/HU');
+let AngryBirds_red = require('../../Models/AngryBirds/AngryBirds_red');
+let Helpers        = require('../../Helpers/Helpers');
 
 let random_cel2 = function(){
 	let a = Math.floor(Math.random()*21);
@@ -72,40 +73,7 @@ let check_win = function(data, line){
 			win_type = 3;
 		}
 	});
-
 	return {line:line, win:win_icon, type:win_type};
-
-
-	/**
-	return new Promise((aT, bT) => {
-		Promise.all(arrT.map(function(c, index){
-			if (index != 5 && index != 4) {
-				arrT[index] += thaythe;
-			}
-			return index != 5 ? c+thaythe : c;
-		})).then(temp1 => {
-			Promise.all(arrT.map(function(c, index){
-				if (c === 3 && index !== 0) {
-					win_icon = index;
-					win_type = 3;
-				}
-				return void 0;
-			})).then(result => {
-				result = null;
-				aT({line:line, win:win_icon, type:win_type});
-			})
-		})
-	})
-	.then(result => {
-		data = null;
-		line = null;
-		win_icon = null;
-		win_type = null;
-		thaythe  = null;
-		arrT     = null;
-		return result;
-	})
-	*/
 }
 
 let spin = function(io, user){
@@ -327,6 +295,7 @@ let spin = function(io, user){
 							}
 							io.sendInHome({pushnohu:{title:'Thiên Thú', name:user.name, bet:okHu}});
 							HU.updateOne({game:'arb', type:bet, red:true}, {$set:{name:'', bet:quyMin}}).exec();
+							AngryBirds_red.create({'name':user.name, 'type':2, 'win':bet_win, 'bet':bet, 'time':new Date()});
 						}else{
 							bet_win += bet*10;
 						}
@@ -349,8 +318,8 @@ let spin = function(io, user){
 			HU.updateOne({game:'arb', type:bet, red:true}, {$inc:huUpdate}).exec();
 			io   = null;
 			user = null;
-			bet = null;
-			a = null;
+			bet  = null;
+			a    = null;
 			addQuy   = null;
 			bet_win  = null;
 			huUpdate = null;
@@ -358,18 +327,18 @@ let spin = function(io, user){
 			quyMin   = null;
 			toX      = null;
 			balans   = null;
-			aRwin = null;
-			celSS = null;
-			celSR = null;
-			cel1 = null;
-			cel2 = null;
-			cel3 = null;
+			aRwin  = null;
+			celSS  = null;
+			celSR  = null;
+			cel1   = null;
+			cel2   = null;
+			cel3   = null;
 			celR1  = null;
 			celR2  = null;
 			heso_T = null;
 			heso   = null;
-		})
-	})
+		});
+	});
 }
 
 module.exports = function(io, listBot){

@@ -550,7 +550,7 @@ module.exports = function(client, data){
 							let tien = bet_win-bet;
 							if (!nohu && bet_win >= bet*10) {
 								isBigWin = true;          // Là thắng lớn
-								type = 1;
+								//type = 1;
 								if (red) {
 									client.redT.sendInHome({news:{t:{game:'Thiên Thú', users:client.profile.name, bet:bet_win, status:2}}});
 								}
@@ -566,7 +566,7 @@ module.exports = function(client, data){
 								if (tien < 0){
 									huUpdate['redLost'] = uInfo['redLost'] = mini_users['lost'] = tien*(-1); // Cập nhật Số Red đã Thua
 								}
-								
+
 								AngryBirds_red.create({'name':client.profile.name, 'type':type, 'win':bet_win, 'bet':bet, 'time':new Date()}, function (err, small) {
 									if (err){
 										client.red({mini:{arb:{status:0, notice:'Có lỗi sảy ra, vui lòng thử lại.!!'}}});
