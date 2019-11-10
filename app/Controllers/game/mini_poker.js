@@ -73,8 +73,8 @@ function spin(client, data){
 						}
 					});
 
-					let type     = ketqua[0].type; // chất đầu tiên
-					let dongChat = ketqua_temp.filter(type_card => type_card.type == type); // Kiểm tra đồng chất
+					let typeCard = ketqua[0].type; // chất đầu tiên
+					let dongChat = ketqua_temp.filter(type_card => type_card.type === typeCard); // Kiểm tra đồng chất
 					dongChat     = dongChat.length == 5 ? true :false;  // Dây là đồng chất
 
 					let AK    = ketqua_temp.sort(function(a, b){return a.card - b.card}); // sắp sếp từ A đến K (A23...JQK)
