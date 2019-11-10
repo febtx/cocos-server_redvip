@@ -41,6 +41,11 @@ module.exports = function(app, redT) {
 		return res.render('help/ios');
 	});
 
+	// Help telegram
+	app.get('/help/telegram/', function(req, res) {
+		return res.render('help/telegram');
+	});
+
 	// Sign API
 	require('./routes/api')(app, redT);  // load routes API
 };
