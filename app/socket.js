@@ -22,6 +22,9 @@ let signMethod = function(client) {
 			//this.poker = null;
 		//}
 
+		if (!!this.fish) {
+			this.fish.outGame();
+		}
 
 		if (this.redT) {
 			let xocxoc = this.redT.game.xocxoc;

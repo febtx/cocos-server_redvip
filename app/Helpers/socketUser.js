@@ -2,6 +2,7 @@
 //let Poker = require('./poker/init');
 
 let XocXoc = require('../Controllers/game/XocXoc/init');
+let BanCa  = require('../Controllers/game/BanCa/Controller');
 
 module.exports = function(io){
 	io.users  = []; // danh sách người dùng đăng nhập
@@ -12,8 +13,9 @@ module.exports = function(io){
 	};
 	*/
 
-	io.game   = {
-		xocxoc: new XocXoc(io), // thiết lập game poker
+	io.game = {
+		xocxoc: new XocXoc(io), // thiết lập game Xóc Đĩa
+		fish:   new BanCa(),    // thiết lập game Bắn Cá
 	};
 
 	// Phát sóng tới tất cả người dùng và khách

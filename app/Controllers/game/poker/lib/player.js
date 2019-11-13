@@ -42,7 +42,7 @@ Player.prototype.outGame = function(){
 		}else{
 			uInfo.xu  = this.balans;
 		}
-		UserInfo.updateOne({id: this.uid}, {$inc:uInfo}).exec();
+		UserInfo.updateOne({id:this.uid}, {$inc:uInfo}).exec();
 	}
 }
 

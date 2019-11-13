@@ -8,7 +8,6 @@ let mini_poker = require('./game/mini_poker');
 // Big Babol
 let big_babol  = require('./game/big_babol');
 
-
 // Bầu Cua
 let baucua     = require('./game/baucua');
 
@@ -23,10 +22,13 @@ let angrybird  = require('./game/angrybird');
 
 let megaj      = require('./game/megaj');
 
-
 /**
  * Game
  */
+
+// Bắn Cá
+let fish    = require('./game/BanCa/index');
+
 // Vương Quốc Red
 let vq_red  = require('./game/vuong_quoc_red');
 
@@ -42,7 +44,6 @@ let LongLan = require('./game/longlan');
 // Reg game
 let reg     = require('./game/reg');
 
-
 // Xoc Xoc
 let XocXoc  = require('./game/XocXoc');
 
@@ -50,6 +51,9 @@ let XocXoc  = require('./game/XocXoc');
 let xs      = require('./game/xs');
 
 module.exports = function(client, data){
+	if (!!data.fish) {
+		fish(client, data.fish);
+	}
 	if (!!data.mini_poker) {
 		mini_poker(client, data.mini_poker);
 	}
@@ -74,7 +78,6 @@ module.exports = function(client, data){
 	if (!!data.megaj) {
 		megaj(client, data.megaj);
 	}
-
 
 	if (!!data.poker) {
 		Poker(client, data.poker);
