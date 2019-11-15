@@ -35,6 +35,7 @@ module.exports = function(client, data){
 					PhongCho = PhongCho[0];
 					if (PhongCho !== void 0) {
 						// có phòng chờ
+						PhongCho.inRoom(client.fish);
 					}else{
 						// tạo phòng mới
 						let singID = new Date().getTime() + client.UID;
@@ -45,8 +46,6 @@ module.exports = function(client, data){
 						let Game = new Room(client.redT.game.fish, singID, room);
 
 						client.redT.game.fish['wait'+room][singID] = Game; // Thêm phòng chờ
-						client.fish.room = Game;
-						client.fish.map  = 1;
 						Game.inRoom(client.fish);
 					}
 					client.red({notice:{title:'CẢNH BÁO', text:'Vào phòng ...', load: false}});

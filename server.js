@@ -52,7 +52,7 @@ require('./app/Cron/taixiu')(redT);   // Chạy game Tài Xỉu
 
 require('./config/cron')();
 
-require('./update')();
+//require('./update')();
 
 //require('./app/Telegram/Telegram')(TelegramBot); // Telegram Bot
 

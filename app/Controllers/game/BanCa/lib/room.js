@@ -29,9 +29,10 @@ Room.prototype.inRoom = function(player){
 
 	gheTrong.player = player; // ngồi
 	player.map = gheTrong.id; // vị trí ngồi
+	player.room = this;
 	console.log(this.player);
 
-	this.sendToAll({ingame:{ghe:player.map, data:{name:player.name, balans:player.balans, typeBet:player.typeBet}}}, player);
+	this.sendToAll({ingame:{ghe:player.map, data:{name:player.client.profile.name, balans:player.money, typeBet:player.typeBet}}}, player);
 
 	let getInfo = this.player.map(function(ghe){
 		if (!!ghe.player) {
@@ -54,14 +55,15 @@ Room.prototype.outRoom = function(player){
 	if (gheTrong.length === 4) {
 		console.log(this.root);
 		delete this.root.removeWait(this.room, this.id);
-		this.sendToAll({outgame:player.map});
 		console.log('Remove Room');
 		this.player.forEach(function(ghe){
-			ghe.player = null;
+			ghe = null;
 		});
 		// xóa phòng
 		this.player = [];
 		this.root   = null;
+	}else{
+		this.sendToAll({outgame:player.map});
 	}
 }
 
