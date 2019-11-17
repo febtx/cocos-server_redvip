@@ -31,7 +31,6 @@ module.exports = function(client, data){
 					client.fish = new Player(client, room, balans);
 					// Tìm phòng chờ
 					let PhongCho = Object.values(client.redT.game.fish['wait'+room]);
-					console.log(PhongCho);
 					PhongCho = PhongCho[0];
 					if (PhongCho !== void 0) {
 						// có phòng chờ
@@ -40,11 +39,7 @@ module.exports = function(client, data){
 						// tạo phòng mới
 						let singID = new Date().getTime() + client.UID;
 						singID = crypto.createHash('md5').update(singID).digest('hex');
-
-						console.log(client.redT.game.fish);
-
 						let Game = new Room(client.redT.game.fish, singID, room);
-
 						client.redT.game.fish['wait'+room][singID] = Game; // Thêm phòng chờ
 						Game.inRoom(client.fish);
 					}

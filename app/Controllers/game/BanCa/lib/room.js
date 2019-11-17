@@ -30,8 +30,7 @@ Room.prototype.inRoom = function(player){
 	gheTrong.player = player; // ngồi
 	player.map = gheTrong.id; // vị trí ngồi
 	player.room = this;
-	console.log(this.player);
-
+	player.updateTypeBet();
 	this.sendToAll({ingame:{ghe:player.map, data:{name:player.client.profile.name, balans:player.money, typeBet:player.typeBet}}}, player);
 
 	let getInfo = this.player.map(function(ghe){

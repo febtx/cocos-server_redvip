@@ -13,8 +13,39 @@ var Player = function(client, game, money){
 
 	this.moneyTotal = money;  // Tổng tiền mang vào
 	this.money      = money;  // số tiền chơi
+
+	this.meBulllet = {};
 }
 
+Player.prototype.changerTypeBet = function(bet){
+	bet = bet>>0;
+	if (bet >= 0 && bet <= 5) {
+		this.updateTypeBet(bet);
+		this.room.sendToAll({other:{updateType:{type:bet, map:this.map}}}, this);
+	}
+}
+
+Player.prototype.bullet = function(bullet){
+	if(this.money >= this.bet){
+		let id = bullet.id>>0;
+		let x  = bullet.x>>0;
+		let y  = bullet.y>>0;
+		let data = {x:x, y:y, player:this.map};
+		this.money = this.money-this.bet;
+		this.meBulllet[id] = {x:x, y:y, type:this.typeBet, bet:this.bet};
+		this.client.red({me:{money:this.money}});
+		this.room.sendToAll({other:{bulllet:{money:this.money, map:this.map, x:x, y:y}}}, this);
+	}
+}
+
+Player.prototype.updateTypeBet = function(bet = null){
+	if (bet !== null) {
+		this.bet = this.room.root.bet[this.game][bet];
+		this.typeBet = bet;
+	}else{
+		this.bet = this.room.root.bet[this.game][this.typeBet];
+	}
+}
 Player.prototype.addRoom = function(room){
 	this.room = room;
 	return void 0;
