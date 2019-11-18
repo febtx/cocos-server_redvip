@@ -97,26 +97,68 @@ function checkMid(client, mid){
 	}
 }
 
+let get_auto = function(client){
+	let cron = client.redT.game.giftcode;
+	client.red({giftcode:{get_auto:{h:cron.h, p:cron.p, sl:cron.sl, gift:cron.gift, re:cron.re, reP:cron.reP, status:cron.status}}});
+};
+
+let get_autoSave = function(client, data){
+	let h      = data.h>>0;
+	let p      = data.p>>0;
+	let sl     = data.sl>>0;
+	let gift   = data.gift>>0;
+	let re     = data.re>>0;
+	let reP    = data.reP>>0;
+
+	let status = !!data.status;
+
+	let cron   = client.redT.game.giftcode;
+	cron.h     = h;
+	cron.p     = p;
+	cron.sl    = sl;
+	cron.gift  = gift;
+	cron.re    = re;
+	cron.reP   = reP;
+
+	if(h < 0 || h > 23) {
+		client.red({notice:{title:'LỖI', text:'Giờ từ 0 đến 23 giờ...'}});
+	}else if(p < 0 || p > 59) {
+		client.red({notice:{title:'LỖI', text:'Phút từ 0 đến 59 phút...'}});
+	}else if(sl < 1) {
+		client.red({notice:{title:'LỖI', text:'Số lượng phải > 0'}});
+	}else if(gift < 1000) {
+		client.red({notice:{title:'LỖI', text:'Giá trị Giftcode phải > 1000'}});
+	}else{
+		client.red({notice:{title:'THÀNH CÔNG', text:'Lưu thành công.'}});
+		cron.status = status;
+		if (status) {
+			cron.start();
+		}else{
+			cron.stop();
+		}
+	}
+};
+
 module.exports = function (client, data) {
-	if (!!data) {
-		if (!!data.get_data) {
-			get_data(client, data.get_data)
-		}
-
-		if (!!data.get_gift) {
-			get_gift(client)
-		}
-
-		if (!!data.create_gift) {
-			create_gift(client, data.create_gift)
-		}
-
-		if (!!data.checkMid) {
-			checkMid(client, data.checkMid)
-		}
-
-		if (!!data.remove) {
-			remove(client, data.remove)
-		}
+	if (!!data.get_auto) {
+		get_auto(client);
+	}
+	if (!!data.get_autoSave) {
+		get_autoSave(client, data.get_autoSave);
+	}
+	if (!!data.get_data) {
+		get_data(client, data.get_data);
+	}
+	if (!!data.get_gift) {
+		get_gift(client);
+	}
+	if (!!data.create_gift) {
+		create_gift(client, data.create_gift);
+	}
+	if (!!data.checkMid) {
+		checkMid(client, data.checkMid);
+	}
+	if (!!data.remove) {
+		remove(client, data.remove);
 	}
 }

@@ -4,6 +4,9 @@
 let XocXoc = require('../Controllers/game/XocXoc/init');
 let BanCa  = require('../Controllers/game/BanCa/Controller');
 
+let GiftCode = require('./autoGiftcode');
+
+
 module.exports = function(io){
 	io.users  = []; // danh sách người dùng đăng nhập
 	io.admins = []; // danh sách admin đăng nhập
@@ -14,8 +17,9 @@ module.exports = function(io){
 	*/
 
 	io.game = {
-		xocxoc: new XocXoc(io), // thiết lập game Xóc Đĩa
-		fish:   new BanCa(),    // thiết lập game Bắn Cá
+		giftcode: new GiftCode(io),
+		xocxoc:   new XocXoc(io), // thiết lập game Xóc Đĩa
+		fish:     new BanCa(),    // thiết lập game Bắn Cá
 	};
 
 	// Phát sóng tới tất cả người dùng và khách

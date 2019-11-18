@@ -118,13 +118,13 @@ var chat = function(client, str){
 							if (!post || post.uid != client.UID || (post.uid == client.UID && post.value != str)) {
 								TXChat.create({'uid':client.UID, 'name':client.profile.name, 'value':str});
 								var content = {taixiu:{chat:{message:{user:client.profile.name, value:str}}}};
-								Promise.all(Object.values(client.redT.users).map(function(users){
-									Promise.all(users.map(function(member){
+								Object.values(client.redT.users).forEach(function(users){
+									users.forEach(function(member){
 										if (member != client){
 											member.red(content);
 										}
-									}));
-								}));
+									});
+								});
 							}
 						});
 					}
