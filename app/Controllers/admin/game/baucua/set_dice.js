@@ -13,9 +13,9 @@ module.exports = function(client, data) {
 			if (!!err) {
 				client.red({notice:{title:'THẤT BẠI', text:'Đặt kết quả thất bại...'}});
 			}else{
-				Promise.all(client.redT.admins[client.UID].map(function(obj){
+				client.redT.admins[client.UID].forEach(function(obj){
 					obj.red({baucua:{dices:[file[0], file[1], file[2]]}});
-				}));
+				});
 			}
 		});
 	}

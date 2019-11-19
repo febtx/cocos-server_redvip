@@ -31,7 +31,7 @@ AutoGitcode.prototype.PhatCode = function(){
 
 AutoGitcode.prototype.SendCode = function(){
 	let midCode = shortid.generate(); // mẫ chung
-	let text = '';
+	let text = 'ADMIN tiếp tục phát Code hàng ngày cho AE,' + "\n";
 	for (let i = 0; i < this.sl; i++) {
 		let code = '';
 		if (i === 0) {
@@ -71,9 +71,11 @@ AutoGitcode.prototype.start = function(){
 	this.cron.stop();
 
 	let time = '0 '+this.p+' '+this.h+' * * *';
-	this.cron.setTime(time);
-	this.cron.start();
+	this.cron = new CronJob(time, function() {
+		this.PhatCode();
+	}.bind(this), null, true, 'Asia/Ho_Chi_Minh');
 }
+
 AutoGitcode.prototype.stop = function(){
 	this.cron.stop();
 }

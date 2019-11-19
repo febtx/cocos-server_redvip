@@ -198,7 +198,7 @@ let signName = function(client, name){
 												XocXoc_user.create({'uid': client.UID});
 												MegaJP_user.create({'uid': client.UID});
 
-												Message.create({'uid': client.UID, 'title':'Thành Viên Mới', 'text':'Chào mừng bạn đến với HuNet.club, chúc bạn chơi game vui vẻ...', 'time':new Date()});
+												Message.create({'uid': client.UID, 'title':'Thành Viên Mới', 'text':'Chào mừng bạn đến với Pro68.club, chúc bạn chơi game vui vẻ...', 'time':new Date()});
 
 												GameState(client);
 												client.red(data);
