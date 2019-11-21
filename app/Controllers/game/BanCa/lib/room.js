@@ -1,31 +1,42 @@
 
 var Room = function(root, id, room){
 	this.root = root; // Root
-	this.id   = id; // ID phòng
+	this.id   = id;   // ID phòng
 	this.room = room; // loại phòng
 
 	this.timeWait = setTimeout(function(){
 		clearTimeout(this.timeWait);
 		this.root.removeWait(this.room, this.id);
 		this.playGame();
-	}.bind(this), 2000); // thời gian chờ phòng
-
+	}.bind(this), 2000);  // thời gian chờ phòng
 
 	this.timeFish = null; // thời gian ra cá
 
-	// Các người chơi
+	this.fish = {};       // Cá
+	this.fishID = 0;      // id
+
+	// Những người chơi
 	this.player = [
 		{id:1, player:null},
 		{id:2, player:null},
 		{id:3, player:null},
 		{id:4, player:null},
-	]; // Các người chơi
+	]; // Những người chơi
 }
 
 Room.prototype.playGame = function(){
 	this.timeFish = setInterval(function() {
-		this.sendToAll({fish:{}});
-	}.bind(this), 2000);
+		let id = this.fishID++;
+		let fish = 1;
+		let rand = (Math.random()*14)>>0;
+		let f = {f:fish, anim:rand, coll:{0:this.collision(this.root.fish[fish]), 1:this.collision(this.root.fish[fish]), 2:this.collision(this.root.fish[fish]), 3:this.collision(this.root.fish[fish]), 4:this.collision(this.root.fish[fish]), 5:this.collision(this.root.fish[fish])}};
+		this.fish[id] = f;
+		this.sendToAll({fish:{id:id, f:fish, r:rand}});
+	}.bind(this), 1000);
+}
+
+Room.prototype.collision = function(data) {
+  return Math.floor(Math.random()*(data.max - data.min + 1)) + data.min;
 }
 
 Room.prototype.sendToAll = function(data, player = null){
@@ -39,11 +50,11 @@ Room.prototype.sendToAll = function(data, player = null){
 Room.prototype.inRoom = function(player){
 	let gheTrong = this.player.filter(function(t){return t.player === null}); // lấy các ghế trống
 	let rand = (Math.random()*gheTrong.length)>>0;
-	gheTrong = gheTrong[rand];
+	let Down = gheTrong[rand];
 	//gheTrong = gheTrong[0];
 
-	gheTrong.player = player; // ngồi
-	player.map = gheTrong.id; // vị trí ngồi
+	Down.player = player; // ngồi
+	player.map = Down.id; // vị trí ngồi
 	player.room = this;
 	player.updateTypeBet();
 	this.sendToAll({ingame:{ghe:player.map, data:{name:player.client.profile.name, balans:player.money, typeBet:player.typeBet}}}, player);
@@ -73,6 +84,8 @@ Room.prototype.outRoom = function(player){
 	});
 	let gheTrong = this.player.filter(function(t){return t.player === null}); // lấy các ghế trống
 	if (gheTrong.length === 4) {
+		clearInterval(this.timeFish);
+		clearTimeout(this.timeWait);
 		console.log(this.root);
 		this.root.removeWait(this.room, this.id);
 		console.log('Remove Room');
