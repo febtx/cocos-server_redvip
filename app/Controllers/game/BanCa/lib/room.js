@@ -86,9 +86,7 @@ Room.prototype.outRoom = function(player){
 	if (gheTrong.length === 4) {
 		clearInterval(this.timeFish);
 		clearTimeout(this.timeWait);
-		console.log(this.root);
 		this.root.removeWait(this.room, this.id);
-		console.log('Remove Room');
 		this.player.forEach(function(ghe){
 			ghe = null;
 		});

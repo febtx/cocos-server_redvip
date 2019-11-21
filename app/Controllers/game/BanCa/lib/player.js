@@ -31,7 +31,9 @@ Player.prototype.collision = function(data){
 			fish.coll[bullet.type]--;
 			if (fish.coll[bullet.type] < 1) {
 				delete this.room.fish[fish_id];
-				this.room.sendToAll({otherEat:{id:fish_id, money:fish, map:this.map, anim:1}}, this);
+				let money = bullet.bet*this.room.root.fish[fish.f].b;
+				this.room.sendToAll({otherEat:{id:fish_id, money:money, map:this.map}}, this);
+				this.client.red({meEat:{id:fish_id, money:money}});
 			}
 		}
 	}
