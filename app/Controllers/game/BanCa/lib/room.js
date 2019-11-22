@@ -25,6 +25,7 @@ var Room = function(root, id, room){
 }
 
 Room.prototype.playGame = function(){
+	/**
 	this.timeFish = setInterval(function() {
 		let id = this.fishID++;
 		let fish = 1;
@@ -33,6 +34,7 @@ Room.prototype.playGame = function(){
 		this.fish[id] = f;
 		this.sendToAll({fish:{id:id, f:fish, r:rand}});
 	}.bind(this), 1000);
+	*/
 }
 
 Room.prototype.collision = function(data) {

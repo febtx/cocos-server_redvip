@@ -1,6 +1,6 @@
 
 let UserInfo = require('../../../Models/UserInfo');
-let Helpers  = require('../../../Helpers/Helpers');
+// let Helpers  = require('../../../Helpers/Helpers');
 
 let Player   = require('./lib/player');
 let Room     = require('./lib/room');
@@ -11,14 +11,14 @@ module.exports = function(client, data){
 	if (!!data.room && !!data.balans) {
 		let room   = data.room>>0;
 		let balans = data.balans>>0;
-		if (room === 1 || room === 2 || room === 3){
-			/**
-			let min = room*20;
-			let max = room*200;
+		let red    = data.red>>0;
+
+		if ((room === 1 && red === 100) || (room === 2 && red === 1000) || (room === 3 && red === 10000)){
+			let min = red*20;
+			let max = red*200;
 			if (balans < min || balans > max) {
 				client.red({notice:{title:'THẤT BẠI', text:'Dữ liệu không đúng...', load: false}});
 			}else{
-				*/
 				let inGame = false;
 				client.redT.users[client.UID].forEach(function(obj){
 					if(!!obj.fish){
@@ -28,24 +28,31 @@ module.exports = function(client, data){
 				if (inGame) {
 					client.red({notice:{title:'CẢNH BÁO', text:'Bạn hoặc ai đó đang chơi BẮN CÁ bằng tài khoản này ...', load: false}});
 				}else{
-					client.fish = new Player(client, room, balans);
-					// Tìm phòng chờ
-					let PhongCho = Object.values(client.redT.game.fish['wait'+room]);
-					PhongCho = PhongCho[0];
-					if (PhongCho !== void 0) {
-						// có phòng chờ
-						PhongCho.inRoom(client.fish);
-					}else{
-						// tạo phòng mới
-						let singID = new Date().getTime() + client.UID;
-						singID = crypto.createHash('md5').update(singID).digest('hex');
-						let Game = new Room(client.redT.game.fish, singID, room);
-						client.redT.game.fish['wait'+room][singID] = Game; // Thêm phòng chờ
-						Game.inRoom(client.fish);
-					}
-					client.red({notice:{title:'CẢNH BÁO', text:'Vào phòng ...', load: false}});
+					UserInfo.findOne({id:client.UID}, 'red', function(err, user){
+						if (!user || user.red < min) {
+							client.red({notice:{title:'THẤT BẠI', text:'Bạn cần tối thiểu ' + Helpers.numberWithCommas(min) + ' RED để vào phòng.!!', load: false}});
+						}else{
+							user.red -= balans;
+							user.save();
+							client.fish = new Player(client, room, balans);
+							// Tìm phòng chờ
+							let PhongCho = Object.values(client.redT.game.fish['wait'+room]);
+							PhongCho = PhongCho[0];
+							if (PhongCho !== void 0) {
+								// có phòng chờ
+								PhongCho.inRoom(client.fish);
+							}else{
+								// tạo phòng mới
+								let singID = new Date().getTime() + client.UID;
+								singID = crypto.createHash('md5').update(singID).digest('hex');
+								let Game = new Room(client.redT.game.fish, singID, room);
+								client.redT.game.fish['wait'+room][singID] = Game; // Thêm phòng chờ
+								Game.inRoom(client.fish);
+							}
+						}
+					})
 				}
-			//}
+			}
 		}else{
 			client.red({notice:{title:'THẤT BẠI', text:'Dữ liệu không đúng...', load: false}});
 		}

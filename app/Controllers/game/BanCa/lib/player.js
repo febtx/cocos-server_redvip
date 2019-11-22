@@ -32,8 +32,9 @@ Player.prototype.collision = function(data){
 			if (fish.coll[bullet.type] < 1) {
 				delete this.room.fish[fish_id];
 				let money = bullet.bet*this.room.root.fish[fish.f].b;
-				this.room.sendToAll({otherEat:{id:fish_id, money:money, map:this.map}}, this);
-				this.client.red({meEat:{id:fish_id, money:money}});
+				this.money += money;
+				this.room.sendToAll({otherEat:{id:fish_id, money:money, map:this.map, m:this.money}}, this);
+				this.client.red({meEat:{id:fish_id, money:money, m:this.money}});
 			}
 		}
 	}
@@ -101,6 +102,24 @@ Player.prototype.lock = function(fish){
 
 Player.prototype.unlock = function(){
 	this.room.sendToAll({unlock:this.map}, this);
+}
+
+Player.prototype.nap = function(nap){
+	nap = nap>>0;
+	if (nap > 0) {
+		UserInfo.findOne({id:this.uid}, 'red', function(err, user){
+			if (!!user && user.red >= nap) {
+				user.red -= nap;
+				user.save();
+				this.moneyTotal += nap;  // Tổng tiền mang vào
+				this.money      += nap;  // số tiền chơi
+				this.room.sendToAll({other:{map:this.map, money:this.money}}, this);
+				this.client.red({me:{money:this.money, nap:true}});
+			}else{
+				this.client.red({notice:{title:'THẤT BẠI', text:'Số dư không khả dụng...', load: false}});
+			}
+		}.bind(this));
+	}
 }
 
 module.exports = Player;

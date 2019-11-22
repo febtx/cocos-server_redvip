@@ -23,4 +23,7 @@ module.exports = function(client, data){
 	if (void 0 !== data.unlock) {
 		client.fish.unlock();
 	}
+	if (!!data.nap) {
+		client.fish.nap(data.nap);
+	}
 };
