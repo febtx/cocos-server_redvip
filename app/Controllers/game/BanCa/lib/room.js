@@ -262,15 +262,11 @@ Room.prototype.inRoom = function(player){
 }
 
 Room.prototype.outRoom = function(player){
-	this.player.forEach(function(obj, index) {
-		if (obj.player === player) {
-			obj.player = null;
-		}
-	});
+	this.player[player.map-1].player = null;
 	let gheTrong = this.player.filter(function(t){return t.player === null}); // lấy các ghế trống
 	if (gheTrong.length === 4) {
 		clearInterval(this.timeFish);
-		//clearTimeout(this.timeWait);
+		clearTimeout(this.timeWait);
 		this.root.removeWait(this.room, this.id);
 		this.player.forEach(function(ghe){
 			ghe = null;
