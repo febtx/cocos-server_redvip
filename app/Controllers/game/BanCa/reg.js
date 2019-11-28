@@ -1,6 +1,6 @@
 
 let UserInfo = require('../../../Models/UserInfo');
-// let Helpers  = require('../../../Helpers/Helpers');
+let Helpers  = require('../../../Helpers/Helpers');
 
 let Player   = require('./lib/player');
 let Room     = require('./lib/room');

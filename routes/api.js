@@ -26,8 +26,6 @@ module.exports = function(app, redT) {
 				if (data.status == '1') {
 					// thành công
 					tab_NapThe.findOneAndUpdate({'_id':data.request_id}, {$set:{status:1}}, function(err, napthe) {
-
-						console.log(napthe);
 						if (!!napthe && napthe.nhan == 0) {
 							MenhGia.findOne({name:napthe.menhGia, nap:true}, {}, function(errMG, dataMG){
 								if (!!dataMG) {

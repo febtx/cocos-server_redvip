@@ -10,8 +10,9 @@ module.exports = {
     '99': 'Đang nạp...',
     '1': 'Nạp thẻ cào thành công.',
     '2': 'Thẻ cào sai mệnh giá.',
-    '3': 'Thẻ nỗi.',
+    '3': 'Thẻ cào không đúng hoặc đã qua sử dụng.',
     '4': 'Hệ thống đang bảo trì, giữ lại thẻ và quay lại sau.',
+    '311': 'Thẻ sai định dạng.',
 
 /**
     '00': 'Nạp thẻ cào thành công.',

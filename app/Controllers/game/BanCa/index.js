@@ -1,5 +1,6 @@
 
-let reg = require('./reg');    // đăng kí vào phòng
+let reg     = require('./reg');    // đăng kí vào phòng
+let history = require('./history');    // đăng kí vào phòng
 
 module.exports = function(client, data){
 	if (!!data.collision) {
@@ -25,5 +26,11 @@ module.exports = function(client, data){
 	}
 	if (!!data.nap) {
 		client.fish.nap(data.nap);
+	}
+	if (!!data.log) {
+		history(client, data.log);
+	}
+	if (void 0 !== data.getScene) {
+		client.fish.getScene(data.getScene);
 	}
 };

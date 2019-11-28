@@ -5,7 +5,7 @@ require('dotenv').config();
 
 let Telegram      = require('node-telegram-bot-api');
 //let TelegramToken = '987211295:AAGlIN124PtI_g3VXSWXczTrc_ri9BBx-ek';
-let TelegramToken = '819726159:AAFMBPuQ5AAZJ60kFaQfEzqZrp_dyTE7mwI';
+let TelegramToken = '955822479:AAFA1s_-JmK7fCgNXZL9wJr9XX4TFOl0PQI';
 
 //let TelegramBot   = new Telegram(TelegramToken, {polling: true});
 

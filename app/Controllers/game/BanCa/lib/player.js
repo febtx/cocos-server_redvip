@@ -1,5 +1,6 @@
 
 var UserInfo = require('../../../../Models/UserInfo');
+var History  = require('../../../../Models/BanCa/BanCa_history');
 
 var Player = function(client, game, money){
 	this.room   = null;       // Phòng game
@@ -11,10 +12,14 @@ var Player = function(client, game, money){
 	this.bet     = 0;         // Tiền mỗi viên đạn
 	this.typeBet = 0;         // loại dạn (0: mặc định)
 
+	this.fishTotal  = 0;      // Cá đã bắn được
 	this.moneyTotal = money;  // Tổng tiền mang vào
 	this.money      = money;  // số tiền chơi
 
 	this.meBulllet = {};
+
+	this.isPlay = false;
+	this.scene  = false;
 }
 
 
@@ -35,6 +40,7 @@ Player.prototype.collision = function(data){
 				this.money += money;
 				this.room.sendToAll({otherEat:{id:fish_id, money:money, map:this.map, m:this.money}}, this);
 				this.client.red({meEat:{id:fish_id, money:money, m:this.money}});
+				this.fishTotal++;
 			}
 		}
 	}
@@ -61,6 +67,7 @@ Player.prototype.bullet = function(bullet){
 			let y = bullet.y>>0;
 			this.room.sendToAll({other:{bulllet:{money:this.money, map:this.map, x:x, y:y}}}, this);
 		}
+		this.isPlay = true;
 	}
 }
 
@@ -82,12 +89,16 @@ Player.prototype.outGame = function(){
 
 	this.client.fish = null;
 	this.client      = null;
+	this.meBulllet   = null;
 
 	if (!!this.room) {
 		this.room.outRoom(this);
 		this.room = null;
 	}
-
+	if (this.isPlay) {
+		let win = this.money-this.moneyTotal;
+		History.create({'uid':this.uid, 'room':this.game, 'money':win, 'fish':this.fishTotal, 'time':new Date()});
+	}
 	if (this.money > 0) {
 		let uInfo = {red:this.money};
 		UserInfo.updateOne({id:this.uid}, {$inc:uInfo}).exec();
@@ -119,6 +130,18 @@ Player.prototype.nap = function(nap){
 				this.client.red({notice:{title:'THẤT BẠI', text:'Số dư không khả dụng...', load: false}});
 			}
 		}.bind(this));
+	}
+}
+
+Player.prototype.getScene = function(data){
+	if (data.f && data.b) {
+		let player = this.room.player[data.g-1];
+		if (player && player.player && player.player.client) {
+			if (player.player.scene === false) {
+				player.player.client.red({scene:{f:data.f, b:data.b}});
+			}
+			player.player.scene = true;
+		}
 	}
 }
 
