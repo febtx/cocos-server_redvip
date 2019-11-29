@@ -95,6 +95,9 @@ let spin = function(io, user){
 	let bet_win = 0;
 
 	HU.findOne({game:'arb', type:bet, red:true}, 'name bet min toX balans x', function(err, dataHu){
+		if (dataHu === null) {
+			return void 0;
+		}
 		let huUpdate = {bet:addQuy, toX:0, balans:0};
 
 		let nohu     = false;

@@ -133,68 +133,72 @@ let TopHu = function(){
 
 let setTaiXiu_user = function(phien, dice){
 	TXCuocOne.find({phien: phien}, {}, function(err, list) {
-		if (list.length){
+		if (list.length !== 0){
 			Promise.all(list.map(function(obj){
 				let action = new Promise((resolve, reject)=> {
-					TaiXiu_User.findOne({uid: obj.uid}, function(error, data) {
-						let bet_thua = obj.bet-obj.tralai;
-						let bet = obj.win ? obj.betwin+obj.bet : bet_thua;
-						let update = {};
-						if (obj.taixiu === true && obj.red === true && bet_thua >= 10000) {          // Red Tài Xỉu
-							update = {
-								tLineWinRed:   obj.win && data.tLineWinRed < data.tLineWinRedH+1 ? data.tLineWinRedH+1 : data.tLineWinRed,
-								tLineLostRed:  !obj.win && data.tLineLostRed < data.tLineLostRedH+1 ? data.tLineLostRedH+1 : data.tLineLostRed,
-								tLineWinRedH:  obj.win ? data.tLineWinRedH+1 : 0,
-								tLineLostRedH: obj.win ? 0 : data.tLineLostRedH+1,
-								last:          phien,
-							};
-							if (obj.win) {
-								if (data.tLineWinRedH == 0) {
-									update.first = phien;
+					TaiXiu_User.findOne({uid:obj.uid}, function(error, data) {
+						if (data !== null) {
+							let bet_thua = obj.bet-obj.tralai;
+							let bet = obj.win ? obj.betwin+obj.bet : bet_thua;
+							let update = {};
+							if (obj.taixiu === true && obj.red === true && bet_thua >= 10000) {          // Red Tài Xỉu
+								update = {
+									tLineWinRed:   obj.win && data.tLineWinRed < data.tLineWinRedH+1 ? data.tLineWinRedH+1 : data.tLineWinRed,
+									tLineLostRed:  !obj.win && data.tLineLostRed < data.tLineLostRedH+1 ? data.tLineLostRedH+1 : data.tLineLostRed,
+									tLineWinRedH:  obj.win ? data.tLineWinRedH+1 : 0,
+									tLineLostRedH: obj.win ? 0 : data.tLineLostRedH+1,
+									last:          phien,
+								};
+								if (obj.win) {
+									if (data.tLineWinRedH == 0) {
+										update.first = phien;
+									}
+								}else{
+									if (data.tLineLostRedH == 0) {
+										update.first = phien;
+									}
 								}
-							}else{
-								if (data.tLineLostRedH == 0) {
-									update.first = phien;
+							} else if (obj.taixiu === true && obj.red === false && bet_thua >= 10000) { // Xu Tài Xỉu
+								update = {
+									tLineWinXu:   obj.win && data.tLineWinXu < data.tLineWinXuH+1 ? data.tLineWinXuH+1 : data.tLineWinXu,
+									tLineLostXu:  !obj.win && data.tLineLostXu < data.tLineLostXuH+1 ? data.tLineLostXuH+1 : data.tLineLostXu,
+									tLineWinXuH:  obj.win ? data.tLineWinXuH+1 : 0,
+									tLineLostXuH: obj.win ? 0 : data.tLineLostXuH+1,
+								}
+							} else if (obj.taixiu === false && obj.red === true && bet_thua >= 10000) { // Red Chẵn Lẻ
+								update = {
+									cLineWinRed:   obj.win && data.cLineWinRed < data.cLineWinRedH+1 ? data.cLineWinRedH+1 : data.cLineWinRed,
+									cLineLostRed:  !obj.win && data.cLineLostRed < data.cLineLostRedH+1 ? data.cLineLostRedH+1 : data.cLineLostRed,
+									cLineWinRedH:  obj.win ? data.cLineWinRedH+1 : 0,
+									cLineLostRedH: obj.win ? 0 : data.cLineLostRedH+1,
+								}
+							} else if (obj.taixiu === false && obj.red === false && bet_thua >= 10000) { // Xu Chẵn Lẻ
+								update = {
+									cLineWinXu:   obj.win && data.cLineWinXu < data.cLineWinXuH+1 ? data.cLineWinXuH+1 : data.cLineWinXu,
+									cLineLostXu:  !obj.win && data.cLineLostXu < data.cLineLostXuH+1 ? data.cLineLostXuH+1 : data.cLineLostXu,
+									cLineWinXuH:  obj.win ? data.cLineWinXuH+1 : 0,
+									cLineLostXuH: obj.win ? 0 : data.cLineLostXuH+1,
 								}
 							}
-						} else if (obj.taixiu === true && obj.red === false && bet_thua >= 10000) { // Xu Tài Xỉu
-							update = {
-								tLineWinXu:   obj.win && data.tLineWinXu < data.tLineWinXuH+1 ? data.tLineWinXuH+1 : data.tLineWinXu,
-								tLineLostXu:  !obj.win && data.tLineLostXu < data.tLineLostXuH+1 ? data.tLineLostXuH+1 : data.tLineLostXu,
-								tLineWinXuH:  obj.win ? data.tLineWinXuH+1 : 0,
-								tLineLostXuH: obj.win ? 0 : data.tLineLostXuH+1,
-							}
-						} else if (obj.taixiu === false && obj.red === true && bet_thua >= 10000) { // Red Chẵn Lẻ
-							update = {
-								cLineWinRed:   obj.win && data.cLineWinRed < data.cLineWinRedH+1 ? data.cLineWinRedH+1 : data.cLineWinRed,
-								cLineLostRed:  !obj.win && data.cLineLostRed < data.cLineLostRedH+1 ? data.cLineLostRedH+1 : data.cLineLostRed,
-								cLineWinRedH:  obj.win ? data.cLineWinRedH+1 : 0,
-								cLineLostRedH: obj.win ? 0 : data.cLineLostRedH+1,
-							}
-						} else if (obj.taixiu === false && obj.red === false && bet_thua >= 10000) { // Xu Chẵn Lẻ
-							update = {
-								cLineWinXu:   obj.win && data.cLineWinXu < data.cLineWinXuH+1 ? data.cLineWinXuH+1 : data.cLineWinXu,
-								cLineLostXu:  !obj.win && data.cLineLostXu < data.cLineLostXuH+1 ? data.cLineLostXuH+1 : data.cLineLostXu,
-								cLineWinXuH:  obj.win ? data.cLineWinXuH+1 : 0,
-								cLineLostXuH: obj.win ? 0 : data.cLineLostXuH+1,
-							}
-						}
 
-						!!Object.entries(update).length && TaiXiu_User.updateOne({uid: obj.uid}, {$set:update}).exec();
+							!!Object.entries(update).length && TaiXiu_User.updateOne({uid: obj.uid}, {$set:update}).exec();
 
-						if(void 0 !== io.users[obj.uid]){
-							io.users[obj.uid].forEach(function(client){
-								client.red({taixiu:{status:{win:obj.win, thuong:obj.thuong, select:obj.select, bet: bet}}});
-							});
+							if(void 0 !== io.users[obj.uid]){
+								io.users[obj.uid].forEach(function(client){
+									client.red({taixiu:{status:{win:obj.win, thuong:obj.thuong, select:obj.select, bet: bet}}});
+								});
+							}
+							resolve({uid: obj.uid, red: obj.red, taixiu:obj.taixiu, betwin: obj.betwin});
+						}else{
+							resolve(null);
 						}
-						resolve({uid: obj.uid, red: obj.red, taixiu:obj.taixiu, betwin: obj.betwin});
 					});
 				});
 				return action;
 			}))
 			.then(values => {
 				values = values.filter(function(obj){
-					return obj.red && obj.betwin > 0;
+					return obj !== null && obj.red && obj.betwin > 0;
 				});
 				if (values.length) {
 					let topTaiXiu = values.filter(function(objTopT){

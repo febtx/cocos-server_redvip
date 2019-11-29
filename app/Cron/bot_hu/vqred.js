@@ -88,6 +88,9 @@ let spin = function(io, user){
 	let nohu    = false;
 	// tạo kết quả
 	HU.findOne({game:'vuongquocred', type:bet, red:true}, {}, function(err2, dataHu){
+		if (dataHu === null) {
+			return void 0;
+		}
 		let huUpdate = {bet:addQuy};
 
 		let aRwin = Math.floor(Math.random()*16);
