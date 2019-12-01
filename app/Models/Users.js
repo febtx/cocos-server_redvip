@@ -34,6 +34,7 @@ let Schema = new mongoose.Schema({
 		name:       String,
 		regDate:    Date,
 	},
+	fail: {type:Number, default:0},
 });
 
 // Các phương thức ======================

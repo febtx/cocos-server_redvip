@@ -9,6 +9,7 @@ let Schema = new mongoose.Schema({
 	token:      String,
 	lastLogin:  String,
 	regDate:    Date,
+	fail:       {type:Number, default:0},
 });
 
 // Các phương thức ======================

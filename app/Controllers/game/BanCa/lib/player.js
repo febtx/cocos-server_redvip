@@ -59,7 +59,6 @@ Player.prototype.bullet = function(bullet){
 		let id = bullet.id>>0;
 		this.money -= this.bet;
 		this.meBulllet[id] = {type:this.typeBet, bet:this.bet};
-		this.client.red({me:{money:this.money}});
 		if (void 0 !== bullet.f) {
 			this.room.sendToAll({other:{bulllet:{money:this.money, map:this.map, f:bullet.f}}}, this);
 		}else{
@@ -68,6 +67,8 @@ Player.prototype.bullet = function(bullet){
 			this.room.sendToAll({other:{bulllet:{money:this.money, map:this.map, x:x, y:y}}}, this);
 		}
 		this.isPlay = true;
+	}else{
+		this.client.red({me:{money:this.money}});
 	}
 }
 

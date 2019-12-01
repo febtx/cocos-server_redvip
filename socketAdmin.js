@@ -2,38 +2,67 @@
 let validator = require('validator');
 let User      = require('./app/Models/Admin');
 let socket    = require('./app/Controllers/admin/socket.js');
+let captcha   = require('./captcha');
 
 // Authenticate!
 let authenticate = function(client, data, callback) {
 	if (!!data && !!data.username && !!data.password) {
 		let username = ''+data.username+'';
-		let password = data.password;
+		let password = ''+data.password+'';
+		let captcha  = data.captcha;
 		let az09     = new RegExp('^[a-zA-Z0-9]+$');
 		let testName = az09.test(username);
 
 		if (!validator.isLength(username, {min: 3, max: 32})) {
-			callback({title: 'ĐĂNG NHẬP', text: 'Tài khoản (3-32 kí tự).'}, false);
+			callback({title:'ĐĂNG NHẬP', text:'Tài khoản (3-32 kí tự).'}, false);
 		}else if (!validator.isLength(password, {min: 5, max: 32})) {
-			callback({title: 'ĐĂNG NHẬP', text: 'Mật khẩu (6-32 kí tự)'}, false);
+			callback({title:'ĐĂNG NHẬP', text:'Mật khẩu (6-32 kí tự)'}, false);
 		}else if (!testName) {
-			callback({title: 'ĐĂNG NHẬP', text: 'Tên đăng nhập chỉ gồm kí tự và số !!'}, false);
+			callback({title:'ĐĂNG NHẬP', text:'Tên đăng nhập chỉ gồm kí tự và số !!'}, false);
 		} else {
 			try {
 				username = username.toLowerCase();
 				User.findOne({'username':username}, function(err, user){
-					if (user){
+					if (void 0 !== user.fail && user.fail > 3) {
+						if (!captcha || !client.c_captcha) {
+							client.c_captcha('signIn');
+							callback({title:'ĐĂNG NHẬP', text:'Phát hiện truy cập trái phép, vui lòng nhập captcha để tiếp tục.'}, false);	
+						}else{
+							let checkCLogin = new RegExp('^' + client.captcha + '$', 'i');
+							checkCLogin     = checkCLogin.test(captcha);
+							if (checkCLogin) {
+								if (user.validPassword(password)){
+									user.fail = 0;
+									user.save();
+									client.UID = user._id.toString();
+									callback(false, true);
+								}else{
+									client.c_captcha('signIn');
+									user.fail += 1;
+									user.save();
+									callback({title:'ĐĂNG NHẬP', text:'Mật khẩu không chính xác!!'}, false);
+								}
+							}else{
+								client.c_captcha('signIn');
+								callback({title:'ĐĂNG NHẬP', text:'Captcha không đúng...'}, false);	
+							}
+						}
+					}else{
 						if (user.validPassword(password)){
+							user.fail = 0;
+							user.save();
 							client.UID = user._id.toString();
 							callback(false, true);
 						}else{
-							callback({title: 'ĐĂNG NHẬP', text: 'Sai mật khẩu!!'}, false);
+							user.fail  = user.fail>>0;
+							user.fail += 1;
+							user.save();
+							callback({title:'ĐĂNG NHẬP', text:'Mật khẩu không chính xác!!'}, false);
 						}
-					}else{
-						callback({title: 'ĐĂNG NHẬP', text: 'Tài khoản không tồn tại!!'}, false);
 					}
 				});
 			} catch (error) {
-				callback({title: 'THÔNG BÁO', text: 'Có lỗi sảy ra, vui lòng kiểm tra lại!!'}, false);
+				callback({title:'THÔNG BÁO', text:'Có lỗi sảy ra, vui lòng kiểm tra lại!!'}, false);
 			}
 		}
 	}
@@ -43,7 +72,8 @@ module.exports = function(ws, redT){
 	ws.admin = true;
 	ws.auth  = false;
 	ws.UID   = null;
-
+	ws.captcha   = {};
+	ws.c_captcha = captcha;
 	ws.red = function(data){
 		try {
 			this.readyState == 1 && this.send(JSON.stringify(data));
@@ -68,7 +98,7 @@ module.exports = function(ws, redT){
 						} else if (!!err) {
 							ws.red({unauth: err});
 						} else {
-							ws.red({unauth: {message: 'Authentication failure'}});
+							ws.red({unauth: {message:'Authentication failure'}});
 						}
 					});
 				}else if(!!this.auth){

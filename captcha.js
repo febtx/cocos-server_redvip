@@ -17,6 +17,10 @@ module.exports = function(data){
 			Create(this, 'signUp');
 			break;
 
+		case 'signIn':
+			Create(this, 'signIn');
+			break;
+
 		case 'giftcode':
 			Create(this, 'giftcode');
 			break;

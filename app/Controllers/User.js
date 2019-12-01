@@ -300,10 +300,12 @@ let getLevel = function(client){
 }
 
 function addToListOnline(client){
-	if (void 0 !== client.redT.users[client.UID]) {
-		client.redT.users[client.UID].push(client);
-	}else{
-		client.redT.users[client.UID] = [client];
+	if (void 0 !== client.redT) {
+		if (void 0 !== client.redT.users[client.UID]) {
+			client.redT.users[client.UID].push(client);
+		}else{
+			client.redT.users[client.UID] = [client];
+		}
 	}
 }
 function signOut(client){

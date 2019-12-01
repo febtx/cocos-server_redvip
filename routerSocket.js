@@ -4,10 +4,10 @@ let admin = require('./socketAdmin');
 // Router Websocket
 
 module.exports = function(app, redT) {
-	app.ws('/websocket', function(ws, req) {
+	app.ws('/client', function(ws, req) {
 		users(ws, redT);
 	});
-	app.ws('/admin', function(ws, req) {
+	app.ws('/admincp', function(ws, req) {
 		admin(ws, redT)
 	});
 };

@@ -13,24 +13,38 @@ let authenticate = function(client, data, callback) {
 	if (!!data){
 		let token = data.token;
 		if (!!token && !!data.id) {
-			let id = data.id;
+			let id = data.id>>0;
 			UserInfo.findOne({'UID':id}, 'id', function(err, userI){
 				if (!!userI) {
 					User.findOne({'_id':userI.id}, 'local', function(err, userToken){
-						if (!!userToken && userToken.local.token === token) {
-							client.UID = userToken._id.toString();
-							callback(false, true);
+						if (!!userToken) {
+							if (void 0 !== userToken.fail && userToken.fail > 3) {
+								callback({title:'THÔNG BÁO', text: 'Vui lòng đăng nhập !!'}, false);
+								userToken.fail  = user.fail>>0;
+								userToken.fail += 1;
+								userToken.save();
+							}else{
+								if (userToken.local.token === token) {
+									userToken.fail = 0;
+									userToken.save();
+									client.UID = userToken._id.toString();
+									callback(false, true);
+								}else{
+									callback({title:'THẤT BẠI', text:'Không thể tự động đăng nhập !!'}, false);
+								}
+							}
 						}else{
-							callback({title:'THẤT BẠI', text: 'Không thể tự động đăng nhập !!'}, false);
+							callback({title:'THẤT BẠI', text: 'Truy cập bị từ chối !!'}, false);
 						}
 					});
 				}else{
-					callback({title:'THẤT BẠI', text: 'Không thể tự động đăng nhập !!'}, false);
+					callback({title:'THẤT BẠI', text:'Truy cập bị từ chối !!'}, false);
 				}
 			});
 		} else if(!!data.username && !!data.password){
 			let username = ''+data.username+'';
-			let password = data.password;
+			let password = ''+data.password+'';
+			let captcha  = data.captcha;
 			let register = !!data.register;
 			let az09     = new RegExp('^[a-zA-Z0-9]+$');
 			let testName = az09.test(username);
@@ -44,7 +58,7 @@ let authenticate = function(client, data, callback) {
 			}else if (!testName) {
 				register && client.c_captcha('signUp');
 				callback({title: register ? 'ĐĂNG KÝ' : 'ĐĂNG NHẬP', text: 'Tên đăng nhập chỉ gồm kí tự và số !!'}, false);
-			}else if (username == password) {
+			}else if (username === password) {
 				register && client.c_captcha('signUp');
 				callback({title: register ? 'ĐĂNG KÝ' : 'ĐĂNG NHẬP', text: 'Tài khoản không được trùng với mật khẩu!!'}, false);
 			}else{
@@ -52,12 +66,12 @@ let authenticate = function(client, data, callback) {
 					username = username.toLowerCase();
 					// Đăng Ký
 					if (register) {
-						if (!data.captcha || !client.c_captcha || !validator.isLength(data.captcha, {min: 4, max: 4})) {
+						if (!captcha || !client.c_captcha) {
 							client.c_captcha('signUp');
 							callback({title: 'ĐĂNG KÝ', text: 'Captcha không tồn tại.'}, false);	
 						}else{
 							let checkCaptcha = new RegExp('^' + client.captcha + '$', 'i');
-							checkCaptcha     = checkCaptcha.test(data.captcha);
+							checkCaptcha     = checkCaptcha.test(captcha);
 							if (checkCaptcha) {
 								User.findOne({'local.username':username}).exec(function(err, check){
 									if (!!check){
@@ -84,14 +98,45 @@ let authenticate = function(client, data, callback) {
 						// Đăng Nhập
 						User.findOne({'local.username':username}, function(err, user){
 							if (user){
-								if (user.validPassword(password)){
-									client.UID = user._id.toString();
-									callback(false, true);
+								if (void 0 !== user.fail && user.fail > 3) {
+									if (!captcha || !client.c_captcha) {
+										client.c_captcha('signIn');
+										callback({title:'ĐĂNG NHẬP', text:'Phát hiện truy cập trái phép, vui lòng nhập captcha để tiếp tục.'}, false);	
+									}else{
+										let checkCLogin = new RegExp('^' + client.captcha + '$', 'i');
+										checkCLogin     = checkCLogin.test(captcha);
+										if (checkCLogin) {
+											if (user.validPassword(password)){
+												user.fail = 0;
+												user.save();
+												client.UID = user._id.toString();
+												callback(false, true);
+											}else{
+												client.c_captcha('signIn');
+												user.fail += 1;
+												user.save();
+												callback({title: 'ĐĂNG NHẬP', text: 'Mật khẩu không chính xác!!'}, false);
+											}
+										}else{
+											client.c_captcha('signIn');
+											callback({title: 'ĐĂNG NHẬP', text: 'Captcha không đúng...'}, false);	
+										}
+									}
 								}else{
-									callback({title: 'ĐĂNG NHẬP', text: 'Sai mật khẩu!!'}, false);
+									if (user.validPassword(password)){
+										user.fail = 0;
+										user.save();
+										client.UID = user._id.toString();
+										callback(false, true);
+									}else{
+										user.fail  = user.fail>>0;
+										user.fail += 1;
+										user.save();
+										callback({title: 'ĐĂNG NHẬP', text: 'Mật khẩu không chính xác!!'}, false);
+									}
 								}
 							}else{
-								callback({title: 'ĐĂNG NHẬP', text: 'Tài khoản không tồn tại!!'}, false);
+								callback({title: 'ĐĂNG NHẬP', text: 'Tên Tài Khoản không tồn tại!!'}, false);
 							}
 						});
 					}
@@ -130,11 +175,12 @@ module.exports = function(ws, redT){
 							this.auth = true;
 							this.redT = redT;
 							socket.auth(this);
+							redT = null;
 						} else if (!!err) {
 							this.red({unauth: err});
 							//this.close();
 						} else {
-							this.red({unauth: {message: 'Authentication failure'}});
+							this.red({unauth: {message:'Authentication failure'}});
 							//this.close();
 						}
 					}.bind(this));

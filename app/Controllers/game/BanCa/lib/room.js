@@ -84,6 +84,10 @@ Room.prototype.gameStart = function(){
 }
 
 Room.prototype.addFish = function(){
+	if (this.timeGame > 650) {
+		this.playRound();
+		return void 0;
+	}
 	let fishs = [];
 	let id    = null;
 	let fish  = null;
@@ -205,6 +209,31 @@ Room.prototype.playGame = function(){
 	*/
 }
 
+Room.prototype.resetGame = function() {
+	clearInterval(this.timeFish);
+	this.fish     = {};
+	this.fishID   = 0;
+	this.timeGame = 0;
+}
+
+Room.prototype.playRound = function() {
+	this.resetGame();
+	this.sendToAll({round:true});
+	this.timeWait = setTimeout(function(){
+		let idG = Math.floor(Math.random()*(20-20+1))+20;
+		let fish = this.root.group[idG];
+		let rand = (Math.random()*fish.clip)>>0;
+		let time = fish.t;
+		fish = this.groupData(fish, null, rand);
+		this.sendToAll({fish:fish});
+
+		this.timeWait = setTimeout(function(){
+			this.resetGame();
+			this.playGame();
+		}.bind(this), time*1000);
+	}.bind(this), 2000);
+}
+
 Room.prototype.groupData = function(data, a = null, r = null) {
 	let g = {'g':data.g};
 	if (a !== null) g.a = a;
@@ -235,9 +264,8 @@ Room.prototype.inRoom = function(player){
 	let rand = (Math.random()*gheTrong.length)>>0;
 	let Down = gheTrong[rand];
 	//gheTrong = gheTrong[0];
-
-	Down.player = player; // ngồi
-	player.map  = Down.id; // vị trí ngồi
+	this.player[Down.id-1].player = player; // ngồi
+	player.map  = Down.id;                  // vị trí ngồi
 	player.room = this;
 	player.updateTypeBet();
 	this.sendToAll({ingame:{ghe:player.map, data:{name:player.client.profile.name, balans:player.money, typeBet:player.typeBet}}}, player);
