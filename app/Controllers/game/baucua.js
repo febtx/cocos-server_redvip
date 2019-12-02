@@ -14,8 +14,8 @@ module.exports = function(client, data){
 	if (!!data.cuoc) {
 		cuoc(client, data.cuoc)
 	}
-	if (void 0 !== data.tops) {
-		tops(client, data.tops)
+	if (data.tops) {
+		tops(client)
 	}
 	if (!!data.viewlogs) {
 		viewlogs(client, data.viewlogs)

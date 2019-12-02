@@ -84,7 +84,7 @@ Room.prototype.gameStart = function(){
 }
 
 Room.prototype.addFish = function(){
-	if (this.timeGame > 650) {
+	if (this.timeGame > 5) { //650
 		this.playRound();
 		return void 0;
 	}
@@ -220,11 +220,13 @@ Room.prototype.playRound = function() {
 	this.resetGame();
 	this.sendToAll({round:true});
 	this.timeWait = setTimeout(function(){
-		let idG = Math.floor(Math.random()*(20-20+1))+20;
+		let idG = Math.floor(Math.random()*(22-20+1))+20;
 		let fish = this.root.group[idG];
 		let rand = (Math.random()*fish.clip)>>0;
 		let time = fish.t;
 		fish = this.groupData(fish, null, rand);
+		console.log('fish');
+		console.log(fish);
 		this.sendToAll({fish:fish});
 
 		this.timeWait = setTimeout(function(){
@@ -238,17 +240,21 @@ Room.prototype.groupData = function(data, a = null, r = null) {
 	let g = {'g':data.g};
 	if (a !== null) g.a = a;
 	if (r !== null) g.r = r;
+	console.log('f');
+	console.log(data);
 	g.f = data.f.map(function(fish){
 		let id = this.fishID++;
 		let f = {f:fish, coll:{0:this.collision(this.root.fish[fish]), 1:this.collision(this.root.fish[fish]), 2:this.collision(this.root.fish[fish]), 3:this.collision(this.root.fish[fish]), 4:this.collision(this.root.fish[fish]), 5:this.collision(this.root.fish[fish])}};
 		this.fish[id] = f;
 		return {id:id, f:fish};
 	}.bind(this));
+	console.log('g');
+	console.log(g);
 	return g;
 }
 
 Room.prototype.collision = function(data) {
-	return Math.floor(Math.random()*(data.max - data.min + 1)) + data.min;
+	return Math.floor(Math.random()*(data.max-data.min+1))+data.min;
 }
 
 Room.prototype.sendToAll = function(data, player = null){

@@ -4,12 +4,12 @@ var BauCua_phien = require('../../../Models/BauCua/BauCua_phien');
 
 module.exports = function(client, data){
 	if (!!data && !!data.page) {
-		var page = data.page>>0; // trang
-		var red  = !!data.red;   // Loại tiền (Red:true, Xu:false)
+		let page = data.page>>0;
+		let red  = true;
 		if (page < 1) {
 			client.red({notice:{text:'DỮ LIỆU KHÔNG ĐÚNG...', title:'THẤT BẠI'}});
 		}else{
-			var kmess = 8;
+			let kmess = 9;
 			BauCua_cuoc.countDocuments({uid:client.UID, red:red, thanhtoan:true}).exec(function(err, total){
 				BauCua_cuoc.find({uid:client.UID, red:red, thanhtoan:true}, {}, {sort:{'_id':-1}, skip:(page-1)*kmess, limit:kmess}, function(err, result) {
 					if (result.length) {

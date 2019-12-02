@@ -42,7 +42,7 @@ module.exports = function(client, data){
 		},
 		function(err, httpResponse, body){
 			body = JSON.parse(body);
-			console.log(body);
+			//console.log(body);
 		});
 			//accept_bank:1,
 			//accept_cc:1,

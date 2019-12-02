@@ -6,14 +6,12 @@ var Phone        = require('../../../Models/Phone');
 var validator    = require('validator');
 
 module.exports = function(client, data){
-	if (!!data.bank && !!data.number && !!data.name && !!data.branch && !!data.rut && !!data.otp) {
+	if (!!data.bank && !!data.number && !!data.name && !!data.rut && !!data.otp) {
 		if (!validator.isLength(data.bank, {min: 4, max: 17})) {
 			client.red({notice: {title:'LỖI', text: 'Ngân hàng không hợp lệ...'}});
 		}else if (!validator.isLength(data.number, {min: 8, max: 17})) {
 			client.red({notice: {title:'LỖI', text: 'Số tài khoản không hợp lệ...'}});
 		}else if (!validator.isLength(data.name, {min: 8, max: 32})) {
-			client.red({notice: {title:'LỖI', text: 'Ngân hàng không hợp lệ...'}});
-		}else if (!validator.isLength(data.branch, {min: 2, max: 32})) {
 			client.red({notice: {title:'LỖI', text: 'Ngân hàng không hợp lệ...'}});
 		}else if (!validator.isLength(data.rut, {min: 4, max: 17})) {
 			client.red({notice: {title:'LỖI', text: 'Số tiền không hợp lệ...'}});
@@ -34,7 +32,7 @@ module.exports = function(client, data){
 											client.red({notice:{title:'THẤT BẠI', text:'Rút tối thiểu là 20.000.!'}});
 										}else{
 											if (dU.red >= rut) {
-												Bank_history.create({uid:client.UID, bank:data.bank, number:data.number, name:data.name, branch:data.branch, money:rut, type:1, time:new Date()});
+												Bank_history.create({uid:client.UID, bank:data.bank, number:data.number, name:data.name, money:rut, type:1, time:new Date()});
 												UserInfo.updateOne({id:client.UID}, {$inc:{'red':-rut}}).exec();
 												client.red({notice:{title:'THÀNH CÔNG', text:'Đã gửi yêu cầu rút tiền.!'}, user:{red:dU.red-rut}});
 											}else{

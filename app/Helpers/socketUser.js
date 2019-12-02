@@ -25,7 +25,7 @@ module.exports = function(io){
 	// Phát sóng tới tất cả người dùng và khách
 	io.broadcast = function(data, noBroadcast = null){
 		this.clients.forEach(function(client){
-			if (void 0 === client.admin && noBroadcast !== client) {
+			if (void 0 === client.admin && client.red && noBroadcast !== client) {
 				client.red(data);
 			}
 		});
@@ -33,7 +33,7 @@ module.exports = function(io){
 	// Phát sóng tới tất cả  khách
 	io.sendAllClient = function(data){
 		this.clients.forEach(function(client){
-			if (void 0 === client.admin && client.auth === false) {
+			if (void 0 === client.admin && client.red && client.auth === false) {
 				client.red(data);
 			}
 		});
@@ -41,7 +41,7 @@ module.exports = function(io){
 	// Phát sóng tới tất cả người dùng
 	io.sendAllUser = function(data, noBroadcast = null){
 		this.clients.forEach(function(client){
-			if (void 0 === client.admin && client.auth === true && noBroadcast !== client) {
+			if (void 0 === client.admin && client.red && client.auth === true && noBroadcast !== client) {
 				client.red(data);
 			}
 		});
@@ -49,7 +49,7 @@ module.exports = function(io){
 	// Phát sóng tới tất cả người dùng
 	io.sendAllAdmin = function(data, noBroadcast = null){
 		this.clients.forEach(function(client){
-			if (client.admin === true && client.auth === true && noBroadcast !== client) {
+			if (client.admin === true && client.red && client.auth === true && noBroadcast !== client) {
 				client.red(data);
 			}
 		});
@@ -57,7 +57,7 @@ module.exports = function(io){
 	// Phát sóng tới tất cả khách
 	io.sendInHome = function(data){
 		io.clients.forEach(function(client){
-			if (void 0 === client.admin && (client.auth === false || client.scene === 'home')) {
+			if (void 0 === client.admin && client.red && (client.auth === false || client.scene === 'home')) {
 				client.red(data);
 			}
 		});
