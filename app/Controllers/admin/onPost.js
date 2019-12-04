@@ -20,6 +20,8 @@ let candy        = require('./game/candy');
 let longlan      = require('./game/longlan');
 let xs           = require('./game/xs');
 
+let eventvip     = require('./panel/eventvip');
+
 module.exports = function(client, data) {
 	if (!!data) {
 		if (!!data.admin) {
@@ -79,6 +81,9 @@ module.exports = function(client, data) {
 		}
 		if (!!data.xs){
 			xs(client, data.xs);
+		}
+		if (!!data.eventvip){
+			eventvip(client, data.eventvip);
 		}
 	}
 }

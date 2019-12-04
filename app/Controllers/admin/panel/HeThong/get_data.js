@@ -1,5 +1,5 @@
 
-var fs   = require('fs');
+var fs = require('fs');
 
 module.exports = function(client) {
 	var promises = ['./config/sys.json', './config/taixiu.json', './config/baucua.json'].map(function(_path){
