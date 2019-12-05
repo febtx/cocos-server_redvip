@@ -6,6 +6,7 @@ let LongLan_user = require('../../../Models/LongLan/LongLan_user');
 
 let MegaJP_user  = require('../../../Models/MegaJP/MegaJP_user');
 let MegaJP_nhan  = require('../../../Models/MegaJP/MegaJP_nhan');
+let TopVip       = require('../../../Models/VipPoint/TopVip');
 
 let UserInfo  = require('../../../Models/UserInfo');
 let Helpers   = require('../../../Helpers/Helpers');
@@ -910,8 +911,20 @@ module.exports = function(client, data){
 							HU.updateOne({game:'long', type:bet, red:red}, {$inc:huUpdate}).exec();
 							UserInfo.updateOne({id:client.UID},{$inc:uInfo}).exec();
 							LongLan_user.updateOne({'uid':client.UID}, {$set:{time:new Date()}, $inc:mini_users}).exec();
-						})
-					})
+
+							let vipStatus = require('../../../../config/topVip.json').status;
+							if (vipStatus === true) {
+								TopVip.updateOne({'name':client.profile.name}, {$inc:{vip:tongCuoc}}).exec(function(errV, userV){
+									if (!!userV && userV.n === 0) {
+										try{
+							    			TopVip.create({'name':client.profile.name, 'vip':tongCuoc});
+										} catch(e){
+										}
+									}
+								});
+							}
+						});
+					});
 				}
 			});
 		}

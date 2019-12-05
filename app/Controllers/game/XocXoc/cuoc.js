@@ -1,11 +1,12 @@
 
 let XocXoc_cuoc = require('../../../Models/XocXoc/XocXoc_cuoc');
 let UserInfo    = require('../../../Models/UserInfo');
+let TopVip      = require('../../../Models/VipPoint/TopVip');
 
 module.exports = function(client, data){
 	if (!!data.cuoc && !!data.box) {
 		let cuoc = data.cuoc>>0;
-		let red  = !!data.red;
+		let red  = true;
 		let box  = data.box;
 
 		if (client.redT.game.xocxoc.time < 2 || client.redT.game.xocxoc.time > 30) {
@@ -17,15 +18,12 @@ module.exports = function(client, data){
 			!(box === 'chan' || box === 'le' || box === 'red3' || box === 'red4' || box === 'white3' || box === 'white4')) {
 			client.red({mini:{XocXoc:{notice: 'Cược thất bại...'}}});
 		}else{
-			UserInfo.findOne({id:client.UID}, 'red xu', function(err, user){
-				if (!user || (red && user.red < cuoc) || (!red && user.xu < cuoc)) {
-					client.red({xocxoc:{notice: 'Bạn không đủ ' + (red ? 'RED':'XU') + ' để cược.!!'}});
+			let name = client.profile.name;
+			UserInfo.findOne({id:client.UID}, 'red', function(err, user){
+				if (!user || user.red < cuoc) {
+					client.red({xocxoc:{notice: 'Bạn không đủ RED để cược.!!'}});
 				}else{
-					if(red){
-						user.red -= cuoc;
-					}else{
-						user.xu  -= cuoc;
-					}
+					user.red -= cuoc;
 					user.save();
 
 					let xocxoc = client.redT.game.xocxoc;
@@ -37,7 +35,7 @@ module.exports = function(client, data){
 							checkOne[box] += cuoc;
 							checkOne.save();
 						}else{
-							var create = {uid:client.UID,name: client.profile.name, phien:xocxoc.phien, red:red, time: new Date()};
+							var create = {uid:client.UID,name: name, phien:xocxoc.phien, red:red, time: new Date()};
 							create[box] = cuoc;
 							XocXoc_cuoc.create(create);
 						}
@@ -52,40 +50,42 @@ module.exports = function(client, data){
 						};
 						newData[box] = cuoc;
 						let me_cuoc = {};
-						if (red) {
-							xocxoc.data.red[box] += cuoc;
-							xocxoc.dataAdmin.red[box] += cuoc;
-							if (xocxoc.ingame.red[client.profile.name]) {
-								xocxoc.ingame.red[client.profile.name][box] += cuoc;
-							}else{
-								xocxoc.ingame.red[client.profile.name] = newData;
-							}
-							me_cuoc.red = xocxoc.ingame.red[client.profile.name];
+						xocxoc.data.red[box] += cuoc;
+						xocxoc.dataAdmin.red[box] += cuoc;
+						if (xocxoc.ingame.red[name]) {
+							xocxoc.ingame.red[name][box] += cuoc;
 						}else{
-							xocxoc.data.xu[box] += cuoc;
-							xocxoc.dataAdmin.xu[box] += cuoc;
-							if (xocxoc.ingame.xu[client.profile.name]) {
-								xocxoc.ingame.xu[client.profile.name][box] += cuoc;
-							}else{
-								xocxoc.ingame.xu[client.profile.name] = newData;
-							}
-							me_cuoc.xu = xocxoc.ingame.xu[client.profile.name];
+							xocxoc.ingame.red[name] = newData;
 						}
+						me_cuoc.red = xocxoc.ingame.red[name];
 						Object.values(xocxoc.clients).forEach(function(users){
 							if (client !== users) {
 								users.red({xocxoc:{chip:{box:box, cuoc:cuoc}}});
 							}else{
-								users.red({xocxoc:{mechip:{box:box, cuoc:data.cuoc}, me:me_cuoc}, user:{red:user.red, xu:user.xu}});
+								users.red({xocxoc:{mechip:{box:box, cuoc:data.cuoc}, me:me_cuoc}, user:{red:user.red}});
 							}
 						});
 
+						let vipStatus = require('../../../../config/topVip.json').status;
+						if (vipStatus === true) {
+							TopVip.updateOne({'name':name}, {$inc:{vip:cuoc}}).exec(function(errV, userV){
+								if (!!userV && userV.n === 0) {
+									try{
+						    			TopVip.create({'name':name, 'vip':cuoc});
+									} catch(e){
+									}
+								}
+								name = null;
+								cuoc = null;
+							});
+						}
+
+						client  = null;
 						xocxoc  = null;
 						me_cuoc = null;
 						newData = null;
-						client  = null;
 						data    = null;
 
-						cuoc = null;
 						red  = null;
 						box  = null;
 					})

@@ -84,7 +84,7 @@ Room.prototype.gameStart = function(){
 }
 
 Room.prototype.addFish = function(){
-	if (this.timeGame > 550) { //650
+	if (this.timeGame > 350) { //650
 		this.playRound();
 		return void 0;
 	}

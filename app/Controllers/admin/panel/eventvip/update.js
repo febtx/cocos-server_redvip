@@ -16,9 +16,9 @@ module.exports = function (client, data) {
 	file.top4    = data.top4>>0;
 	file.top5    = data.top5>>0;
 	file.top6_10 = data.top6_10>>0;
-	file.top10_20  = data.top10_20>>0;
-	file.top20_50  = data.top20_50>>0;
-	file.top50_100 = data.top50_100>>0;
+	file.top11_20  = data.top11_20>>0;
+	file.top21_50  = data.top21_50>>0;
+	file.top51_xxx = data.top51_xxx>>0;
 
 	fs.writeFile(path.dirname(path.dirname(path.dirname(path.dirname(path.dirname(__dirname))))) + '/config/topVip.json', JSON.stringify(file), function(err){
 		if (!!err) {

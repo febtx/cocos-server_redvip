@@ -5,6 +5,7 @@ let MegaJP_user = require('../../../Models/MegaJP/MegaJP_user');
 let MegaJP_spin = require('../../../Models/MegaJP/MegaJP_spin');
 
 let UserInfo    = require('../../../Models/UserInfo');
+//let TopVip      = require('../../../Models/VipPoint/TopVip');
 
 let megaData    = require('../../../../data/megajackpot');
 

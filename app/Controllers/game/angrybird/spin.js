@@ -2,11 +2,12 @@
 let HU              = require('../../../Models/HU');
 
 let AngryBirds_red  = require('../../../Models/AngryBirds/AngryBirds_red');
-let AngryBirds_xu   = require('../../../Models/AngryBirds/AngryBirds_xu');
 let AngryBirds_user = require('../../../Models/AngryBirds/AngryBirds_user');
 
 let MegaJP_user     = require('../../../Models/MegaJP/MegaJP_user');
 let MegaJP_nhan     = require('../../../Models/MegaJP/MegaJP_nhan');
+
+let TopVip          = require('../../../Models/VipPoint/TopVip');
 
 let UserInfo     = require('../../../Models/UserInfo');
 let Helpers      = require('../../../Helpers/Helpers');
@@ -116,44 +117,19 @@ function check_win(data, line){
 	});
 
 	return {line:line, win:win_icon, type:win_type};
-
-
-	/**
-	return new Promise((aT, bT) => {
-		Promise.all(arrT.map(function(c, index){
-			if (index != 5 && index != 4) {
-				arrT[index] += thaythe;
-			}
-			return index != 5 ? c+thaythe :c;
-		})).then(temp1 => {
-			Promise.all(arrT.map(function(c, index){
-				if (c === 3 && index !== 0) {
-					win_icon = index;
-					win_type = 3;
-				}
-				return void 0;
-			})).then(result => {
-				aT({line:line, win:win_icon, type:win_type});
-			})
-		})
-	})
-	.then(result => {
-		return result;
-	})
-	*/
 }
 
 module.exports = function(client, data){
 	if (!!data && !!data.cuoc) {
-		let bet  = data.cuoc>>0;                   // Mức cược
-		let red  = !!data.red;                     // Loại tiền (Red:true, Xu:false)
+		let bet  = data.cuoc>>0;   // Mức cược
+		let red  = true;           // Loại tiền
 
 		if (!(bet == 100 || bet == 1000 || bet == 10000)) {
 			client.red({mini:{arb:{status:0}}, notice:{text:'DỮ LIỆU KHÔNG ĐÚNG...', title:'THẤT BẠI'}});
 		}else{
-			UserInfo.findOne({id:client.UID}, red ? 'red name':'xu name', function(err, user){
-				if (!user || (red && user.red < bet) || (!red && user.xu < bet)) {
-					client.red({mini:{arb:{status:0, notice:'Bạn không đủ ' + (red ? 'RED':'XU') + ' để quay.!!'}}});
+			UserInfo.findOne({id:client.UID}, 'red name', function(err, user){
+				if (!user || user.red < bet) {
+					client.red({mini:{arb:{status:0, notice:'Bạn không đủ RED để quay.!!'}}});
 				}else{
 					let phe = red ? 2 :4;    // Phế
 					let addQuy = (bet*0.01)>>0;
@@ -166,14 +142,9 @@ module.exports = function(client, data){
 					let config = require('../../../../config/angrybird.json');
 
 					HU.findOne({game:'arb', type:bet, red:red}, 'name bet min toX balans x', function(err, dataHu){
-						let uInfo      = {};
-						let mini_users = {};
-						let huUpdate   = {bet:addQuy, toX:0, balans:0};
-						if (red){
-							huUpdate['hu'] = uInfo['hu'] = mini_users['hu']     = 0; // Khởi tạo
-						}else{
-							huUpdate['huXu'] = uInfo['huXu'] = mini_users['huXu'] = 0; // Khởi tạo
-						}
+						let uInfo      = {hu:0};
+						let mini_users = {hu:0};
+						let huUpdate   = {bet:addQuy, toX:0, balans:0, hu:0};
 
 						let nohu     = false;
 						let isBigWin = false;
@@ -512,21 +483,13 @@ module.exports = function(client, data){
 												nohu = true;
 												let okHu = (quyHu-Math.ceil(quyHu*phe/100))>>0;
 												bet_win += okHu;
-												if (red){
-													client.redT.sendInHome({pushnohu:{title:'Thiên Thú', name:client.profile.name, bet:okHu}});
-													huUpdate['hu']   = uInfo['hu']   = mini_users['hu']  += 1; // Cập nhật Số Hũ Red đã Trúng
-												}else{
-													huUpdate['huXu'] = uInfo['huXu'] = mini_users['huXu'] += 1; // Cập nhật Số Hũ Xu đã Trúng
-												}
+												client.redT.sendInHome({pushnohu:{title:'Thiên Thú', name:client.profile.name, bet:okHu}});
+												huUpdate['hu']   = uInfo['hu']   = mini_users['hu']  += 1; // Cập nhật Số Hũ Red đã Trúng
 											}else{
 												let okHu = (quyMin-Math.ceil(quyMin*phe/100))>>0;
 												bet_win += okHu;
-												if (red){
-													client.redT.sendInHome({pushnohu:{title:'Thiên Thú', name:client.profile.name, bet:okHu}});
-													huUpdate['hu']   = uInfo['hu']   = mini_users['hu']   += 1; // Cập nhật Số Hũ Red đã Trúng
-												}else{
-													huUpdate['huXu'] = uInfo['huXu'] = mini_users['huXu'] += 1; // Cập nhật Số Hũ Xu đã Trúng
-												}
+												client.redT.sendInHome({pushnohu:{title:'Thiên Thú', name:client.profile.name, bet:okHu}});
+												huUpdate['hu']   = uInfo['hu']   = mini_users['hu']   += 1; // Cập nhật Số Hũ Red đã Trúng
 											}
 											HU.updateOne({game:'arb', type:bet, red:red}, {$set:{name:'', bet:quyMin}}).exec();
 										}else{
@@ -556,79 +519,67 @@ module.exports = function(client, data){
 								}
 							}
 
-							let thuong     = 0;
-							if (red) {
-								uInfo['red'] = tien;                                   // Cập nhật Số dư Red trong tài khoản
-								huUpdate['redPlay'] = uInfo['redPlay'] = mini_users['bet'] = bet;            // Cập nhật Số Red đã chơi
-								if (tien > 0){
-									huUpdate['redWin'] = uInfo['redWin'] = mini_users['win'] = tien;        // Cập nhật Số Red đã Thắng
-								}
-								if (tien < 0){
-									huUpdate['redLost'] = uInfo['redLost'] = mini_users['lost'] = tien*(-1); // Cập nhật Số Red đã Thua
-								}
-
-								AngryBirds_red.create({'name':client.profile.name, 'type':type, 'win':bet_win, 'bet':bet, 'time':new Date()}, function (err, small) {
-									if (err){
-										client.red({mini:{arb:{status:0, notice:'Có lỗi sảy ra, vui lòng thử lại.!!'}}});
-									}else{
-										client.red({mini:{arb:{status:1, cel:[cel1, cel2, cel3], celR:[celR1, celR2], line_win:result, nohu:nohu, isBigWin:isBigWin, win:bet_win}}, user:{red:user.red-bet}});
-									}
-								});
-
-								MegaJP_user.findOne({uid:client.UID}, {}, function(err, updateMega){
-									if (!!updateMega) {
-										if (tien > 0){
-											updateMega['win'+bet] += tien;
-										}
-										if (tien < 0){
-											updateMega['lost'+bet] += tien*-1;
-										}
-
-										let MWin    = updateMega['win'+bet];
-										let MLost   = updateMega['lost'+bet];
-										let MUpdate = updateMega['last'+bet];
-										let RedHuong = MLost-MWin-MUpdate;
-										if (bet !== 10000) {
-											if (RedHuong > bet*4000) {
-												updateMega[bet] += 1;
-												updateMega['last'+bet] += RedHuong;
-												MegaJP_nhan.create({'uid':client.UID, 'room':bet, 'to':100, 'sl':1, 'status':true, 'time':new Date()});
-											}
-										}else{
-											if (RedHuong > bet*1000) {
-												updateMega[bet] += 1;
-												updateMega['last'+bet] += RedHuong;
-												MegaJP_nhan.create({'uid':client.UID, 'room':bet, 'to':100, 'sl':1, 'status':true, 'time':new Date()});
-											}
-										}
-										updateMega.save();
-									}
-								});
-							}else{
-								thuong = (bet_win*0.039589)>>0;
-								uInfo['xu'] = tien;                               // Cập nhật Số dư XU trong tài khoản
-								huUpdate['xuPlay'] = uInfo['xuPlay'] = mini_users['betXu'] = bet;     // Cập nhật Số XU đã chơi
-								if (thuong > 0){
-									uInfo['red'] = uInfo['thuong'] = mini_users['thuong'] = thuong;  // Cập nhật Số dư Red trong tài khoản // Cập nhật Số Red được thưởng do chơi XU
-								}
-								if (tien > 0){
-									huUpdate['xuWin'] = uInfo['xuWin'] = mini_users['winXu'] = tien;         // Cập nhật Số Red đã Thắng
-								}
-								if (tien < 0){
-									huUpdate['xuLost'] = uInfo['xuLost'] = mini_users['lostXu'] = tien*(-1); // Cập nhật Số Red đã Thua
-								}
-
-								AngryBirds_xu.create({'name':client.profile.name, 'type':type, 'win':bet_win, 'bet':bet, 'time':new Date()}, function (err, small) {
-									if (err){
-										client.red({mini:{arb:{status:0, notice:'Có lỗi sảy ra, vui lòng thử lại.!!'}}});
-									}else{
-										client.red({mini:{arb:{status:1, cel:[cel1, cel2, cel3], celR:[celR1, celR2], line_win:result, nohu:nohu, isBigWin:isBigWin, win:bet_win, thuong:thuong}}, user:{xu:user.xu-bet}});
-									}
-								});
+							uInfo['red'] = tien;                                   // Cập nhật Số dư Red trong tài khoản
+							huUpdate['redPlay'] = uInfo['redPlay'] = mini_users['bet'] = bet;            // Cập nhật Số Red đã chơi
+							if (tien > 0){
+								huUpdate['redWin'] = uInfo['redWin'] = mini_users['win'] = tien;        // Cập nhật Số Red đã Thắng
 							}
+							if (tien < 0){
+								huUpdate['redLost'] = uInfo['redLost'] = mini_users['lost'] = tien*(-1); // Cập nhật Số Red đã Thua
+							}
+
+							AngryBirds_red.create({'name':client.profile.name, 'type':type, 'win':bet_win, 'bet':bet, 'time':new Date()}, function (err, small) {
+								if (err){
+									client.red({mini:{arb:{status:0, notice:'Có lỗi sảy ra, vui lòng thử lại.!!'}}});
+								}else{
+									client.red({mini:{arb:{status:1, cel:[cel1, cel2, cel3], celR:[celR1, celR2], line_win:result, nohu:nohu, isBigWin:isBigWin, win:bet_win}}, user:{red:user.red-bet}});
+								}
+							});
+
+							MegaJP_user.findOne({uid:client.UID}, {}, function(err, updateMega){
+								if (!!updateMega) {
+									if (tien > 0){
+										updateMega['win'+bet] += tien;
+									}
+									if (tien < 0){
+										updateMega['lost'+bet] += tien*-1;
+									}
+
+									let MWin    = updateMega['win'+bet];
+									let MLost   = updateMega['lost'+bet];
+									let MUpdate = updateMega['last'+bet];
+									let RedHuong = MLost-MWin-MUpdate;
+									if (bet !== 10000) {
+										if (RedHuong > bet*4000) {
+											updateMega[bet] += 1;
+											updateMega['last'+bet] += RedHuong;
+											MegaJP_nhan.create({'uid':client.UID, 'room':bet, 'to':100, 'sl':1, 'status':true, 'time':new Date()});
+										}
+									}else{
+										if (RedHuong > bet*1000) {
+											updateMega[bet] += 1;
+											updateMega['last'+bet] += RedHuong;
+											MegaJP_nhan.create({'uid':client.UID, 'room':bet, 'to':100, 'sl':1, 'status':true, 'time':new Date()});
+										}
+									}
+									updateMega.save();
+								}
+							});
 							HU.updateOne({game:'arb', type:bet, red:red}, {$inc:huUpdate}).exec();
 							UserInfo.updateOne({id:client.UID}, {$inc:uInfo}).exec();
 							AngryBirds_user.updateOne({'uid':client.UID}, {$set:{time:new Date()}, $inc:mini_users}).exec();
+
+							let vipStatus = require('../../../../config/topVip.json').status;
+							if (vipStatus === true) {
+								TopVip.updateOne({'name':client.profile.name}, {$inc:{vip:bet}}).exec(function(errV, userV){
+									if (!!userV && userV.n === 0) {
+										try{
+							    			TopVip.create({'name':client.profile.name, 'vip':bet});
+										} catch(e){
+										}
+									}
+								});
+							}
 						})
 					})
 				}
