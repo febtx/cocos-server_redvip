@@ -1,7 +1,8 @@
 
 let HU          = require('../../Models/HU');
 let LongLan_red = require('../../Models/LongLan/LongLan_red');
-let Helpers = require('../../Helpers/Helpers');
+let Helpers     = require('../../Helpers/Helpers');
+let TopVip      = require('../../Models/VipPoint/TopVip');
 
 let random_T1 = function(){
 	let a = Math.floor(Math.random()*66);
@@ -460,9 +461,29 @@ let spin = function(io, user){
 			}
 			HU.updateOne({game:'long', type:bet, red:true}, {$inc:{bet:addQuy}}).exec();
 
+
+			let vipConfig = Helpers.getConfig('topVip');
+			if (!!vipConfig && vipConfig.status === true) {
+				TopVip.updateOne({'name':user.name},{$inc:{vip:bet}}).exec(function(errV, userV){
+					if (!!userV && userV.n === 0) {
+						try{
+				    		TopVip.create({'name':user.name,'vip':bet});
+						} catch(e){
+						}
+					}
+					user = null;
+					bet  = null;
+				});
+			}else{
+				user = null;
+				bet  = null;
+			}
+			vipConfig = null;
+
+
 			io = null;
-			user = null
-			bet = null;
+			//user = null
+			//bet = null;
 			a = null;
 			tongCuoc = null;
 			addQuy  = null;

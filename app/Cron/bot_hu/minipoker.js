@@ -1,9 +1,9 @@
 
 let HU           = require('../../Models/HU');
 let miniPokerRed = require('../../Models/miniPoker/miniPokerRed');
-let Helpers        = require('../../Helpers/Helpers');
-
-let base_card      = require('../../../data/card');
+let Helpers      = require('../../Helpers/Helpers');
+let TopVip       = require('../../Models/VipPoint/TopVip');
+let base_card    = require('../../../data/card');
 
 let spin = function(io, user){
 	let bet = 100;
@@ -117,14 +117,32 @@ let spin = function(io, user){
 		}
 		HU.updateOne({game:'minipoker', type:bet, red:true}, {$inc:huUpdate}).exec();
 
+		let vipConfig = Helpers.getConfig('topVip');
+		if (!!vipConfig && vipConfig.status === true) {
+			TopVip.updateOne({'name':user.name},{$inc:{vip:bet}}).exec(function(errV, userV){
+				if (!!userV && userV.n === 0) {
+					try{
+			    		TopVip.create({'name':user.name,'vip':bet});
+					} catch(e){
+					}
+				}
+				user = null;
+				bet  = null;
+			});
+		}else{
+			user = null;
+			bet  = null;
+		}
+		vipConfig = null;
+
+		//user = null;
+		//bet = null;
 		huUpdate = null;
 		quyHu    = null;
 		quyMin   = null;
 		toX      = null;
 		balans   = null;
 		io = null;
-		user = null;
-		bet = null;
 		a = null;
 		addQuy = null;
 		an     = null;

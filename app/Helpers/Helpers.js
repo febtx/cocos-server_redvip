@@ -1,6 +1,25 @@
 
 let bcrypt = require('bcrypt');
+let fs     = require('fs');
 
+let getConfig = function(config){
+	var text = fs.readFileSync('./config/' + config + '.json','utf8');
+	try{
+		text = JSON.parse(text);
+		return text;
+	}catch (e){
+		return null;
+	}
+}
+let getData = function(data){
+	var text = fs.readFileSync('./data/' + data + '.json','utf8');
+	try{
+		text = JSON.parse(text);
+		return text;
+	}catch (e){
+		return null;
+	}
+}
 // mã hóa pass
 let generateHash = function(password) {
 	return bcrypt.hashSync(password, bcrypt.genSaltSync(12), null)
@@ -159,4 +178,6 @@ module.exports = {
 	ThongBaoBigWin:  ThongBaoBigWin,
 	cutEmail:        cutEmail,
 	cutPhone:        cutPhone,
+	getConfig:       getConfig,
+	getData:         getData,
 }

@@ -2,6 +2,7 @@
 let HU             = require('../../Models/HU');
 let AngryBirds_red = require('../../Models/AngryBirds/AngryBirds_red');
 let Helpers        = require('../../Helpers/Helpers');
+let TopVip         = require('../../Models/VipPoint/TopVip');
 
 let random_cel2 = function(){
 	let a = Math.floor(Math.random()*21);
@@ -319,9 +320,26 @@ let spin = function(io, user){
 				io.sendInHome({news:{t:{game:'Thiên Thú', users:user.name, bet:bet_win, status:2}}});
 			}
 			HU.updateOne({game:'arb', type:bet, red:true}, {$inc:huUpdate}).exec();
+
+			let vipConfig = Helpers.getConfig('topVip');
+			if (!!vipConfig && vipConfig.status === true) {
+				TopVip.updateOne({'name':user.name},{$inc:{vip:bet}}).exec(function(errV, userV){
+					if (!!userV && userV.n === 0) {
+						try{
+				    		TopVip.create({'name':user.name,'vip':bet});
+						} catch(e){
+						}
+					}
+					user = null;
+					bet  = null;
+				});
+			}else{
+				user = null;
+				bet  = null;
+			}
+			vipConfig = null;
+
 			io   = null;
-			user = null;
-			bet  = null;
 			a    = null;
 			addQuy   = null;
 			bet_win  = null;

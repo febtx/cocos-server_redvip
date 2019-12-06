@@ -230,6 +230,8 @@ let thongtin_thanhtoan = function(game_id, dice = false){
 		let TaiXiu_red_tong_tai = 0;
 		let TaiXiu_red_tong_xiu = 0;
 
+		let vipConfig = Helpers.getConfig('topVip');
+
 		TXCuoc.find({phien:game_id}, null, {sort:{'_id':-1}}, function(err, list) {
 			if(list.length){
 				list.forEach(function(objL) {
@@ -248,6 +250,8 @@ let thongtin_thanhtoan = function(game_id, dice = false){
 
 				Promise.all(list.map(function(obj){
 					let oneUpdate = {};
+					let winH = false;
+					let betH = 0;
 					if (obj.taixiu === true && obj.red === true && obj.select === true){ // Tổng Red Tài
 						let win = dice > 10 ? true : false;
 						if (TaiXiu_red_lech_tai && TaiXiu_tong_red_lech > 0) {
@@ -280,6 +284,17 @@ let thongtin_thanhtoan = function(game_id, dice = false){
 									let redUpdate = obj.bet+betwinP;
 									UserInfo.updateOne({id:obj.uid}, {$inc:{red:redUpdate, redPlay:betPlay, redWin:betwinP}}).exec();
 									TaiXiu_User.updateOne({uid: obj.uid}, {$inc:{tWinRed:betwinP, tRedPlay: betPlay}}).exec();
+
+									if (!!vipConfig && vipConfig.status === true) {
+										TopVip.updateOne({'name':obj.name},{$inc:{vip:betPlay}}).exec(function(errV, userV){
+											if (!!userV && userV.n === 0) {
+												try{
+										    		TopVip.create({'name':obj.name,'vip':betPlay});
+												} catch(e){
+												}
+											}
+										});
+									}
 								}else{
 									UserInfo.updateOne({id:obj.uid}, {$inc:{red:obj.tralai, redPlay:betPlay, redLost:betPlay}}).exec();
 									TaiXiu_User.updateOne({uid: obj.uid}, {$inc:{tLostRed:betPlay, tRedPlay: betPlay}}).exec();
@@ -295,6 +310,17 @@ let thongtin_thanhtoan = function(game_id, dice = false){
 								obj.win       = true;
 								obj.betwin    = betwin;
 								obj.save();
+
+								if (!!vipConfig && vipConfig.status === true) {
+									TopVip.updateOne({'name':obj.name},{$inc:{vip:obj.bet}}).exec(function(errV, userV){
+										if (!!userV && userV.n === 0) {
+											try{
+									    		TopVip.create({'name':obj.name,'vip':obj.bet});
+											} catch(e){
+											}
+										}
+									});
+								}
 
 								let redUpdate = obj.bet+betwin;
 								UserInfo.updateOne({id:obj.uid}, {$inc:{red:redUpdate, redWin:betwin, redPlay:obj.bet}}).exec();
@@ -340,6 +366,17 @@ let thongtin_thanhtoan = function(game_id, dice = false){
 									let redUpdate = obj.bet+betwinP;
 									UserInfo.updateOne({id:obj.uid}, {$inc:{red:redUpdate, redPlay:betPlay, redWin:betwinP}}).exec();
 									TaiXiu_User.updateOne({uid: obj.uid}, {$inc:{tWinRed:betwinP, tRedPlay:betPlay}}).exec();
+
+									if (!!vipConfig && vipConfig.status === true) {
+										TopVip.updateOne({'name':obj.name},{$inc:{vip:betPlay}}).exec(function(errV, userV){
+											if (!!userV && userV.n === 0) {
+												try{
+										    		TopVip.create({'name':obj.name,'vip':betPlay});
+												} catch(e){
+												}
+											}
+										});
+									}
 								}else{
 									UserInfo.updateOne({id:obj.uid}, {$inc:{red:obj.tralai, redPlay: betPlay, redLost:betPlay}}).exec();
 									TaiXiu_User.updateOne({uid: obj.uid}, {$inc:{tLostRed:betPlay, tRedPlay:betPlay}}).exec();
@@ -355,6 +392,17 @@ let thongtin_thanhtoan = function(game_id, dice = false){
 								obj.win       = true;
 								obj.betwin    = betwin;
 								obj.save();
+
+								if (!!vipConfig && vipConfig.status === true) {
+									TopVip.updateOne({'name':obj.name},{$inc:{vip:obj.bet}}).exec(function(errV, userV){
+										if (!!userV && userV.n === 0) {
+											try{
+									    		TopVip.create({'name':obj.name,'vip':obj.bet});
+											} catch(e){
+											}
+										}
+									});
+								}
 
 								let redUpdate = obj.bet+betwin;
 								UserInfo.updateOne({id:obj.uid}, {$inc:{red:redUpdate, redWin:betwin, redPlay:obj.bet}}).exec();
@@ -565,21 +613,6 @@ let playGame = function(){
 							dataT = null;
 						}
 					}
-					/**
-					timeBot = (Math.floor(Math.random()*(6-2+1))+2)>>0;
-					if (!(io.TaiXiu_time%timeBot)) {
-						let userCuocCL = (Math.random()*7)>>0;
-						let iHCL = 0;
-						for (iHCL = 0; iHCL < userCuocCL; iHCL++) {
-							let dataT = botListCl[iHCL];
-							if (!!dataT) {
-								bot.cl(dataT, io);
-								botListCl.splice(iHCL, 1); // Xoá bot đã đặt tránh trùng lặp
-							}
-							dataT = null;
-						}
-					}
-					*/
 				}
 			}
 		}

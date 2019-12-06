@@ -156,18 +156,6 @@ var cuoc = function(client, data){
 						user.save();
 						var phien = client.redT.TaiXiu_phien;
 
-						let vipStatus = require('../../../config/topVip.json').status;
-						if (vipStatus === true) {
-							TopVip.updateOne({'name':client.profile.name}, {$inc:{vip:bet}}).exec(function(errV, userV){
-								if (!!userV && userV.n === 0) {
-									try{
-						    			TopVip.create({'name':client.profile.name, 'vip':bet});
-									} catch(e){
-									}
-								}
-							});
-						}
-
 						TXCuocOne.findOne({uid:client.UID, phien:phien, taixiu:taixiu, red:red}, 'bet select', function(isCuocErr, isCuoc) {
 							if (!!isCuoc) {
 								// update

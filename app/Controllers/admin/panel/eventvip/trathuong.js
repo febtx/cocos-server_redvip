@@ -3,8 +3,8 @@ let TopVip   = require('../../../../Models/VipPoint/TopVip');
 let Message  = require('../../../../Models/Message');
 let UserInfo = require('../../../../Models/UserInfo');
 
-let path   = require('path');
-let fs     = require('fs');
+let path = require('path');
+let fs   = require('fs');
 
 let numberWithCommas = require('../../../../Helpers/Helpers').numberWithCommas;
 
