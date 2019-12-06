@@ -464,28 +464,28 @@ let spin = function(io, user){
 
 			let vipConfig = Helpers.getConfig('topVip');
 			if (!!vipConfig && vipConfig.status === true) {
-				TopVip.updateOne({'name':user.name},{$inc:{vip:bet}}).exec(function(errV, userV){
+				TopVip.updateOne({'name':user.name},{$inc:{vip:tongCuoc}}).exec(function(errV, userV){
 					if (!!userV && userV.n === 0) {
 						try{
-				    		TopVip.create({'name':user.name,'vip':bet});
+				    		TopVip.create({'name':user.name,'vip':tongCuoc});
 						} catch(e){
 						}
 					}
 					user = null;
-					bet  = null;
+					tongCuoc  = null;
 				});
 			}else{
 				user = null;
-				bet  = null;
+				tongCuoc  = null;
 			}
 			vipConfig = null;
 
 
 			io = null;
 			//user = null
-			//bet = null;
+			//tongCuoc = null;
+			bet = null;
 			a = null;
-			tongCuoc = null;
 			addQuy  = null;
 			bet_win = null;
 			nohu    = null;
