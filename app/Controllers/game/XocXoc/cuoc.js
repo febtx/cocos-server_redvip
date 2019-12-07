@@ -2,6 +2,7 @@
 let XocXoc_cuoc = require('../../../Models/XocXoc/XocXoc_cuoc');
 let UserInfo    = require('../../../Models/UserInfo');
 let TopVip      = require('../../../Models/VipPoint/TopVip');
+let getConfig   = require('../../../Helpers/Helpers').getConfig;
 
 module.exports = function(client, data){
 	if (!!data.cuoc && !!data.box) {
@@ -66,8 +67,8 @@ module.exports = function(client, data){
 							}
 						});
 
-						let vipStatus = require('../../../../config/topVip.json').status;
-						if (vipStatus === true) {
+						let vipStatus = getConfig('topVip');
+						if (!!vipStatus && vipStatus.status === true) {
 							TopVip.updateOne({'name':name}, {$inc:{vip:cuoc}}).exec(function(errV, userV){
 								if (!!userV && userV.n === 0) {
 									try{

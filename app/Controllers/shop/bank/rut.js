@@ -15,7 +15,7 @@ module.exports = function(client, data){
 			client.red({notice: {title:'LỖI', text: 'Ngân hàng không hợp lệ...'}});
 		}else if (!validator.isLength(data.rut, {min: 4, max: 17})) {
 			client.red({notice: {title:'LỖI', text: 'Số tiền không hợp lệ...'}});
-		}else if (!validator.isLength(data.otp, {min: 4, max: 6})) {
+		}else if (!validator.isLength(data.otp, {min: 4, max: 8})) {
 			client.red({notice: {title:'LỖI', text: 'Mã OTP không đúng...'}});
 		}else {
 			Phone.findOne({uid: client.UID}, {}, function(err1, dPhone){

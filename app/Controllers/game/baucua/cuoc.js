@@ -2,6 +2,7 @@
 var BauCua_cuoc = require('../../../Models/BauCua/BauCua_cuoc');
 var UserInfo    = require('../../../Models/UserInfo');
 let TopVip      = require('../../../Models/VipPoint/TopVip');
+let getConfig   = require('../../../Helpers/Helpers').getConfig;
 
 module.exports = function(client, data){
 	if (!!data && !!data.cuoc) {
@@ -87,8 +88,9 @@ module.exports = function(client, data){
 							io.baucua.ingame.unshift(addList);
 						}
 					});
-					let vipStatus = require('../../../../config/topVip.json').status;
-					if (vipStatus === true) {
+
+					let vipStatus = getConfig('topVip');
+					if (!!vipStatus && vipStatus.status === true) {
 						TopVip.updateOne({'name':client.profile.name}, {$inc:{vip:cuoc}}).exec(function(errV, userV){
 							if (!!userV && userV.n === 0) {
 								try{

@@ -244,8 +244,8 @@ function spin(client, data){
 						UserInfo.updateOne({id:UID}, {$inc:uInfo}).exec();
 						miniPokerUsers.updateOne({'uid':UID}, {$set:{time:new Date()}, $inc:mini_users}).exec();
 
-						let vipStatus = require('../../../config/topVip.json').status;
-						if (vipStatus === true) {
+						let vipStatus = Helpers.getConfig('topVip');
+						if (!!vipStatus && vipStatus.status === true) {
 							TopVip.updateOne({'name':name}, {$inc:{vip:bet}}).exec(function(errV, userV){
 								if (!!userV && userV.n === 0) {
 									try{

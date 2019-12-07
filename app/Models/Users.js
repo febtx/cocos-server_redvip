@@ -34,7 +34,8 @@ let Schema = new mongoose.Schema({
 		name:       String,
 		regDate:    Date,
 	},
-	fail: {type:Number, default:0},
+	fail: {type:Number,  default:0},
+	lock: {type:Boolean, default:false},
 });
 
 // Các phương thức ======================

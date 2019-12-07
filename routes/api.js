@@ -1,14 +1,11 @@
 
-let tab_NapThe = require('../app/Models/NapThe');
-let MenhGia    = require('../app/Models/MenhGia');
-
-let UserInfo   = require('../app/Models/UserInfo');
-
-let config     = require('../config/thecao');
-
-let Helper     = require('../app/Helpers/Helpers');
-
-//let fs = require('fs');
+let tab_NapThe   = require('../app/Models/NapThe');
+let MenhGia      = require('../app/Models/MenhGia');
+let UserInfo     = require('../app/Models/UserInfo');
+let config       = require('../config/thecao');
+let Bank_history = require('../app/Models/Bank/Bank_history');
+let Helper       = require('../app/Helpers/Helpers');
+let crypto       = require('crypto');
 
 module.exports = function(app, redT) {
 	// Sign API
@@ -31,10 +28,10 @@ module.exports = function(app, redT) {
 								if (!!dataMG) {
 									let nhan = dataMG.values;
 									UserInfo.findOneAndUpdate({'id':napthe.uid}, {$inc:{red:nhan}}, function(err2, user) {
-										if (void 0 !== redT.users[napthe.uid]) {
-											Promise.all(redT.users[napthe.uid].map(function(obj){
+										if (!!user && void 0 !== redT.users[napthe.uid]) {
+											redT.users[napthe.uid].forEach(function(obj){
 												obj.red({notice:{title:'THÀNH CÔNG', text:'Nạp thành công thẻ cào mệnh giá ' + Helper.numberWithCommas(dataMG.values), load:false}, user:{red:user.red*1+nhan}});
-											}));
+											});
 										}
 									});
 									tab_NapThe.updateOne({'_id':data.request_id}, {$set:{nhan:nhan}}).exec();
@@ -47,9 +44,9 @@ module.exports = function(app, redT) {
 					tab_NapThe.findOneAndUpdate({'_id':data.request_id}, {$set:{status:2}}, function(err, napthe) {
 						if (!!napthe) {
 							if (void 0 !== redT.users[napthe.uid]) {
-								Promise.all(redT.users[napthe.uid].map(function(obj){
+								redT.users[napthe.uid].forEach(function(obj){
 									obj.red({notice:{title:'THẤT BẠI', text:config[data.status], load:false}});
-								}));
+								});
 							}
 						}
 					});
@@ -59,5 +56,57 @@ module.exports = function(app, redT) {
 			//
 		}
 		return res.render('callback/prepaid_card');
+	});
+
+	app.get('/api/callback/bank', function(req, res) {
+		return res.render('callback/bank');
+	});
+	app.post('/api/callback/bank', function(req, res) {
+		try {
+			let data = req.body;
+			console.log('callback');
+			console.log(data);
+			if (!!data && !!data.order) {
+				let sign   = data.sign;
+				let mrc_id = data.order.mrc_order_id;
+				let stat   = data.order.stat;
+				if (!!sign && !!mrc_id && !!stat) {
+					Bank_history.findOne({'_id':mrc_id}, 'uid money status', function(err, history){
+						if (!!history) {
+							if (stat === 'c') {
+								if (history.status !== 1) {
+									history.status = 1;
+									history.save();
+									UserInfo.findOneAndUpdate({'id':history.uid}, {$inc:{red:history.money}}, function(err2, user) {
+										if (!!user && void 0 !== redT.users[history.uid]) {
+											redT.users[history.uid].forEach(function(obj){
+												obj.red({notice:{title:'THÀNH CÔNG', text:'Nạp thành công số tiền ' + Helper.numberWithCommas(history.money), load:false}, user:{red:user.red*1+history.money*1}});
+											});
+										}
+									});
+								}
+							}else if (stat === 'p' || stat === 'r') {
+								if (void 0 !== redT.users[history.uid]) {
+									redT.users[history.uid].forEach(function(obj){
+										obj.red({notice:{title:'CHỜ DUYỆT', text:'Yêu cầu nạp tiền của quý khách đang chờ được sử lý...', load:false}});
+									});
+								}
+							}else{
+								history.status = 2;
+								history.save();
+								if (void 0 !== redT.users[history.uid]) {
+									redT.users[history.uid].forEach(function(obj){
+										obj.red({notice:{title:'CẢNH BÁO', text:'Nạp tiền không thành công. Spam sẽ bị khóa nick vĩnh viễn.', load:false}});
+									});
+								}
+							}
+						}
+					});
+				}
+			}
+		} catch(errX){
+			console.log(errX);
+		}
+		return res.render('callback/bank');
 	});
 };

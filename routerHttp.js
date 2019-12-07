@@ -46,6 +46,17 @@ module.exports = function(app, redT) {
 		return res.render('help/telegram');
 	});
 
+	// Bank
+	app.get('/bank/', function(req, res) {
+		let data = req.query;
+		console.log('success');
+		console.log(data);
+		if (!!data.success) {
+		}else{
+		}
+		return res.render('bank/success');
+	});
+
 	// Sign API
 	require('./routes/api')(app, redT);  // load routes API
 };

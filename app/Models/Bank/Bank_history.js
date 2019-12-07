@@ -6,9 +6,9 @@ let Schema = new mongoose.Schema({
 	uid:    {type:String, required:true, index:true},         // ID người dùng
 	// out
 	bank:   {type:String, required:true},                     // Ngân hàng
-	number: {type:String, default:''},                                    // Số tài khoản
-	name:   {type:String, default:''},                                    // Chủ tài khoản
-	branch: {type:String, default:''},                                    // Chi nhánh
+	number: {type:String, default:''},                        // Số tài khoản
+	name:   {type:String, default:''},                        // Chủ tài khoản
+	branch: {type:String, default:''},                        // Chi nhánh
 
 	// in
 	hinhthuc: {type:Number, default:1},                       // Hình thức (1:Internet Banking, 2:ATM, 3:Quầy)

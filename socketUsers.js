@@ -16,11 +16,15 @@ let authenticate = function(client, data, callback) {
 			let id = data.id>>0;
 			UserInfo.findOne({'UID':id}, 'id', function(err, userI){
 				if (!!userI) {
-					User.findOne({'_id':userI.id}, 'local', function(err, userToken){
+					User.findOne({'_id':userI.id}, 'local fail lock', function(err, userToken){
 						if (!!userToken) {
+							if (userToken.lock === true) {
+								callback({title:'CẤM', text:'Tài khoản bị vô hiệu hóa.'}, false);
+								return void 0;
+							}
 							if (void 0 !== userToken.fail && userToken.fail > 3) {
 								callback({title:'THÔNG BÁO', text: 'Vui lòng đăng nhập !!'}, false);
-								userToken.fail  = user.fail>>0;
+								userToken.fail  = userToken.fail>>0;
 								userToken.fail += 1;
 								userToken.save();
 							}else{
@@ -30,7 +34,7 @@ let authenticate = function(client, data, callback) {
 									client.UID = userToken._id.toString();
 									callback(false, true);
 								}else{
-									callback({title:'THẤT BẠI', text:'Không thể tự động đăng nhập !!'}, false);
+									callback({title:'THẤT BẠI', text:'Bạn hoặc ai đó đã đăng nhập trên 1 thiết bị khác !!'}, false);
 								}
 							}
 						}else{
@@ -68,7 +72,7 @@ let authenticate = function(client, data, callback) {
 					if (register) {
 						if (!captcha || !client.c_captcha) {
 							client.c_captcha('signUp');
-							callback({title: 'ĐĂNG KÝ', text: 'Captcha không tồn tại.'}, false);	
+							callback({title: 'ĐĂNG KÝ', text: 'Captcha không tồn tại.'}, false);
 						}else{
 							let checkCaptcha = new RegExp('^' + client.captcha + '$', 'i');
 							checkCaptcha     = checkCaptcha.test(captcha);
@@ -98,10 +102,14 @@ let authenticate = function(client, data, callback) {
 						// Đăng Nhập
 						User.findOne({'local.username':username}, function(err, user){
 							if (user){
+								if (user.lock === true) {
+									callback({title:'CẤM', text:'Tài khoản bị vô hiệu hóa.'}, false);
+									return void 0;
+								}
 								if (void 0 !== user.fail && user.fail > 3) {
 									if (!captcha || !client.c_captcha) {
 										client.c_captcha('signIn');
-										callback({title:'ĐĂNG NHẬP', text:'Phát hiện truy cập trái phép, vui lòng nhập captcha để tiếp tục.'}, false);	
+										callback({title:'ĐĂNG NHẬP', text:'Phát hiện truy cập trái phép, vui lòng nhập captcha để tiếp tục.'}, false);
 									}else{
 										let checkCLogin = new RegExp('^' + client.captcha + '$', 'i');
 										checkCLogin     = checkCLogin.test(captcha);
@@ -119,7 +127,7 @@ let authenticate = function(client, data, callback) {
 											}
 										}else{
 											client.c_captcha('signIn');
-											callback({title: 'ĐĂNG NHẬP', text: 'Captcha không đúng...'}, false);	
+											callback({title: 'ĐĂNG NHẬP', text: 'Captcha không đúng...'}, false);
 										}
 									}
 								}else{

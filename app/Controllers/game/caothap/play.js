@@ -35,8 +35,8 @@ function newGame(client, data) {
 					user.save();
 
 
-					let vipStatus = require('../../../../config/topVip.json').status;
-					if (vipStatus === true) {
+					let vipStatus = Helpers.getConfig('topVip');
+					if (!!vipStatus && vipStatus.status === true) {
 						TopVip.updateOne({'name':client.profile.name}, {$inc:{vip:cuoc}}).exec(function(errV, userV){
 							if (!!userV && userV.n === 0) {
 								try{

@@ -121,7 +121,7 @@ module.exports = function(client, data){
 				if (!user || (red && user.red < cuoc) || (!red && user.xu < cuoc)) {
 					client.red({mini:{big_babol:{status:0, notice:'Bạn không đủ RED để quay.!!'}}});
 				}else{
-					let config = require('../../../../config/bigbabol.json');
+					let config = Helpers.getConfig('bigbabol');
 					let phe = red ? 2 :4;    // Phế
 					let addQuy = (cuoc*0.005)>>0;
 
@@ -473,8 +473,8 @@ module.exports = function(client, data){
 							UserInfo.updateOne({id:client.UID}, {$inc:uInfo}).exec();
 							BigBabol_users.updateOne({'uid':client.UID}, {$set:{time:new Date()}, $inc:mini_users}).exec();
 
-							let vipStatus = require('../../../../config/topVip.json').status;
-							if (vipStatus === true) {
+							let vipStatus = Helpers.getConfig('topVip');
+							if (!!vipStatus && vipStatus.status === true) {
 								TopVip.updateOne({'name':client.profile.name}, {$inc:{vip:cuoc}}).exec(function(errV, userV){
 									if (!!userV && userV.n === 0) {
 										try{
