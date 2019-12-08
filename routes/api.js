@@ -64,8 +64,9 @@ module.exports = function(app, redT) {
 	app.post('/api/callback/bank', function(req, res) {
 		try {
 			let data = req.body;
-			console.log('callback');
+			console.log('post callback');
 			console.log(data);
+			// var hash = crypto.createHmac('SHA256', secret).update(string).digest('ascii');
 			if (!!data && !!data.order) {
 				let sign   = data.sign;
 				let mrc_id = data.order.mrc_order_id;

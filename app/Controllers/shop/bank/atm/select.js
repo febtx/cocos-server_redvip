@@ -15,6 +15,7 @@ module.exports = function(client, data){
 			client.red({notice:{title:'LỖI', text:'Mã OTP không đúng.!', load:false}});
 			return void 0;
 		}
+		/**
 		Phone.findOne({uid:client.UID}, {}, function(err, dPhone){
 			if (!!dPhone) {
 				OTP.findOne({'uid':client.UID, 'phone':dPhone.phone}, {}, {sort:{'_id':-1}}, function(err2, data_otp){
@@ -22,8 +23,10 @@ module.exports = function(client, data){
 						if (((new Date()-Date.parse(data_otp.date))/1000) > 180 || data_otp.active) {
 							client.red({notice:{title:'LỖI', text:'Mã OTP đã hết hạn.!', load:false}});
 						}else{
+							*/
 							let id     = data.id>>0;
 							let amount = data.amount>>0;
+							console.log(id, amount);
 							if (!!id && !!data.name && amount >= 20000) {
 								let tokenId = crypto.randomBytes(32).toString('hex');
 								tokenId = Buffer.from(tokenId).toString('base64');
@@ -44,6 +47,7 @@ module.exports = function(client, data){
 											lang:'vi',
 											bpm_id:id,
 											webhooks:config.url_callback,
+											accept_qrpay:0,
 										};
 										let dataBase = {
 											'iat': issuedAt,
@@ -69,12 +73,12 @@ module.exports = function(client, data){
 
 								//accept_bank:1,
 								//accept_cc:1,
-								//accept_qrpay:0,
 								//url_detail:,
 								//var hash = crypto.createHmac('SHA256', secret).update(string).digest('ascii');
 							}else{
 								client.red({notice:{title:'LỖI', text:'Giao dịch tối thiểu 20.000.!', load:false}});
 							}
+							/**
 						}
 					}else{
 						client.red({notice:{title:'LỖI', text:'Mã OTP Không đúng.!', load:false}});
@@ -85,5 +89,6 @@ module.exports = function(client, data){
 				client.red({notice:{title:'LỖI', text:'Bạn chưa kích hoạt số điện thoại.!', load:false}});
 			}
 		});
+		*/
 	}
 }

@@ -49,7 +49,7 @@ module.exports = function(app, redT) {
 	// Bank
 	app.get('/bank/', function(req, res) {
 		let data = req.query;
-		console.log('success');
+		console.log('http success');
 		console.log(data);
 		if (!!data.success) {
 		}else{
