@@ -88,7 +88,7 @@ module.exports = function(client, data){
 								//accept_bank:1,
 								//accept_cc:1,
 								//url_detail:,
-								//var hash = crypto.createHmac('SHA256', secret).update(string).digest('ascii');
+								//var hash = crypto.createHmac('SHA256', secret).update(string).digest('hex');
 							}else{
 								client.red({notice:{title:'LỖI', text:'Giao dịch tối thiểu 20.000.!', load:false}});
 							}

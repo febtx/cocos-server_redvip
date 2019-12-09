@@ -1,7 +1,7 @@
 
 // Router HTTP / HTTPS
 let mobile = require('is-mobile');
-
+let bank   = require('./routes/bank');
 module.exports = function(app, redT) {
 	// Home
 	app.get('/', function(req, res) {
@@ -48,13 +48,7 @@ module.exports = function(app, redT) {
 
 	// Bank
 	app.get('/bank/', function(req, res) {
-		let data = req.query;
-		console.log('http success');
-		console.log(data);
-		if (!!data.success) {
-		}else{
-		}
-		return res.render('bank/success');
+		bank(res, req.query);
 	});
 
 	// Sign API

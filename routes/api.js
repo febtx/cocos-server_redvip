@@ -5,7 +5,7 @@ let UserInfo     = require('../app/Models/UserInfo');
 let config       = require('../config/thecao');
 let Bank_history = require('../app/Models/Bank/Bank_history');
 let Helper       = require('../app/Helpers/Helpers');
-let crypto       = require('crypto');
+//let crypto       = require('crypto');
 
 module.exports = function(app, redT) {
 	// Sign API
@@ -15,9 +15,6 @@ module.exports = function(app, redT) {
 	});
 	app.post('/api/callback/prepaid_card', function(req, res) {
 		try {
-			//console.log('callback');
-			//console.log(req.body);
-			//var data = JSON.parse(body);
 			let data = req.body;
 			if (!!data && !!data.status && !!data.request_id) {
 				if (data.status == '1') {
@@ -64,8 +61,6 @@ module.exports = function(app, redT) {
 	app.post('/api/callback/bank', function(req, res) {
 		try {
 			let data = req.body;
-			console.log('post callback');
-			console.log(data);
 			// var hash = crypto.createHmac('SHA256', secret).update(string).digest('ascii');
 			if (!!data && !!data.order) {
 				let sign   = data.sign;
@@ -106,7 +101,7 @@ module.exports = function(app, redT) {
 				}
 			}
 		} catch(errX){
-			console.log(errX);
+			//console.log(errX);
 		}
 		return res.render('callback/bank');
 	});
