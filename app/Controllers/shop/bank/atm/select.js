@@ -15,7 +15,7 @@ module.exports = function(client, data){
 			client.red({notice:{title:'LỖI', text:'Mã OTP không đúng.!', load:false}});
 			return void 0;
 		}
-		/**
+		///**
 		Phone.findOne({uid:client.UID}, {}, function(err, dPhone){
 			if (!!dPhone) {
 				OTP.findOne({'uid':client.UID, 'phone':dPhone.phone}, {}, {sort:{'_id':-1}}, function(err2, data_otp){
@@ -23,11 +23,10 @@ module.exports = function(client, data){
 						if (((new Date()-Date.parse(data_otp.date))/1000) > 180 || data_otp.active) {
 							client.red({notice:{title:'LỖI', text:'Mã OTP đã hết hạn.!', load:false}});
 						}else{
-							*/
+							//*/
 							let id     = data.id>>0;
 							let amount = data.amount>>0;
-							console.log(id, amount);
-							if (!!id && !!data.name && amount >= 20000) {
+							if (!!id && !!data.name && amount >= 50000) {
 								let tokenId = crypto.randomBytes(32).toString('hex');
 								tokenId = Buffer.from(tokenId).toString('base64');
 								let issuedAt = (new Date().getTime()/1000)>>0;
@@ -48,6 +47,10 @@ module.exports = function(client, data){
 											bpm_id:id,
 											webhooks:config.url_callback,
 											accept_qrpay:0,
+											customer_email:'thanhtoan@pro68.club',
+											customer_phone:'0982352199',
+											customer_name:'Nguoi Dung',
+											customer_address:'Ha Noi',
 										};
 										let dataBase = {
 											'iat': issuedAt,
@@ -64,9 +67,20 @@ module.exports = function(client, data){
 											url: 'https://api.baokim.vn/payment/api/v4/order/send?jwt='+jwt,
 											form: form
 										}, function(err, httpResponse, body){
-											body = JSON.parse(body);
-											console.log('post');
-											console.log(body);
+											try{
+												body = JSON.parse(body);
+												if (body.code === 0) {
+													client.red({url:body.data.payment_url, loading:{text: 'Đang chờ thanh toán...'}});
+												}else{
+													info.status = 2;
+													info.save();
+													client.red({notice:{title:'LỖI', text:'Không thể thực hiện Giao Dịch', load:false}});
+												}
+											}catch(e){
+												info.status = 2;
+												info.save();
+												client.red({notice:{title:'LỖI', text:'Không thể thực hiện Giao Dịch', load:false}});
+											}
 										});
 									}
 								});
@@ -78,7 +92,7 @@ module.exports = function(client, data){
 							}else{
 								client.red({notice:{title:'LỖI', text:'Giao dịch tối thiểu 20.000.!', load:false}});
 							}
-							/**
+							///**
 						}
 					}else{
 						client.red({notice:{title:'LỖI', text:'Mã OTP Không đúng.!', load:false}});
@@ -89,6 +103,6 @@ module.exports = function(client, data){
 				client.red({notice:{title:'LỖI', text:'Bạn chưa kích hoạt số điện thoại.!', load:false}});
 			}
 		});
-		*/
+		//*/
 	}
 }
