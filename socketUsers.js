@@ -126,6 +126,8 @@ let authenticate = function(client, data, callback) {
 												callback({title: 'ĐĂNG NHẬP', text: 'Mật khẩu không chính xác!!'}, false);
 											}
 										}else{
+											user.fail += 1;
+											user.save();
 											client.c_captcha('signIn');
 											callback({title: 'ĐĂNG NHẬP', text: 'Captcha không đúng...'}, false);
 										}

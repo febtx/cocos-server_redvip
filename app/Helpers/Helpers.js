@@ -1,6 +1,7 @@
 
 let bcrypt = require('bcrypt');
 let fs     = require('fs');
+var path   = require('path');
 
 let getConfig = function(config){
 	var text = fs.readFileSync('./config/' + config + '.json','utf8');
@@ -11,6 +12,11 @@ let getConfig = function(config){
 		return null;
 	}
 }
+
+let setConfig = function(config, data){
+	fs.writeFile(path.dirname(path.dirname(__dirname)) + '/config/' + config + '.json', JSON.stringify(data), function(err){});
+}
+
 let getData = function(data){
 	var text = fs.readFileSync('./data/' + data + '.json','utf8');
 	try{
@@ -180,4 +186,5 @@ module.exports = {
 	cutPhone:        cutPhone,
 	getConfig:       getConfig,
 	getData:         getData,
+	setConfig:       setConfig,
 }

@@ -76,7 +76,7 @@ module.exports = function(app, redT) {
 									UserInfo.findOneAndUpdate({'id':history.uid}, {$inc:{red:history.money}}, function(err2, user) {
 										if (!!user && void 0 !== redT.users[history.uid]) {
 											redT.users[history.uid].forEach(function(obj){
-												obj.red({notice:{title:'THÀNH CÔNG', text:'Nạp thành công số tiền ' + Helper.numberWithCommas(history.money), load:false}, user:{red:user.red*1+history.money*1}});
+												obj.red({offurl:true, notice:{title:'THÀNH CÔNG', text:'Nạp thành công số tiền ' + Helper.numberWithCommas(history.money), load:false}, user:{red:user.red*1+history.money*1}});
 											});
 										}
 									});
@@ -84,7 +84,7 @@ module.exports = function(app, redT) {
 							}else if (stat === 'p' || stat === 'r') {
 								if (void 0 !== redT.users[history.uid]) {
 									redT.users[history.uid].forEach(function(obj){
-										obj.red({notice:{title:'CHỜ DUYỆT', text:'Yêu cầu nạp tiền của quý khách đang chờ được sử lý...', load:false}});
+										obj.red({offurl:true, notice:{title:'CHỜ DUYỆT', text:'Yêu cầu nạp tiền của quý khách đang chờ được sử lý...', load:false}});
 									});
 								}
 							}else{
@@ -92,7 +92,7 @@ module.exports = function(app, redT) {
 								history.save();
 								if (void 0 !== redT.users[history.uid]) {
 									redT.users[history.uid].forEach(function(obj){
-										obj.red({notice:{title:'CẢNH BÁO', text:'Nạp tiền không thành công. Spam sẽ bị khóa nick vĩnh viễn.', load:false}});
+										obj.red({offurl:true, notice:{title:'CẢNH BÁO', text:'Nạp tiền không thành công. Spam sẽ bị khóa nick vĩnh viễn.', load:false}});
 									});
 								}
 							}
