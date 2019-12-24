@@ -8,7 +8,6 @@ module.exports = function(client, data){
 	if (!!data.room && !!data.balans) {
 		var room   = data.room>>0;
 		var balans = data.balans>>0;
-		var red    = !!data.red;
 		var auto   = !!data.auto;
 
 		if (room == 100 ||
@@ -54,7 +53,7 @@ module.exports = function(client, data){
 								}else{
 									user.red -= balans;
 									user.save();
-									client.poker = new Player(client, room, balans, red, auto);
+									client.poker = new Player(client, room, balans, auto);
 									client.red({toGame:'Poker'});
 									//client.red({notice:{title:'BẢO TRÌ', text:'Game đang bảo trì...', load: false}});
 								}

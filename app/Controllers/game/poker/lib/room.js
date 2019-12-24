@@ -2,9 +2,16 @@
 var Helpers   = require('../../../../Helpers/Helpers');
 var base_card = require('../../../../../data/card');
 
-var Poker = function(poker){
-	this.poker = poker; // quản lý các phòng
-	this.card  = [];    // bài
+var Poker = function(poker, singID, game){
+	this.poker  = poker; // quản lý các phòng
+	this.singID = singID;
+	this.game   = game;
+
+	poker.addRoom(this);
+
+	this.online = 0;
+
+	this.card   = [];    // bài
 
 	// ghế ngồi có sẵn 
 	this.player = {
@@ -39,19 +46,23 @@ Poker.prototype.sendTo = function(client, data){
 
 Poker.prototype.sendToAll = function(data, player = null){
 	var trongPhong = Object.values(this.player); // danh sách ghế
-	Promise.all(trongPhong.map(function(ghe){
+	trongPhong.forEach(function(ghe){
 		if (!!ghe.data && ghe.data !== player) {
 			!!ghe.data.client && ghe.data.client.red(data);
 		}
-	}));
+	});
 }
 
 Poker.prototype.inroom = function(player){
-	this.dataroom.online += 1;
-	this.dataroom.save();
+	this.online++;
+
+	if (this.online > 5) {
+		this.poker.removeRoom(this.game, this.singID);
+	}else{
+		this.poker.addRoom(this);
+	}
 
 	player.room = this;
-
 	var trongPhong = Object.values(this.player);                          // danh sách ghế
 	var gheTrong = trongPhong.filter(function(t){return t.data == null}); // lấy các ghế trống
 
@@ -65,36 +76,30 @@ Poker.prototype.inroom = function(player){
 	this.sendToAll({ingame:{ghe:player.map, data:{name:player.name, balans:player.balans}}}, player);
 
 	trongPhong = Object.values(this.player); // danh sách ghế
-	Promise.all(trongPhong.map(function(ghe){
+	let result = trongPhong.map(function(ghe){
 		if (!!ghe.data) {
 			return {ghe:ghe.id, data:{name:ghe.data.name, balans:ghe.data.balans}};
 		}else{
 			return {ghe:ghe.id, data:null};
 		}
-	}))
-	.then(result => {
-		var client = {infoGhe:result, infoRoom:{game:player.game, red:player.red, id: this.dataroom.id}, meMap:player.map};
-		this.sendTo(player.client, client);
 	});
+	var client = {infoGhe:result, infoRoom:{game:player.game}, meMap:player.map};
+	this.sendTo(player.client, client);
 
-	this.dataroom.online == 1 && (this.d = player);
-	this.dataroom.online > 1 && this.checkGame();
+	this.online == 1 && (this.d = player);
+	this.online > 1 && this.checkGame();
 }
 
 Poker.prototype.outroom = function(player){
-	this.dataroom.online -= 1;
-	if (this.dataroom.online < 1) {
-		var id = this.dataroom._id;
-		this.poker.removeRoom(id);
-		this.dataroom.remove();
-	}else{
-		this.dataroom.save();
+	this.online--;
+	if (this.online < 1) {
+		this.poker.removeRoom(this.game, this.singID);
 	}
 
 	this.player[player.map].data = null;
 	this.sendToAll({outgame:player.map});
 
-	if (this.dataroom.online == 1) {
+	if (this.online == 1) {
 		this.isPlay = false;
 		if (!!this.timeOut) {
 			clearTimeout(this.timeOut);
@@ -108,30 +113,26 @@ Poker.prototype.outroom = function(player){
 
 Poker.prototype.checkGame = function(){
 	if (!this.isPlay && !this.timeOut) {
-		var self = this;
 		this.timeOut = setTimeout(function(){
-			var trongPhong = Object.values(this.player);                      // danh sách ghế
-			var ghe = trongPhong.filter(function(t){return t.data !== null}); // ghế có người ngồi
+			let trongPhong = Object.values(this.player);                      // danh sách ghế
+			let ghe = trongPhong.filter(function(t){return t.data !== null}); // ghế có người ngồi
 
 			//this.isPlay  = true;
 			this.playerWait = {}; // người được chơi trong phiên sắp tới
 
-			Promise.all(ghe.map(function(player){
-				self.playerWait[player.id] = {id:player.id, data:player.data};
+			let result = ghe.map(function(player){
+				this.playerWait[player.id] = {id:player.id, data:player.data};
 				return {ghe:player.id, data:{progress:5}};
-			}))
-			.then(result => {
-				this.sendToAll({game:{start:result}});
-				this.timeOut = setTimeout(function(){
-					this.playerInGame = Object.values(this.playerWait); // danh sách người chơi
-					var self = this;
-					// vị trí người chơi đầu tiên trong mảng,
-					this.indexBegin = this.playerInGame.findIndex(function(obj){
-						return obj.ghe == self.d.map;
-					});
-					this.Round1();
-				}.bind(this), 5000);
-			});
+			}.bind(this));
+			this.sendToAll({game:{start:result}});
+			this.timeOut = setTimeout(function(){
+				this.playerInGame = Object.values(this.playerWait); // danh sách người chơi
+				// vị trí người chơi đầu tiên trong mảng,
+				this.indexBegin = this.playerInGame.findIndex(function(obj){
+					return obj.ghe == this.d.map;
+				}.bind(this));
+				this.Round1();
+			}.bind(this), 5000);
 		}.bind(this), 1000);
 	}
 }

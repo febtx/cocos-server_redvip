@@ -1,11 +1,11 @@
 
 var UserInfo = require('../../../../Models/UserInfo');
 
-var Player = function(client, room, balans, red, auto){
-	this.room     = null; // Phòng game
+var Player = function(client, game, balans, auto){
+	this.room     = null; // Phòng
 	this.map      = null; // vị trí ghế ngồi
 
-	this.isInGame = false; // người chơi đang trong game
+	this.isInGame = false; // người chơi đang
 	this.isPlay   = false; // người chơi đang chơi
 	this.isOut    = false; // người chơi đã thoát
 
@@ -13,9 +13,8 @@ var Player = function(client, room, balans, red, auto){
 	this.name  = client.profile.name; // tên người chơi
 
 	this.client   = client; // địa chỉ socket của người chơi
-	this.game     = room;   // game (100/1000/5000/10000/...)
+	this.game     = game;   // game (100/1000/5000/10000/...)
 	this.balans   = balans; // sô tiền mang vào
-	this.red      = red;    // Loại tiền (red: true)
 	this.autoNap  = auto;   // Tự động nạp tiền mang vào
 }
 
@@ -37,11 +36,7 @@ Player.prototype.outGame = function(){
 
 	if (this.balans > 0) {
 		var uInfo = {};
-		if (this.red) {
-			uInfo.red = this.balans;
-		}else{
-			uInfo.xu  = this.balans;
-		}
+		uInfo.red = this.balans;
 		UserInfo.updateOne({id:this.uid}, {$inc:uInfo}).exec();
 	}
 }

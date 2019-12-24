@@ -1,49 +1,30 @@
 
-var UserInfo  = require('../../../Models/UserInfo');
+let Room   = require('./lib/room');
+let crypto = require('crypto');
 
-var Poker_red = require('../../../Models/Poker/Poker_red');
-var Poker_xu  = require('../../../Models/Poker/Poker_xu');
-
-var Helpers   = require('../../../Helpers/Helpers');
-var Room      = require('./lib/room');
-
-module.exports = function(client){
-	var poker = client.poker;
-	if (poker.red) {
-		Poker_red.findOne({room: poker.game}, {}, {sort:{'online':1}}, function(err, room){
-			if (!room || room.online >= 6) {
-				// tạo phòng mới
-				Poker_red.create({'room': poker.game}, function(create_err, create_data){
-					var newRoom = new Room(client.redT.game.poker);
-					newRoom.dataroom = create_data;
-					client.redT.game.poker.addRoom(create_data._id, newRoom);
-					// vào phòng chơi
-					newRoom.inroom(poker);
-				});
+let ingame = function(client){
+	let poker = client.poker;
+	if (!!poker && poker.room == null) {
+		let PhongCho = Object.values(client.redT.game.poker.room[poker.game]);
+		PhongCho = PhongCho[0];
+		// vào phòng
+		if (PhongCho !== void 0) {
+			// vào phòng chơi
+			if (PhongCho.online > 5) {
+				ingame(client);
 			}else{
-				// vào phòng
-				if (!!client.redT.game.poker.room[room._id]) {
-					var getRoom = client.redT.game.poker.room[room._id];
-					// vào phòng chơi
-					getRoom.inroom(poker);
-				}else{
-					var newRoom = new Room(client.redT.game.poker);
-					newRoom.dataroom = room;
-					client.redT.game.poker.addRoom(room._id, newRoom);
-					// vào phòng chơi
-					newRoom.inroom(poker);
-				}
+				PhongCho.inroom(poker);
 			}
-		});
-	}else{
-		Poker_xu.findOne({room: poker.game}, {}, {sort:{'online':1}}, function(err, room){
-			if (!room || room.online == 6) {
-				// tạo phòng mới
-				Poker_xu.create({room: poker.game, online: 1}, function(create_err, create_data){
-				});
-			}else{
-				// vào phòng
-			}
-		});
+		}else{
+			let singID = new Date().getTime()+client.UID;
+			singID = crypto.createHash('md5').update(singID).digest('hex');
+			let newRoom = new Room(client.redT.game.poker, singID, poker.game);
+			// vào phòng chơi
+			newRoom.inroom(poker);
+		}
 	}
+	poker  = null;
+	client = null;
 }
+
+module.exports = ingame;
