@@ -17,10 +17,10 @@ let signMethod = function(client) {
 			this.caothap = null;
 		}
 
-		//if (!!this.poker) {
-		//	this.poker.outGame();
-			//this.poker = null;
-		//}
+		if (!!this.poker) {
+			this.poker.outGame();
+			this.poker = null;
+		}
 
 		if (!!this.fish) {
 			this.fish.outGame();

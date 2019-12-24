@@ -24,51 +24,44 @@ module.exports = function(client, data){
 			room == 200000 ||
 			room == 500000)
 		{
-			var min = room*20;
-			var max = room*200;
+			let min = room*20;
+			let max = room*200;
 			if (balans < min || balans > max) {
 				client.red({notice:{title:'THẤT BẠI', text:'Dữ liệu không đúng...', load: false}});
 			}else{
-				var inGame = false;
-				Promise.all(client.redT.users[client.UID].map(function(obj){
-					if(!!obj.poker){
-						inGame = true;
-					}
-				}))
-				.then(result => {
+				let inGame = false;
+				if (client.redT.users[client.UID]) {
+					client.redT.users[client.UID].forEach(function(obj){
+						if(!!obj.poker){
+							inGame = true;
+						}
+					});
 					if (inGame) {
 						client.red({notice:{title:'CẢNH BÁO', text:'Bạn hoặc ai đó đang chơi Poker bằng tài khoản này ...', load: false}});
 					}else{
-						UserInfo.findOne({id: client.UID}, 'red xu name', function(err, user){
-							if (!user || (red && user.red < min) || (!red && user.xu < min)) {
-								client.red({notice:{title:'THẤT BẠI', text:'Bạn cần tối thiểu ' + Helpers.numberWithCommas(min) + (red ? ' RED':' XU') + ' để vào phòng.!!', load: false}});
+						UserInfo.findOne({id: client.UID}, 'red name', function(err, user){
+							if (!user || user.red < min) {
+								client.red({notice:{title:'THẤT BẠI', text:'Bạn cần tối thiểu RED để vào phòng.!!', load: false}});
 							}else{
-								if ((red && user.red < balans) || (!red && user.xu < balans)) {
-									var minMang = (red ? user.red : user.xu);
+								if (user.red < balans) {
+									var minMang = user.red;
 									if (min < 1000000){
 										minMang = (((minMang/room)*2)>>0)*(room/2);
 									}else{
 										minMang = (((minMang/min)*2)>>0)*(min/2);
 									}
-									client.red({notice:{title:'THẤT BẠI', text:'Bạn chỉ có thể mang tối đa ' + Helpers.numberWithCommas(minMang) + (red ? ' RED':' XU') + ' vào phòng chơi.!!', load: false}});
+									client.red({notice:{title:'THẤT BẠI', text:'Bạn chỉ có thể mang tối đa ' + Helpers.numberWithCommas(minMang) + ' RED vào phòng chơi.!!', load: false}});
 								}else{
-									/**
-									if (red){
-										user.red -= balans;
-									}else{
-										user.xu -= balans;
-									}
+									user.red -= balans;
 									user.save();
 									client.poker = new Player(client, room, balans, red, auto);
 									client.red({toGame:'Poker'});
-									*/
-
-									client.red({notice:{title:'BẢO TRÌ', text:'Game đang bảo trì...', load: false}});
+									//client.red({notice:{title:'BẢO TRÌ', text:'Game đang bảo trì...', load: false}});
 								}
 							}
 						});
 					}
-				})
+				}
 			}
 		}else{
 			client.red({notice:{title:'THẤT BẠI', text:'Dữ liệu không đúng...', load: false}});
