@@ -6,11 +6,8 @@ var Poker = function(poker, singID, game){
 	this.poker  = poker; // quản lý các phòng
 	this.singID = singID;
 	this.game   = game;
-
 	poker.addRoom(this);
-
 	this.online = 0;
-
 	this.card   = [];    // bài
 
 	// ghế ngồi có sẵn 
@@ -40,6 +37,10 @@ var Poker = function(poker, singID, game){
 	this.i_first      = 0;
 	this.i_last       = 0;
 	this.round        = 0;
+
+	this.game_player  = null;  // người chơi hiện tại
+	this.game_to      = false; // Game đang có người tố
+	this.game_bet     = 0;     // cược hiện tại của game
 };
 
 Poker.prototype.sendTo = function(client, data){
@@ -192,6 +193,10 @@ Poker.prototype.Round1 = function(){
 
 // Round 2 // mở 3 lá
 Poker.prototype.Round2 = function(){
+}
+
+// tới lượt người chơi tiếp theo
+Poker.prototype.nextPlayer = function(){
 }
 
 Poker.prototype.resetD = function(){

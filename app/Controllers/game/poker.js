@@ -1,6 +1,6 @@
 
-const reg    = require('./poker/reg');    // đăng kí vào phòng
-const ingame = require('./poker/ingame'); // vào phòng
+let reg    = require('./poker/reg');    // đăng kí vào phòng
+let ingame = require('./poker/ingame'); // vào phòng
 
 module.exports = function(client, data){
 	if (!!data.reg) {
@@ -9,7 +9,31 @@ module.exports = function(client, data){
 	if (!!data.ingame) {
 		ingame(client);
 	}
-	if (!!data.outgame && !!client.poker) {
-		client.poker.outGame();
+	if (!!client.poker) {
+		if (!!data.outgame) {
+			client.poker.outGame();
+		}
+		if (!!data.to) {
+			client.poker.onTo(data.to);
+		}
+		if (!!data.select) {
+			switch(data.select){
+				case 'huy':
+					client.poker.onHuy();
+					break;
+
+				case 'xem':
+					client.poker.onXem();
+					break;
+
+				case 'theo':
+					client.poker.onTheo();
+					break;
+
+				case 'all':
+					client.poker.onAll();
+					break;
+			}
+		}
 	}
 };

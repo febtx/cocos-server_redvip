@@ -2,8 +2,8 @@
 var UserInfo = require('../../../../Models/UserInfo');
 
 var Player = function(client, game, balans, auto){
-	this.room     = null; // Phòng
-	this.map      = null; // vị trí ghế ngồi
+	this.room     = null;  // Phòng
+	this.map      = null;  // vị trí ghế ngồi
 
 	this.isInGame = false; // người chơi đang
 	this.isPlay   = false; // người chơi đang chơi
@@ -16,6 +16,9 @@ var Player = function(client, game, balans, auto){
 	this.game    = game;   // game (100/1000/5000/10000/...)
 	this.balans  = balans; // sô tiền mang vào
 	this.autoNap = auto;   // Tự động nạp tiền mang vào
+	this.isTheo  = false;  // đang theo/xem
+	this.isAll   = false;  // đang tất tay
+
 	this.d       = false;
 }
 
@@ -48,7 +51,7 @@ Player.prototype.onXem  = function(){
 }
 Player.prototype.onTheo = function(){
 }
-Player.prototype.onTo   = function(){
+Player.prototype.onTo   = function(to){
 }
 Player.prototype.onAll  = function(){
 }
