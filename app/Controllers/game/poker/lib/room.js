@@ -208,7 +208,7 @@ Poker.prototype.resetD = function(){
 		// lấy ngẫu nhiên 1 ghế làm D
 		let rand = (Math.random()*trongPhong.length)>>0;
 		trongPhong = trongPhong[rand];
-		if (trongPhong.data) {
+		if (trongPhong && trongPhong.data) {
 			this.d = trongPhong.data.map;
 			trongPhong.data.d = true;
 		}

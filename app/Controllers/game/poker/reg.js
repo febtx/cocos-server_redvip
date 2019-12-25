@@ -1,14 +1,14 @@
 
-var UserInfo = require('../../../Models/UserInfo');
-var Helpers  = require('../../../Helpers/Helpers');
+let UserInfo = require('../../../Models/UserInfo');
+let Helpers  = require('../../../Helpers/Helpers');
 
-var Player   = require('./lib/player');
+let Player   = require('./lib/player');
 
 module.exports = function(client, data){
 	if (!!data.room && !!data.balans) {
-		var room   = data.room>>0;
-		var balans = data.balans>>0;
-		var auto   = !!data.auto;
+		let room   = data.room>>0;
+		let balans = data.balans>>0;
+		let auto   = !!data.auto;
 
 		if (room == 100 ||
 			room == 200 ||
@@ -40,10 +40,10 @@ module.exports = function(client, data){
 					}else{
 						UserInfo.findOne({id: client.UID}, 'red name', function(err, user){
 							if (!user || user.red < min) {
-								client.red({notice:{title:'THẤT BẠI', text:'Bạn cần tối thiểu RED để vào phòng.!!', load: false}});
+								client.red({notice:{title:'THẤT BẠI', text:'Bạn cần tối thiểu ' + min + ' RED để vào phòng.!!', load: false}});
 							}else{
 								if (user.red < balans) {
-									var minMang = user.red;
+									let minMang = user.red;
 									if (min < 1000000){
 										minMang = (((minMang/room)*2)>>0)*(room/2);
 									}else{
