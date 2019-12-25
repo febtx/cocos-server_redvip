@@ -36,7 +36,9 @@ var Poker = function(poker, singID, game){
 	this.isPlay       = false; // phòng đang chơi
 	this.timeOut      = null;  // thời gian
 
-	this.d            = null;  // Người chơi đầu tiên / lượt chơi
+	this.d            = null;  // Người chơi đầu tiên
+	this.i_first      = 0;
+	this.i_last       = 0;
 	this.round        = 0;
 };
 
@@ -73,12 +75,17 @@ Poker.prototype.inroom = function(player){
 	this.player[gheTrong.id].data = player; // ngồi
 	player.map = gheTrong.id;               // vị trí ngồi
 
-	this.sendToAll({ingame:{ghe:player.map, data:{name:player.name, balans:player.balans}}}, player);
+	if(this.online == 1){
+		this.d = player.map;
+		player.d = true;
+	}
+
+	this.sendToAll({ingame:{ghe:player.map, data:{name:player.name, balans:player.balans, d:player.d}}}, player);
 
 	trongPhong = Object.values(this.player); // danh sách ghế
 	let result = trongPhong.map(function(ghe){
 		if (!!ghe.data) {
-			return {ghe:ghe.id, data:{name:ghe.data.name, balans:ghe.data.balans}};
+			return {ghe:ghe.id, data:{name:ghe.data.name, balans:ghe.data.balans, d:ghe.data.d}};
 		}else{
 			return {ghe:ghe.id, data:null};
 		}
@@ -86,7 +93,6 @@ Poker.prototype.inroom = function(player){
 	var client = {infoGhe:result, infoRoom:{game:player.game}, meMap:player.map};
 	this.sendTo(player.client, client);
 
-	this.online == 1 && (this.d = player);
 	this.online > 1 && this.checkGame();
 }
 
@@ -106,18 +112,20 @@ Poker.prototype.outroom = function(player){
 			this.timeOut = null;
 		}
 	}
-	if (this.d == player) {
+	player.room = null;
+	player.d    = null;
+	if (this.d == player.map) {
 		this.resetD();
 	}
 }
 
 Poker.prototype.checkGame = function(){
 	if (!this.isPlay && !this.timeOut) {
+		this.isPlay  = true;
 		this.timeOut = setTimeout(function(){
 			let trongPhong = Object.values(this.player);                      // danh sách ghế
 			let ghe = trongPhong.filter(function(t){return t.data !== null}); // ghế có người ngồi
 
-			//this.isPlay  = true;
 			this.playerWait = {}; // người được chơi trong phiên sắp tới
 
 			let result = ghe.map(function(player){
@@ -125,12 +133,15 @@ Poker.prototype.checkGame = function(){
 				return {ghe:player.id, data:{progress:5}};
 			}.bind(this));
 			this.sendToAll({game:{start:result}});
+			clearTimeout(this.timeOut);
 			this.timeOut = setTimeout(function(){
 				this.playerInGame = Object.values(this.playerWait); // danh sách người chơi
 				// vị trí người chơi đầu tiên trong mảng,
 				this.indexBegin = this.playerInGame.findIndex(function(obj){
-					return obj.ghe == this.d.map;
+					let a = obj.id == this.d ? true : false;
+					return (obj.id == this.d);
 				}.bind(this));
+				this.i_first = this.i_last = this.indexBegin;
 				this.Round1();
 			}.bind(this), 5000);
 		}.bind(this), 1000);
@@ -139,8 +150,44 @@ Poker.prototype.checkGame = function(){
 
 // Round 1 // Chia 2 lá đầu
 Poker.prototype.Round1 = function(){
+	this.round = 1;
 	this.card = [...base_card.card]; // bộ bài mới
+
+	this.card = Helpers.shuffle(this.card); // tráo bài lần 1
+	this.card = Helpers.shuffle(this.card); // tráo bài lần 2
+	this.card = Helpers.shuffle(this.card); // tráo bài lần 3
 	// chia bài
+	let chia = [];
+	this.playerInGame.forEach(function(player, index){
+		player.card = this.card.splice(0, 2);
+		chia[index] = {id:player.id};
+	}.bind(this));
+	this.playerInGame.forEach(function(player){
+		chia.forEach(function(dataChia){
+			if (dataChia.id == player.id) {
+				dataChia.data = player.card;
+			}else{
+				delete dataChia.data;
+			}
+		});
+		player.data.client.red({game:{chia_bai:chia}});
+	});
+
+	clearTimeout(this.timeOut);
+	this.timeOut = setTimeout(function(){
+		clearTimeout(this.timeOut);
+		let player = this.playerInGame[this.i_last];
+
+		let resultG = {ghe:player.id, progress:15};
+		this.sendToAll({game:{turn:resultG}}, player.data);
+
+		resultG = {ghe:player.id, progress:15, select:{xem:true, theo:false, to:true, all:true}};
+		this.sendTo(player.data.client, {game:{turn:resultG}});
+
+		this.timeOut = setTimeout(function(){
+			clearTimeout(this.timeOut);
+		}.bind(this), 1500);
+	}.bind(this), 1000);
 }
 
 // Round 2 // mở 3 lá
@@ -148,6 +195,19 @@ Poker.prototype.Round2 = function(){
 }
 
 Poker.prototype.resetD = function(){
+	if (this.isPlay == true && this.playerInGame.length > 0) {
+		//
+	}else{
+		let trongPhong = Object.values(this.player);                      // danh sách ghế
+		trongPhong = trongPhong.filter(function(t){return t.data !== null}); // ghế có người ngồi
+		// lấy ngẫu nhiên 1 ghế làm D
+		let rand = (Math.random()*trongPhong.length)>>0;
+		trongPhong = trongPhong[rand];
+		if (trongPhong.data) {
+			this.d = trongPhong.data.map;
+			trongPhong.data.d = true;
+		}
+	}
 }
 
 module.exports = Poker;

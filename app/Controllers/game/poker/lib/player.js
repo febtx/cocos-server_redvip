@@ -9,13 +9,14 @@ var Player = function(client, game, balans, auto){
 	this.isPlay   = false; // người chơi đang chơi
 	this.isOut    = false; // người chơi đã thoát
 
-	this.uid   = client.UID;          // id người chơi
-	this.name  = client.profile.name; // tên người chơi
+	this.uid     = client.UID;          // id người chơi
+	this.name    = client.profile.name; // tên người chơi
 
-	this.client   = client; // địa chỉ socket của người chơi
-	this.game     = game;   // game (100/1000/5000/10000/...)
-	this.balans   = balans; // sô tiền mang vào
-	this.autoNap  = auto;   // Tự động nạp tiền mang vào
+	this.client  = client; // địa chỉ socket của người chơi
+	this.game    = game;   // game (100/1000/5000/10000/...)
+	this.balans  = balans; // sô tiền mang vào
+	this.autoNap = auto;   // Tự động nạp tiền mang vào
+	this.d       = false;
 }
 
 Player.prototype.addRoom = function(room){
@@ -41,5 +42,15 @@ Player.prototype.outGame = function(){
 	}
 }
 
+Player.prototype.onHuy  = function(){
+}
+Player.prototype.onXem  = function(){
+}
+Player.prototype.onTheo = function(){
+}
+Player.prototype.onTo   = function(){
+}
+Player.prototype.onAll  = function(){
+}
 
 module.exports = Player;
