@@ -63,9 +63,7 @@ Player.prototype.onTo   = function(to){
 	this.room.onTo(this, to);
 }
 Player.prototype.onAll  = function(){
-	if (this.room.game_player === this) {
-		console.log('All');
-	}
+	this.room.onAll(this);
 }
 
 module.exports = Player;

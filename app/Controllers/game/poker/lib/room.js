@@ -176,17 +176,6 @@ Poker.prototype.Round1 = function(){
 	this.timeOut = setTimeout(function(){
 		clearTimeout(this.timeOut);
 		this.nextPlayer(true);
-		/**
-		let resultG = {ghe:this.game_player.map, progress:15};
-		this.sendToAll({game:{turn:resultG}}, this.game_player);
-
-		resultG = {ghe:this.game_player.map, progress:15, select:{xem:true, theo:false, to:true, all:true}};
-		this.sendTo(this.game_player.client, {game:{turn:resultG}});
-
-		this.timeOut = setTimeout(function(){
-			clearTimeout(this.timeOut);
-		}.bind(this), 1500);
-		*/
 	}.bind(this), 1000);
 }
 
@@ -210,28 +199,7 @@ Poker.prototype.nextRound = function(){
 		// đã đủ 5 lá và tính điểm
 	}
 }
-/**
-Poker.prototype.getNextPlayer = function(){
-	this.i_last++;
-	if(this.i_last >= this.playerInGame.length){
-		this.i_last = 0;
-	}
-	if (this.i_last === this.i_first) {
-		// kết thúc vòng chơi
-		this.sendToAll({game:{offSelect:true}});
-		//this.sendTo(this.game_player.client, {game:{offSelect:true}});
-		this.game_player = null;
-		this.nextRound();
-		return void 0;
-	}
 
-	this.game_player = this.playerInGame[this.i_last].data;
-	if (this.game_player.isOut === true) {
-		this.nextPlayer();
-		return void 0;
-	}
-}
-*/
 // tới lượt người chơi tiếp theo
 Poker.prototype.nextPlayer = function(new_round = false){
 	clearTimeout(this.timeOut);
@@ -350,7 +318,7 @@ Poker.prototype.onTo = function(player, to){
 			if (player.balans < 1) {
 				player.isAll = true;
 			}
-			this.i_first =  this.playerInGame.findIndex(function(obj){
+			this.i_first = this.playerInGame.findIndex(function(obj){
 				return (obj.id == player.map);
 			}.bind(this));
 			this.sendToAll({game:{player:{ghe:player.map, data:{balans:player.balans, bet:player.bet}}}, infoRoom:{bet:this.game_bet}});
@@ -361,27 +329,22 @@ Poker.prototype.onTo = function(player, to){
 
 // Tất tay
 Poker.prototype.onAll = function(player){
-	if (this.game_to) {
-
-	}else{
-
-	}
-	/**
-	else{
-			let check = this.game_bet-player.bet;
-			bet -= check;
-			to  -= check;
-			if (bet <= player.balans) {
-				this.game_to   = true;
-				player.balans -= bet;
-				player.bet    += bet;
-				this.game_bet += to;
-			}
-			player.balans = 0;
-			player.bet   += player.balans;
-			player.isAll  = true;
+	if (this.game_player === player) {
+		let debit = this.game_bet-player.bet;   // số tiền đang thiếu
+		let updateBalans = player.balans-debit; // số tiền còn lại khi trả đủ để thược hiện tố
+		player.bet   += player.balans;
+		player.isAll  = true;
+		player.balans = 0;
+		if (updateBalans > 0) {
+			this.game_to  = true;
+			this.game_bet += updateBalans;
+			this.i_first = this.playerInGame.findIndex(function(obj){
+				return (obj.id == player.map);
+			}.bind(this));
 		}
-		*/
+		this.sendToAll({game:{player:{ghe:player.map, data:{balans:player.balans, bet:player.bet}}}, infoRoom:{bet:this.game_bet}});
+		this.nextPlayer();
+	}
 }
 
 module.exports = Poker;
