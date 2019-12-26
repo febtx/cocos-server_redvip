@@ -5,7 +5,7 @@ var Player = function(client, game, balans, auto){
 	this.room     = null;  // Phòng
 	this.map      = null;  // vị trí ghế ngồi
 
-	this.isInGame = false; // người chơi đang
+	this.isInGame = false; // người chơi trong game
 	this.isPlay   = false; // người chơi đang chơi
 	this.isOut    = false; // người chơi đã thoát
 
@@ -20,6 +20,8 @@ var Player = function(client, game, balans, auto){
 	this.isAll   = false;  // đang tất tay
 
 	this.d       = false;
+
+	this.bet     = 0; // số tiền cược
 }
 
 Player.prototype.addRoom = function(room){
@@ -46,14 +48,26 @@ Player.prototype.outGame = function(){
 }
 
 Player.prototype.onHuy  = function(){
+	// this.game_player
+	if (this.room.game_player === this) {
+		console.log('Huy');
+	}
 }
 Player.prototype.onXem  = function(){
+	this.room.onTheo(this);
 }
 Player.prototype.onTheo = function(){
+	this.room.onTheo(this);
 }
 Player.prototype.onTo   = function(to){
+	if (this.room.game_player === this) {
+		console.log('To', to);
+	}
 }
 Player.prototype.onAll  = function(){
+	if (this.room.game_player === this) {
+		console.log('All');
+	}
 }
 
 module.exports = Player;
