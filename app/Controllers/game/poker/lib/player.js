@@ -60,9 +60,7 @@ Player.prototype.onTheo = function(){
 	this.room.onTheo(this);
 }
 Player.prototype.onTo   = function(to){
-	if (this.room.game_player === this) {
-		console.log('To', to);
-	}
+	this.room.onTo(this, to);
 }
 Player.prototype.onAll  = function(){
 	if (this.room.game_player === this) {
