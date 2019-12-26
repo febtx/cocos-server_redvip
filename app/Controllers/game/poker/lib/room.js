@@ -192,18 +192,19 @@ Poker.prototype.Round1 = function(){
 // Sang vòng mới
 Poker.prototype.nextRound = function(){
 	let round = this.mainCard.length;
-	if (round === 0) {
-		// Mở 3 lá nên bàn
-		this.mainCard = [...this.card.splice(0, 3)];
-		this.sendToAll({game:{card:this.mainCard}});
-	}else{
-		if (round < 5) {
+	if (round < 5) {
+		if (round === 0) {
+			// Mở 3 lá nên bàn
+			this.mainCard = this.mainCard.concat(this.card.splice(0, 3));
+			this.sendToAll({game:{card:this.mainCard}});
+		}else{
 			// mở thêm 1 lá
 			let card = this.card.splice(0, 1);
-			this.mainCard = [...card];
-		}else{
-			// đã đủ 5 và lá tính điểm
+			this.mainCard = this.mainCard.concat(card);
+			this.sendToAll({game:{card:card}});
 		}
+	}else{
+		// đã đủ 5 lá và tính điểm
 	}
 	console.log(this.mainCard);
 }
