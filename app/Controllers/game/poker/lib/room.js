@@ -39,7 +39,13 @@ var Poker = function(poker, singID, game){
 	this.game_player  = null;  // người chơi hiện tại
 	this.game_to      = false; // Game đang trong quá trình tố
 	this.game_bet     = 0;     // cược hiện tại của game
-	this.game_time    = 0;     // mini time
+
+	this.game_time     = 0;    // mini time
+
+	this.game_start    = false; // game đã bắt đầu
+
+	this.timeStartGame = 10;   // thời gian bắt đầu game
+	this.timePlayer    = 20;   // thời gian người chơi lựa chọn
 };
 
 Poker.prototype.sendTo = function(client, data){
@@ -224,10 +230,9 @@ Poker.prototype.nextPlayer = function(new_round = false){
 
 		resultG = {ghe:this.game_player.map, progress:15, select:this.btnSelect(this.game_player)};
 		this.sendTo(this.game_player.client, {game:{turn:resultG}});
-
 		this.timeOut = setTimeout(function(){
 			clearTimeout(this.timeOut);
-		}.bind(this), 1500);
+		}.bind(this), this.timePlayer*1000);
 	}else{
 		this.i_last++;
 		if(this.i_last >= this.playerInGame.length){
@@ -256,7 +261,7 @@ Poker.prototype.nextPlayer = function(new_round = false){
 
 		this.timeOut = setTimeout(function(){
 			clearTimeout(this.timeOut);
-		}.bind(this), 1500);
+		}.bind(this), this.timePlayer*1000);
 	}
 }
 
