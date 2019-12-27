@@ -27,9 +27,7 @@ var Poker = function(poker, singID, game){
 			data:null},
 	};
 
-	this.playerWait   = {}; // người chơi đang chờ phiên mới // chờ vào ván mới
-	this.playerInGame = []; // người chơi trong ván chơi     // bỏ bài
-	this.playerPlay   = []; // đang chơi                     // đang chơi
+	this.playerInGame = []; // đang chơi
 
 	this.isPlay       = false; // phòng đang chơi
 	this.timeOut      = null;  // thời gian
@@ -41,6 +39,7 @@ var Poker = function(poker, singID, game){
 	this.game_player  = null;  // người chơi hiện tại
 	this.game_to      = false; // Game đang trong quá trình tố
 	this.game_bet     = 0;     // cược hiện tại của game
+	this.game_time    = 0;     // mini time
 };
 
 Poker.prototype.sendTo = function(client, data){
@@ -86,14 +85,19 @@ Poker.prototype.inroom = function(player){
 	trongPhong = Object.values(this.player); // danh sách ghế
 	let result = trongPhong.map(function(ghe){
 		if (!!ghe.data) {
+			if (this.isPlay === true) {
+				return {ghe:ghe.id, data:{name:ghe.data.name, balans:ghe.data.balans, bet:ghe.data.bet, card:{}}};
+			}
 			return {ghe:ghe.id, data:{name:ghe.data.name, balans:ghe.data.balans, d:ghe.data.d}};
 		}else{
 			return {ghe:ghe.id, data:null};
 		}
-	});
-	var client = {infoGhe:result, infoRoom:{game:player.game}, meMap:player.map};
+	}.bind(this));
+	let client = {infoGhe:result, infoRoom:{game:player.game}, meMap:player.map};
+	if (this.isPlay === true) {
+		client.game = {card:this.mainCard};
+	}
 	this.sendTo(player.client, client);
-
 	this.online > 1 && this.checkGame();
 }
 
@@ -122,29 +126,27 @@ Poker.prototype.outroom = function(player){
 
 Poker.prototype.checkGame = function(){
 	if (!this.isPlay && !this.timeOut) {
-		this.isPlay  = true;
-		this.timeOut = setTimeout(function(){
-			let trongPhong = Object.values(this.player);                      // danh sách ghế
-			let ghe = trongPhong.filter(function(t){return t.data !== null}); // ghế có người ngồi
-
-			this.playerWait = {}; // người được chơi trong phiên sắp tới
-
-			let result = ghe.map(function(player){
-				this.playerWait[player.id] = {id:player.id, data:player.data};
-				return {ghe:player.id, data:{progress:5}};
-			}.bind(this));
-			this.sendToAll({game:{start:result}});
+		this.isPlay    = true;
+		this.game_time = new Date().getTime();
+		this.timeOut   = setTimeout(function(){
 			clearTimeout(this.timeOut);
-			this.timeOut = setTimeout(function(){
-				this.playerInGame = Object.values(this.playerWait); // danh sách người chơi
-				// vị trí người chơi đầu tiên trong mảng,
-				this.i_first = this.playerInGame.findIndex(function(obj){
-					return (obj.id == this.d);
-				}.bind(this));
-				this.game_bet = this.game;
-				this.Round1();
-			}.bind(this), 5000);
-		}.bind(this), 1000);
+			 // ghế có người ngồi
+			let nguoichoi = Object.values(this.player).filter(function(t){return t.data !== null});
+			if (nguoichoi.length < 2) {
+				return void 0;
+			}
+			this.playerInGame = [];
+
+			nguoichoi.forEach(function(player, index){
+				this.playerInGame[index] = {id:player.map, data:player.data};
+			});
+			// vị trí người chơi đầu tiên trong mảng,
+			this.i_first = this.playerInGame.findIndex(function(obj){
+				return (obj.id == this.d);
+			}.bind(this));
+			this.game_bet = this.game;
+			this.Round1();
+		}.bind(this), 3000);
 	}
 }
 
@@ -158,13 +160,13 @@ Poker.prototype.Round1 = function(){
 	// chia bài
 	let chia = [];
 	this.playerInGame.forEach(function(player, index){
-		player.card = this.card.splice(0, 2);
+		player.data.card = this.card.splice(0, 2);
 		chia[index] = {id:player.id};
 	}.bind(this));
 	this.playerInGame.forEach(function(player){
 		chia.forEach(function(dataChia){
 			if (dataChia.id == player.id) {
-				dataChia.data = player.card;
+				dataChia.data = player.data.card;
 			}else{
 				delete dataChia.data;
 			}
@@ -176,7 +178,7 @@ Poker.prototype.Round1 = function(){
 	this.timeOut = setTimeout(function(){
 		clearTimeout(this.timeOut);
 		this.nextPlayer(true);
-	}.bind(this), 1000);
+	}.bind(this), 500);
 }
 
 // Sang vòng mới
@@ -194,7 +196,11 @@ Poker.prototype.nextRound = function(){
 			this.mainCard = this.mainCard.concat(card);
 			this.sendToAll({game:{card:card}});
 		}
-		this.nextPlayer(true);
+		clearTimeout(this.timeOut);
+		this.timeOut = setTimeout(function(){
+			clearTimeout(this.timeOut);
+			this.nextPlayer(true);
+		}.bind(this), 1000);
 	}else{
 		// đã đủ 5 lá và tính điểm
 	}
@@ -203,11 +209,12 @@ Poker.prototype.nextRound = function(){
 // tới lượt người chơi tiếp theo
 Poker.prototype.nextPlayer = function(new_round = false){
 	clearTimeout(this.timeOut);
+	this.game_time = new Date().getTime();
 	if(new_round === true){
 		this.i_last = this.i_first;
 		this.game_player = this.playerInGame[this.i_first].data;
 
-		if (this.game_player.isOut === true) {
+		if (this.game_player.isOut === true || this.game_player.isHuy === true) {
 			this.nextPlayer();
 			return void 0;
 		}
@@ -236,7 +243,7 @@ Poker.prototype.nextPlayer = function(new_round = false){
 		}
 
 		this.game_player = this.playerInGame[this.i_last].data;
-		if (this.game_player.isOut === true) {
+		if (this.game_player.isOut === true || this.game_player.isHuy === true) {
 			this.nextPlayer();
 			return void 0;
 		}
@@ -311,6 +318,7 @@ Poker.prototype.onTo = function(player, to){
 		let debit = this.game_bet-player.bet;   // số tiền đang thiếu
 		let updateBalans = player.balans-debit; // số tiền còn lại khi trả đủ để thược hiện tố
 		if (to <= updateBalans) {
+			this.resetTheo();
 			this.game_to  = true;
 			player.balans = player.balans-(debit+to);
 			player.bet    = player.bet+debit+to;
@@ -336,6 +344,7 @@ Poker.prototype.onAll = function(player){
 		player.isAll  = true;
 		player.balans = 0;
 		if (updateBalans > 0) {
+			this.resetTheo();
 			this.game_to  = true;
 			this.game_bet += updateBalans;
 			this.i_first = this.playerInGame.findIndex(function(obj){
@@ -345,6 +354,74 @@ Poker.prototype.onAll = function(player){
 		this.sendToAll({game:{player:{ghe:player.map, data:{balans:player.balans, bet:player.bet}}}, infoRoom:{bet:this.game_bet}});
 		this.nextPlayer();
 	}
+}
+
+Poker.prototype.resetTheo = function(){
+	this.playerInGame.forEach(function(player){
+		player.isTheo = false;
+	});
+}
+Poker.prototype.onHuy = function(player){
+	if (this.isPlay === true) {
+		player.isHuy = true;
+		let huy = this.playerInGame.filter(function(t){return t.data.isHuy === false}); // ghế chưa hủy bài
+		if (huy.length > 1 && this.game_player === player) {
+			this.nextPlayer();
+			return void 0;
+		}
+		if (huy.length === 1) {
+			this.resetData();
+			let noHuy = huy[0];
+			noHuy.data.balans += noHuy.data.bet;
+			let objWin = {ghe:noHuy.data.map, data:{balans:noHuy.data.balans}, info:{win:0}};
+			let array = [objWin];
+			this.playerInGame.forEach(function(obj, index){
+				if (noHuy.data !== obj.data) {
+					if (obj.data.bet <= noHuy.data.bet) {
+						// ăn tất
+						objWin.info.win    += obj.data.bet;
+						objWin.data.balans += obj.data.bet;
+						noHuy.data.balans  += obj.data.bet;
+						if (obj.data.isOut === false) {
+							array = array.concat({ghe:obj.data.map, data:{balans:obj.data.balans}, info:{lost:obj.data.bet}});
+						}
+						obj.data.bet = 0;
+					}else{
+						// có trả lại
+						objWin.info.win    += noHuy.data.bet;
+						objWin.data.balans += noHuy.data.bet;
+						noHuy.data.balans  += noHuy.data.bet;
+						if (obj.data.isOut) {
+							obj.data.du = obj.data.bet-noHuy.data.bet;
+							obj.data.tralai();
+						}else{
+							obj.data.balans += obj.data.bet-noHuy.data.bet;
+							array = array.concat({ghe:obj.data.map, data:{balans:obj.data.balans}, info:{lost:noHuy.data.bet}});
+						}
+						obj.data.bet = 0;
+					}
+				}
+				obj.data.isTheo = false;
+				obj.data.isAll  = false;
+				obj.data.isHuy  = false;
+			});
+			console.log(array);
+			this.sendToAll({game:{info:array, offSelect:true}});
+		}
+	}
+}
+
+Poker.prototype.resetData = function(){
+	this.game_player = null;
+	this.isPlay      = false;
+	clearTimeout(this.timeOut);
+	this.timeOut     = null;
+	this.card        = [];
+	this.mainCard    = [];
+	//this.playerInGame.forEach(function(data){
+		//data.id = null;
+		//data.data = null;
+	//});
 }
 
 module.exports = Poker;

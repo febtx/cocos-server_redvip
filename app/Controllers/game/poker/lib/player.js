@@ -2,12 +2,11 @@
 var UserInfo = require('../../../../Models/UserInfo');
 
 var Player = function(client, game, balans, auto){
-	this.room     = null;  // Phòng
-	this.map      = null;  // vị trí ghế ngồi
+	this.room    = null;  // Phòng
+	this.map     = null;  // vị trí ghế ngồi
 
-	this.isInGame = false; // người chơi trong game
-	this.isPlay   = false; // người chơi đang chơi
-	this.isOut    = false; // người chơi đã thoát
+	this.isHuy   = false; // người chơi đã hủy bài
+	this.isOut   = false; // người chơi đã thoát
 
 	this.uid     = client.UID;          // id người chơi
 	this.name    = client.profile.name; // tên người chơi
@@ -31,7 +30,7 @@ Player.prototype.addRoom = function(room){
 
 Player.prototype.outGame = function(){
 	// Thoát game sẽ trả lại tiền vào tài khoản và thoát game
-
+	this.room.onHuy(this);
 	this.isOut = true;
 	this.client.poker = null;
 	this.client = null;
@@ -41,29 +40,37 @@ Player.prototype.outGame = function(){
 	}
 
 	if (this.balans > 0) {
-		var uInfo = {};
+		let uInfo = {};
 		uInfo.red = this.balans;
 		UserInfo.updateOne({id:this.uid}, {$inc:uInfo}).exec();
 	}
 }
-
+Player.prototype.tralai = function(){
+}
 Player.prototype.onHuy  = function(){
-	// this.game_player
-	if (this.room.game_player === this) {
-		console.log('Huy');
+	if(this.isHuy === false){
+		this.room.onHuy(this);
 	}
 }
 Player.prototype.onXem  = function(){
-	this.room.onTheo(this);
+	if(this.isHuy === false){
+		this.room.onTheo(this);
+	}
 }
 Player.prototype.onTheo = function(){
-	this.room.onTheo(this);
+	if(this.isHuy === false){
+		this.room.onTheo(this);
+	}
 }
 Player.prototype.onTo   = function(to){
-	this.room.onTo(this, to);
+	if(this.isHuy === false){
+		this.room.onTo(this, to);
+	}
 }
 Player.prototype.onAll  = function(){
-	this.room.onAll(this);
+	if(this.isHuy === false){
+		this.room.onAll(this);
+	}
 }
 
 module.exports = Player;
