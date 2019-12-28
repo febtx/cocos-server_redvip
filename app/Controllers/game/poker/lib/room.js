@@ -411,7 +411,7 @@ Poker.prototype.onHuy = function(player){
 				obj.data.isHuy  = false;
 			});
 			console.log(array);
-			this.sendToAll({game:{info:array, offSelect:true}});
+			this.sendToAll({game:{info:array, offSelect:true, stop:true}});
 		}
 	}
 }
@@ -427,6 +427,8 @@ Poker.prototype.resetData = function(){
 		//data.id = null;
 		//data.data = null;
 	//});
+
+	this.checkGame();
 }
 
 module.exports = Poker;
