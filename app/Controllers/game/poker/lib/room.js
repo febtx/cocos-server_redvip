@@ -457,7 +457,6 @@ Poker.prototype.win = function(){
 		g_player.boCard = g_player.boCard.filter(function (el) {
 			return el != void 0;
 		});
-
 		// nếu có lớn hơn 5 lá bài khác nhau thì kiểm tra có dây hợp lệ không
 		if (g_player.boCard.length > 4) {
 			// Lấy ra các trường hợp của dây
