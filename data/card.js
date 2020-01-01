@@ -1,4 +1,3 @@
-
 let card = [
 	{
 		'card': 0,

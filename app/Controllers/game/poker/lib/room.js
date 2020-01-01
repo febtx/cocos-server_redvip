@@ -32,7 +32,6 @@ var Poker = function(poker, singID, game){
 	this.isPlay       = false; // phòng đang chơi
 	this.timeOut      = null;  // thời gian
 
-	this.d            = null;  // Người chơi đầu tiên
 	this.i_first      = 0;     // người chơi đầu tiên
 	this.i_last       = 0;     // người chơi sau cùng
 
@@ -82,7 +81,6 @@ Poker.prototype.inroom = function(player){
 	player.map = gheTrong.id;               // vị trí ngồi
 
 	if(this.online == 1){
-		this.d = player.map;
 		player.d = true;
 	}
 
@@ -124,8 +122,8 @@ Poker.prototype.outroom = function(player){
 		}
 	}
 	player.room = null;
-	player.d    = null;
-	if (this.d == player.map) {
+	if (player.d) {
+		player.d = null;
 		this.resetD();
 	}
 }
@@ -144,12 +142,13 @@ Poker.prototype.checkGame = function(){
 			this.playerInGame = [];
 
 			nguoichoi.forEach(function(player, index){
-				this.playerInGame[index] = {id:player.map, data:player.data};
-			});
+				this.playerInGame[index] = {id:player.data.map, data:player.data};
+			}.bind(this));
 			// vị trí người chơi đầu tiên trong mảng,
 			this.i_first = this.playerInGame.findIndex(function(obj){
-				return (obj.id == this.d);
-			}.bind(this));
+				return obj.data.d;
+			});
+			console.log(this.i_first);
 			this.game_bet = this.game;
 			this.Round1();
 		}.bind(this), 3000);
@@ -209,6 +208,7 @@ Poker.prototype.nextRound = function(){
 		}.bind(this), 1000);
 	}else{
 		// đã đủ 5 lá và tính điểm
+		this.win();
 	}
 }
 
@@ -289,13 +289,12 @@ Poker.prototype.resetD = function(){
 	if (this.isPlay == true && this.playerInGame.length > 0) {
 		//
 	}else{
-		let trongPhong = Object.values(this.player);                      // danh sách ghế
+		let trongPhong = Object.values(this.player);                         // danh sách ghế
 		trongPhong = trongPhong.filter(function(t){return t.data !== null}); // ghế có người ngồi
 		// lấy ngẫu nhiên 1 ghế làm D
 		let rand = (Math.random()*trongPhong.length)>>0;
 		trongPhong = trongPhong[rand];
 		if (trongPhong && trongPhong.data) {
-			this.d = trongPhong.data.map;
 			trongPhong.data.d = true;
 		}
 	}
@@ -391,6 +390,7 @@ Poker.prototype.onHuy = function(player){
 							array = array.concat({ghe:obj.data.map, data:{balans:obj.data.balans}, info:{lost:obj.data.bet}});
 						}
 						obj.data.bet = 0;
+						obj.data.newGame();
 					}else{
 						// có trả lại
 						objWin.info.win    += noHuy.data.bet;
@@ -404,13 +404,13 @@ Poker.prototype.onHuy = function(player){
 							array = array.concat({ghe:obj.data.map, data:{balans:obj.data.balans}, info:{lost:noHuy.data.bet}});
 						}
 						obj.data.bet = 0;
+						obj.data.newGame();
 					}
 				}
 				obj.data.isTheo = false;
 				obj.data.isAll  = false;
 				obj.data.isHuy  = false;
 			});
-			console.log(array);
 			this.sendToAll({game:{info:array, offSelect:true, stop:true}});
 		}
 	}
@@ -431,4 +431,47 @@ Poker.prototype.resetData = function(){
 	this.checkGame();
 }
 
+Poker.prototype.win = function(){
+	let gamer = this.playerInGame.filter(function(t){return (t.data.isHuy === false && t.data.isOut === false)}); // lấy người chơi theo đến cùng
+	gamer.forEach(function(player){
+		let g_player = player.data;
+		let card_concat = this.mainCard.concat(g_player.card);
+
+		for (let i = 0; i < 7; i++) {
+			let dataT = card_concat[i];
+			// Lọc bài
+			if (void 0 === g_player.boCard[dataT.card]) {
+				g_player.boCard[dataT.card] = [dataT];
+			}else{
+				g_player.boCard[dataT.card] = g_player.boCard[dataT.card].concat(dataT);
+			}
+			// lọc chất
+			if (void 0 === g_player.loc_chat[dataT.type]) {
+				g_player.loc_chat[dataT.type] = [dataT];
+			}else{
+				g_player.loc_chat[dataT.type] = g_player.loc_chat[dataT.type].concat(dataT);
+			}
+			dataT = null;
+		}
+		// Lọc bỏ empty
+		g_player.boCard = g_player.boCard.filter(function (el) {
+			return el != void 0;
+		});
+
+		// nếu có lớn hơn 5 lá bài khác nhau thì kiểm tra có dây hợp lệ không
+		if (g_player.boCard.length > 4) {
+			// Lấy ra các trường hợp của dây
+			g_player.dequyDay(g_player.boCard, []);
+			// Kiểm tra và suất ra kết quả cuối cùng
+			g_player.checkDay();
+		}else{
+			// các trường hợp khác
+			g_player.checkBo();
+		}
+	}.bind(this));
+
+	this.playerInGame.forEach(function(player){
+		console.log(player.data.caoNhat);
+	});
+}
 module.exports = Poker;

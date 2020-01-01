@@ -82,11 +82,16 @@ function spin(client, data){
 					let AK    = ketqua_temp.sort(function(a, b){return a.card - b.card}); // sắp sếp từ A đến K (A23...JQK)
 					let isDay = false; // là 1 dây
 					if (bo3 == false && bo2 == 0 && tuQuy == null) {
+						if (AK[4].card-AK[0].card === 4 || (AK[4].card-AK[1].card === 3 && AK[0].card === 0 && AK[4].card === 12)) {
+							isDay = true;
+						}
+						/**
 						if (AK[4].card - AK[0].card === 4 && AK[0].card !== 0) {
 							isDay = true;
 						}else if (AK[4].card - AK[1].card === 3 && AK[0].card === 0 && AK[4].card === 12) {
 							isDay = true;
 						}
+						*/
 					}
 
 					HU.findOne({game:'minipoker', type:bet, red:red}, 'name bet min toX balans x', function(err, dataHu){
