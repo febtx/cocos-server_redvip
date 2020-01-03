@@ -73,12 +73,12 @@ Player.prototype.onHuy  = function(){
 }
 Player.prototype.onXem  = function(){
 	if(this.isHuy === false){
-		this.room.onTheo(this);
+		this.room.onTheo(this, true);
 	}
 }
 Player.prototype.onTheo = function(){
 	if(this.isHuy === false){
-		this.room.onTheo(this);
+		this.room.onTheo(this, false);
 	}
 }
 Player.prototype.onTo   = function(to){
@@ -162,7 +162,7 @@ Player.prototype.checkDay = function(){
 Player.prototype.checkBo = function(){
 	// Đồng chất
 	this.loc_chat.forEach(function(el){
-		if(el.length >= 5) {
+		if(el.length > 4) {
 			let lacaonhat = el.sort(function(a, b){return b.card-a.card});
 			let ddowN = lacaonhat[lacaonhat.length-1];
 			if (ddowN.card === 0) {
@@ -174,17 +174,8 @@ Player.prototype.checkBo = function(){
 				return cmy.type == lacaonhat.type;
 			});
 			if (chat_my.length > 0) {
-				chat_my = chat_my.sort(function(a, b){return b.card-a.card});
-				ddowN = chat_my[chat_my.length-1];
-				if (ddowN.card === 0) {
-					chat_my = ddowN;
-				}else{
-					chat_my = chat_my[0];
-				}
-			}else{
-				chat_my = null;
+				this.caoNhat = {code:6, up:lacaonhat}; 
 			}
-			this.caoNhat = {code:6, up:lacaonhat, me:chat_my}; 
 		}
 	}.bind(this));
 	if (this.caoNhat === null) {
@@ -236,12 +227,11 @@ Player.prototype.checkBo = function(){
 				bo3_a = bo3[0];
 			}else{
 				let dcao  = bo3.sort(function(a, b){return b[0].card-a[0].card});
-				let dupN  = dcao[0];
 				let ddowN = dcao[dcao.length-1];
 				if (ddowN[0].card === 0) {
 					bo3_a = ddowN;
 				}else{
-					bo3_a = dupN;
+					bo3_a = dcao[0];
 				}
 			}
 		}
@@ -250,14 +240,13 @@ Player.prototype.checkBo = function(){
 				bo2_a = bo2[0];
 			}else{
 				let dcao  = bo2.sort(function(a, b){return b[0].card-a[0].card});
-				let dupN  = dcao[0];
 				let ddowN = dcao[dcao.length-1];
 				if (ddowN[0].card === 0) {
 					bo2_a = ddowN;
-					bo2_b = dupN;
-				}else{
-					bo2_a = dupN;
 					bo2_b = dcao[0];
+				}else{
+					bo2_a = dcao[0];
+					bo2_b = dcao[1];
 				}
 			}
 		}

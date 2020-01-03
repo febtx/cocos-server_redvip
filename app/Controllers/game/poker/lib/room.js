@@ -107,20 +107,21 @@ Poker.prototype.inroom = function(player){
 
 Poker.prototype.outroom = function(player){
 	this.online--;
+	this.player[player.map].data = null;
+
 	if (this.online < 1) {
 		this.poker.removeRoom(this.game, this.singID);
-	}
-
-	this.player[player.map].data = null;
-	this.sendToAll({outgame:player.map});
-
-	if (this.online == 1) {
-		this.isPlay = false;
-		if (!!this.timeOut) {
-			clearTimeout(this.timeOut);
-			this.timeOut = null;
+	}else{
+		this.sendToAll({outgame:player.map});
+		if (this.online == 1) {
+			this.isPlay = false;
+			if (!!this.timeOut) {
+				clearTimeout(this.timeOut);
+				this.timeOut = null;
+			}
 		}
 	}
+	this.onHuy(player);
 	player.room = null;
 	if (player.d) {
 		player.d = null;
@@ -183,7 +184,7 @@ Poker.prototype.Round1 = function(){
 	this.timeOut = setTimeout(function(){
 		clearTimeout(this.timeOut);
 		this.nextPlayer(true);
-	}.bind(this), 500);
+	}.bind(this), 600);
 }
 
 // Sang vòng mới
@@ -205,7 +206,7 @@ Poker.prototype.nextRound = function(){
 		this.timeOut = setTimeout(function(){
 			clearTimeout(this.timeOut);
 			this.nextPlayer(true);
-		}.bind(this), 1000);
+		}.bind(this), 300);
 	}else{
 		// đã đủ 5 lá và tính điểm
 		this.win();
@@ -286,21 +287,20 @@ Poker.prototype.btnSelect = function(player){
 }
 
 Poker.prototype.resetD = function(){
-	if (this.isPlay == true && this.playerInGame.length > 0) {
-		//
-	}else{
-		let trongPhong = Object.values(this.player);                         // danh sách ghế
-		trongPhong = trongPhong.filter(function(t){return t.data !== null}); // ghế có người ngồi
-		// lấy ngẫu nhiên 1 ghế làm D
-		let rand = (Math.random()*trongPhong.length)>>0;
-		trongPhong = trongPhong[rand];
-		if (trongPhong && trongPhong.data) {
-			trongPhong.data.d = true;
+	let trongPhong = Object.values(this.player);                         // danh sách ghế
+	trongPhong = trongPhong.filter(function(t){return t.data !== null}); // ghế có người ngồi
+	// lấy ngẫu nhiên 1 ghế làm D
+	let rand = (Math.random()*trongPhong.length)>>0;
+	trongPhong.forEach(function(player, index){
+		if (rand === index) {
+			player.data.d = true;
+		}else{
+			player.data.d = false;
 		}
-	}
+	});
 }
 // Theo
-Poker.prototype.onTheo = function(player){
+Poker.prototype.onTheo = function(player, xem){
 	if (this.game_player === player) {
 		let bet = this.game_bet-player.bet;
 		if (bet <= player.balans) {
@@ -310,7 +310,17 @@ Poker.prototype.onTheo = function(player){
 			if (player.balans < 1) {
 				player.isAll = true;
 			}
-			this.sendToAll({game:{player:{ghe:player.map, data:{balans:player.balans, bet:player.bet}}}});
+			let info = {};
+			if (player.isAll) {
+				info.all = bet;
+			}else{
+				if (xem) {
+					info.xem  = bet;
+				}else{
+					info.theo = bet;
+				}
+			}
+			this.sendToAll({game:{player:{ghe:player.map, data:{balans:player.balans, bet:player.bet}, info:info}}});
 			this.nextPlayer();
 		}
 	}
@@ -333,7 +343,7 @@ Poker.prototype.onTo = function(player, to){
 			this.i_first = this.playerInGame.findIndex(function(obj){
 				return (obj.id == player.map);
 			}.bind(this));
-			this.sendToAll({game:{player:{ghe:player.map, data:{balans:player.balans, bet:player.bet}}}, infoRoom:{bet:this.game_bet}});
+			this.sendToAll({game:{player:{ghe:player.map, data:{balans:player.balans, bet:player.bet}, info:{to:to}}}, infoRoom:{bet:this.game_bet}});
 			this.nextPlayer();
 		}
 	}
@@ -355,7 +365,7 @@ Poker.prototype.onAll = function(player){
 				return (obj.id == player.map);
 			}.bind(this));
 		}
-		this.sendToAll({game:{player:{ghe:player.map, data:{balans:player.balans, bet:player.bet}}}, infoRoom:{bet:this.game_bet}});
+		this.sendToAll({game:{player:{ghe:player.map, data:{balans:player.balans, bet:player.bet}, info:{all:player.balans}}}, infoRoom:{bet:this.game_bet}});
 		this.nextPlayer();
 	}
 }
@@ -370,6 +380,7 @@ Poker.prototype.onHuy = function(player){
 		player.isHuy = true;
 		let huy = this.playerInGame.filter(function(t){return t.data.isHuy === false}); // ghế chưa hủy bài
 		if (huy.length > 1 && this.game_player === player) {
+			this.sendToAll({game:{player:{ghe:player.map, info:{huy:true}}}});
 			this.nextPlayer();
 			return void 0;
 		}
@@ -406,12 +417,14 @@ Poker.prototype.onHuy = function(player){
 						obj.data.bet = 0;
 						obj.data.newGame();
 					}
+				}else{
+					obj.data.newGame();
 				}
 				obj.data.isTheo = false;
 				obj.data.isAll  = false;
 				obj.data.isHuy  = false;
 			});
-			this.sendToAll({game:{info:array, offSelect:true, stop:true}});
+			this.sendToAll({game:{info:array, stop:true}});
 		}
 	}
 }
@@ -427,7 +440,6 @@ Poker.prototype.resetData = function(){
 		//data.id = null;
 		//data.data = null;
 	//});
-
 	this.checkGame();
 }
 
@@ -454,7 +466,7 @@ Poker.prototype.win = function(){
 			dataT = null;
 		}
 		// Lọc bỏ empty
-		g_player.boCard = g_player.boCard.filter(function (el) {
+		g_player.boCard = g_player.boCard.filter(function(el){
 			return el != void 0;
 		});
 		// nếu có lớn hơn 5 lá bài khác nhau thì kiểm tra có dây hợp lệ không
@@ -469,8 +481,202 @@ Poker.prototype.win = function(){
 		}
 	}.bind(this));
 
-	this.playerInGame.forEach(function(player){
-		console.log(player.data.caoNhat);
+	// Lọc người chơi đang có bộ bài
+	let player_bo = this.playerInGame.filter(function(player) {
+		return player.data.caoNhat !== null;
 	});
+	if (player_bo.length > 0) {
+		player_bo.sort(function(a, b){return b.data.caoNhat.code-a.data.caoNhat.code});
+		let code = player_bo[0].data.caoNhat.code;
+		player_bo = player_bo.filter(function(player) {
+			return player.data.caoNhat.code === code;
+		});
+		if (player_bo.length > 0) {
+			if (player_bo.length === 1) {
+				this.winer(player_bo[0].data);
+			}else{
+				let card = null;
+				switch(code){
+					case 2:
+						player_bo.sort(function(a, b){return b.data.caoNhat.bo2[0].card-a.data.caoNhat.bo2[0].card});
+						card = player_bo[player_bo.length-1].data.caoNhat.bo2[0].card === 0 ? player_bo[player_bo.length-1].data.caoNhat.bo2[0].card : player_bo[0].data.caoNhat.bo2[0].card;
+						player_bo = player_bo.filter(function(player) {
+							return player.data.caoNhat.bo2[0].card === card;
+						});
+						if (player_bo.length === 1) {
+							this.winer(player_bo[0].data);
+						}else{
+							this.Hoa();
+						}
+						break;
+					case 3:
+						player_bo.sort(function(a, b){return b.data.caoNhat.bo2A[0].card-a.data.caoNhat.bo2A[0].card});
+						card = player_bo[player_bo.length-1].data.caoNhat.bo2A[0].card === 0 ? player_bo[player_bo.length-1].data.caoNhat.bo2A[0].card : player_bo[0].data.caoNhat.bo2A[0].card;
+						let player_bo2A = player_bo.filter(function(player) {
+							return player.data.caoNhat.bo2A[0].card === card;
+						});
+						if (player_bo2A.length === 1) {
+							this.winer(player_bo2A[0].data);
+						}else{
+							player_bo.sort(function(a, b){return b.data.caoNhat.bo2B[0].card-a.data.caoNhat.bo2B[0].card});
+							card = player_bo[player_bo.length-1].data.caoNhat.bo2B[0].card === 0 ? player_bo[player_bo.length-1].data.caoNhat.bo2B[0].card : player_bo[0].data.caoNhat.bo2B[0].card;
+							player_bo = player_bo.filter(function(player) {
+								return player.data.caoNhat.bo2B[0].card === card;
+							});
+							if (player_bo.length === 1) {
+								this.winer(player_bo[0].data);
+							}else{
+								this.Hoa();
+							}
+						}
+						break;
+					case 4:
+						player_bo.sort(function(a, b){return b.data.caoNhat.bo3[0].card-a.data.caoNhat.bo3[0].card});
+						card = player_bo[player_bo.length-1].data.caoNhat.bo3[0].card === 0 ? player_bo[player_bo.length-1].data.caoNhat.bo3[0].card : player_bo[0].data.caoNhat.bo3[0].card;
+						player_bo = player_bo.filter(function(player) {
+							return player.data.caoNhat.bo3[0].card === card;
+						});
+						if (player_bo.length === 1) {
+							this.winer(player_bo[0].data);
+						}else{
+							this.Hoa();
+						}
+						break;
+					case 5:
+						player_bo.sort(function(a, b){return b.data.caoNhat.bai_cao.card-a.data.caoNhat.bai_cao.card});
+						card = player_bo[player_bo.length-1].data.caoNhat.bai_cao.card === 0 ? player_bo[player_bo.length-1].data.caoNhat.bai_cao.card : player_bo[0].data.caoNhat.bai_cao.card;
+						player_bo = player_bo.filter(function(player) {
+							return player.data.caoNhat.bai_cao.card === card;
+						});
+						if (player_bo.length === 1) {
+							this.winer(player_bo[0].data);
+						}else{
+							this.Hoa();
+						}
+						break;
+					case 6:
+						player_bo.sort(function(a, b){return b.data.caoNhat.up.card-a.data.caoNhat.up.card});
+						card = player_bo[player_bo.length-1].data.caoNhat.up.card === 0 ? player_bo[player_bo.length-1].data.caoNhat.up.card : player_bo[0].data.caoNhat.up.card;
+						player_bo = player_bo.filter(function(player) {
+							return player.data.caoNhat.up.card === card;
+						});
+						if (player_bo.length === 1) {
+							this.winer(player_bo[0].data);
+						}else{
+							this.Hoa();
+						}
+						break;
+					case 7:
+						player_bo.sort(function(a, b){return b.data.caoNhat.bo3[0].card-a.data.caoNhat.bo3[0].card});
+						card = player_bo[player_bo.length-1].data.caoNhat.bo3[0].card === 0 ? player_bo[player_bo.length-1].data.caoNhat.bo3[0].card : player_bo[0].data.caoNhat.bo3[0].card;
+						let player_bo3 = player_bo.filter(function(player) {
+							return player.data.caoNhat.bo3[0].card === card;
+						});
+						if (player_bo3.length === 1) {
+							this.winer(player_bo3[0].data);
+						}else{
+							player_bo.sort(function(a, b){return b.data.caoNhat.bo2[0].card-a.data.caoNhat.bo2[0].card});
+							card = player_bo[player_bo.length-1].data.caoNhat.bo2[0].card === 0 ? player_bo[player_bo.length-1].data.caoNhat.bo2[0].card : player_bo[0].data.caoNhat.bo2[0].card;
+							player_bo = player_bo.filter(function(player) {
+								return player.data.caoNhat.bo2[0].card === card;
+							});
+							if (player_bo.length === 1) {
+								this.winer(player_bo[0].data);
+							}else{
+								this.Hoa();
+							}
+						}
+						break;
+					case 8:
+						player_bo.sort(function(a, b){return b.data.caoNhat.bo[0].card-a.data.caoNhat.bo[0].card});
+						card = player_bo[player_bo.length-1].data.caoNhat.bo[0].card === 0 ? player_bo[player_bo.length-1].data.caoNhat.bo[0].card : player_bo[0].data.caoNhat.bo[0].card;
+						player_bo = player_bo.filter(function(player) {
+							return player.data.caoNhat.bo[0].card === card;
+						});
+						if (player_bo.length === 1) {
+							this.winer(player_bo[0].data);
+						}else{
+							this.Hoa();
+						}
+						break;
+					case 9:
+						player_bo.sort(function(a, b){return b.data.caoNhat.bai_cao.card-a.data.caoNhat.bai_cao.card});
+						card = player_bo[player_bo.length-1].data.caoNhat.bai_cao.card === 0 ? player_bo[player_bo.length-1].data.caoNhat.bai_cao.card : player_bo[0].data.caoNhat.bai_cao.card;
+						player_bo = player_bo.filter(function(player) {
+							return player.data.caoNhat.bai_cao.card === card;
+						});
+						if (player_bo.length === 1) {
+							this.winer(player_bo[0].data);
+						}else{
+							this.Hoa();
+						}
+						break;
+				}
+			}
+		}
+	}else{
+		this.Hoa();
+	}
 }
+Poker.prototype.winer = function(player){
+	console.log('Tìm Ra người chiến thắng');
+	console.log(player.caoNhat);
+	//this.resetData();
+	player.balans += player.bet;
+	let objWin = {ghe:player.map, data:{balans:player.balans, openCard:player.card}, info:{win:0}};
+	let array = [objWin];
+
+	this.playerInGame.forEach(function(obj, index){
+		if (player !== obj.data) {
+			if (obj.data.bet <= player.bet) {
+				// ăn tất
+				objWin.info.win    += obj.data.bet;
+				objWin.data.balans += obj.data.bet;
+				player.balans  += obj.data.bet;
+				if (obj.data.isOut === false) {
+					array = array.concat({ghe:obj.data.map, data:{balans:obj.data.balans, openCard:obj.data.card}, info:{lost:obj.data.bet}});
+				}
+				obj.data.bet = 0;
+				obj.data.newGame();
+			}else{
+				// có trả lại
+				objWin.info.win    += player.bet;
+				objWin.data.balans += player.bet;
+				player.balans      += player.bet;
+				if (obj.data.isOut) {
+					obj.data.du = obj.data.bet-player.bet;
+					obj.data.tralai();
+				}else{
+					obj.data.balans += obj.data.bet-player.bet;
+					array = array.concat({ghe:obj.data.map, data:{balans:obj.data.balans, openCard:obj.data.card}, info:{lost:player.bet}});
+				}
+				obj.data.bet = 0;
+				obj.data.newGame();
+			}
+		}else{
+			obj.data.newGame();
+		}
+		obj.data.isTheo = false;
+		obj.data.isAll  = false;
+		obj.data.isHuy  = false;
+	});
+	this.sendToAll({game:{info:array, finish:true}});
+}
+// Hòa game
+Poker.prototype.Hoa = function(){
+	console.log('Hòa game');
+	let array = [];
+	this.playerInGame.forEach(function(obj, index){
+		obj.data.balans += obj.data.bet;
+		if (obj.data.isOut) {
+			obj.data.du = obj.data.bet;
+			obj.data.tralai();
+		}else{
+			array = array.concat({ghe:obj.data.map, data:{balans:obj.data.balans, openCard:obj.data.card}, info:{hoa:obj.data.bet}});
+		}
+		obj.data.newGame();
+	});
+	this.sendToAll({game:{info:array, finish:true}});
+}
+
 module.exports = Poker;
