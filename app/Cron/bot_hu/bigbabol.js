@@ -101,7 +101,7 @@ let spin = function(io, user){
 	let bet_win   = 0;
 	// tạo kết quả
 	HU.findOne({game:'bigbabol', type:bet, red:true}, 'name bet min toX balans x', function(err, dataHu){
-		if (dataHu === null) {
+		if (!dataHu) {
 			return void 0;
 		}
 		let huUpdate   = {bet:addQuy, toX:0, balans:0};

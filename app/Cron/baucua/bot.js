@@ -9,16 +9,16 @@ let random = function(){
 	let a = (Math.random()*35)>>0;
 	if (a == 34) {
 		// 34
-		return (Math.floor(Math.random()*(50-45+1))+45)*10000;
+		return (Math.floor(Math.random()*(100-1+1))+1)*10000;
 	}else if (a >= 32 && a < 34) {
 		// 32 33
-		return (Math.floor(Math.random()*(45-10+1))+10)*10000;
+		return (Math.floor(Math.random()*(10-1+1))+1)*10000;
 	}else if (a >= 30 && a < 32) {
 		// 30 31 32
-		return (Math.floor(Math.random()*(100-20+1))+20)*1000;
+		return (Math.floor(Math.random()*(20-1+1))+1)*5000;
 	}else if (a >= 26 && a < 30) {
 		// 26 27 28 29
-		return (Math.floor(Math.random()*(50-10+1))+10)*1000;
+		return (Math.floor(Math.random()*(20-1+1))+1)*5000;
 	}else if (a >= 21 && a < 26) {
 		// 21 22 23 24 25
 		return (Math.floor(Math.random()*(20-1+1))+1)*1000;

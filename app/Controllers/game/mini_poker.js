@@ -25,7 +25,7 @@ function spin(client, data){
 					let UID  = client.UID;
 					let name = client.profile.name;
 
-					let phe     = red ? 2 :4;    // Phế
+					let phe     = red ? 2 : 4;    // Phế
 					let addQuy  = (bet*0.01)>>0;
 					let an      = 0;
 					let code    = 0;

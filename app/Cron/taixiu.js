@@ -16,7 +16,6 @@ let HU_game    = require('../Models/HU');
 
 let bot        = require('./taixiu/bot');
 let botList    = [];
-let botListCl  = [];
 
 let botHu      = require('./bot_hu');
 let botTemp    = [];
@@ -28,48 +27,20 @@ let init = function(obj){
 	io = obj;
 
 	io.taixiu = {
-		chanle: {
-			red_chan: 0,
-			red_le: 0,
-			red_player_chan: 0,
-			red_player_le: 0,
-			xu_chan: 0,
-			xu_le: 0,
-			xu_player_chan: 0,
-			xu_player_le: 0,
-		},
 		taixiu: {
 			red_player_tai: 0,
 			red_player_xiu: 0,
 			red_tai: 0,
 			red_xiu: 0,
-			xu_player_tai: 0,
-			xu_player_xiu: 0,
-			xu_tai: 0,
-			xu_xiu: 0,
 		}
 	};
 
 	io.taixiuAdmin = {
-		chanle: {
-			red_chan: 0,
-			red_le: 0,
-			red_player_chan: 0,
-			red_player_le: 0,
-			xu_chan: 0,
-			xu_le: 0,
-			xu_player_chan: 0,
-			xu_player_le: 0,
-		},
 		taixiu: {
 			red_player_tai: 0,
 			red_player_xiu: 0,
 			red_tai: 0,
 			red_xiu: 0,
-			xu_player_tai: 0,
-			xu_player_xiu: 0,
-			xu_tai: 0,
-			xu_xiu: 0,
 		},
 		list: []
 	};
@@ -89,7 +60,7 @@ let truChietKhau = function(bet, phe){
 
 // Dữ liệu Hũ
 let TopHu = function(){
-	HU_game.find({}, 'game type red bet toX balans x').exec(function(err, data){
+	HU_game.find({'red':true}, 'game type red bet toX balans x').exec(function(err, data){
 		if (data.length) {
 			let result = data.map(function(obj){
 				obj = obj._doc;
@@ -106,18 +77,18 @@ let TopHu = function(){
 				vq_red: result.filter(function(vq_red){
 					return (vq_red.game === 'vuongquocred')
 				}),
-				mini3cay: result.filter(function(mini3cay){
-					return (mini3cay.game === 'mini3cay')
-				}),
+				//mini3cay: result.filter(function(mini3cay){
+				//	return (mini3cay.game === 'mini3cay')
+				//}),
 				caothap: result.filter(function(caothap){
 					return (caothap.game === 'caothap')
 				}),
 				arb: result.filter(function(arb){
 					return (arb.game === 'arb')
 				}),
-				candy: result.filter(function(candy){
-					return (candy.game === 'candy')
-				}),
+				//candy: result.filter(function(candy){
+				//	return (candy.game === 'candy')
+				//}),
 				long: result.filter(function(long){
 					return (long.game === 'long')
 				}),
@@ -136,11 +107,11 @@ let setTaiXiu_user = function(phien, dice){
 			Promise.all(list.map(function(obj){
 				let action = new Promise((resolve, reject)=> {
 					TaiXiu_User.findOne({uid:obj.uid}, function(error, data) {
-						if (data !== null) {
+						if (!!data) {
 							let bet_thua = obj.bet-obj.tralai;
 							let bet = obj.win ? obj.betwin+obj.bet : bet_thua;
 							let update = {};
-							if (obj.taixiu === true && obj.red === true && bet_thua >= 10000) {          // Red Tài Xỉu
+							if (obj.taixiu === true && obj.red === true && bet_thua >= 10000) {// Red Tài Xỉu
 								update = {
 									tLineWinRed:   obj.win && data.tLineWinRed < data.tLineWinRedH+1 ? data.tLineWinRedH+1 : data.tLineWinRed,
 									tLineLostRed:  !obj.win && data.tLineLostRed < data.tLineLostRedH+1 ? data.tLineLostRedH+1 : data.tLineLostRed,
@@ -156,13 +127,6 @@ let setTaiXiu_user = function(phien, dice){
 									if (data.tLineLostRedH == 0) {
 										update.first = phien;
 									}
-								}
-							} else if (obj.taixiu === true && obj.red === false && bet_thua >= 10000) { // Xu Tài Xỉu
-								update = {
-									tLineWinXu:   obj.win && data.tLineWinXu < data.tLineWinXuH+1 ? data.tLineWinXuH+1 : data.tLineWinXu,
-									tLineLostXu:  !obj.win && data.tLineLostXu < data.tLineLostXuH+1 ? data.tLineLostXuH+1 : data.tLineLostXu,
-									tLineWinXuH:  obj.win ? data.tLineWinXuH+1 : 0,
-									tLineLostXuH: obj.win ? 0 : data.tLineLostXuH+1,
 								}
 							}
 
@@ -189,36 +153,22 @@ let setTaiXiu_user = function(phien, dice){
 					let topTaiXiu = values.filter(function(objTopT){
 						return !!objTopT.taixiu;
 					});
-					let topChanLe = values.filter(function(objTopC){
-						return !objTopC.taixiu;
-					});
 					topTaiXiu.sort(function(a, b){
 						return b.betwin-a.betwin;
 					});
-					topChanLe.sort(function(a, b){
-						return b.betwin-a.betwin;
-					});
-					let top10TX = topTaiXiu.slice(0, 10);
-					let top10CL = topChanLe.slice(0, 10);
-					values = [...top10TX, ...top10CL];
-
+					values = topTaiXiu.slice(0, 10);
 					values = Helpers.shuffle(values);
-
 					Promise.all(values.map(function(obj){
 						let action = new Promise((resolve, reject) => {
-							UserInfo.findOne({id: obj.uid}, 'name', function(err, users){
-								if (obj.taixiu) {
-									resolve({users:users.name, bet:obj.betwin, game:'Tài Xỉu'});
-								}else{
-									resolve({users:users.name, bet:obj.betwin, game:'Chẵn Lẻ'});
-								}
+							UserInfo.findOne({id:obj.uid}, 'name', function(err, users){
+								resolve({users:users.name, bet:obj.betwin, game:'Tài Xỉu'});
 							});
 						});
 						return action;
 					}))
 					.then(result => {
 						io.sendInHome({news:{a:result}});
-					})
+					});
 				}
 			})
 		}
@@ -424,9 +374,11 @@ let thongtin_thanhtoan = function(game_id, dice = false){
 					setTaiXiu_user(game_id, dice);
 					TaiXiu_tong_red_lech = null;
 					TaiXiu_red_lech_tai  = null;
+					vipConfig = null;
 				});
 			}else if (dice) {
 				playGame();
+				vipConfig = null;
 			}
 		});
 	}else{
@@ -440,7 +392,10 @@ let thongtin_thanhtoan = function(game_id, dice = false){
 				}else if(client.scene == 'home'){
 					client.red(home);
 				}
+				client = null;
 			});
+			users = null;
+
 		});
 
 		// Admin
@@ -449,7 +404,9 @@ let thongtin_thanhtoan = function(game_id, dice = false){
 				if (client.gameEvent !== void 0 && client.gameEvent.viewTaiXiu !== void 0 && client.gameEvent.viewTaiXiu){
 					client.red({taixiu: io.taixiuAdmin});
 				}
+				client = null;
 			});
+			admin = null;
 		});
 
 		// Khách
@@ -502,7 +459,9 @@ let playGame = function(){
 								Object.values(io.admins).forEach(function(admin){
 									admin.forEach(function(client){
 										client.red({taixiu: {finish:{dices:[create.dice1, create.dice2, create.dice3], phien:create.id}}});
+										client = null;
 									});
+									admin = null;
 								});
 								dice1 = null;
 								dice2 = null;
@@ -515,48 +474,19 @@ let playGame = function(){
 				});
 
 				io.taixiu = {
-					chanle: {
-						red_chan: 0,
-						red_le: 0,
-						red_player_chan: 0,
-						red_player_le: 0,
-						xu_chan: 0,
-						xu_le: 0,
-						xu_player_chan: 0,
-						xu_player_le: 0,
-					},
 					taixiu: {
 						red_player_tai: 0,
 						red_player_xiu: 0,
 						red_tai: 0,
 						red_xiu: 0,
-						xu_player_tai: 0,
-						xu_player_xiu: 0,
-						xu_tai: 0,
-						xu_xiu: 0,
 					}
 				};
-
 				io.taixiuAdmin = {
-					chanle: {
-						red_chan: 0,
-						red_le: 0,
-						red_player_chan: 0,
-						red_player_le: 0,
-						xu_chan: 0,
-						xu_le: 0,
-						xu_player_chan: 0,
-						xu_player_le: 0,
-					},
 					taixiu: {
 						red_player_tai: 0,
 						red_player_xiu: 0,
 						red_tai: 0,
 						red_xiu: 0,
-						xu_player_tai: 0,
-						xu_player_xiu: 0,
-						xu_tai: 0,
-						xu_xiu: 0,
 					},
 					list: []
 				};
@@ -567,34 +497,28 @@ let playGame = function(){
 						
 						if (taixiucf.bot) {
 							// lấy danh sách tài khoản bot
-							UserInfo.find({type: true}, 'id name', function(err, list){
-								if (list.length) {
-									Promise.all(list.map(function(user){
+							UserInfo.find({type:true}, 'id name', function(err, list){
+								if (!!list && list.length) {
+									list = list.map(function(user){
 										user = user._doc;
 										delete user._id;
 										return user;
-									}))
-									.then(result => {
-										botTemp = [...result];
-										let maxBot = (result.length*70/100)>>0;
-										botList = Helpers.shuffle(result); // tráo bot;
-										botList = botList.slice(0, maxBot);
-
-										//maxBot = (result.length*50/100)>>0;
-										//botListCl = Helpers.shuffle(result); // tráo bot;
-										//botListCl = botListCl.slice(0, maxBot);
 									});
+									botTemp = [...list];
+									let maxBot = (list.length*70/100)>>0;
+									botList = Helpers.shuffle(list); // tráo
+									botList = botList.slice(0, maxBot);
+									maxBot = null;
+									list = null;
 								}
 							});
 						}else{
 							botTemp = [];
 							botList = [];
-							//botListCl = [];
 						}
 					} catch (error) {
 						botTemp = [];
 						botList = [];
-						//botListCl = [];
 					}
 				});
 			}else{

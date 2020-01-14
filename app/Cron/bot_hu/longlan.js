@@ -197,7 +197,7 @@ let spin = function(io, user){
 	let nohu      = false;
 	// tạo kết quả
 	HU.findOne({game:'long', type:bet, red:true}, {}, function(err2, dataHu){
-		if (dataHu === null) {
+		if (!dataHu) {
 			return void 0;
 		}
 		let aRwin = Math.floor(Math.random()*50);

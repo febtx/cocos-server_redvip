@@ -13,17 +13,8 @@ var validator   = require('validator');
 
 function getLogs(client){
 	var data = JSON.parse(JSON.stringify(client.redT.taixiu));
-
 	data.taixiu.red_me_tai = 0;
 	data.taixiu.red_me_xiu = 0;
-	data.taixiu.xu_me_tai  = 0;
-	data.taixiu.xu_me_xiu  = 0;
-
-	data.chanle.red_me_chan = 0;
-	data.chanle.red_me_le   = 0;
-	data.chanle.xu_me_chan  = 0;
-	data.chanle.xu_me_le    = 0;
-
 	var active1 = new Promise((resolve, reject) => {
 		TXPhien.find({}, {}, {sort:{'_id':-1}, limit:125}, function(err, post) {
 			Promise.all(post.map(function(obj){return {'dice':[obj.dice1,obj.dice2,obj.dice3], 'phien':obj.id}}))
@@ -34,50 +25,25 @@ function getLogs(client){
 	});
 
 	var active2 = new Promise((resolve, reject) => {
-		TaiXiu_User.findOne({uid:client.UID}, 'tLineWinRed tLineLostRed tLineWinXu tLineLostXu cLineWinRed cLineLostRed cLineWinXu cLineLostXu tLineWinRedH tLineLostRedH tLineWinXuH tLineLostXuH cLineWinRedH cLineLostRedH cLineWinXuH cLineLostXuH', function(err, data) {
+		TaiXiu_User.findOne({uid:client.UID}, 'tLineWinRed tLineLostRed tLineWinRedH tLineLostRedH', function(err, data) {
 			data = data._doc;
 			delete data._id;
 			resolve(data);
 		});
 	});
 
-	var active3 = Promise.all(client.redT.taixiuAdmin.list.map(function(game){
+	client.redT.taixiuAdmin.list.forEach(function(game){
 		if (game.name == client.profile.name) {
-			if (game.taixiu) {
-				if (game.red) {
-					if (game.select) {
-						data.taixiu.red_me_tai += game.bet;
-					}else{
-						data.taixiu.red_me_xiu += game.bet;
-					}
-				}else{
-					if (game.select) {
-						data.taixiu.xu_me_tai += game.bet;
-					}else{
-						data.taixiu.xu_me_xiu += game.bet;
-					}
-				}
+			if (game.select) {
+				data.taixiu.red_me_tai += game.bet;
 			}else{
-				if (game.red) {
-					if (game.select) {
-						data.chanle.red_me_chan += game.bet;
-					}else{
-						data.chanle.red_me_le   += game.bet;
-					}
-				}else{
-					if (game.select) {
-						data.chanle.xu_me_chan += game.bet;
-					}else{
-						data.chanle.xu_me_le   += game.bet;
-					}
-				}
+				data.taixiu.red_me_xiu += game.bet;
 			}
 		}
-	}));
-
-	Promise.all([active1, active2, active3])
+	});
+	Promise.all([active1, active2])
 	.then(values => {
-		data.logs   = values[0]; 
+		data.logs   = values[0];
 		data.du_day = values[1];
 		client.red({taixiu:data});
 	});
@@ -85,13 +51,13 @@ function getLogs(client){
 
 function getNew(client){
 	var active1 = new Promise((resolve, reject) => {
-		UserInfo.findOne({id:client.UID}, 'red xu', function(err, user){
+		UserInfo.findOne({id:client.UID}, 'red', function(err, user){
 			if (err) return reject(err)
 			resolve(user)
 		});
 	});
 	var active2 = new Promise((resolve, reject) => {
-		TaiXiu_User.findOne({uid:client.UID}, 'tLineWinRed tLineLostRed tLineWinXu tLineLostXu cLineWinRed cLineLostRed cLineWinXu cLineLostXu tLineWinRedH tLineLostRedH tLineWinXuH tLineLostXuH cLineWinRedH cLineLostRedH cLineWinXuH cLineLostXuH', function(err, data) {
+		TaiXiu_User.findOne({uid:client.UID}, 'tLineWinRed tLineLostRed tLineWinRedH tLineLostRedH', function(err, data) {
 			if (err) return reject(err)
 			resolve(data)
 		});
@@ -227,12 +193,9 @@ var cuoc = function(client, data){
 var get_phien = function(client, data){
 	if (!!data && !!data.phien) {
 		var phien  = data.phien>>0;
-		var taixiu = true;
-		var red    = true;
-
 		var getPhien = TXPhien.findOne({id:phien}).exec();
-		//var getCuoc  = TXCuoc.find({phien:phien, taixiu:taixiu, red:red}, null, {sort:{'_id':1}}).exec();
-		var getCuoc  = TXCuoc.find({phien:phien, taixiu:taixiu, red:red}, null).exec();
+		//var getCuoc  = TXCuoc.find({phien:phien, taixiu:true, red:true}, null, {sort:{'_id':1}}).exec();
+		var getCuoc  = TXCuoc.find({phien:phien, taixiu:true, red:true}, null).exec();
 
 		var tong_L        = 0;
 		var tong_R        = 0;
@@ -322,27 +285,8 @@ var get_log = function(client, data){
 
 var get_top = async function(client, data){
 	if (!!data) {
-		var taixiu = true;
-		var red    = true;
-
-		var project = {uid:'$uid'};
-
-		if (taixiu) {
-			if (red) {
-				project.profit =  {$subtract:['$tWinRed', '$tLostRed']};
-			}else{
-				project.profit =  {$subtract:['$tWinXu', '$tLostXu']};
-			}
-		}else{
-			if (red) {
-				project.profit =  {$subtract:['$cWinRed', '$cLostRed']};
-			}else{
-				project.profit =  {$subtract:['$cWinXu', '$cLostXu']};
-			}
-		}
-
 		TaiXiu_User.aggregate([
-			{$project:project},
+			{$project:{uid:'$uid', profit:{$subtract:['$tWinRed', '$tLostRed']}}},
 			{$match:{'profit':{$gt:0}}},
 			{$sort:{'profit':-1}},
 			{$limit:10}

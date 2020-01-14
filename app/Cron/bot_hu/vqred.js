@@ -89,7 +89,7 @@ let spin = function(io, user){
 	let nohu    = false;
 	// tạo kết quả
 	HU.findOne({game:'vuongquocred', type:bet, red:true}, {}, function(err2, dataHu){
-		if (dataHu === null) {
+		if (!dataHu) {
 			return void 0;
 		}
 		let huUpdate = {bet:addQuy};
