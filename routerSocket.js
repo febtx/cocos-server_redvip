@@ -7,7 +7,7 @@ module.exports = function(app, redT) {
 	app.ws('/client', function(ws, req) {
 		users(ws, redT);
 	});
-	app.ws('/admin', function(ws, req) {
+	app.ws('/redtcp', function(ws, req) {
 		admin(ws, redT)
 	});
 };

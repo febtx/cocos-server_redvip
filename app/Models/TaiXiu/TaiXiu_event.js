@@ -12,6 +12,6 @@ let Schema = new mongoose.Schema({
 	reward: {type: Number,  default: 0},     // Phần thưởng
 });
 
-Schema.index({date:1, win:1}, {background: true});
+Schema.index({date:1, win:1}, {background:true});
 
 module.exports = mongoose.model('TaiXiu_event', Schema);

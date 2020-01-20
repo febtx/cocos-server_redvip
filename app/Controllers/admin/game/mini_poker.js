@@ -1,10 +1,13 @@
 
-var get_data = require('./mini_poker/get_data');
-var get_top  = require('./mini_poker/get_top');
-var name_hu  = require('./mini_poker/name_hu');
+let get_data = require('./mini_poker/get_data');
+let get_top  = require('./mini_poker/get_top');
+let name_hu  = require('./mini_poker/name_hu');
 
-var getEvent = require('./mini_poker/getEvent');
-var setEvent = require('./mini_poker/setEvent');
+let getEvent = require('./mini_poker/getEvent');
+let setEvent = require('./mini_poker/setEvent');
+
+let reset_top  = require('./mini_poker/reset_top');
+let reset_data = require('./mini_poker/reset_data');
 
 module.exports = function(client, data) {
 	if (void 0 !== data.get_data) {
@@ -22,5 +25,12 @@ module.exports = function(client, data) {
 	}
 	if (!!data.setEvent) {
 		setEvent(client, data.setEvent)
+	}
+
+	if (void 0 !== data.reset_top) {
+		reset_top(client);
+	}
+	if (void 0 !== data.reset_data) {
+		reset_data(client);
 	}
 }

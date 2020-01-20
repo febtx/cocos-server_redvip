@@ -1,15 +1,15 @@
 
+
 let XocXoc_cuoc  = require('../../../Models/XocXoc/XocXoc_cuoc');
 let XocXoc_phien = require('../../../Models/XocXoc/XocXoc_phien');
 
 module.exports = function(client, data){
 	if (!!data.page) {
-		let red = !!data.red;
 		let page = data.page>>0;
 		if (page > 0) {
 			let kmess = 8;
-			XocXoc_cuoc.countDocuments({uid:client.UID, red:red, thanhtoan:true}).exec(function(err, total){
-				XocXoc_cuoc.find({uid:client.UID, red:red, thanhtoan:true}, {}, {sort:{'_id':-1}, skip:(page-1)*kmess, limit:kmess}, function(err, result) {
+			XocXoc_cuoc.countDocuments({uid:client.UID, red:true, thanhtoan:true}).exec(function(err, total){
+				XocXoc_cuoc.find({uid:client.UID, red:true, thanhtoan:true}, {}, {sort:{'_id':-1}, skip:(page-1)*kmess, limit:kmess}, function(err, result) {
 					if (result.length) {
 						Promise.all(result.map(function(obj){
 							obj = obj._doc;

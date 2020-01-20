@@ -85,13 +85,6 @@ function spin(client, data){
 						if (AK[4].card-AK[0].card === 4 || (AK[4].card-AK[1].card === 3 && AK[0].card === 0 && AK[4].card === 12)) {
 							isDay = true;
 						}
-						/**
-						if (AK[4].card - AK[0].card === 4 && AK[0].card !== 0) {
-							isDay = true;
-						}else if (AK[4].card - AK[1].card === 3 && AK[0].card === 0 && AK[4].card === 12) {
-							isDay = true;
-						}
-						*/
 					}
 
 					HU.findOne({game:'minipoker', type:bet, red:red}, 'name bet min toX balans x', function(err, dataHu){
@@ -191,12 +184,14 @@ function spin(client, data){
 						card     = null;
 						let tien = an-bet;
 						uInfo['red'] = tien;         // Cập nhật Số dư Red trong tài khoản
+						mini_users['totall'] = tien;
 						huUpdate['redPlay'] = uInfo['redPlay'] = mini_users['bet'] = bet;       // Cập nhật Số Red đã chơi
 						if (tien > 0){
 							huUpdate['redWin'] = uInfo['redWin'] = mini_users['win'] = tien;    // Cập nhật Số Red đã Thắng
 						}
 						if (tien < 0){
 							huUpdate['redLost'] = uInfo['redLost'] = mini_users['lost'] = tien*(-1); // Cập nhật Số Red đã Thua
+		
 						}
 						if (code === 2){
 							uInfo['hu'] = mini_users['hu'] = 1;         // Cập nhật Số Hũ Red đã Trúng
@@ -247,7 +242,7 @@ function spin(client, data){
 						});
 						HU.updateOne({game:'minipoker', type:bet, red:red}, {$inc:huUpdate}).exec();
 						UserInfo.updateOne({id:UID}, {$inc:uInfo}).exec();
-						miniPokerUsers.updateOne({'uid':UID}, {$set:{time:new Date()}, $inc:mini_users}).exec();
+						miniPokerUsers.updateOne({'uid':UID}, {$set:{time:new Date().getTime(), select:bet}, $inc:mini_users}).exec();
 
 						let vipStatus = Helpers.getConfig('topVip');
 						if (!!vipStatus && vipStatus.status === true) {

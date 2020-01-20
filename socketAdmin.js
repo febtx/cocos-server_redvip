@@ -24,7 +24,6 @@ let authenticate = function(client, data, callback) {
 			callback({title:'ĐĂNG NHẬP', text:'Tên đăng nhập chỉ gồm kí tự và số !!'}, false);
 		} else {
 			let configAdmin = getConfig('admin');
-			console.log(configAdmin);
 			if (!!configAdmin && configAdmin.anti === true) {
 				callback({title:'CẢNH BÁO', text:'Bạn hoặc ai đó đang cố đăng nhập trái phép. khóa đăng nhập được kích hoạt...'}, false);	
 			}else{

@@ -15,24 +15,18 @@ let Schema = new mongoose.Schema({
 		login:  {type:Number, default:0}, // Bảo mật đăng nhập
 	},
 
-	red:       {type:mongoose.Schema.Types.Long, default:0},     // RED
+	red:       {type:mongoose.Schema.Types.Long, default:0, index:true},     // RED
 	ketSat:    {type:mongoose.Schema.Types.Long, default:0},     // RED trong két sắt
-	xu:        {type:mongoose.Schema.Types.Long, default:0},     // XU
 
-	redWin:    {type:mongoose.Schema.Types.Long, default:0},     // Tổng Red thắng
-	redLost:   {type:mongoose.Schema.Types.Long, default:0},     // Tổng Red thua
-	redPlay:   {type:mongoose.Schema.Types.Long, default:0},     // Tổng Red đã chơi
-
-	xuWin:     {type:mongoose.Schema.Types.Long, default:0},     // Tổng Xu thắng
-	xuLost:    {type:mongoose.Schema.Types.Long, default:0},     // Tổng Xu thua
-	xuPlay:    {type:mongoose.Schema.Types.Long, default:0},     // Tổng Xu đã chơi
-	thuong:    {type:mongoose.Schema.Types.Long, default:0},     // RED thưởng khi chơi XU
+	redWin:    {type:mongoose.Schema.Types.Long, default:0, index:true},   // Tổng Red thắng
+	redLost:   {type:mongoose.Schema.Types.Long, default:0, index:true},   // Tổng Red thua
+	redPlay:   {type:mongoose.Schema.Types.Long, default:0, index:true},   // Tổng Red đã chơi
+	totall:    {type: mongoose.Schema.Types.Long, default: 0, index:true}, // Thắng trừ thua
 
 	vip:       {type:Number, default:0},                         // Tổng vip tích luỹ (Vip đã đổi thưởng)
 	lastVip:   {type:mongoose.Schema.Types.Long, default:0},     // Cập nhật lần đổi thưởng cuối
 
 	hu:        {type:Number, default:0},                         // Số lần Nổ Hũ REd
-	huXu:      {type:Number, default:0},                         // Số lần Nổ Hũ Xu
 
 	type:      {type:Boolean, default:false, index:true},        // Bot = true | Users = false
 

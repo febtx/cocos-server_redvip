@@ -17,7 +17,7 @@ let XocXoc = function(io){
 	this.botList      = [];
 	this.botCount     = 0;
 
-	this.ingame = {red:{}, xu:{}};
+	this.ingame = {red:{}};
 
 	this.chip = {
 		'chan':   {'1000':0, '10000':0, '50000':0, '100000':0, '1000000':0},
@@ -37,25 +37,9 @@ let XocXoc = function(io){
 			'white3': 0,
 			'white4': 0,
 		},
-		'xu': {
-			'chan':   0,
-			'le':     0,
-			'red3':   0,
-			'red4':   0,
-			'white3': 0,
-			'white4': 0,
-		},
 	};
 	this.dataAdmin = {
 		'red': {
-			'chan':   0,
-			'le':     0,
-			'red3':   0,
-			'red4':   0,
-			'white3': 0,
-			'white4': 0,
-		},
-		'xu': {
 			'chan':   0,
 			'le':     0,
 			'red3':   0,
@@ -276,41 +260,21 @@ XocXoc.prototype.thanhtoan = function(dice = null){
 					cuoc.betwin    = TongThang;
 					cuoc.save();
 
-					if (cuoc.red) {
-						//RED
-						if (TongThang > 0) {
-							update['red'] = TongThang;
-						}
-						if (TienThang > 0) {
-							update['redWin'] = updateGame['red'] = TienThang;
-						}
-						if (TongThua > 0) {
-							update['redLost'] = updateGame['red_lost'] = TongThua;
-						}
-
-						update['redPlay'] = updateGame['redPlay'] = tongDat;
-
-						UserInfo.updateOne({id:cuoc.uid}, {$inc:update}).exec();
-						XocXoc_user.updateOne({uid:cuoc.uid}, {$inc:updateGame}).exec();
-					}else{
-						//XU
-						if (TongThang > 0) {
-							update['xu'] = TongThang;
-						}
-						if (TienThang > 0) {
-							thuong = (TienThang*0.039589)>>0;
-							update['xuWin'] = updateGame['xu'] = TienThang;
-							update['red']   = update['thuong'] = updateGame['thuong'] = thuong;
-						}
-						if (TongThua > 0) {
-							update['xuLost'] = updateGame['xu_lost'] = TongThua;
-						}
-
-						update['xuPlay'] = updateGame['xuPlay'] = tongDat;
-
-						UserInfo.updateOne({id:cuoc.uid}, {$inc:update}).exec();
-						XocXoc_user.updateOne({uid:cuoc.uid}, {$inc:updateGame}).exec();
+					//RED
+					if (TongThang > 0) {
+						update['red'] = TongThang;
 					}
+					if (TienThang > 0) {
+						update['redWin'] = updateGame['red'] = TienThang;
+					}
+					if (TongThua > 0) {
+						update['redLost'] = updateGame['red_lost'] = TongThua;
+					}
+
+					update['redPlay'] = updateGame['redPlay'] = tongDat;
+
+					UserInfo.updateOne({id:cuoc.uid}, {$inc:update}).exec();
+					XocXoc_user.updateOne({uid:cuoc.uid}, {$inc:updateGame}).exec();
 					if(void 0 !== self.clients[cuoc.uid]){
 						let status = {};
 						if (TongThang > 0) {
@@ -402,13 +366,6 @@ XocXoc.prototype.resetData = function(){
 	this.data.red.white3 = 0;
 	this.data.red.white4 = 0;
 
-	this.data.xu.chan =   0;
-	this.data.xu.le =     0;
-	this.data.xu.red3 =   0;
-	this.data.xu.red4 =   0;
-	this.data.xu.white3 = 0;
-	this.data.xu.white4 = 0;
-
 	this.chip.chan['1000']    = 0;
 	this.chip.chan['10000']   = 0;
 	this.chip.chan['50000']   = 0;
@@ -448,21 +405,12 @@ XocXoc.prototype.resetData = function(){
 
 XocXoc.prototype.resetDataAdmin = function(){
 	this.ingame.red = {};
-	this.ingame.xu  = {};
-
 	this.dataAdmin.red.chan =   0;
 	this.dataAdmin.red.le =     0;
 	this.dataAdmin.red.red3 =   0;
 	this.dataAdmin.red.red4 =   0;
 	this.dataAdmin.red.white3 = 0;
 	this.dataAdmin.red.white4 = 0;
-
-	this.dataAdmin.xu.chan =   0;
-	this.dataAdmin.xu.le =     0;
-	this.dataAdmin.xu.red3 =   0;
-	this.dataAdmin.xu.red4 =   0;
-	this.dataAdmin.xu.white3 = 0;
-	this.dataAdmin.xu.white4 = 0;
 };
 
 XocXoc.prototype.bot = function(users){

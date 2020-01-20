@@ -1,5 +1,5 @@
 
-const HU = require('../../../../Models/HU');
+let HU = require('../../../../Models/HU');
 
 module.exports = function(client) {
 	HU.find({game: 'minipoker', red:true}, 'name type redPlay redWin redLost hu', function(err, cat){

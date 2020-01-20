@@ -11,9 +11,9 @@ module.exports = function(client, data){
 	if (!!data.rut) {
 		rut(client, data.rut);
 	}
-	if (!!data.atm) {
-		atm(client, data.atm);
-	}
+	//if (!!data.atm) {
+	//	atm(client, data.atm);
+	//}
 	if (!!data.nap) {
 		nap(client, data.nap);
 	}

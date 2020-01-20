@@ -61,9 +61,6 @@ module.exports = function(client){
 			if (xocxoc.ingame.red[client.profile.name]) {
 				data.me.red = xocxoc.ingame.red[client.profile.name]
 			}
-			if (xocxoc.ingame.xu[client.profile.name]) {
-				data.me.xu = xocxoc.ingame.xu[client.profile.name]
-			}
 			client.red({xocxoc:{ingame:data}});
 			values = null;
 			data   = null;
