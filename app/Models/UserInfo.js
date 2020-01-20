@@ -21,7 +21,7 @@ let Schema = new mongoose.Schema({
 	redWin:    {type:mongoose.Schema.Types.Long, default:0, index:true},   // Tổng Red thắng
 	redLost:   {type:mongoose.Schema.Types.Long, default:0, index:true},   // Tổng Red thua
 	redPlay:   {type:mongoose.Schema.Types.Long, default:0, index:true},   // Tổng Red đã chơi
-	totall:    {type: mongoose.Schema.Types.Long, default: 0, index:true}, // Thắng trừ thua
+	totall:    {type:mongoose.Schema.Types.Long, default:0, index:true},   // Thắng trừ thua
 
 	vip:       {type:Number, default:0},                         // Tổng vip tích luỹ (Vip đã đổi thưởng)
 	lastVip:   {type:mongoose.Schema.Types.Long, default:0},     // Cập nhật lần đổi thưởng cuối

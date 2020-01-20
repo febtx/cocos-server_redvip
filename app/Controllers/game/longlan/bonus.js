@@ -31,7 +31,9 @@ function onSelectBox(client, box){
 					huUpdate.redWin = betWin;
 					uInfo.red       = betWin;
 					uInfo.redWin    = betWin;
+					uInfo.totall    = betWin;
 					gInfo.win       = betWin;
+					gInfo.totall    = betWin;
 					LongLan_red.updateOne({'_id': client.LongLan.id}, {$inc:{win:betWin}}).exec();
 
 					client.LongLan.bonus    = null;

@@ -1,8 +1,10 @@
 
-var get_data = require('./longlan/get_data');
-var get_top  = require('./longlan/get_top');
-var name_hu  = require('./longlan/name_hu');
-var setChedo = require('./longlan/setChedo');
+let get_data = require('./longlan/get_data');
+let get_top  = require('./longlan/get_top');
+let name_hu  = require('./longlan/name_hu');
+let setChedo = require('./longlan/setChedo');
+let reset_top  = require('./longlan/reset_top');
+let reset_data = require('./longlan/reset_data');
 
 module.exports = function(client, data) {
 	if (void 0 !== data.get_data) {
@@ -16,5 +18,11 @@ module.exports = function(client, data) {
 	}
 	if (void 0 !== data.chedo) {
 		setChedo(client, data.chedo);
+	}
+	if (void 0 !== data.reset_top) {
+		reset_top(client);
+	}
+	if (void 0 !== data.reset_data) {
+		reset_data(client);
 	}
 }

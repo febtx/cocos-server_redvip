@@ -29,7 +29,10 @@ function onSelectBox(client, box){
 					huUpdate.redWin = betWin;
 					uInfo.red       = betWin;
 					uInfo.redWin    = betWin;
+					uInfo.totall    = betWin;
 					gInfo.win       = betWin;
+					gInfo.totall    = betWin;
+
 					VuongQuocRed_red.updateOne({'_id': client.VuongQuocRed.id}, {$inc:{win:betWin}}).exec();
 
 					client.VuongQuocRed.bonus    = null;

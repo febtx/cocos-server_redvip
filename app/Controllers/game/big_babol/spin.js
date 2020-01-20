@@ -425,6 +425,7 @@ module.exports = function(client, data){
 								}
 							}
 							uInfo['red'] = tien;                                                 // Cập nhật Số dư Red trong tài khoản
+							uInfo['totall'] = tien;
 							huUpdate['redPlay'] = uInfo['redPlay'] = mini_users['bet'] = cuoc;   // Cập nhật Số Red đã chơi
 							mini_users['totall'] = tien;
 							if (tien > 0){

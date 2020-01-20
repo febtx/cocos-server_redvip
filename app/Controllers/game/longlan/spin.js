@@ -858,9 +858,11 @@ module.exports = function(client, data){
 
 							let thuong = 0;
 							uInfo.red = tien;
+							uInfo.totall = tien;
 							huUpdate.redPlay = tongCuoc;
 							uInfo.redPlay = tongCuoc;
 							mini_users.bet = tongCuoc;
+							mini_users.totall = tien;
 
 							if (tien > 0){
 								huUpdate.redWin = tien;
@@ -910,7 +912,7 @@ module.exports = function(client, data){
 							});
 							HU.updateOne({game:'long', type:bet, red:red}, {$inc:huUpdate}).exec();
 							UserInfo.updateOne({id:client.UID},{$inc:uInfo}).exec();
-							LongLan_user.updateOne({'uid':client.UID}, {$set:{time:new Date()}, $inc:mini_users}).exec();
+							LongLan_user.updateOne({'uid':client.UID}, {$set:{time:new Date().getTime(), select:bet}, $inc:mini_users}).exec();
 
 							let vipStatus = Helpers.getConfig('topVip');
 							if (!!vipStatus && vipStatus.status === true) {
