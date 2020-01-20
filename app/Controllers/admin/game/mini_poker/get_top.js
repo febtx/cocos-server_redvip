@@ -4,8 +4,8 @@ let UserInfo        = require('../../../../Models/UserInfo');
 
 module.exports = function(client, data) {
 	if (!!data && !!data.page && !!data.sort) {
-		var page = data.page>>0;
-		var kmess = 9;
+		let page = data.page>>0;
+		let kmess = 9;
 		if (page > 0) {
 
 			// sort

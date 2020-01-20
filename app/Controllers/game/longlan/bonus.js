@@ -1,11 +1,10 @@
 
-const HU            = require('../../../Models/HU');
+let HU            = require('../../../Models/HU');
 
-const LongLan_red  = require('../../../Models/LongLan/LongLan_red');
-const LongLan_xu   = require('../../../Models/LongLan/LongLan_xu');
-const LongLan_user = require('../../../Models/LongLan/LongLan_user');
+let LongLan_red  = require('../../../Models/LongLan/LongLan_red');
+let LongLan_user = require('../../../Models/LongLan/LongLan_user');
 
-const UserInfo   = require('../../../Models/UserInfo');
+let UserInfo   = require('../../../Models/UserInfo');
 
 function onSelectBox(client, box){
 	box = box>>0;
@@ -29,36 +28,18 @@ function onSelectBox(client, box){
 					var gInfo    = {};
 					var huUpdate = {};
 
-					if (client.LongLan.red) {
-						huUpdate.redWin = betWin;
-						uInfo.red       = betWin;
-						uInfo.redWin    = betWin;
-						gInfo.win       = betWin;
-						LongLan_red.updateOne({'_id': client.LongLan.id}, {$inc:{win:betWin}}).exec();
-					}else{
-						huUpdate.xuWin = betWin;
-						uInfo.xu       = betWin;
-						uInfo.xuWin    = betWin;
-						gInfo.winXu    = betWin;
-
-						var thuong = (betWin*0.039589)>>0;
-						uInfo.red      = thuong;
-						uInfo.thuong   = thuong;
-						gInfo.thuong   = thuong;
-
-						LongLan_xu.updateOne({'_id': client.LongLan.id}, {$inc:{win:betWin}}).exec();
-					}
+					huUpdate.redWin = betWin;
+					uInfo.red       = betWin;
+					uInfo.redWin    = betWin;
+					gInfo.win       = betWin;
+					LongLan_red.updateOne({'_id': client.LongLan.id}, {$inc:{win:betWin}}).exec();
 
 					client.LongLan.bonus    = null;
 					client.LongLan.bonusWin = 0;
 
 					UserInfo.findOneAndUpdate({id:client.UID}, {$inc:uInfo}, function(err, user){
 						setTimeout(function(){
-							if (client.LongLan.red) {
-								client.red({longlan:{bonus:{win: betWin}}, user:{red:user.red*1+betWin}});
-							}else{
-								client.red({longlan:{bonus:{win: betWin}}, user:{xu:user.xu*1+betWin}});
-							}
+							client.red({longlan:{bonus:{win: betWin}}, user:{red:user.red*1+betWin}});
 						}, 700);
 					});
 					HU.updateOne({game:'long', type:client.LongLan.bet, red:client.LongLan.red}, {$inc:huUpdate}).exec();

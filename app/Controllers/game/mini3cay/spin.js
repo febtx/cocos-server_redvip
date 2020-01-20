@@ -1,6 +1,5 @@
 
 let Mini3Cay_red  = require('../../../Models/Mini3Cay/Mini3Cay_red');
-let Mini3Cay_xu   = require('../../../Models/Mini3Cay/Mini3Cay_xu');
 
 let Mini3Cay_user = require('../../../Models/Mini3Cay/Mini3Cay_user');
 let HU            = require('../../../Models/HU');
@@ -22,9 +21,9 @@ module.exports = function(client, spin) {
 			client.red({mini:{bacay:{status:0,notice: 'Quay thất bại...'}}});
 		}else{
 			// Spin
-			UserInfo.findOne({id:client.UID}, 'red xu name', function(err, user){
-				if (!user || (red && user.red < cuoc) || (!red && user.xu < cuoc)) {
-					client.red({mini:{bacay:{status:0, notice: 'Bạn không đủ ' + (red ? 'RED':'XU') + ' để quay.!!'}}});
+			UserInfo.findOne({id:client.UID}, 'red name', function(err, user){
+				if (!user || red && user.red < cuoc) {
+					client.red({mini:{bacay:{status:0, notice: 'Bạn không đủ RED để quay.!!'}}});
 				}else{
 					let phe = red ? 2 : 4;    // Phế
 					let addQuy = (cuoc*0.01)>>0;
@@ -112,12 +111,8 @@ module.exports = function(client, spin) {
 							an   = (quyHu-Math.ceil(quyHu*phe/100))>>0;
 							text = 'Nổ Hũ';
 							code = 6;
-							if (red){
-								huUpdate['hu'] = uInfo['hu'] = mini_users['hu']     = 1; // Khởi tạo
-								client.redT.sendInHome({pushnohu:{title:'MINI 3 CÂY', name:client.profile.name, bet:an}});
-							}else{
-								huUpdate['huXu'] = uInfo['huXu'] = mini_users['huXu'] = 1; // Khởi tạo
-							}
+							huUpdate['hu'] = uInfo['hu'] = mini_users['hu']     = 1; // Khởi tạo
+							client.redT.sendInHome({pushnohu:{title:'MINI 3 CÂY', name:client.profile.name, bet:an}});
 						}else if (Day && dongChat) {
 							// x30    3 lá liên tiếp đồng chất
 							an   = cuoc*30;
@@ -152,64 +147,46 @@ module.exports = function(client, spin) {
 						}
 
 						let tien = an-cuoc;
-
-						if (red){
-							uInfo['red'] = tien;         // Cập nhật Số dư Red trong tài khoản
-							huUpdate['redPlay'] = uInfo['redPlay'] = mini_users['bet'] = cuoc;     // Cập nhật Số Red đã chơi
-							if (tien > 0){
-								huUpdate['redWin'] = uInfo['redWin'] = mini_users['win'] = tien;    // Cập nhật Số Red đã Thắng
-							}
-							if (tien < 0){
-								huUpdate['redLost'] = uInfo['redLost'] = mini_users['lost'] = tien*(-1); // Cập nhật Số Red đã Thua
-							}
-							Mini3Cay_red.create({'uid': client.UID, 'win': an, 'bet': cuoc, 'type': code, 'kq': ketqua, 'time': new Date()});
-							client.red({mini:{bacay:{status:1, card:ketqua, win: an, text: text, code: code}}, user:{red: user.red-cuoc, xu: user.xu}});
-
-							MegaJP_user.findOne({uid:client.UID}, {}, function(err, updateMega){
-								if (!!updateMega) {
-									if (tien > 0){
-										updateMega['win'+cuoc] += tien;
-									}
-									if (tien < 0){
-										updateMega['lost'+cuoc] += tien*-1;
-									}
-
-									let MWin    = updateMega['win'+cuoc];
-									let MLost   = updateMega['lost'+cuoc];
-									let MUpdate = updateMega['last'+cuoc];
-									let RedHuong = MLost-MWin-MUpdate;
-									if (cuoc !== 10000) {
-										if (RedHuong > cuoc*4000) {
-											updateMega[cuoc] += 1;
-											updateMega['last'+cuoc] += RedHuong;
-											MegaJP_nhan.create({'uid':client.UID, 'room':cuoc, 'to':104, 'sl':1, 'status':true, 'time':new Date()});
-										}
-									}else{
-										if (RedHuong > cuoc*1000) {
-											updateMega[cuoc] += 1;
-											updateMega['last'+cuoc] += RedHuong;
-											MegaJP_nhan.create({'uid':client.UID, 'room':cuoc, 'to':104, 'sl':1, 'status':true, 'time':new Date()});
-										}
-									}
-									updateMega.save();
-								}
-							});
-						} else{
-							thuong = (an*0.039589)>>0;
-							uInfo['xu'] = tien;         // Cập nhật Số dư XU trong tài khoản
-							huUpdate['xuPlay'] = uInfo['xuPlay'] = mini_users['betXu'] = cuoc;     // Cập nhật Số XU đã chơi
-							if (thuong > 0){
-								uInfo['red'] = uInfo['thuong'] = mini_users['thuong'] = thuong;  // Cập nhật Số dư Red trong tài khoản // Cập nhật Số Red được thưởng do chơi XU
-							}
-							if (tien > 0){
-								huUpdate['xuWin'] = uInfo['xuWin'] = mini_users['winXu'] = tien;    // Cập nhật Số Red đã Thắng
-							}
-							if (tien < 0){
-								huUpdate['xuLost'] = uInfo['xuLost'] = mini_users['lostXu'] = tien*(-1); // Cập nhật Số Red đã Thua
-							}
-							Mini3Cay_xu.create({'uid': client.UID, 'win': an, 'bet': cuoc, 'type': code, 'kq': ketqua, 'time': new Date()});
-							client.red({mini:{bacay:{status:1, card:ketqua, win: an, thuong: thuong, text: text, code: code}}, user:{red: user.red, xu: user.xu-cuoc}});
+						uInfo['red'] = tien;         // Cập nhật Số dư Red trong tài khoản
+						huUpdate['redPlay'] = uInfo['redPlay'] = mini_users['bet'] = cuoc;     // Cập nhật Số Red đã chơi
+						if (tien > 0){
+							huUpdate['redWin'] = uInfo['redWin'] = mini_users['win'] = tien;    // Cập nhật Số Red đã Thắng
 						}
+						if (tien < 0){
+							huUpdate['redLost'] = uInfo['redLost'] = mini_users['lost'] = tien*(-1); // Cập nhật Số Red đã Thua
+						}
+						Mini3Cay_red.create({'uid': client.UID, 'win': an, 'bet': cuoc, 'type': code, 'kq': ketqua, 'time': new Date()});
+						client.red({mini:{bacay:{status:1, card:ketqua, win: an, text: text, code: code}}, user:{red: user.red-cuoc}});
+
+						MegaJP_user.findOne({uid:client.UID}, {}, function(err, updateMega){
+							if (!!updateMega) {
+								if (tien > 0){
+									updateMega['win'+cuoc] += tien;
+								}
+								if (tien < 0){
+									updateMega['lost'+cuoc] += tien*-1;
+								}
+
+								let MWin    = updateMega['win'+cuoc];
+								let MLost   = updateMega['lost'+cuoc];
+								let MUpdate = updateMega['last'+cuoc];
+								let RedHuong = MLost-MWin-MUpdate;
+								if (cuoc !== 10000) {
+									if (RedHuong > cuoc*4000) {
+										updateMega[cuoc] += 1;
+										updateMega['last'+cuoc] += RedHuong;
+										MegaJP_nhan.create({'uid':client.UID, 'room':cuoc, 'to':104, 'sl':1, 'status':true, 'time':new Date()});
+									}
+								}else{
+									if (RedHuong > cuoc*1000) {
+										updateMega[cuoc] += 1;
+										updateMega['last'+cuoc] += RedHuong;
+										MegaJP_nhan.create({'uid':client.UID, 'room':cuoc, 'to':104, 'sl':1, 'status':true, 'time':new Date()});
+									}
+								}
+								updateMega.save();
+							}
+						});
 						HU.updateOne({game:'mini3cay', type:cuoc, red:red}, {$inc:huUpdate}).exec();
 						UserInfo.updateOne({id:client.UID}, {$inc: uInfo}).exec();
 						Mini3Cay_user.updateOne({'uid': client.UID}, {$set:{time: new Date()}, $inc: mini_users}).exec();

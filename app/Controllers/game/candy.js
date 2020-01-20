@@ -1,8 +1,8 @@
 
-const spin  = require('./candy/spin');
-const bonus = require('./candy/bonus');
-const log   = require('./candy/log');
-const top   = require('./candy/top');
+let spin  = require('./candy/spin');
+let bonus = require('./candy/bonus');
+let log   = require('./candy/log');
+let top   = require('./candy/top');
 
 module.exports = function(client, data){
 	if (!!data.bonus) {
@@ -15,6 +15,6 @@ module.exports = function(client, data){
 		log(client, data.log)
 	}
 	if (void 0 !== data.top) {
-		top(client, data.top)
+		top(client)
 	}
 };

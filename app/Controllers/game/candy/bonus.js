@@ -1,11 +1,10 @@
 
-const HU         = require('../../../Models/HU');
+let HU         = require('../../../Models/HU');
 
-const Candy_red  = require('../../../Models/Candy/Candy_red');
-const Candy_xu   = require('../../../Models/Candy/Candy_xu');
-const Candy_user = require('../../../Models/Candy/Candy_user');
+let Candy_red  = require('../../../Models/Candy/Candy_red');
+let Candy_user = require('../../../Models/Candy/Candy_user');
 
-const UserInfo   = require('../../../Models/UserInfo');
+let UserInfo   = require('../../../Models/UserInfo');
 
 function onSelectBox(client, box){
 	box = box>>0;
@@ -29,25 +28,11 @@ function onSelectBox(client, box){
 					var gInfo    = {};
 					var huUpdate = {};
 
-					if (client.Candy.red) {
-						huUpdate.redWin = betWin;
-						uInfo.red       = betWin;
-						uInfo.redWin    = betWin;
-						gInfo.win       = betWin;
-						Candy_red.updateOne({'_id': client.Candy.id}, {$inc:{win:betWin}}).exec();
-					}else{
-						huUpdate.xuWin = betWin;
-						uInfo.xu       = betWin;
-						uInfo.xuWin    = betWin;
-						gInfo.winXu    = betWin;
-
-						var thuong = (betWin*0.039589)>>0;
-						uInfo.red      = thuong;
-						uInfo.thuong   = thuong;
-						gInfo.thuong   = thuong;
-
-						Candy_xu.updateOne({'_id': client.Candy.id}, {$inc:{win:betWin}}).exec();
-					}
+					huUpdate.redWin = betWin;
+					uInfo.red       = betWin;
+					uInfo.redWin    = betWin;
+					gInfo.win       = betWin;
+					Candy_red.updateOne({'_id': client.Candy.id}, {$inc:{win:betWin}}).exec();
 
 					client.Candy.bonus    = null;
 					client.Candy.bonusWin = 0;
@@ -55,11 +40,7 @@ function onSelectBox(client, box){
 
 					UserInfo.findOneAndUpdate({id:client.UID}, {$inc:uInfo}, function(err, user){
 						setTimeout(function(){
-							if (client.Candy.red) {
-								client.red({candy:{bonus:{win: betWin}}, user:{red:user.red*1+betWin}});
-							}else{
-								client.red({candy:{bonus:{win: betWin}}, user:{xu:user.xu*1+betWin}});
-							}
+							client.red({candy:{bonus:{win: betWin}}, user:{red:user.red*1+betWin}});
 						}, 700);
 					});
 					HU.updateOne({game:'candy', type:client.Candy.bet, red:client.Candy.red}, {$inc:huUpdate}).exec();

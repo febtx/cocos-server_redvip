@@ -4,7 +4,6 @@ var NapThe      = require('../../Models/NapThe');
 var MuaThe      = require('../../Models/MuaThe');
 var MuaThe_card = require('../../Models/MuaThe_card');
 
-var MuaXu       = require('../../Models/MuaXu');
 var ChuyenRed   = require('../../Models/ChuyenRed');
 
 var Bank_history = require('../../Models/Bank/Bank_history');
@@ -33,20 +32,6 @@ function historyMuaThe(client, data){
 			MuaThe.countDocuments({'uid': client.UID}).exec(function(err, total){
 				MuaThe.find({'uid': client.UID}, {}, {sort:{'_id':-1}, skip: (page-1)*kmess, limit: kmess}, function(err, result) {
 					client.red({profile:{history:{mua_the:result, page:page, kmess:kmess, total:total}}});
-				});
-			});
-		}
-	}
-}
-
-function historyMuaXu(client, data){
-	if(!!data && !!data.page){
-		var page  = data.page>>0;
-		var kmess = 10;
-		if (page > 0) {
-			MuaXu.countDocuments({uid: client.UID}).exec(function(err, total){
-				MuaXu.find({uid: client.UID}, {}, {sort:{'_id':-1}, skip: (page-1)*kmess, limit: kmess}, function(err, result) {
-					client.red({profile:{history:{mua_xu:result, page:page, kmess:kmess, total:total}}});
 				});
 			});
 		}
@@ -101,10 +86,6 @@ module.exports = function(client, data) {
 
 		if (!!data.mua_the) {
 			historyMuaThe(client, data.mua_the)
-		}
-
-		if (!!data.mua_xu) {
-			historyMuaXu(client, data.mua_xu)
 		}
 
 		if (!!data.chuyen_red) {

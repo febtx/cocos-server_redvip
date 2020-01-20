@@ -8,6 +8,8 @@ var setEvent = require('./big_babol/setEvent');
 
 var setChedo = require('./big_babol/setChedo');
 
+let reset_top  = require('./big_babol/reset_top');
+let reset_data = require('./big_babol/reset_data');
 
 module.exports = function(client, data) {
 	if (void 0 !== data.get_data) {
@@ -19,7 +21,6 @@ module.exports = function(client, data) {
 	if (void 0 !== data.get_top) {
 		get_top(client, data.get_top)
 	}
-
 	if (!!data.getEvent) {
 		getEvent(client)
 	}
@@ -28,5 +29,11 @@ module.exports = function(client, data) {
 	}
 	if (void 0 !== data.chedo) {
 		setChedo(client, data.chedo);
+	}
+	if (void 0 !== data.reset_top) {
+		reset_top(client);
+	}
+	if (void 0 !== data.reset_data) {
+		reset_data(client);
 	}
 }

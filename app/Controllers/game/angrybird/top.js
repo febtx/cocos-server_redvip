@@ -11,6 +11,6 @@ module.exports = function(client){
 		}))
 		.then(function(arrayOfResults) {
 			client.red({mini:{arb:{top:arrayOfResults}}});
-		})
+		});
 	});
 };

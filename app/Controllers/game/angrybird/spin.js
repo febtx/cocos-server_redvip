@@ -521,6 +521,7 @@ module.exports = function(client, data){
 
 							uInfo['red'] = tien;                                   // Cập nhật Số dư Red trong tài khoản
 							huUpdate['redPlay'] = uInfo['redPlay'] = mini_users['bet'] = bet;            // Cập nhật Số Red đã chơi
+							mini_users['totall'] = tien;
 							if (tien > 0){
 								huUpdate['redWin'] = uInfo['redWin'] = mini_users['win'] = tien;        // Cập nhật Số Red đã Thắng
 							}
@@ -567,7 +568,7 @@ module.exports = function(client, data){
 							});
 							HU.updateOne({game:'arb', type:bet, red:red}, {$inc:huUpdate}).exec();
 							UserInfo.updateOne({id:client.UID}, {$inc:uInfo}).exec();
-							AngryBirds_user.updateOne({'uid':client.UID}, {$set:{time:new Date()}, $inc:mini_users}).exec();
+							AngryBirds_user.updateOne({'uid':client.UID}, {$set:{time:new Date().getTime(), select:bet}, $inc:mini_users}).exec();
 
 							let vipStatus = Helpers.getConfig('topVip');
 							if (!!vipStatus && vipStatus.status === true) {
