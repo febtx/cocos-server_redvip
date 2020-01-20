@@ -196,12 +196,13 @@ XocXoc.prototype.thanhtoan = function(dice = null){
 					let TienThang = 0; // Số tiền thắng (chưa tính gốc)
 					let TongThua  = 0; // Số tiền thua
 					let TongThang = 0; // Tổng tiền thắng (đã tính gốc)
-					let thuong    = 0;
 
-					// Cược Chẵn
+					let totall = 0; // Số tiền thắng / thua
+
+					// Cược Chẵ
 					if (cuoc.chan > 0) {
 						if (gameChan) {
-							TienThang += cuoc.chan;
+							totall    += cuoc.chan;
 							TongThang += cuoc.chan*2;
 						}else{
 							TongThua  += cuoc.chan;
@@ -210,46 +211,46 @@ XocXoc.prototype.thanhtoan = function(dice = null){
 					// Cược Lẻ
 					if (cuoc.le > 0) {
 						if (!gameChan) {
-							TienThang += cuoc.le;
+							totall    += cuoc.le;
 							TongThang += cuoc.le*2;
 						}else{
-							TongThua  += cuoc.le;
+							totall    -= cuoc.le;
 						}
 					}
 					// 3 đỏ
 					if (cuoc.red3 > 0) {
 						if (red3) {
-							TienThang += cuoc.red3;
+							totall    += cuoc.red3*3;
 							TongThang += cuoc.red3*4;
 						}else{
-							TongThua  += cuoc.red3;
+							totall    -= cuoc.red3;
 						}
 					}
 					// 4 đỏ
 					if (cuoc.red4 > 0) {
 						if (red4) {
-							TienThang += cuoc.red4;
+							totall    += cuoc.red4*10;
 							TongThang += cuoc.red4*11;
 						}else{
-							TongThua  += cuoc.red4;
+							totall    -= cuoc.red4;
 						}
 					}
 					// 3 trắng
 					if (cuoc.white3 > 0) {
 						if (white3) {
-							TienThang += cuoc.white3;
+							totall    += cuoc.white3*3;
 							TongThang += cuoc.white3*4;
 						}else{
-							TongThua  += cuoc.white3;
+							totall    -= cuoc.white3;
 						}
 					}
 					// 4 trắng
 					if (cuoc.white4 > 0) {
 						if (white4) {
-							TienThang += cuoc.white4;
+							totall    += cuoc.white4*10;
 							TongThang += cuoc.white4*11;
 						}else{
-							TongThua  += cuoc.white4;
+							totall    -= cuoc.white4;
 						}
 					}
 
@@ -260,25 +261,27 @@ XocXoc.prototype.thanhtoan = function(dice = null){
 					cuoc.betwin    = TongThang;
 					cuoc.save();
 
-					//RED
+					update['totall']     = totall;
+					updateGame['totall'] = totall;
+
 					if (TongThang > 0) {
 						update['red'] = TongThang;
 					}
-					if (TienThang > 0) {
-						update['redWin'] = updateGame['red'] = TienThang;
+					if (totall > 0) {
+						update['redWin'] = updateGame['win'] = totall;
 					}
-					if (TongThua > 0) {
-						update['redLost'] = updateGame['red_lost'] = TongThua;
+					if (totall < 0) {
+						update['redLost'] = updateGame['lost'] = totall*-1;
 					}
 
-					update['redPlay'] = updateGame['redPlay'] = tongDat;
+					update['redPlay'] = updateGame['bet'] = tongDat;
 
 					UserInfo.updateOne({id:cuoc.uid}, {$inc:update}).exec();
 					XocXoc_user.updateOne({uid:cuoc.uid}, {$inc:updateGame}).exec();
 					if(void 0 !== self.clients[cuoc.uid]){
 						let status = {};
 						if (TongThang > 0) {
-							status = {xocxoc:{status:{win:true, bet:TongThang, thuong:thuong}}};
+							status = {xocxoc:{status:{win:true, bet:TongThang}}};
 						}else{
 							status = {xocxoc:{status:{win:false, bet:TongThua}}};
 						}
@@ -288,7 +291,6 @@ XocXoc.prototype.thanhtoan = function(dice = null){
 
 					TongThua   = null;
 					TongThang  = null;
-					thuong     = null;
 
 					tongDat    = null;
 					update     = null;

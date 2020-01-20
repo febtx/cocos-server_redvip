@@ -27,12 +27,6 @@ let init = function init(obj){
 		redGa:0,
 		redHuou:0,
 		redTom:0,
-		xuBau:0,
-		xuCa:0,
-		xuCua:0,
-		xuGa:0,
-		xuHuou:0,
-		xuTom:0,
 	};
 
 	io.baucua.infoAdmin = {
@@ -42,12 +36,6 @@ let init = function init(obj){
 		redGa:0,
 		redHuou:0,
 		redTom:0,
-		xuBau:0,
-		xuCa:0,
-		xuCua:0,
-		xuGa:0,
-		xuHuou:0,
-		xuTom:0,
 	};
 
 	BauCua_phien.findOne({}, 'id', {sort:{'_id':-1}}, function(err, last) {
@@ -80,7 +68,6 @@ let thongtin_thanhtoan = function thongtin_thanhtoan(dice = null){
 		BauCua_cuoc.find({phien:phien}, {}, function(err, list) {
 			if (list.length) {
 				Promise.all(list.map(function(cuoc){
-					let TienThang = 0; // Số tiền thắng (chưa tính gốc)
 					let TongThua  = 0; // Số tiền thua
 					let TongThang = 0; // Tổng tiền thắng (đã tính gốc)
 					let thuong    = 0;
@@ -90,65 +77,66 @@ let thongtin_thanhtoan = function thongtin_thanhtoan(dice = null){
 					let ca        = 0;
 					let cua       = 0;
 					let tom       = 0;
+					let totall    = 0;
 
 					// Cược Hươu
 					if (cuoc[0] > 0) {
 						if (void 0 !== heSo[0]) {
 							huou = (cuoc[0]*heSo[0]);
-							TienThang += huou;
+							totall    += huou;
 							TongThang += cuoc[0]+huou;
 						}else{
-							TongThua  += cuoc[0];
+							totall    -= cuoc[0];
 						}
 					}
 					// Cược Bầu
 					if (cuoc[1] > 0) {
 						if (void 0 !== heSo[1]) {
 							bau = (cuoc[1]*heSo[1]);
-							TienThang += bau;
+							totall    += bau;
 							TongThang += cuoc[1]+bau;
 						}else{
-							TongThua  += cuoc[1];
+							totall    -= cuoc[1];
 						}
 					}
 					// Cược Gà
 					if (cuoc[2] > 0) {
 						if (void 0 !== heSo[2]) {
 							ga = (cuoc[2]*heSo[2]);
-							TienThang += ga;
+							totall    += ga;
 							TongThang += cuoc[2]+ga;
 						}else{
-							TongThua  += cuoc[2];
+							totall    -= cuoc[2];
 						}
 					}
 					// Cược Cá
 					if (cuoc[3] > 0) {
 						if (void 0 !== heSo[3]) {
 							ca = (cuoc[3]*heSo[3]);
-							TienThang += ca;
+							totall    += ca;
 							TongThang += cuoc[3]+ca;
 						}else{
-							TongThua  += cuoc[3];
+							totall    -= cuoc[3];
 						}
 					}
 					// Cược Cua
 					if (cuoc[4] > 0) {
 						if (void 0 !== heSo[4]) {
 							cua = (cuoc[4]*heSo[4]);
-							TienThang += cua;
+							totall    += cua;
 							TongThang += cuoc[4]+cua;
 						}else{
-							TongThua  += cuoc[4];
+							totall    -= cuoc[4];
 						}
 					}
 					// Cược Tôm
 					if (cuoc[5] > 0) {
 						if (void 0 !== heSo[5]) {
 							tom = (cuoc[5]*heSo[5]);
-							TienThang += tom;
+							totall    += tom;
 							TongThang += cuoc[5]+tom;
 						}else{
-							TongThua  += cuoc[5];
+							totall    -= cuoc[5];
 						}
 					}
 
@@ -161,56 +149,38 @@ let thongtin_thanhtoan = function thongtin_thanhtoan(dice = null){
 					cuoc.betwin    = TongThang;
 					cuoc.save();
 
-					if (cuoc.red) {
-						//RED
-						if (TongThang > 0) {
-							update['red'] = TongThang;
-						}
-						if (TienThang > 0) {
-							update['redWin'] = updateGame['red'] = TienThang;
-						}
-						if (TongThua > 0) {
-							update['redLost'] = updateGame['red_lost'] = TongThua;
-						}
-
-						update['redPlay'] = updateGame['redPlay'] = tongDat;
-
-						UserInfo.updateOne({id:cuoc.uid}, {$inc:update}).exec();
-						BauCua_user.updateOne({uid:cuoc.uid}, {$inc:updateGame}).exec();
-					}else{
-						//XU
-						if (TongThang > 0) {
-							update['xu'] = TongThang;
-						}
-						if (TienThang > 0) {
-							thuong = (TienThang*0.039589)>>0;
-							update['xuWin'] = updateGame['xu'] = TienThang;
-							update['red']   = update['thuong'] = updateGame['thuong'] = thuong;
-						}
-						if (TongThua > 0) {
-							update['xuLost'] = updateGame['xu_lost'] = TongThua;
-						}
-
-						update['xuPlay'] = updateGame['xuPlay'] = tongDat;
-
-						UserInfo.updateOne({id:cuoc.uid}, {$inc:update}).exec();
-						BauCua_user.updateOne({uid:cuoc.uid}, {$inc:updateGame}).exec();
+					update['totall']     = totall;
+					updateGame['totall'] = totall;
+					
+					if (TongThang > 0) {
+						update['red'] = TongThang;
 					}
+
+					if (totall > 0) {
+						update['redWin'] = updateGame['win'] = totall;
+					}
+					if (totall < 0) {
+						update['redLost'] = updateGame['lost'] = totall*-1;
+					}
+
+					update['redPlay'] = updateGame['bet'] = tongDat;
+
+					UserInfo.updateOne({id:cuoc.uid}, {$inc:update}).exec();
+					BauCua_user.updateOne({uid:cuoc.uid}, {$inc:updateGame}).exec();
+
 					if(void 0 !== io.users[cuoc.uid]){
 						let status = {};
 						if (TongThang > 0) {
-							status = {mini:{baucua:{status:{win:true, bet:TongThang, thuong:thuong}}}};
+							status = {mini:{baucua:{status:{win:true, bet:TongThang}}}};
 						}else{
-							status = {mini:{baucua:{status:{win:false, bet:TongThua}}}};
+							status = {mini:{baucua:{status:{win:false, bet:totall*-1}}}};
 						}
 						io.users[cuoc.uid].forEach(function(client){
 							client.red(status);
 						});
 						status = null;
 					}
-					TongThua   = null;
 					TongThang  = null;
-					thuong     = null;
 					huou       = null;
 					bau        = null;
 					ga         = null;
@@ -220,7 +190,7 @@ let thongtin_thanhtoan = function thongtin_thanhtoan(dice = null){
 					tongDat    = null;
 					update     = null;
 					updateGame = null;
-					return {users:cuoc.name, bet:TienThang, red:cuoc.red};
+					return {users:cuoc.name, bet:totall, red:cuoc.red};
 				}))
 				.then(function(arrayOfResults) {
 					heSo  = null;
@@ -325,12 +295,6 @@ let playGame = function(){
 					redGa:0,
 					redHuou:0,
 					redTom:0,
-					xuBau:0,
-					xuCa:0,
-					xuCua:0,
-					xuGa:0,
-					xuHuou:0,
-					xuTom:0,
 				};
 				io.baucua.infoAdmin = {
 					redBau:0,
@@ -339,12 +303,6 @@ let playGame = function(){
 					redGa:0,
 					redHuou:0,
 					redTom:0,
-					xuBau:0,
-					xuCa:0,
-					xuCua:0,
-					xuGa:0,
-					xuHuou:0,
-					xuTom:0,
 				};
 
 				fs.readFile('./config/baucua.json', 'utf8', (errcf, bccf) => {

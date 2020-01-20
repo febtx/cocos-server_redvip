@@ -96,12 +96,12 @@ Player.prototype.outGame = function(){
 		this.room.outRoom(this);
 		this.room = null;
 	}
+	let win = this.money-this.moneyTotal;
 	if (this.isPlay) {
-		let win = this.money-this.moneyTotal;
 		History.create({'uid':this.uid, 'room':this.game, 'money':win, 'fish':this.fishTotal, 'time':new Date()});
 	}
 	if (this.money > 0) {
-		let uInfo = {red:this.money};
+		let uInfo = {red:this.money, totall:win};
 		UserInfo.updateOne({id:this.uid}, {$inc:uInfo}).exec();
 	}
 }
