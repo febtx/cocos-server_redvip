@@ -16,7 +16,7 @@ let random = function(){
 		return (Math.floor(Math.random()*(20-1+1))+1)*10000;
 	}else if (a >= 30 && a < 32) {
 		// 30 31 32
-		return (Math.floor(Math.random()*(10-1+1))+1)*10000;
+		return (Math.floor(Math.random()*(20-1+1))+1)*10000;
 	}else if (a >= 26 && a < 30) {
 		// 26 27 28 29
 		return (Math.floor(Math.random()*(20-1+1))+1)*5000;
@@ -25,10 +25,10 @@ let random = function(){
 		return (Math.floor(Math.random()*(20-1+1))+1)*5000;
 	}else if (a >= 15 && a < 21) {
 		// 15 16 17 18 19 20
-		return (Math.floor(Math.random()*(100-1+1))+1)*1000;
+		return (Math.floor(Math.random()*(10-1+1))+1)*10000;
 	}else if (a >= 8 && a < 15) {
 		// 8 9 10 11 12 13 14
-		return (Math.floor(Math.random()*(100-1+1))+1)*1000;
+		return (Math.floor(Math.random()*(10-1+1))+1)*10000;
 	}else{
 		// 0 1 2 3 4 5 6 7
 		return (Math.floor(Math.random()*(10-1+1))+1)*1000;
