@@ -193,8 +193,6 @@ XocXoc.prototype.thanhtoan = function(dice = null){
 			if (list.length) {
 				Promise.all(list.map(function(cuoc){
 					let tongDat   = cuoc.chan+cuoc.le+cuoc.red3+cuoc.red4+cuoc.white3+cuoc.white4;
-					let TienThang = 0; // Số tiền thắng (chưa tính gốc)
-					let TongThua  = 0; // Số tiền thua
 					let TongThang = 0; // Tổng tiền thắng (đã tính gốc)
 
 					let totall = 0; // Số tiền thắng / thua
@@ -205,7 +203,7 @@ XocXoc.prototype.thanhtoan = function(dice = null){
 							totall    += cuoc.chan;
 							TongThang += cuoc.chan*2;
 						}else{
-							TongThua  += cuoc.chan;
+							totall    -= cuoc.chan;
 						}
 					}
 					// Cược Lẻ
@@ -283,19 +281,18 @@ XocXoc.prototype.thanhtoan = function(dice = null){
 						if (TongThang > 0) {
 							status = {xocxoc:{status:{win:true, bet:TongThang}}};
 						}else{
-							status = {xocxoc:{status:{win:false, bet:TongThua}}};
+							status = {xocxoc:{status:{win:false, bet:Math.abs(totall)}}};
 						}
 						self.clients[cuoc.uid].red(status);
 						status = null;
 					}
 
-					TongThua   = null;
 					TongThang  = null;
 
 					tongDat    = null;
 					update     = null;
 					updateGame = null;
-					return {users:cuoc.name, bet:TienThang, red:cuoc.red};
+					return {users:cuoc.name, bet:totall};
 				}))
 				.then(function(arrayOfResults) {
 					phien = null;
@@ -305,7 +302,7 @@ XocXoc.prototype.thanhtoan = function(dice = null){
 					white3 = null;
 					white4 = null;
 					arrayOfResults = arrayOfResults.filter(function(st){
-						return (st.red && st.bet > 0);
+						return st.bet > 0;
 					});
 					self.play();
 					if (arrayOfResults.length) {

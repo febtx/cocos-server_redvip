@@ -173,7 +173,7 @@ let thongtin_thanhtoan = function thongtin_thanhtoan(dice = null){
 						if (TongThang > 0) {
 							status = {mini:{baucua:{status:{win:true, bet:TongThang}}}};
 						}else{
-							status = {mini:{baucua:{status:{win:false, bet:totall*-1}}}};
+							status = {mini:{baucua:{status:{win:false, bet:Math.abs(totall)}}}};
 						}
 						io.users[cuoc.uid].forEach(function(client){
 							client.red(status);
@@ -190,14 +190,14 @@ let thongtin_thanhtoan = function thongtin_thanhtoan(dice = null){
 					tongDat    = null;
 					update     = null;
 					updateGame = null;
-					return {users:cuoc.name, bet:totall, red:cuoc.red};
+					return {users:cuoc.name, bet:totall};
 				}))
 				.then(function(arrayOfResults) {
 					heSo  = null;
 					phien = null;
 					dice = null;
 					arrayOfResults = arrayOfResults.filter(function(st){
-						return (st.red && st.bet > 0);
+						return st.bet > 0;
 					});
 					if (arrayOfResults.length) {
 						arrayOfResults.sort(function(a, b){

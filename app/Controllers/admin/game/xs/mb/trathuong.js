@@ -44,6 +44,7 @@ module.exports = function(client, date) {
 								let lo2soNot2 = [...new Set(lo2so)]; // loại bỏ trùng nặp lô 2 số
 								let tongCuoc = 0;
 								let tongTra  = 0;
+								let totall   = 0;
 
 								data.pay = true;
 
@@ -52,6 +53,7 @@ module.exports = function(client, date) {
 									let diem = objC.diem;
 									let win = 0;
 									let trung = 0;
+									let arrCheck = {};
 									objC.thanhtoan = true;
 									switch(objC.type) {
 										case 'lo2':
@@ -248,13 +250,15 @@ module.exports = function(client, date) {
 									if (win > 0) {
 										tongTra += win;
 										objC.win = win;
-										UserInfo.updateOne({name:objC.name}, {$inc:{red:win}}).exec();
 									}
 									objC.save();
 								});
 								data.cuoc = tongCuoc;
 								data.tra = tongTra;
 								data.save();
+								if(tongTra > 0){
+									UserInfo.updateOne({name:objC.name}, {$inc:{red:tongTra}}).exec();
+								}
 							}
 						}else{
 							client.red({xs:{mb:{kq:{notice:'Không có người cược...'}}}});

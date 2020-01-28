@@ -134,10 +134,10 @@ let setTaiXiu_user = function(phien, dice){
 
 							if(void 0 !== io.users[obj.uid]){
 								io.users[obj.uid].forEach(function(client){
-									client.red({taixiu:{status:{win:obj.win, thuong:obj.thuong, select:obj.select, bet: bet}}});
+									client.red({taixiu:{status:{win:obj.win, select:obj.select, bet: bet}}});
 								});
 							}
-							resolve({uid: obj.uid, red: obj.red, taixiu:obj.taixiu, betwin: obj.betwin});
+							resolve({uid:obj.uid, betwin:obj.betwin});
 						}else{
 							resolve(null);
 						}
@@ -147,16 +147,13 @@ let setTaiXiu_user = function(phien, dice){
 			}))
 			.then(values => {
 				values = values.filter(function(obj){
-					return obj !== null && obj.red && obj.betwin > 0;
+					return obj !== null && obj.betwin > 0;
 				});
 				if (values.length) {
-					let topTaiXiu = values.filter(function(objTopT){
-						return !!objTopT.taixiu;
-					});
-					topTaiXiu.sort(function(a, b){
+					values.sort(function(a, b){
 						return b.betwin-a.betwin;
 					});
-					values = topTaiXiu.slice(0, 10);
+					values = values.slice(0, 10);
 					values = Helpers.shuffle(values);
 					Promise.all(values.map(function(obj){
 						let action = new Promise((resolve, reject) => {
