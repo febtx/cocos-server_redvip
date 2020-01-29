@@ -277,7 +277,7 @@ module.exports = function(client, data){
 					let isBigWin  = false;
 					let balans    = user.red-tongCuoc;
 					// tạo kết quả
-					HU.findOne({game:'long', type:bet, red:red}, {}, function(err2, dataHu){
+					HU.findOne({game:'long', type:bet}, {}, function(err2, dataHu){
 						if (dataHu === null){
 							return void 0;
 						}
@@ -713,7 +713,7 @@ module.exports = function(client, data){
 										if (!nohu) {
 											let okHu = (quyHu-Math.ceil(quyHu*phe/100))>>0;
 											bet_win += okHu;
-											HU.updateOne({game:'long', type:bet, red:red}, {$set:{name:'', bet:dataHu.min}}).exec();
+											HU.updateOne({game:'long', type:bet}, {$set:{name:'', bet:dataHu.min}}).exec();
 											red && client.redT.sendInHome({pushnohu:{title:'Đập Hũ', name:client.profile.name, bet:okHu}});
 										}else{
 											let okHu = (dataHu.min-Math.ceil(dataHu.min*phe/100))>>0;
@@ -910,7 +910,7 @@ module.exports = function(client, data){
 									updateMega.save();
 								}
 							});
-							HU.updateOne({game:'long', type:bet, red:red}, {$inc:huUpdate}).exec();
+							HU.updateOne({game:'long', type:bet}, {$inc:huUpdate}).exec();
 							UserInfo.updateOne({id:client.UID},{$inc:uInfo}).exec();
 							LongLan_user.updateOne({'uid':client.UID}, {$set:{time:new Date().getTime(), select:bet}, $inc:mini_users}).exec();
 

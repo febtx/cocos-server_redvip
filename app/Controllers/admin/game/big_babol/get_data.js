@@ -4,7 +4,7 @@ var config = require('../../../../../config/bigbabol.json');
 
 
 module.exports = function(client) {
-	HU.find({game:'bigbabol', red:true}, 'name type redPlay redWin redLost hu', function(err, cat){
+	HU.find({game:'bigbabol'}, 'name type redPlay redWin redLost hu', function(err, cat){
 		Promise.all(cat.map(function(obj){
 			obj = obj._doc;
 			delete obj._id;

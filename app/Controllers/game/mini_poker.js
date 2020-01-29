@@ -87,7 +87,7 @@ function spin(client, data){
 						}
 					}
 
-					HU.findOne({game:'minipoker', type:bet, red:red}, 'name bet min toX balans x', function(err, dataHu){
+					HU.findOne({game:'minipoker', type:bet}, 'name bet min toX balans x', function(err, dataHu){
 						if (dataHu === null) {
 							return void 0;
 						}
@@ -115,7 +115,7 @@ function spin(client, data){
 							if (toX < 1 && balans > 0) {
 								quyMin = quyMin*dataHu.x;
 							}
-							HU.updateOne({game:'minipoker', type:bet, red:red}, {$set:{name:'', bet:quyMin}}).exec();
+							HU.updateOne({game:'minipoker', type:bet}, {$set:{name:'', bet:quyMin}}).exec();
 							if (checkName){
 								// đặt kết quả thành nổ hũ nếu người chơi được xác định thủ công
 								let randomType = (Math.random()*4)>>0;           // Ngẫu nhiên chất bài
@@ -241,7 +241,7 @@ function spin(client, data){
 								updateMega.save();
 							}
 						});
-						HU.updateOne({game:'minipoker', type:bet, red:red}, {$inc:huUpdate}).exec();
+						HU.updateOne({game:'minipoker', type:bet}, {$inc:huUpdate}).exec();
 						UserInfo.updateOne({id:UID}, {$inc:uInfo}).exec();
 						miniPokerUsers.updateOne({'uid':UID}, {$set:{time:new Date().getTime(), select:bet}, $inc:mini_users}).exec();
 

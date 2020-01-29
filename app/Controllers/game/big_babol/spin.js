@@ -130,7 +130,7 @@ module.exports = function(client, data){
 					let bet_win   = 0;
 					let type      = 0;   // Loại được ăn lớn nhất trong phiên
 					// tạo kết quả
-					HU.findOne({game:'bigbabol', type:bet, red:red}, 'name bet min toX balans x', function(err, dataHu){
+					HU.findOne({game:'bigbabol', type:bet}, 'name bet min toX balans x', function(err, dataHu){
 						let uInfo      = {hu:0};
 						let mini_users = {hu:0};
 						let huUpdate   = {bet:addQuy, toX:0, balans:0, hu:0};
@@ -386,7 +386,7 @@ module.exports = function(client, data){
 											bet_win += okHu;
 											red && client.redT.sendInHome({pushnohu:{title:'Thỉnh Kinh', name:client.profile.name, bet:okHu}});
 										}
-										HU.updateOne({game:'bigbabol', type:bet, red:red}, {$set:{name:'', bet:quyMin}}).exec();
+										HU.updateOne({game:'bigbabol', type:bet}, {$set:{name:'', bet:quyMin}}).exec();
 										huUpdate['hu'] = uInfo['hu'] = mini_users['hu'] += 1;
 										nohu = true;
 										type = 2;
@@ -471,7 +471,7 @@ module.exports = function(client, data){
 									updateMega.save();
 								}
 							});
-							HU.updateOne({game:'bigbabol', type:bet, red:red}, {$inc:huUpdate}).exec();
+							HU.updateOne({game:'bigbabol', type:bet}, {$inc:huUpdate}).exec();
 							UserInfo.updateOne({id:client.UID}, {$inc:uInfo}).exec();
 							BigBabol_users.updateOne({'uid':client.UID}, {$set:{time:new Date().getTime(), select:bet}, $inc:mini_users}).exec();
 

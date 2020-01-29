@@ -3,7 +3,7 @@ let HU = require('../../../../Models/HU');
 let get_data = require('./get_data');
 
 module.exports = function(client) {
-	HU.updateMany({game:'vuongquocred', red:true}, {'$set':{'name':'', 'redWin':0, 'redPlay':0, 'redLost':0, 'hu':0}}).exec(function(err, result){
+	HU.updateMany({game:'vuongquocred'}, {'$set':{'name':'', 'redWin':0, 'redPlay':0, 'redLost':0, 'hu':0}}).exec(function(err, result){
 		get_data(client);
 	});
 }

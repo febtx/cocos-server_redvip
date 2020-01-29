@@ -141,7 +141,7 @@ module.exports = function(client, data){
 
 					let config = Helpers.getConfig('angrybird');
 
-					HU.findOne({game:'arb', type:bet, red:red}, 'name bet min toX balans x', function(err, dataHu){
+					HU.findOne({game:'arb', type:bet}, 'name bet min toX balans x', function(err, dataHu){
 						let uInfo      = {hu:0};
 						let mini_users = {hu:0};
 						let huUpdate   = {bet:addQuy, toX:0, balans:0, hu:0};
@@ -491,7 +491,7 @@ module.exports = function(client, data){
 												client.redT.sendInHome({pushnohu:{title:'Thiên Thú', name:client.profile.name, bet:okHu}});
 												huUpdate['hu']   = uInfo['hu']   = mini_users['hu']   += 1; // Cập nhật Số Hũ Red đã Trúng
 											}
-											HU.updateOne({game:'arb', type:bet, red:red}, {$set:{name:'', bet:quyMin}}).exec();
+											HU.updateOne({game:'arb', type:bet}, {$set:{name:'', bet:quyMin}}).exec();
 										}else{
 											bet_win += bet*10;
 										}
@@ -567,7 +567,7 @@ module.exports = function(client, data){
 									updateMega.save();
 								}
 							});
-							HU.updateOne({game:'arb', type:bet, red:red}, {$inc:huUpdate}).exec();
+							HU.updateOne({game:'arb', type:bet}, {$inc:huUpdate}).exec();
 							UserInfo.updateOne({id:client.UID}, {$inc:uInfo}).exec();
 							AngryBirds_user.updateOne({'uid':client.UID}, {$set:{time:new Date().getTime(), select:bet}, $inc:mini_users}).exec();
 

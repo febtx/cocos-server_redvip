@@ -189,7 +189,7 @@ module.exports = function(client, data){
 					let nohu      = false;
 					let isBigWin  = false;
 					// tạo kết quả
-					HU.findOne({game:'candy', type:bet, red:red}, {}, function(err2, dataHu){
+					HU.findOne({game:'candy', type:bet}, {}, function(err2, dataHu){
 						let uInfo      = {};
 						let mini_users = {};
 						let huUpdate   = {bet:addQuy};
@@ -478,7 +478,7 @@ module.exports = function(client, data){
 											let okHu = (quyHu-Math.ceil(quyHu*phe/100))>>0;
 											bet_win += okHu;
 
-											HU.updateOne({game:'candy', type:bet, red:red}, {$set:{name:'', bet:dataHu.min}}).exec();
+											HU.updateOne({game:'candy', type:bet}, {$set:{name:'', bet:dataHu.min}}).exec();
 											red && client.redT.sendInHome({pushnohu:{title:'Candy', name:client.profile.name, bet:okHu}});
 										}else{
 											let okHu = (dataHu.min-Math.ceil(dataHu.min*phe/100))>>0;
@@ -652,7 +652,7 @@ module.exports = function(client, data){
 								}
 							});
 
-							HU.updateOne({game:'candy', type:bet, red:red}, {$inc:huUpdate}).exec();
+							HU.updateOne({game:'candy', type:bet}, {$inc:huUpdate}).exec();
 							UserInfo.updateOne({id:client.UID},{$inc:uInfo}).exec();
 							Candy_user.updateOne({'uid':client.UID}, {$set:{time:new Date()}, $inc:mini_users}).exec();
 						})

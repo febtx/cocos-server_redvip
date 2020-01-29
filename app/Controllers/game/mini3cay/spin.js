@@ -15,17 +15,15 @@ let base_card     = require('../../../../data/card');
 module.exports = function(client, spin) {
 	if (!!spin && !!spin.cuoc) {
 		let cuoc = spin.cuoc>>0;  // Tiền cược
-		let red  = !!spin.red;	  // Loại tiền đang chơi
 		if (!(cuoc == 100 || cuoc == 1000 || cuoc == 10000)) {
 			// Error
 			client.red({mini:{bacay:{status:0,notice: 'Quay thất bại...'}}});
 		}else{
 			// Spin
 			UserInfo.findOne({id:client.UID}, 'red name', function(err, user){
-				if (!user || red && user.red < cuoc) {
+				if (!user || user.red < cuoc) {
 					client.red({mini:{bacay:{status:0, notice: 'Bạn không đủ RED để quay.!!'}}});
 				}else{
-					let phe = red ? 2 : 4;    // Phế
 					let addQuy = (cuoc*0.01)>>0;
 					// Sử lý bài
 					let an      = 0;
@@ -84,7 +82,7 @@ module.exports = function(client, spin) {
 					// Kết thúc Sử lý bài
 
 					// Kiểm tra kết quả
-					HU.findOne({game:'mini3cay', type:cuoc, red:red}, {}, function(err, data){
+					HU.findOne({game:'mini3cay', type:cuoc}, {}, function(err, data){
 						let uInfo      = {};
 						let mini_users = {};
 						let huUpdate   = {bet:addQuy};
@@ -96,7 +94,7 @@ module.exports = function(client, spin) {
 
 						if (checkName || (bo3 && bo3_a === 0)) {
 							// NỔ HŨ (Bộ 3 Át Hoặc được xác định là nổ hũ)
-							HU.updateOne({game:'mini3cay', type:cuoc, red:red}, {$set:{name:'', bet:quyMin}}).exec();
+							HU.updateOne({game:'mini3cay', type:cuoc}, {$set:{name:'', bet:quyMin}}).exec();
 							if (checkName){
 								// đặt kết quả thành nổ hũ nếu người chơi được xác định thủ công
 								card = [...base_card.card]
@@ -108,7 +106,7 @@ module.exports = function(client, spin) {
 								ketqua = card.slice(0, 3);
 							}
 							nohu = true;
-							an   = (quyHu-Math.ceil(quyHu*phe/100))>>0;
+							an   = (quyHu-Math.ceil(quyHu*2/100))>>0;
 							text = 'Nổ Hũ';
 							code = 6;
 							huUpdate['hu'] = uInfo['hu'] = mini_users['hu']     = 1; // Khởi tạo
@@ -118,17 +116,13 @@ module.exports = function(client, spin) {
 							an   = cuoc*30;
 							text = 'Suốt';
 							code = 5;
-							if (red) {
-								client.redT.sendInHome({news:{t:{game:'MINI 3 CÂY', users:client.profile.name, bet:an, status:2}}});
-							}
+							client.redT.sendInHome({news:{t:{game:'MINI 3 CÂY', users:client.profile.name, bet:an, status:2}}});
 						}else if (bo3) {
 							// x20      Sáp
 							an   = cuoc*20;
 							text = 'Sáp ' + (bo3_a+1);
 							code = 4;
-							if (red) {
-								client.redT.sendInHome({news:{t:{game:'MINI 3 CÂY', users:client.profile.name, bet:an, status:2}}});
-							}
+							client.redT.sendInHome({news:{t:{game:'MINI 3 CÂY', users:client.profile.name, bet:an, status:2}}});
 						}else if (ADiamond && TongDiem == 10) {
 							// x10		Tổng 3 lá = 10, có Át rô
 							an   = cuoc*10;
@@ -187,7 +181,7 @@ module.exports = function(client, spin) {
 								updateMega.save();
 							}
 						});
-						HU.updateOne({game:'mini3cay', type:cuoc, red:red}, {$inc:huUpdate}).exec();
+						HU.updateOne({game:'mini3cay', type:cuoc}, {$inc:huUpdate}).exec();
 						UserInfo.updateOne({id:client.UID}, {$inc: uInfo}).exec();
 						Mini3Cay_user.updateOne({'uid': client.UID}, {$set:{time: new Date()}, $inc: mini_users}).exec();
 
@@ -203,9 +197,7 @@ module.exports = function(client, spin) {
 						//client = null;
 						spin = null;
 						//cuoc = null;
-						red  = null;
 						config = null;
-						phe = null;
 						addQuy = null;
 						an      = null;
 						code    = null;
