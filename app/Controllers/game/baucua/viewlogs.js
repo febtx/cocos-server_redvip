@@ -10,8 +10,8 @@ module.exports = function(client, data){
 			client.red({notice:{text:'DỮ LIỆU KHÔNG ĐÚNG...', title:'THẤT BẠI'}});
 		}else{
 			let kmess = 9;
-			BauCua_cuoc.countDocuments({uid:client.UID, red:red, thanhtoan:true}).exec(function(err, total){
-				BauCua_cuoc.find({uid:client.UID, red:red, thanhtoan:true}, {}, {sort:{'_id':-1}, skip:(page-1)*kmess, limit:kmess}, function(err, result) {
+			BauCua_cuoc.countDocuments({uid:client.UID, thanhtoan:true}).exec(function(err, total){
+				BauCua_cuoc.find({uid:client.UID, thanhtoan:true}, {}, {sort:{'_id':-1}, skip:(page-1)*kmess, limit:kmess}, function(err, result) {
 					if (result.length) {
 						Promise.all(result.map(function(obj){
 							obj = obj._doc;

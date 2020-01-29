@@ -7,7 +7,6 @@ let getConfig   = require('../../../Helpers/Helpers').getConfig;
 module.exports = function(client, data){
 	if (!!data.cuoc && !!data.box) {
 		let cuoc = data.cuoc>>0;
-		let red  = true;
 		let box  = data.box;
 
 		if (client.redT.game.xocxoc.time < 2 || client.redT.game.xocxoc.time > 30) {
@@ -31,12 +30,12 @@ module.exports = function(client, data){
 
 					xocxoc.chip[box][cuoc] += 1;
 
-					XocXoc_cuoc.findOne({uid:client.UID, phien:xocxoc.phien, red:red}, function(err, checkOne) {
+					XocXoc_cuoc.findOne({uid:client.UID, phien:xocxoc.phien}, function(err, checkOne) {
 						if (checkOne){
 							checkOne[box] += cuoc;
 							checkOne.save();
 						}else{
-							var create = {uid:client.UID,name: name, phien:xocxoc.phien, red:red, time: new Date()};
+							var create = {uid:client.UID,name: name, phien:xocxoc.phien, time: new Date()};
 							create[box] = cuoc;
 							XocXoc_cuoc.create(create);
 						}
@@ -86,8 +85,6 @@ module.exports = function(client, data){
 						me_cuoc = null;
 						newData = null;
 						data    = null;
-
-						red  = null;
 						box  = null;
 					})
 				}

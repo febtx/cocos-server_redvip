@@ -4,14 +4,11 @@ var TXCuoc  = require('../../../../../Models/TaiXiu_cuoc');
 
 module.exports = function(client, data){
 	if (!!data.id) {
-		var taixiu = !!data.taixiu;
-		var red    = !!data.red;
-		var page   = data.page>>0;
+		var page  = data.page>>0;
 		var kmess = 10;
-
 		if (page > 0) {
-			TXCuoc.countDocuments({uid:data.id, thanhtoan:true, taixiu:taixiu, red:red}).exec(function(err, total){
-				var getCuoc = TXCuoc.find({uid:data.id, thanhtoan:true, taixiu:taixiu, red:red}, {}, {sort:{'_id': -1}, skip: (page-1)*kmess, limit: kmess}, function(error, result){
+			TXCuoc.countDocuments({uid:data.id, thanhtoan:true}).exec(function(err, total){
+				var getCuoc = TXCuoc.find({uid:data.id, thanhtoan:true}, {}, {sort:{'_id':-1}, skip: (page-1)*kmess, limit: kmess}, function(error, result){
 					if (result.length) {
 						Promise.all(result.map(function(obj){
 							obj = obj._doc;

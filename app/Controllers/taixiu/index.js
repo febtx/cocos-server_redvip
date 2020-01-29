@@ -107,8 +107,6 @@ var cuoc = function(client, data){
 			client.red({taixiu:{err:'Vui lòng cược ở phiên sau.!!'}});
 		}else{
 			var bet    = data.bet>>0; // Số tiền
-			var taixiu = true;        // Tài xỉu:true    Chẵn lẻ:false
-			var red    = true;
 			var select = !!data.select; // Cửa đặt (Tài:1, Xỉu:0)
 
 			if (bet < 1000){
@@ -122,7 +120,7 @@ var cuoc = function(client, data){
 						user.save();
 						var phien = client.redT.TaiXiu_phien;
 
-						TXCuocOne.findOne({uid:client.UID, phien:phien, taixiu:taixiu, red:red}, 'bet select', function(isCuocErr, isCuoc) {
+						TXCuocOne.findOne({uid:client.UID, phien:phien}, 'bet select', function(isCuocErr, isCuoc) {
 							if (!!isCuoc) {
 								// update
 								if (isCuoc.select !== select) {
@@ -141,8 +139,8 @@ var cuoc = function(client, data){
 										io.taixiuAdmin.taixiu.red_xiu += bet;
 									}
 	
-									io.taixiuAdmin.list.unshift({name:user.name, taixiu:taixiu, select:select, red:red, bet:bet, time:new Date()});
-									TXCuoc.create({uid:client.UID, name:user.name, phien:phien, bet:bet, taixiu:taixiu, select:select, red:red, time:new Date()});
+									io.taixiuAdmin.list.unshift({name:user.name, select:select, bet:bet, time:new Date()});
+									TXCuoc.create({uid:client.UID, name:user.name, phien:phien, bet:bet, select:select, time:new Date()});
 
 									var taixiuVery = select ? {red_me_tai:isCuoc.bet} : {red_me_xiu:isCuoc.bet};
 									taixiuVery = {taixiu:taixiuVery};
@@ -169,9 +167,9 @@ var cuoc = function(client, data){
 									io.taixiuAdmin.taixiu.red_xiu        += bet;
 									io.taixiuAdmin.taixiu.red_player_xiu += 1;
 								}
-								io.taixiuAdmin.list.unshift({name:user.name, taixiu:taixiu, select:select, red:red, bet:bet, time:new Date()});
-								TXCuocOne.create({uid:client.UID, phien:phien, taixiu:taixiu, select:select, red:red, bet:bet});
-								TXCuoc.create({uid:client.UID, name:user.name, phien:phien, bet:bet, taixiu:taixiu, select:select, red:red, time:new Date()});
+								io.taixiuAdmin.list.unshift({name:user.name, select:select, bet:bet, time:new Date()});
+								TXCuocOne.create({uid:client.UID, phien:phien, select:select, bet:bet});
+								TXCuoc.create({uid:client.UID, name:user.name, phien:phien, bet:bet, select:select, time:new Date()});
 
 								var taixiuVery = select ? {red_me_tai:bet} : {red_me_xiu:bet};
 								taixiuVery = {taixiu:taixiuVery};
@@ -195,7 +193,7 @@ var get_phien = function(client, data){
 		var phien  = data.phien>>0;
 		var getPhien = TXPhien.findOne({id:phien}).exec();
 		//var getCuoc  = TXCuoc.find({phien:phien, taixiu:true, red:true}, null, {sort:{'_id':1}}).exec();
-		var getCuoc  = TXCuoc.find({phien:phien, taixiu:true, red:true}, null).exec();
+		var getCuoc  = TXCuoc.find({phien:phien}, null).exec();
 
 		var tong_L        = 0;
 		var tong_R        = 0;

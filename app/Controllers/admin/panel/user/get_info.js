@@ -14,7 +14,6 @@ var Users    = require('../../../../Models/Users');
 var UserInfo = require('../../../../Models/UserInfo');
 let Phone    = require('../../../../Models/Phone');
 
-
 module.exports = function(client, id){
 	if (!!id) {
 		var wait_user = new Promise((resolve, reject)=>{

@@ -7,7 +7,6 @@ let getConfig   = require('../../../Helpers/Helpers').getConfig;
 module.exports = function(client, data){
 	if (!!data && !!data.cuoc) {
 		var cuoc    = data.cuoc>>0;
-		var red     = true;
 		var linhVat = data.linhVat>>0;
 
 		if (client.redT.BauCua_time < 2 || client.redT.BauCua_time > 60) {
@@ -34,7 +33,7 @@ module.exports = function(client, data){
 						'meRedTom',
 					]
 					var data = {};
-					BauCua_cuoc.findOne({uid: client.UID, phien: client.redT.BauCua_phien, red:red}, function(err, checkOne) {
+					BauCua_cuoc.findOne({uid:client.UID, phien:client.redT.BauCua_phien}, function(err, checkOne) {
 						var io = client.redT;
 							if (linhVat == 0) {
 								io.baucua.info.redHuou += cuoc;
@@ -58,7 +57,7 @@ module.exports = function(client, data){
 						if (checkOne){
 							let update = {};
 							update[linhVat] = cuoc;
-							BauCua_cuoc.findOneAndUpdate({uid: client.UID, phien: client.redT.BauCua_phien, red:red}, {$inc:update}, function (err, cat){
+							BauCua_cuoc.findOneAndUpdate({uid:client.UID, phien:client.redT.BauCua_phien}, {$inc:update}, function (err, cat){
 								dataRed.forEach(function(o, i){
 									data[o] = cat[i] + (i == linhVat ? cuoc : 0);
 									return (data[o] = cat[i] + (i == linhVat ? cuoc : 0));
@@ -70,12 +69,12 @@ module.exports = function(client, data){
 							});
 
 							io.baucua.ingame.forEach(function(uOld){
-								if (uOld.uid == client.UID && uOld.red == red) {
+								if (uOld.uid == client.UID) {
 									uOld[linhVat] += cuoc;
 								}
 							});
 						}else{
-							let create = {uid: client.UID, name: client.profile.name, phien: client.redT.BauCua_phien, red:red, time: new Date()};
+							let create = {uid:client.UID, name:client.profile.name, phien:client.redT.BauCua_phien, time: new Date()};
 							create[linhVat] = cuoc;
 							BauCua_cuoc.create(create);
 							data[dataRed[linhVat]] = cuoc;
@@ -83,7 +82,7 @@ module.exports = function(client, data){
 							client.redT.users[client.UID].forEach(function(obj){
 								obj.red(dataT);
 							});
-							let addList = {uid:client.UID, name:client.profile.name, red:red, '0':0, '1':0, '2':0, '3':0, '4':0, '5':0};
+							let addList = {uid:client.UID, name:client.profile.name, '0':0, '1':0, '2':0, '3':0, '4':0, '5':0};
 							addList[linhVat] = cuoc;
 							io.baucua.ingame.unshift(addList);
 						}

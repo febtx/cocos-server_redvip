@@ -49,8 +49,8 @@ let tx = function(bot, io){
 		io.taixiu.taixiu.red_xiu        += cuoc;
 		io.taixiu.taixiu.red_player_xiu += 1;
 	}
-	TXCuocOne.create({uid:bot.id, phien:io.TaiXiu_phien, taixiu:true, select:select, red:true, bet:cuoc});
-	TXCuoc.create({uid:bot.id, name:bot.name, phien:io.TaiXiu_phien, bet:cuoc, taixiu:true, select:select, red:true, time:new Date()});
+	TXCuocOne.create({uid:bot.id, phien:io.TaiXiu_phien, select:select, bet:cuoc});
+	TXCuoc.create({uid:bot.id, name:bot.name, phien:io.TaiXiu_phien, bet:cuoc, select:select, time:new Date()});
 	bot = null;
 	io = null;
 	cuoc   = null;

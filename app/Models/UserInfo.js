@@ -18,9 +18,9 @@ let Schema = new mongoose.Schema({
 	red:       {type:mongoose.Schema.Types.Long, default:0, index:true},     // RED
 	ketSat:    {type:mongoose.Schema.Types.Long, default:0},     // RED trong két sắt
 
-	redWin:    {type:mongoose.Schema.Types.Long, default:0, index:true},   // Tổng Red thắng
-	redLost:   {type:mongoose.Schema.Types.Long, default:0, index:true},   // Tổng Red thua
-	redPlay:   {type:mongoose.Schema.Types.Long, default:0, index:true},   // Tổng Red đã chơi
+	redWin:    {type:mongoose.Schema.Types.Long, default:0},   // Tổng Red thắng
+	redLost:   {type:mongoose.Schema.Types.Long, default:0},   // Tổng Red thua
+	redPlay:   {type:mongoose.Schema.Types.Long, default:0},   // Tổng Red đã chơi
 	totall:    {type:mongoose.Schema.Types.Long, default:0, index:true},   // Thắng trừ thua
 
 	vip:       {type:Number, default:0},                         // Tổng vip tích luỹ (Vip đã đổi thưởng)
