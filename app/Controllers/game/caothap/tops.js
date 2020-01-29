@@ -3,13 +3,7 @@ let CaoThap_red = require('../../../Models/CaoThap/CaoThap_red');
 let UserInfo     = require('../../../Models/UserInfo');
 
 module.exports = function(client){
-	CaoThap_red.find({play: false, $or:[
-		{goc:1000, bet:{$gt:1000}},
-		{goc:10000, bet:{$gt:10000}},
-		{goc:50000, bet:{$gt:50000}},
-		{goc:100000, bet:{$gt:100000}},
-		{goc:500000, bet:{$gt:500000}}
-	]}, 'uid goc bet a time', {sort:{'_id':-1}, limit: 50}, function(err, result) {
+	CaoThap_red.find({play: false}, 'uid goc bet a time', {sort:{'_id':-1}, limit: 50}, function(err, result) {
 		Promise.all(result.map(function(obj){
 			obj = obj._doc;
 			obj.a = (obj.a.length == 3);

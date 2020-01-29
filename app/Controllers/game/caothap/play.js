@@ -16,7 +16,6 @@ var HeSo         = require('./heso');
 function newGame(client, data) {
 	if (!!data && !!data.cuoc) {
 		var cuoc = data.cuoc>>0;  // Tiền cược
-		var red  = true;	  // Loại tiền đang chơi
 		if (!(cuoc == 1000 || cuoc == 10000 || cuoc == 50000 || cuoc == 100000 || cuoc == 500000)) {
 			// Error
 			client.red({mini:{caothap:{status:0,notice: 'Dữ liệu trò chơi không đúng...'}}});
@@ -49,7 +48,7 @@ function newGame(client, data) {
 
 					CaoThap_user.updateOne({'uid': client.UID}, {$inc: uInfoGame}).exec();
 
-					HU.findOneAndUpdate({game:'caothap', type:cuoc, red:red}, {$inc:{bet:addQuy}}, function(err, caothap){
+					HU.findOneAndUpdate({game:'caothap', type:cuoc}, {$inc:{bet:addQuy}}, function(err, caothap){
 						var checkName = (client.profile.name == caothap.name);
 
 						if (checkName) {
@@ -89,7 +88,6 @@ function newGame(client, data) {
 						});
 
 						client.red({mini:{caothap:{status:1, card:create['card'], a: create['a'], win: true, bet: cuoc, winUp: winUp, winDown: winDown, click:{isAnNon: false, down: down, up: up}}}, user:{red:user.red}});
-						client.caothap.red  = red;
 						client.caothap.time = setTimeout(function(){
 							var select = (Math.random()*2)>>0;
 							playGame(client, !!select);
@@ -137,7 +135,7 @@ function playGame(client, select) {
 
 						var winUp   = 0; // Vốn Cao
 						var winDown = 0; // Hệ số ăn Thấp
-						HU.findOne({game:'caothap', type:result.goc, red:client.caothap.red}, {}, function(err, caothap){
+						HU.findOne({game:'caothap', type:result.goc}, {}, function(err, caothap){
 							if (!!caothap) {
 								var checkName = (client.profile.name == caothap.name);
 								if (checkName) {
@@ -193,7 +191,7 @@ function playGame(client, select) {
 									}else{
 										var addQuy = (Math.ceil(bet*10/100))>>0;
 										bet = (bet-addQuy)>>0; // Hoà , trừ 10% vốn
-										HU.updateOne({game:'caothap', type:result.goc, red:client.caothap.red}, {$inc:{bet:addQuy}}).exec();
+										HU.updateOne({game:'caothap', type:result.goc}, {$inc:{bet:addQuy}}).exec();
 									}
 
 									up   = card.card != 0;
@@ -214,7 +212,7 @@ function playGame(client, select) {
 										// Tích lũy A = 3 => Nổ Hũ
 										clearTimeout(client.caothap.time);
 										client.caothap.play = false;
-										HU.updateOne({game:'caothap', type: result.goc, red:client.caothap.red}, {$set:{name:'', bet: caothap.min}}).exec();
+										HU.updateOne({game:'caothap', type: result.goc}, {$set:{name:'', bet: caothap.min}}).exec();
 										var nohu = create.bet = (caothap.bet-Math.ceil(caothap.bet*phe/100))>>0;
 
 										uInfo['red']    = nohu;            // Cập nhật Số dư Red trong tài khoản
@@ -300,7 +298,6 @@ function reconnect(client){
 			if (!!redLast && redLast.play){
 				client.caothap = client.caothap || {};
 				client.caothap.id  = redLast._id.toString();
-				client.caothap.red = true;
 				ketqua(redLast._doc);
 			}else{
 				ketqua(null);
@@ -333,7 +330,7 @@ function reconnect(client){
 					winDown = bet+winDown;               // Vốn Thấp
 				}
 				var isAnNon = (result.buoc > 0);
-				client.red({mini:{caothap:{reconnect: {red: client.caothap.red, cuoc: result.goc, time_remain: time_remain, card:result.card, a: result.a, bet: bet, winUp: winUp, winDown: winDown, click:{isAnNon: isAnNon, down: down, up: up}}}}});
+				client.red({mini:{caothap:{reconnect:{cuoc: result.goc, time_remain: time_remain, card:result.card, a: result.a, bet: bet, winUp: winUp, winDown: winDown, click:{isAnNon: isAnNon, down: down, up: up}}}}});
 
 				client.caothap.time = setTimeout(function(){
 					var select = (Math.random()*2)>>0;
