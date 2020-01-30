@@ -173,40 +173,8 @@ Room.prototype.addFish = function(){
 }
 
 Room.prototype.playGame = function(){
-	//var rand = ((Math.random()*19)>>0)+1;
-
 	this.gameStart();
 	this.timeFish = setInterval(this.addFish.bind(this), 1000);
-
-/**
-	var rand = (Math.random()*4)>>0;
-	var group = this.root.group[1];
-	console.log(group);
-	//console.log(this.groupData(group));
-	this.sendToAll({fish:this.groupData(group, null, rand)});
-		/**
-		var f = {f:fish, anim:rand, coll:{0:this.collision(this.root.fish[fish]), 1:this.collision(this.root.fish[fish]), 2:this.collision(this.root.fish[fish]), 3:this.collision(this.root.fish[fish]), 4:this.collision(this.root.fish[fish]), 5:this.collision(this.root.fish[fish])}};
-		this.fish[id] = f;
-		var data = {id:id, f:fish, r:rand};
-		all.push(data);
-		*/
-	/**
-	//this.timeFish = setInterval(function() {
-		let all = [];
-		var rand = (Math.random()*14)>>0;
-		for (let i = 0; i < 5; i++) {
-			var id = this.fishID++;
-			var fish = 1;
-			var f = {f:fish, coll:{0:this.collision(this.root.fish[fish]), 1:this.collision(this.root.fish[fish]), 2:this.collision(this.root.fish[fish]), 3:this.collision(this.root.fish[fish]), 4:this.collision(this.root.fish[fish]), 5:this.collision(this.root.fish[fish])}};
-			this.fish[id] = f;
-			var data = {id:id, f:fish, r:rand};
-			all.push(data);
-		}
-		this.sendToAll({fishs:{t:0.8, f:all}});
-
-		//this.sendToAll({fish:{id:id, f:fish, r:rand}});
-	//}.bind(this), 5000);
-	*/
 }
 
 Room.prototype.resetGame = function() {

@@ -119,7 +119,6 @@ var cuoc = function(client, data){
 						user.red -= bet;
 						user.save();
 						var phien = client.redT.TaiXiu_phien;
-
 						TXCuocOne.findOne({uid:client.UID, phien:phien}, 'bet select', function(isCuocErr, isCuoc) {
 							if (!!isCuoc) {
 								// update
@@ -138,7 +137,7 @@ var cuoc = function(client, data){
 
 										io.taixiuAdmin.taixiu.red_xiu += bet;
 									}
-	
+
 									io.taixiuAdmin.list.unshift({name:user.name, select:select, bet:bet, time:new Date()});
 									TXCuoc.create({uid:client.UID, name:user.name, phien:phien, bet:bet, select:select, time:new Date()});
 
@@ -147,7 +146,7 @@ var cuoc = function(client, data){
 
 									if (!!client.redT.users[client.UID]) {
 										client.redT.users[client.UID].forEach(function(obj){
-											obj.red({taixiu:taixiuVery, user:{red:user.red-bet}});
+											obj.red({taixiu:taixiuVery, user:{red:user.red}});
 										});
 									}
 								}
@@ -176,7 +175,7 @@ var cuoc = function(client, data){
 
 								if (!!client.redT.users[client.UID]) {
 									client.redT.users[client.UID].forEach(function(obj){
-										obj.red({taixiu:taixiuVery, user:{red:user.red-bet}});
+										obj.red({taixiu:taixiuVery, user:{red:user.red}});
 									});
 								}
 							}
@@ -283,22 +282,17 @@ var get_log = function(client, data){
 
 var get_top = async function(client, data){
 	if (!!data) {
-		TaiXiu_User.aggregate([
-			{$project:{uid:'$uid', profit:{$subtract:['$tWinRed', '$tLostRed']}}},
-			{$match:{'profit':{$gt:0}}},
-			{$sort:{'profit':-1}},
-			{$limit:10}
-		]).exec(function(err, result){
-			Promise.all(result.map(function(obj){
+		TaiXiu_User.find({'totall':{$gt:0}}, 'totall uid', {sort:{totall:-1}, limit:10}, function(err, results) {
+			Promise.all(results.map(function(obj){
 				return new Promise(function(resolve, reject) {
-					UserInfo.findOne({'id':obj.uid}, 'name', function(error, result2){
-						resolve({name:result2.name, bet:obj.profit});
+					UserInfo.findOne({'id': obj.uid}, function(error, result2){
+						resolve({name:!!result2 ? result2.name : '', bet:obj.totall});
 					})
 				})
 			}))
 			.then(function(data){
 				client.red({taixiu:{get_top:data}});
-			})
+			});
 		});
 	}
 }

@@ -1,23 +1,17 @@
 
 let BauCua_user = require('../../../Models/BauCua/BauCua_user');
-let UserInfo   = require('../../../Models/UserInfo');
+let UserInfo    = require('../../../Models/UserInfo');
 module.exports = function(client){
-	let project = {uid:'$uid',profit:{$subtract:['$red', '$red_lost']}};
-	BauCua_user.aggregate([
-		{$project: project},
-		{$match:{'profit':{$gt:0}}},
-		{$sort: {'profit': -1}},
-		{$limit: 100}
-	]).exec(function(err, result){
-		Promise.all(result.map(function(obj){
+	BauCua_user.find({'totall':{$gt:0}}, 'totall uid', {sort:{totall:-1}, limit:100}, function(err, results) {
+		Promise.all(results.map(function(obj){
 			return new Promise(function(resolve, reject) {
-				UserInfo.findOne({'id':obj.uid}, 'name', function(error, result2){
-					resolve({name:result2.name, bet:obj.profit});
-				})
-			})
+				UserInfo.findOne({'id': obj.uid}, function(error, result2){
+					resolve({name:!!result2 ? result2.name : '', bet:obj.totall});
+				});
+			});
 		}))
 		.then(function(data){
 			client.red({mini:{baucua:{tops:data}}});
-		})
+		});
 	});
 };

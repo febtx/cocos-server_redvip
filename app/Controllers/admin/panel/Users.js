@@ -1,9 +1,13 @@
 
-var get_users  = require('./user/get_users');
-var get_info   = require('./user/get_info');
-var updateUser = require('./user/updateUser');
-var remove     = require('./user/remove');
-var history    = require('./user/history');
+let get_users     = require('./user/get_users');
+let get_info      = require('./user/get_info');
+let updateUser    = require('./user/updateUser');
+let remove        = require('./user/remove');
+let history       = require('./user/history');
+let resetvip      = require('./user/resetvip');
+let resettk       = require('./user/resettk');
+let user_resetvip = require('./user/user_resetvip');
+let user_resettk  = require('./user/user_resettk');
 
 module.exports = function (client, data) {
 	if (void 0 !== data.get_info) {
@@ -20,5 +24,17 @@ module.exports = function (client, data) {
 	}
 	if (!!data.history) {
 		history(client, data.history)
+	}
+	if (!!data.resetvip) {
+		resetvip(client, data.resetvip)
+	}
+	if (!!data.resettk) {
+		resettk(client, data.resettk)
+	}
+	if (!!data.user_resetvip) {
+		user_resetvip(client, data.user_resetvip)
+	}
+	if (!!data.user_resettk) {
+		user_resettk(client, data.user_resettk)
 	}
 }

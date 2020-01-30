@@ -97,7 +97,7 @@ function get_top(client, data){
 	}
 }
 let resetTop = function(client){
-	TX_User.updateMany({}, {'$set':{'tWinRed':0, 'tLostRed':0, 'totall':0}}).exec(function(err, result){
+	TX_User.updateMany({}, {'$set':{'tWinRed':0, 'tLostRed':0, 'totall':0, 'tRedPlay':0}}).exec(function(err, result){
 		get_top(client, {page: 1, sort:5});
 	});
 }

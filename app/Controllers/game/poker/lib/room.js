@@ -149,7 +149,6 @@ Poker.prototype.checkGame = function(){
 			this.i_first = this.playerInGame.findIndex(function(obj){
 				return obj.data.d;
 			});
-			console.log(this.i_first);
 			this.game_bet = this.game;
 			this.Round1();
 		}.bind(this), 3000);
@@ -619,9 +618,6 @@ Poker.prototype.win = function(){
 	}
 }
 Poker.prototype.winer = function(player){
-	console.log('Tìm Ra người chiến thắng');
-	console.log(player.caoNhat);
-	//this.resetData();
 	player.balans += player.bet;
 	let objWin = {ghe:player.map, data:{balans:player.balans, openCard:player.card}, info:{win:0}};
 	let array = [objWin];
@@ -664,7 +660,6 @@ Poker.prototype.winer = function(player){
 }
 // Hòa game
 Poker.prototype.Hoa = function(){
-	console.log('Hòa game');
 	let array = [];
 	this.playerInGame.forEach(function(obj, index){
 		obj.data.balans += obj.data.bet;

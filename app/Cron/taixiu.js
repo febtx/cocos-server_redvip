@@ -111,7 +111,7 @@ let setTaiXiu_user = function(phien, dice){
 							let bet_thua = obj.bet-obj.tralai;
 							let bet = obj.win ? obj.betwin+obj.bet : bet_thua;
 							let update = {};
-							if (obj.taixiu === true && obj.red === true && bet_thua >= 10000) {
+							if (bet_thua >= 10000) {
 								update = {
 									tLineWinRed:   obj.win && data.tLineWinRed < data.tLineWinRedH+1 ? data.tLineWinRedH+1 : data.tLineWinRed,
 									tLineLostRed:  !obj.win && data.tLineLostRed < data.tLineLostRedH+1 ? data.tLineLostRedH+1 : data.tLineLostRed,
@@ -182,9 +182,9 @@ let thongtin_thanhtoan = function(game_id, dice = false){
 		TXCuoc.find({phien:game_id}, null, {sort:{'_id':-1}}, function(err, list) {
 			if(list.length){
 				list.forEach(function(objL) {
-					if (objL.taixiu === true && objL.red === true && objL.select === true){           // Tổng Red Tài
+					if (objL.select === true){           // Tổng Red Tài
 						TaiXiu_red_tong_tai += objL.bet;
-					} else if (objL.taixiu === true && objL.red === true && objL.select === false) {  // Tổng Red Xỉu
+					} else if (objL.select === false) {  // Tổng Red Xỉu
 						TaiXiu_red_tong_xiu += objL.bet;
 					}
 				});
@@ -199,7 +199,7 @@ let thongtin_thanhtoan = function(game_id, dice = false){
 					let oneUpdate = {};
 					let winH = false;
 					let betH = 0;
-					if (obj.taixiu === true && obj.red === true && obj.select === true){ // Tổng Red Tài
+					if (obj.select === true){ // Tổng Red Tài
 						let win = dice > 10 ? true : false;
 						if (TaiXiu_red_lech_tai && TaiXiu_tong_red_lech > 0) {
 							if (TaiXiu_tong_red_lech >= obj.bet) {
@@ -281,7 +281,7 @@ let thongtin_thanhtoan = function(game_id, dice = false){
 								TaiXiu_User.updateOne({uid: obj.uid}, {$inc:{totall:-obj.bet, tLostRed:obj.bet, tRedPlay:obj.bet}}).exec();
 							}
 						}
-					} else if (obj.taixiu === true && obj.red === true && obj.select === false) { // Tổng Red Xỉu
+					} else if (obj.select === false) { // Tổng Red Xỉu
 						let win = dice > 10 ? false : true;
 						if (!TaiXiu_red_lech_tai && TaiXiu_tong_red_lech > 0) {
 							if (TaiXiu_tong_red_lech >= obj.bet) {
@@ -466,7 +466,6 @@ let playGame = function(){
 							}
 						});
 					} catch (error) {
-						//console.log(error);
 					}
 				});
 

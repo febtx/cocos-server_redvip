@@ -1,17 +1,17 @@
 
-var Users_TX           = require('../../../../Models/TaiXiu_user');
-var Users_BauCua       = require('../../../../Models/BauCua/BauCua_user');
-var Users_BigBabol     = require('../../../../Models/BigBabol/BigBabol_users');
-var Users_CaoThap      = require('../../../../Models/CaoThap/CaoThap_user');
-var Users_Mini3Cay     = require('../../../../Models/Mini3Cay/Mini3Cay_user');
-var Users_miniPoker    = require('../../../../Models/miniPoker/miniPoker_users');
-var Users_VuongQuocRed = require('../../../../Models/VuongQuocRed/VuongQuocRed_users');
-var Users_AngryBirds   = require('../../../../Models/AngryBirds/AngryBirds_user');
-var Users_LongLan      = require('../../../../Models/LongLan/LongLan_user');
-var Users_Candy        = require('../../../../Models/Candy/Candy_user');
+let Users_TX           = require('../../../../Models/TaiXiu_user');
+let Users_BauCua       = require('../../../../Models/BauCua/BauCua_user');
+let Users_BigBabol     = require('../../../../Models/BigBabol/BigBabol_users');
+let Users_CaoThap      = require('../../../../Models/CaoThap/CaoThap_user');
+let Users_Mini3Cay     = require('../../../../Models/Mini3Cay/Mini3Cay_user');
+let Users_miniPoker    = require('../../../../Models/miniPoker/miniPoker_users');
+let Users_VuongQuocRed = require('../../../../Models/VuongQuocRed/VuongQuocRed_users');
+let Users_AngryBirds   = require('../../../../Models/AngryBirds/AngryBirds_user');
+let Users_LongLan      = require('../../../../Models/LongLan/LongLan_user');
+let Users_Candy        = require('../../../../Models/Candy/Candy_user');
 
-var Users    = require('../../../../Models/Users');
-var UserInfo = require('../../../../Models/UserInfo');
+let Users    = require('../../../../Models/Users');
+let UserInfo = require('../../../../Models/UserInfo');
 let Phone    = require('../../../../Models/Phone');
 
 module.exports = function(client, id){
