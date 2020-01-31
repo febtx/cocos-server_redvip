@@ -2,7 +2,7 @@
 var fs = require('fs');
 
 module.exports = function(client) {
-	var promises = ['./config/sys.json', './config/taixiu.json', './config/baucua.json'].map(function(_path){
+	var promises = ['./config/sys.json', './config/taixiu.json', './config/baucua.json', './config/xocxoc.json'].map(function(_path){
 		return new Promise(function(_path, resolve, reject){
 			fs.readFile(_path, 'utf8', function(err, data){
 				if(err){
@@ -19,7 +19,8 @@ module.exports = function(client) {
 			let sys   = JSON.parse(results[0]);
 			let txbot = JSON.parse(results[1]);
 			let bcbot = JSON.parse(results[2]);
-			let data = {txbot:txbot.bot, bcbot:bcbot.bot};
+			let xxbot = JSON.parse(results[3]);
+			let data = {txbot:txbot.bot, bcbot:bcbot.bot, xxbot:xxbot.bot};
 			data = Object.assign(data, sys);
 			client.red({sys:data});
 		} catch (error) {
