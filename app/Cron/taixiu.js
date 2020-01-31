@@ -23,6 +23,17 @@ let gameLoop   = null;
 let init = function(obj){
 	io = obj;
 	io.listBot = [];
+	UserInfo.find({type:true}, 'id name', function(err, list){
+		if (!!list && list.length) {
+			io.listBot = list.map(function(user){
+				user = user._doc;
+				delete user._id;
+				return user;
+			});
+			list = null;
+		}
+	});
+
 	io.taixiu = {
 		taixiu: {
 			red_player_tai: 0,
