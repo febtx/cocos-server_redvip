@@ -254,39 +254,34 @@ let playGame = function(){
 			if (io.BauCua_time < 0) {
 				clearInterval(gameLoop);
 				io.BauCua_time = 0;
+				let bcjs = Helpers.getData('baucua');
+				if (!!bcjs) {
+					let dice1 = bcjs[0] == 6 ? (Math.random()*6)>>0 :bcjs[0];
+					let dice2 = bcjs[1] == 6 ? (Math.random()*6)>>0 :bcjs[1];
+					let dice3 = bcjs[2] == 6 ? (Math.random()*6)>>0 :bcjs[2];
 
-				fs.readFile('./data/baucua.json', 'utf8', (errjs, bcjs) => {
-					try {
-						bcjs = JSON.parse(bcjs);
+					bcjs[0]     = 6;
+					bcjs[1]     = 6;
+					bcjs[2]     = 6;
+					bcjs.uid    = '';
+					bcjs.rights = 2;
 
-						let dice1 = bcjs[0] == 6 ? (Math.random()*6)>>0 :bcjs[0];
-						let dice2 = bcjs[1] == 6 ? (Math.random()*6)>>0 :bcjs[1];
-						let dice3 = bcjs[2] == 6 ? (Math.random()*6)>>0 :bcjs[2];
+					Helpers.setData('baucua', bcjs);
 
-						bcjs[0]     = 6;
-						bcjs[1]     = 6;
-						bcjs[2]     = 6;
-						bcjs.uid    = '';
-						bcjs.rights = 2;
+					BauCua_phien.create({'dice1':dice1, 'dice2':dice2, 'dice3':dice3, 'time':new Date()}, function(err, create){
+						if (!!create) {
+							io.BauCua_phien = create.id+1;
+							thongtin_thanhtoan([dice1, dice2, dice3]);
+							io.sendAllUser({mini:{baucua:{finish:{dices:[create.dice1, create.dice2, create.dice3], phien:create.id}}}});
 
-						fs.writeFile('./data/baucua.json', JSON.stringify(bcjs), function(err){});
-
-						BauCua_phien.create({'dice1':dice1, 'dice2':dice2, 'dice3':dice3, 'time':new Date()}, function(err, create){
-							if (!!create) {
-								io.BauCua_phien = create.id+1;
-								thongtin_thanhtoan([dice1, dice2, dice3]);
-								io.sendAllUser({mini:{baucua:{finish:{dices:[create.dice1, create.dice2, create.dice3], phien:create.id}}}});
-
-								Object.values(io.admins).forEach(function(admin){
-									admin.forEach(function(client){
-										client.red({baucua:{finish:true, dices:[create.dice1, create.dice2, create.dice3]}});
-									});
+							Object.values(io.admins).forEach(function(admin){
+								admin.forEach(function(client){
+									client.red({baucua:{finish:true, dices:[create.dice1, create.dice2, create.dice3]}});
 								});
-							}
-						});
-					} catch (error) {
-					}
-				});
+							});
+						}
+					});
+				}
 				io.baucua.ingame = [];
 				io.baucua.info = {
 					redBau:0,
@@ -304,34 +299,16 @@ let playGame = function(){
 					redHuou:0,
 					redTom:0,
 				};
-
-				fs.readFile('./config/baucua.json', 'utf8', (errcf, bccf) => {
-					try {
-						bccf = JSON.parse(bccf);
-						if (bccf.bot) {
-							// lấy danh sách tài khoản bot
-							UserInfo.find({type:true}, 'id name', function(err, blist){
-								if (blist.length) {
-									Promise.all(blist.map(function(buser){
-										buser = buser._doc;
-										delete buser._id;
-
-										return buser;
-									}))
-									.then(result => {
-										let maxBot = (result.length*50/100)>>0;
-										botList = Helpers.shuffle(result);
-										botList = botList.slice(0, maxBot);
-									});
-								}
-							});
-						}else{
-							botList = [];
-						}
-					} catch (error) {
-						botList = [];
-					}
-				});
+				let bccf = Helpers.getConfig('baucua');
+				if (!!bccf && bccf.bot && !!io.listBot && io.listBot.length > 0) {
+					// lấy danh sách tài khoản bot
+					botList = [...io.listBot];
+					let maxBot = (botList.length*50/100)>>0;
+					botList = Helpers.shuffle(botList);
+					botList = botList.slice(0, maxBot);
+				}else{
+					botList = [];
+				}
 			}else{
 				thongtin_thanhtoan();
 				if (!!botList.length && io.BauCua_time > 2) {

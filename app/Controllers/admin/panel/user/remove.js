@@ -67,12 +67,17 @@ module.exports = function(client, id){
 	UserInfo.findOne({'id':id}, 'name', function(err, data){
 		if (!!data) {
 			// thực hiện xóa @@
+			// Đóng kết nối
+			if (!!client.redT.users[data.id]) {
+				client.redT.users[data.id].forEach(function(clt){
+					clt.terminate();
+				});
+			}
 
 			Phone.findOne({'uid':data.id}, '_id phone', function(errP, dataP){
 				if (!!dataP) {
 					Telegram.deleteOne({'phone':dataP.phone}).exec();
 					dataP.remove();
-					//Phone.deleteOne({'_id':dataP._id}).exec();
 				}
 			});
 

@@ -1,7 +1,4 @@
 
-//let path        = require('path');
-let fs          = require('fs');
-
 let Helpers     = require('../Helpers/Helpers');
 
 let UserInfo    = require('../Models/UserInfo');
@@ -25,7 +22,7 @@ let gameLoop   = null;
 
 let init = function(obj){
 	io = obj;
-
+	io.listBot = [];
 	io.taixiu = {
 		taixiu: {
 			red_player_tai: 0,
@@ -431,44 +428,39 @@ let playGame = function(){
 				clearInterval(gameLoop);
 				io.TaiXiu_time = 0;
 
-				fs.readFile('./data/taixiu.json', 'utf8', (errjs, taixiujs) => {
-					try {
-						taixiujs = JSON.parse(taixiujs);
+				let taixiujs = Helpers.getData('taixiu');
+				if (!!taixiujs) {
+					let dice1 = parseInt(taixiujs.dice1 == 0 ? Math.floor(Math.random() * 6) + 1 : taixiujs.dice1);
+					let dice2 = parseInt(taixiujs.dice2 == 0 ? Math.floor(Math.random() * 6) + 1 : taixiujs.dice2);
+					let dice3 = parseInt(taixiujs.dice3 == 0 ? Math.floor(Math.random() * 6) + 1 : taixiujs.dice3);
 
-						let dice1 = parseInt(taixiujs.dice1 == 0 ? Math.floor(Math.random() * 6) + 1 : taixiujs.dice1);
-						let dice2 = parseInt(taixiujs.dice2 == 0 ? Math.floor(Math.random() * 6) + 1 : taixiujs.dice2);
-						let dice3 = parseInt(taixiujs.dice3 == 0 ? Math.floor(Math.random() * 6) + 1 : taixiujs.dice3);
+					taixiujs.dice1  = 0;
+					taixiujs.dice2  = 0;
+					taixiujs.dice3  = 0;
+					taixiujs.uid    = '';
+					taixiujs.rights = 2;
 
-						taixiujs.dice1  = 0;
-						taixiujs.dice2  = 0;
-						taixiujs.dice3  = 0;
-						taixiujs.uid    = '';
-						taixiujs.rights = 2;
+					Helpers.setData('taixiu', taixiujs);
 
-						fs.writeFile('./data/taixiu.json', JSON.stringify(taixiujs), function(err){});
+					TXPhien.create({'dice1':dice1, 'dice2':dice2, 'dice3':dice3, 'time':new Date()}, function(err, create){
+						if (!!create) {
+							io.TaiXiu_phien = create.id+1;
+							thongtin_thanhtoan(create.id, dice1+dice2+dice3);
+							io.sendAllUser({taixiu: {finish:{dices:[create.dice1, create.dice2, create.dice3], phien:create.id}}});
 
-						TXPhien.create({'dice1':dice1, 'dice2':dice2, 'dice3':dice3, 'time':new Date()}, function(err, create){
-							if (!!create) {
-								io.TaiXiu_phien = create.id+1;
-								thongtin_thanhtoan(create.id, dice1+dice2+dice3);
-								io.sendAllUser({taixiu: {finish:{dices:[create.dice1, create.dice2, create.dice3], phien:create.id}}});
-
-								Object.values(io.admins).forEach(function(admin){
-									admin.forEach(function(client){
-										client.red({taixiu: {finish:{dices:[create.dice1, create.dice2, create.dice3], phien:create.id}}});
-										client = null;
-									});
-									admin = null;
+							Object.values(io.admins).forEach(function(admin){
+								admin.forEach(function(client){
+									client.red({taixiu: {finish:{dices:[create.dice1, create.dice2, create.dice3], phien:create.id}}});
+									client = null;
 								});
-								dice1 = null;
-								dice2 = null;
-								dice3 = null;
-							}
-						});
-					} catch (error) {
-					}
-				});
-
+								admin = null;
+							});
+							dice1 = null;
+							dice2 = null;
+							dice3 = null;
+						}
+					});
+				}
 				io.taixiu = {
 					taixiu: {
 						red_player_tai: 0,
@@ -486,37 +478,19 @@ let playGame = function(){
 					},
 					list: []
 				};
-
-				fs.readFile('./config/taixiu.json', 'utf8', (errcf, taixiucf) => {
-					try {
-						taixiucf = JSON.parse(taixiucf);
-						
-						if (taixiucf.bot) {
-							// lấy danh sách tài khoản bot
-							UserInfo.find({type:true}, 'id name', function(err, list){
-								if (!!list && list.length) {
-									list = list.map(function(user){
-										user = user._doc;
-										delete user._id;
-										return user;
-									});
-									botTemp = [...list];
-									let maxBot = (list.length*70/100)>>0;
-									botList = Helpers.shuffle(list); // tráo
-									botList = botList.slice(0, maxBot);
-									maxBot = null;
-									list = null;
-								}
-							});
-						}else{
-							botTemp = [];
-							botList = [];
-						}
-					} catch (error) {
-						botTemp = [];
-						botList = [];
-					}
-				});
+				let taixiucf = Helpers.getConfig('taixiu');
+				if (!!taixiucf && taixiucf.bot && !!io.listBot && io.listBot.length > 0) {
+					// lấy danh sách tài khoản bot
+					botTemp = [...io.listBot];
+					botList = [...io.listBot];
+					let maxBot = (botList.length*70/100)>>0;
+					botList = Helpers.shuffle(botList); // tráo
+					botList = botList.slice(0, maxBot);
+					maxBot = null;
+				}else{
+					botTemp = [];
+					botList = [];
+				}
 			}else{
 				thongtin_thanhtoan(io.TaiXiu_phien);
 				if (!!botList.length && io.TaiXiu_time > 2) {

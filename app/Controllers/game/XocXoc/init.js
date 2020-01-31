@@ -49,101 +49,74 @@ let XocXoc = function(io){
 		},
 	};
 
-	let self = this;
 	XocXoc_phien.findOne({}, 'id', {sort:{'_id':-1}}, function(err, last) {
 		if (!!last){
-			self.phien = last.id+1;
+			this.phien = last.id+1;
 		}
-		self.play();
-		self = null;
-	});
+		this.play();
+	}.bind(this));
 }
 
 XocXoc.prototype.play = function(){
 	// chạy thời gian
-
 	this.time = 43;
-
 	this.timeInterval = setInterval(function(){
-		let self = this;
 		if (this.time < 30) {
 			if (this.time < 0) {
 				clearInterval(this.timeInterval);
 				this.time = 0;
-
 				this.resetData();
-
 				this.resetDataAdmin();
+				let xocxocjs = Helpers.getData('xocxoc');
+				if(!!xocxocjs){
+					let red1 = xocxocjs.red1 == 2 ? !!((Math.random()*2)>>0) : xocxocjs.red1;
+					let red2 = xocxocjs.red2 == 2 ? !!((Math.random()*2)>>0) : xocxocjs.red2;
+					let red3 = xocxocjs.red3 == 2 ? !!((Math.random()*2)>>0) : xocxocjs.red3;
+					let red4 = xocxocjs.red4 == 2 ? !!((Math.random()*2)>>0) : xocxocjs.red4;
+					xocxocjs.red1 = 2;
+					xocxocjs.red2 = 2;
+					xocxocjs.red3 = 2;
+					xocxocjs.red4 = 2;
 
-				fs.readFile('./data/xocxoc.json', 'utf8', (errjs, xocxocjs) => {
-					try {
-						xocxocjs = JSON.parse(xocxocjs);
-
-						let red1 = xocxocjs.red1 == 2 ? !!((Math.random()*2)>>0) : xocxocjs.red1;
-						let red2 = xocxocjs.red2 == 2 ? !!((Math.random()*2)>>0) : xocxocjs.red2;
-						let red3 = xocxocjs.red3 == 2 ? !!((Math.random()*2)>>0) : xocxocjs.red3;
-						let red4 = xocxocjs.red4 == 2 ? !!((Math.random()*2)>>0) : xocxocjs.red4;
-
-						xocxocjs.red1 = 2;
-						xocxocjs.red2 = 2;
-						xocxocjs.red3 = 2;
-						xocxocjs.red4 = 2;
-
-						fs.writeFile('./data/xocxoc.json', JSON.stringify(xocxocjs), function(err){});
-
-						XocXoc_phien.create({'red1':red1, 'red2':red2, 'red3':red3, 'red4':red4, 'time':new Date()}, function(err, create){
-							if (!!create) {
-								self.phien = create.id+1;
-								self.thanhtoan([red1, red2, red3, red4]);
-								self.timeInterval = null;
-								xocxocjs          = null;
-								Object.values(self.clients).forEach(function(client){
-									client.red({xocxoc:{phien:create.id, finish:[red1, red2, red3, red4]}});
-								});
-								Object.values(self.io.admins).forEach(function(admin){
-									admin.forEach(function(client){
-										client.red({xocxoc:{finish:[red1, red2, red3, red4]}});
-									});
-								});
-								self = null;
-							}
-						});
-					} catch (error) {
-					}
-				});
-				/**
-				fs.readFile('./config/xocxoc.json', 'utf8', (errXX, bcXX) => {
-					try {
-						bcXX = JSON.parse(bcXX);
-						if (bcXX.bot) {
-							// lấy danh sách tài khoản bot
-							UserInfo.find({type:true}, 'id name', function(err, blist){
-								if (blist.length) {
-									Promise.all(blist.map(function(buser){
-										buser = buser._doc;
-										delete buser._id;
-
-										return buser;
-									}))
-									.then(result => {
-										let maxBot = (result.length*50/100)>>0;
-										this.botList = Helpers.shuffle(result);
-										this.botList = this.botList.slice(0, maxBot);
-									});
-								}
+					Helpers.setData('xocxoc', xocxocjs);
+					xocxocjs = null;
+					XocXoc_phien.create({'red1':red1, 'red2':red2, 'red3':red3, 'red4':red4, 'time':new Date()}, function(err, create){
+						if (!!create) {
+							this.phien = create.id+1;
+							this.thanhtoan([red1, red2, red3, red4]);
+							this.timeInterval = null;
+							Object.values(this.clients).forEach(function(client){
+								client.red({xocxoc:{phien:create.id, finish:[red1, red2, red3, red4]}});
 							});
-						}else{
-							this.botList = [];
+							Object.values(this.io.admins).forEach(function(admin){
+								admin.forEach(function(client){
+									client.red({xocxoc:{finish:[red1, red2, red3, red4]}});
+								});
+							});
 						}
-					} catch (error) {
-						this.botList = [];
-					}
-				});
-				*/
+					}.bind(this));
+				}
+				let xocxoc_config = Helpers.getConfig('xocxoc');
+				if (!!xocxoc_config && xocxoc_config.bot && !!this.io.listBot && this.io.listBot.length > 0) {
+					// lấy danh sách tài khoản bot
+					this.botList = [...this.io.listBot];
+					let maxBot = (this.botList.length*(Math.floor(Math.random()*(70-50+1))+50)/100)>>0;
+					this.botList = Helpers.shuffle(this.botList);
+					this.botList = this.botList.slice(0, maxBot);
+					this.botCount = this.botList.length;
+
+					let cc = Object.keys(this.clients).length+this.botCount;
+					Object.values(this.clients).forEach(function(users){
+						users.red({xocxoc:{ingame:{client:cc}}});
+					}.bind(this));
+				}else{
+					this.botList  = [];
+					this.botCount = 0;
+				}
 			}else{
 				this.thanhtoan();
-				/**
-				if (!!this.botList.length && this.time > 2) {
+				///**
+				if (!!this.botList.length && this.time > 5) {
 					let userCuoc = (Math.random()*5)>>0;
 					for (let i = 0; i < userCuoc; i++) {
 						let dataT = this.botList[i];
@@ -154,7 +127,7 @@ XocXoc.prototype.play = function(){
 						dataT = null;
 					}
 				}
-				*/
+				//*/
 			}
 		}
 		this.time--;
@@ -164,7 +137,6 @@ XocXoc.prototype.play = function(){
 
 XocXoc.prototype.thanhtoan = function(dice = null){
 	// thanh toán phiên
-	let self = this;
 	if (!!dice) {
 		let gameChan = 0;     // Là chẵn
 
@@ -276,14 +248,14 @@ XocXoc.prototype.thanhtoan = function(dice = null){
 
 					UserInfo.updateOne({id:cuoc.uid}, {$inc:update}).exec();
 					XocXoc_user.updateOne({uid:cuoc.uid}, {$inc:updateGame}).exec();
-					if(void 0 !== self.clients[cuoc.uid]){
+					if(void 0 !== this.clients[cuoc.uid]){
 						let status = {};
 						if (TongThang > 0) {
 							status = {xocxoc:{status:{win:true, bet:TongThang}}};
 						}else{
 							status = {xocxoc:{status:{win:false, bet:Math.abs(totall)}}};
 						}
-						self.clients[cuoc.uid].red(status);
+						this.clients[cuoc.uid].red(status);
 						status = null;
 					}
 
@@ -293,7 +265,7 @@ XocXoc.prototype.thanhtoan = function(dice = null){
 					update     = null;
 					updateGame = null;
 					return {users:cuoc.name, bet:totall};
-				}))
+				}.bind(this)))
 				.then(function(arrayOfResults) {
 					phien = null;
 					dice = null;
@@ -304,7 +276,7 @@ XocXoc.prototype.thanhtoan = function(dice = null){
 					arrayOfResults = arrayOfResults.filter(function(st){
 						return st.bet > 0;
 					});
-					self.play();
+					this.play();
 					if (arrayOfResults.length) {
 						arrayOfResults.sort(function(a, b){
 							return b.bet-a.bet;
@@ -317,15 +289,12 @@ XocXoc.prototype.thanhtoan = function(dice = null){
 							return {users:obj.users, bet:obj.bet, game:'Xóc Xóc'};
 						}))
 						.then(results => {
-							self.io.sendInHome({news:{a:results}});
+							this.io.sendInHome({news:{a:results}});
 							results = null;
 							arrayOfResults = null;
-							self = null;
 						});
-					}else{
-						self = null;
 					}
-				});
+				}.bind(this));
 			}else{
 				phien = null;
 				dice = null;
@@ -334,14 +303,13 @@ XocXoc.prototype.thanhtoan = function(dice = null){
 				white3 = null;
 				white4 = null;
 
-				self.play();
-				self = null;
+				this.play();
 			}
-		});
+		}.bind(this));
 	}else{
 		Object.values(this.clients).forEach(function(client){
-			client.red({xocxoc:{client:self.data}});
-		});
+			client.red({xocxoc:{client:this.data}});
+		}.bind(this));
 
 		///**
 		let admin_data = {xocxoc:{info:this.dataAdmin, ingame:this.ingame}};
@@ -353,7 +321,6 @@ XocXoc.prototype.thanhtoan = function(dice = null){
 			});
 		});
 		//*/
-		self = null;
 	}
 }
 
@@ -412,10 +379,77 @@ XocXoc.prototype.resetDataAdmin = function(){
 	this.dataAdmin.red.white4 = 0;
 };
 
-XocXoc.prototype.bot = function(users){
+XocXoc.prototype.randomChip = function(){
+	let a = (Math.random()*35)>>0;
+	if (a == 34) {
+		return 1000000;
+	}else if (a >= 30 && a < 34) {
+		return 100000;
+	}else if (a >= 25 && a < 30) {
+		return 50000;
+	}else if (a >= 18 && a < 25) {
+		return 10000;
+	}else{
+		return 1000;
+	}
 }
 
-XocXoc.prototype.updateUsers = function(){
+XocXoc.prototype.randomBox = function(){
+	let a = Math.floor(Math.random()*6);
+	let data = ['chan', 'le', 'red3', 'red4', 'white3', 'white4'];
+	return data[a];
+}
+
+XocXoc.prototype.randomTime = function(){
+	return Math.floor(Math.random()*3000);
+}
+
+XocXoc.prototype.bot = function(data){
+	let chip = this.randomChip();
+	switch(chip){
+		case 1000:
+			for (let i = 6; i >= 0; i--) {
+				this.botCuoc(chip, data);
+			}
+			break;
+		case 10000:
+			for (let i = 3; i >= 0; i--) {
+				this.botCuoc(chip, data);
+			}
+			break;
+		case 50000:
+			for (let i = 2; i >= 0; i--) {
+				this.botCuoc(chip, data);
+			}
+			break;
+		case 100000:
+			this.botCuoc(chip, data);
+			break;
+		case 100000:
+			this.botCuoc(chip, data);
+			break;
+	}
+}
+
+XocXoc.prototype.botCuoc = function(cuoc, data){
+	let time = this.randomTime();
+	setTimeout(function(){
+		let box = this.randomBox();
+		XocXoc_cuoc.findOne({uid:data.id, phien:this.phien}, function(err, checkOne){
+			if (checkOne){
+				checkOne[box] += cuoc;
+				checkOne.save();
+			}else{
+				var create = {uid:data.id,name:data.name, phien:this.phien, time:new Date()};
+				create[box] = cuoc;
+				XocXoc_cuoc.create(create);
+			}
+		}.bind(this));
+		this.data.red[box] += cuoc;
+		Object.values(this.clients).forEach(function(users){
+			users.red({xocxoc:{chip:{box:box, cuoc:cuoc}}});
+		});
+	}.bind(this), time);
 }
 
 module.exports = XocXoc;

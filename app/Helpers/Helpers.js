@@ -4,7 +4,7 @@ let fs     = require('fs');
 var path   = require('path');
 
 let getConfig = function(config){
-	var text = fs.readFileSync('./config/' + config + '.json','utf8');
+	let text = fs.readFileSync('./config/' + config + '.json','utf8');
 	try{
 		text = JSON.parse(text);
 		return text;
@@ -15,10 +15,11 @@ let getConfig = function(config){
 
 let setConfig = function(config, data){
 	fs.writeFile(path.dirname(path.dirname(__dirname)) + '/config/' + config + '.json', JSON.stringify(data), function(err){});
+	data = null;
 }
 
 let getData = function(data){
-	var text = fs.readFileSync('./data/' + data + '.json','utf8');
+	let text = fs.readFileSync('./data/' + data + '.json','utf8');
 	try{
 		text = JSON.parse(text);
 		return text;
@@ -26,6 +27,12 @@ let getData = function(data){
 		return null;
 	}
 }
+
+let setData = function(config, data){
+	fs.writeFile(path.dirname(path.dirname(__dirname)) + '/data/' + config + '.json', JSON.stringify(data), function(err){});
+	data = null;
+}
+
 // mã hóa pass
 let generateHash = function(password) {
 	return bcrypt.hashSync(password, bcrypt.genSaltSync(12), null)
@@ -185,6 +192,7 @@ module.exports = {
 	cutEmail:        cutEmail,
 	cutPhone:        cutPhone,
 	getConfig:       getConfig,
-	getData:         getData,
 	setConfig:       setConfig,
+	getData:         getData,
+	setData:         setData,
 }
