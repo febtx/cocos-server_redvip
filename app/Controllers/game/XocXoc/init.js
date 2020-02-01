@@ -116,7 +116,7 @@ XocXoc.prototype.play = function(){
 			}else{
 				this.thanhtoan();
 				///**
-				if (!!this.botList.length && this.time > 5) {
+				if (!!this.botList.length && this.time > 10) {
 					let userCuoc = (Math.random()*5)>>0;
 					for (let i = 0; i < userCuoc; i++) {
 						let dataT = this.botList[i];
@@ -274,7 +274,7 @@ XocXoc.prototype.thanhtoan = function(dice = null){
 					white3 = null;
 					white4 = null;
 					arrayOfResults = arrayOfResults.filter(function(st){
-						return st.bet > 0;
+						return st.bet > 10000;
 					});
 					this.play();
 					if (arrayOfResults.length) {
@@ -401,24 +401,27 @@ XocXoc.prototype.randomBox = function(){
 }
 
 XocXoc.prototype.randomTime = function(){
-	return Math.floor(Math.random()*3000);
+	return Math.floor(Math.random()*5000);
 }
 
 XocXoc.prototype.bot = function(data){
 	let chip = this.randomChip();
 	switch(chip){
 		case 1000:
-			for (let i = 6; i >= 0; i--) {
+			var rand = Math.floor(Math.random()*(15-5+1))+5;
+			for (let i = rand; i >= 0; i--) {
 				this.botCuoc(chip, data);
 			}
 			break;
 		case 10000:
-			for (let i = 3; i >= 0; i--) {
+			var rand = Math.floor(Math.random()*(8-2+1))+2;
+			for (let i = rand; i >= 0; i--) {
 				this.botCuoc(chip, data);
 			}
 			break;
 		case 50000:
-			for (let i = 2; i >= 0; i--) {
+			var rand = Math.floor(Math.random()*(5-1+1))+1;
+			for (let i = rand; i >= 0; i--) {
 				this.botCuoc(chip, data);
 			}
 			break;

@@ -197,7 +197,7 @@ let thongtin_thanhtoan = function thongtin_thanhtoan(dice = null){
 					phien = null;
 					dice = null;
 					arrayOfResults = arrayOfResults.filter(function(st){
-						return st.bet > 0;
+						return st.bet > 10000;
 					});
 					if (arrayOfResults.length) {
 						arrayOfResults.sort(function(a, b){

@@ -41,7 +41,7 @@ module.exports = function(client, data) {
 			}
 
 			AngryBirds_user.countDocuments({}).exec(function(err, total){
-				AngryBirds_user.find({}, 'bet win lost uid totall time', {sort:sort, skip:(page-1)*kmess, limit:kmess}, function(err, results) {
+				AngryBirds_user.find({}, 'bet win lost uid totall time select', {sort:sort, skip:(page-1)*kmess, limit:kmess}, function(err, results) {
 					if (results.length) {
 						Promise.all(results.map(function(obj){
 							return new Promise(function(resolve, reject) {

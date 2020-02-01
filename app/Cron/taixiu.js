@@ -155,7 +155,7 @@ let setTaiXiu_user = function(phien, dice){
 			}))
 			.then(values => {
 				values = values.filter(function(obj){
-					return obj !== null && obj.betwin > 0;
+					return obj !== null && obj.betwin > 10000;
 				});
 				if (values.length) {
 					values.sort(function(a, b){

@@ -31,7 +31,10 @@ function onSelectBox(client, box){
 					huUpdate.redWin = betWin;
 					uInfo.red       = betWin;
 					uInfo.redWin    = betWin;
+					uInfo.totall    = betWin;
+
 					gInfo.win       = betWin;
+					gInfo.totall    = betWin;
 					Candy_red.updateOne({'_id': client.Candy.id}, {$inc:{win:betWin}}).exec();
 
 					client.Candy.bonus    = null;
@@ -43,7 +46,7 @@ function onSelectBox(client, box){
 							client.red({candy:{bonus:{win: betWin}}, user:{red:user.red*1+betWin}});
 						}, 700);
 					});
-					HU.updateOne({game:'candy', type:client.Candy.bet, red:client.Candy.red}, {$inc:huUpdate}).exec();
+					HU.updateOne({game:'candy', type:client.Candy.bet}, {$inc:huUpdate}).exec();
 					Candy_user.updateOne({'uid':client.UID}, {$inc:gInfo}).exec();
 				}
 			}

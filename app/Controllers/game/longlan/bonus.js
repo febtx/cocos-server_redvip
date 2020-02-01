@@ -44,7 +44,7 @@ function onSelectBox(client, box){
 							client.red({longlan:{bonus:{win: betWin}}, user:{red:user.red*1+betWin}});
 						}, 700);
 					});
-					HU.updateOne({game:'long', type:client.LongLan.bet, red:client.LongLan.red}, {$inc:huUpdate}).exec();
+					HU.updateOne({game:'long', type:client.LongLan.bet}, {$inc:huUpdate}).exec();
 					LongLan_user.updateOne({'uid':client.UID}, {$inc:gInfo}).exec();
 				}
 			}

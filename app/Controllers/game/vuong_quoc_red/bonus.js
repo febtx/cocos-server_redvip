@@ -45,7 +45,7 @@ function onSelectBox(client, box){
 							client = null;
 						}, 700);
 					});
-					HU.updateOne({game:'vuongquocred', type:client.VuongQuocRed.bet, red:client.VuongQuocRed.red}, {$inc:huUpdate}).exec();
+					HU.updateOne({game:'vuongquocred', type:client.VuongQuocRed.bet}, {$inc:huUpdate}).exec();
 					VuongQuocRed_users.updateOne({'uid':client.UID}, {$inc:gInfo}).exec();
 				}else{
 					client = null;

@@ -251,13 +251,11 @@ function gameBonus(client, bet){
 module.exports = function(client, data){
 	if (!!data && !!data.cuoc && Array.isArray(data.line)) {
 		let bet  = data.cuoc>>0;             // Mức cược
-		let red  = true;
 		let line = Array.from(new Set(data.line)); // Dòng cược // fix trùng lặp
 		if (!(bet == 100 || bet == 1000 || bet == 10000) || line.length < 1) {
 			client.red({longlan:{status:0}, notice:{text:'DỮ LIỆU KHÔNG ĐÚNG...', title:'THẤT BẠI'}});
 		}else{
-			client.LongLan = void 0 === client.LongLan ? {id:'', red:red, bet:bet, bonus:null, bonusL:0, bonusWin:0, free:0} :client.LongLan;
-			client.LongLan.red = red;
+			client.LongLan = void 0 === client.LongLan ? {id:'', bet:bet, bonus:null, bonusL:0, bonusWin:0, free:0} :client.LongLan;
 			client.LongLan.bet = bet;
 			let tongCuoc = bet*line.length;
 			UserInfo.findOne({id:client.UID}, 'red name', function(err, user){
@@ -265,7 +263,7 @@ module.exports = function(client, data){
 					client.red({longlan:{status:0, notice:'Bạn không đủ RED để quay.!!'}});
 				}else{
 					let config = Helpers.getConfig('LongLan');
-					let phe = red ? 2 :4;    // Phế
+					let phe = 2;    // Phế
 					let addQuy = (tongCuoc*0.005)>>0;
 
 					let line_nohu = 0;
@@ -286,7 +284,7 @@ module.exports = function(client, data){
 						let huUpdate   = {bet:addQuy, hu:0};
 
 						let celSS = null;
-						if (config.chedo == 0 || !red) {
+						if (config.chedo == 0) {
 							// chế độ khó
 							celSS = [
 								random_T1(), random_T1(), random_T1(),
@@ -714,11 +712,11 @@ module.exports = function(client, data){
 											let okHu = (quyHu-Math.ceil(quyHu*phe/100))>>0;
 											bet_win += okHu;
 											HU.updateOne({game:'long', type:bet}, {$set:{name:'', bet:dataHu.min}}).exec();
-											red && client.redT.sendInHome({pushnohu:{title:'Đập Hũ', name:client.profile.name, bet:okHu}});
+											client.redT.sendInHome({pushnohu:{title:'Đập Hũ', name:client.profile.name, bet:okHu}});
 										}else{
 											let okHu = (dataHu.min-Math.ceil(dataHu.min*phe/100))>>0;
 											bet_win += okHu;
-											red && client.redT.sendInHome({pushnohu:{title:'Đập Hũ', name:client.profile.name, bet:okHu}});
+											client.redT.sendInHome({pushnohu:{title:'Đập Hũ', name:client.profile.name, bet:okHu}});
 										}
 										huUpdate.hu += 1;
 										uInfo.hu += 1;
@@ -848,9 +846,7 @@ module.exports = function(client, data){
 							if (!nohu && bet_win >= tongCuoc*2.24) {
 								isBigWin = true;
 								//type = 1;
-								if (red) {
-									client.redT.sendInHome({news:{t:{game:'Đập Hũ', users:client.profile.name, bet:bet_win, status:2}}});
-								}
+								client.redT.sendInHome({news:{t:{game:'Đập Hũ', users:client.profile.name, bet:bet_win, status:2}}});
 							}
 							if (free > 0) {
 								client.LongLan.free += free;

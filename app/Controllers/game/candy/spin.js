@@ -163,21 +163,19 @@ function gameBonus(client, bet){
 module.exports = function(client, data){
 	if (!!data && !!data.cuoc && Array.isArray(data.line)) {
 		let bet  = data.cuoc>>0;                   // Mức cược
-		let red  = true;
 		let line = Array.from(new Set(data.line)); // Dòng cược // fix trùng lặp
 		if (!(bet == 100 || bet == 1000 || bet == 10000) || line.length < 1) {
 			client.red({candy:{status:0}, notice:{text:'DỮ LIỆU KHÔNG ĐÚNG...', title:'THẤT BẠI'}});
 		}else{
-			client.Candy = void 0 === client.Candy ? {id:'', red:red, bet:bet, bonus:null, bonusX:0, bonusL:0, bonusWin:0, free:0} :client.Candy;
-			client.Candy.red = red;
+			client.Candy = void 0 === client.Candy ? {id:'', bet:bet, bonus:null, bonusX:0, bonusL:0, bonusWin:0, free:0} :client.Candy;
 			client.Candy.bet = bet;
 			let tongCuoc = bet*line.length;
 			UserInfo.findOne({id:client.UID}, 'red name', function(err, user){
-				if (client.Candy.free === 0 && (red && user.red < tongCuoc)) {
+				if (client.Candy.free === 0 && user.red < tongCuoc) {
 					client.red({candy:{status:0, notice:'Bạn không đủ RED để quay.!!'}});
 				}else{
 					let config = require('../../../../config/candy.json');
-					let phe = red ? 2 :4;    // Phế
+					let phe = 2;    // Phế
 					let addQuy = (tongCuoc*0.005)>>0;
 
 					let line_nohu = 0;
@@ -196,7 +194,7 @@ module.exports = function(client, data){
 						huUpdate['hu'] = uInfo['hu'] = mini_users['hu']     = 0; // Khởi tạo
 
 						let celSS = null;
-						if (config.chedo == 0 || !red) {
+						if (config.chedo == 0) {
 							// chế độ khó
 							celSS = [
 								random_cel2(), random_cel2(), random_cel2(),
@@ -475,15 +473,15 @@ module.exports = function(client, data){
 										// Nổ Hũ
 										type = 2;
 										if (!nohu) {
-											let okHu = (quyHu-Math.ceil(quyHu*phe/100))>>0;
+											let okHu = (quyHu-Math.ceil(quyHu*2/100))>>0;
 											bet_win += okHu;
 
 											HU.updateOne({game:'candy', type:bet}, {$set:{name:'', bet:dataHu.min}}).exec();
-											red && client.redT.sendInHome({pushnohu:{title:'Candy', name:client.profile.name, bet:okHu}});
+											client.redT.sendInHome({pushnohu:{title:'Candy', name:client.profile.name, bet:okHu}});
 										}else{
-											let okHu = (dataHu.min-Math.ceil(dataHu.min*phe/100))>>0;
+											let okHu = (dataHu.min-Math.ceil(dataHu.min*2/100))>>0;
 											bet_win += okHu;
-											red && client.redT.sendInHome({pushnohu:{title:'Candy', name:client.profile.name, bet:okHu}});
+											client.redT.sendInHome({pushnohu:{title:'Candy', name:client.profile.name, bet:okHu}});
 										}
 										huUpdate.hu += 1;
 										uInfo.hu += 1;
@@ -586,9 +584,7 @@ module.exports = function(client, data){
 							if (!nohu && bet_win >= tongCuoc*2.24) {
 								isBigWin = true;
 								type = 1;
-								if (red) {
-									client.redT.sendInHome({news:{t:{game:'Candy', users:client.profile.name, bet:bet_win, status:2}}});
-								}
+								client.redT.sendInHome({news:{t:{game:'Candy', users:client.profile.name, bet:bet_win, status:2}}});
 							}
 							if (free > 0) {
 								client.Candy.free += free;
@@ -601,10 +597,11 @@ module.exports = function(client, data){
 
 							let thuong = 0;
 							uInfo.red = tien;
+							uInfo.totall = tien;
 							huUpdate.redPlay = tongCuoc;
 							uInfo.redPlay = tongCuoc;
 							mini_users.bet = tongCuoc;
-
+							mini_users.totall = tien;
 							if (tien > 0){
 								huUpdate.redWin = tien;
 								uInfo.redWin = tien;
@@ -654,7 +651,7 @@ module.exports = function(client, data){
 
 							HU.updateOne({game:'candy', type:bet}, {$inc:huUpdate}).exec();
 							UserInfo.updateOne({id:client.UID},{$inc:uInfo}).exec();
-							Candy_user.updateOne({'uid':client.UID}, {$set:{time:new Date()}, $inc:mini_users}).exec();
+							Candy_user.updateOne({'uid':client.UID}, {$set:{time:new Date().getTime(), select:bet}, $inc:mini_users}).exec();
 						})
 					})
 				}
