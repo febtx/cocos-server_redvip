@@ -2,6 +2,7 @@
 let User     = require('../Models/Users');
 let UserInfo = require('../Models/UserInfo');
 let Phone    = require('../Models/Phone');
+let telegram = require('../Models/Telegram');
 
 // Game User
 let TaiXiu_User     = require('../Models/TaiXiu_user');
@@ -33,7 +34,7 @@ let nhanthuong  = require('./user/nhanthuong');
 let GameState = require('./GameState.js')
 
 let first = function(client){
-	UserInfo.findOne({id:client.UID}, 'name lastVip redPlay red xu ketSat UID cmt email security joinedOn', function(err, user) {
+	UserInfo.findOne({id:client.UID}, 'name lastVip redPlay red ketSat UID security joinedOn veryphone', function(err, user) {
 		if (!!user) {
 			// Tạo token mới
 			let txtTH = new Date()+'';
@@ -79,35 +80,26 @@ let first = function(client){
 				vipPre   = 100;
 				vipNext  = 500;
 			}
-			user.level   = vipLevel;
-			user.vipNext = vipNext-vipPre;
-			user.vipHT   = vipHT-vipPre;
-			user.token   = token;
+			user.level     = vipLevel;
+			user.vipNext   = vipNext-vipPre;
+			user.vipHT     = vipHT-vipPre;
+			user.token     = token;
 
 			delete user._id;
 			delete user.redPlay;
 			delete user.lastVip;
 
-			if (!Helper.isEmpty(user.email)) {
-				user.email = Helper.cutEmail(user.email)
-			}
-
-			client.profile = {name: user.name};
+			client.profile = {name:user.name};
 
 			addToListOnline(client);
 
 			Phone.findOne({uid:client.UID}, {}, function(err2, dataP){
 				user.phone = dataP ? Helper.cutPhone(dataP.region+dataP.phone) : '';
-				let data = {
-					Authorized: true,
-					user:       user,
-				};
 				Message.countDocuments({uid:client.UID, read:false}).exec(function(errMess, countMess){
-					data.message = {news:countMess};
-					client.red(data);
+					client.red({Authorized:true, user:user, message:{news:countMess}});
 					GameState(client);
 				});
-			})
+			});
 		}else{
 			client.red({Authorized: false});
 		}
@@ -115,9 +107,9 @@ let first = function(client){
 }
 
 let updateCoint = function(client){
-	UserInfo.findOne({id:client.UID}, 'red xu', function(err, user){
+	UserInfo.findOne({id:client.UID}, 'red', function(err, user){
 		if (!!user) {
-			client.red({user: {red: user.red, xu: user.xu}});
+			client.red({user: {red:user.red}});
 		}
 	});
 }
@@ -133,7 +125,7 @@ let signName = function(client, name){
 		}else if (!testName) {
 			client.red({notice: {title: 'TÊN NHÂN VẬT', text: 'Tên không chứa ký tự đặc biệt !!'}});
 		} else{
-			UserInfo.findOne({id: client.UID}, 'name red xu ketSat UID phone email cmt security joinedOn', function(err, d){
+			UserInfo.findOne({id: client.UID}, 'name red ketSat UID security joinedOn', function(err, d){
 				if (!d) {
 					name = name.toLowerCase();
 					User.findOne({'_id':client.UID}, function(err, base){
@@ -168,13 +160,14 @@ let signName = function(client, name){
 												delete user.redWin;
 												delete user.redLost;
 												delete user.redPlay;
-												delete user.xuWin;
-												delete user.xuLost;
-												delete user.xuPlay;
-												delete user.thuong;
 												delete user.vip;
 												delete user.hu;
-												delete user.huXu;
+												delete user.totall;
+												delete user.type;
+												delete user.otpFirst;
+												delete user.gitCode;
+												delete user.gitRed;
+												delete user.veryold;
 
 												addToListOnline(client);
 
@@ -198,7 +191,7 @@ let signName = function(client, name){
 												XocXoc_user.create({'uid': client.UID});
 												MegaJP_user.create({'uid': client.UID});
 
-												Message.create({'uid': client.UID, 'title':'Thành Viên Mới', 'text':'Chào mừng bạn đến với Pro68.club, chúc bạn chơi game vui vẻ...', 'time':new Date()});
+												Message.create({'uid': client.UID, 'title':'Thành Viên Mới', 'text':'Chào mừng bạn đến với PhatTai68.club, chúc bạn chơi game vui vẻ...', 'time':new Date()});
 
 												GameState(client);
 												client.red(data);

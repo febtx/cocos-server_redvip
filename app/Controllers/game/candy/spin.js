@@ -583,7 +583,7 @@ module.exports = function(client, data){
 							}
 							if (!nohu && bet_win >= tongCuoc*2.24) {
 								isBigWin = true;
-								type = 1;
+								//type = 1;
 								client.redT.sendInHome({news:{t:{game:'Candy', users:client.profile.name, bet:bet_win, status:2}}});
 							}
 							if (free > 0) {

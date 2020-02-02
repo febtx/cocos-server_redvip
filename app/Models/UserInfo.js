@@ -2,14 +2,14 @@
 let AutoIncrement = require('mongoose-auto-increment-reworked').MongooseAutoIncrementID;
 let mongoose      = require('mongoose');
 
+let telegram      = require('./Telegram');
+let Phone         = require('./Phone');
+
 let Schema = new mongoose.Schema({
 	id:        {type:String, required:true, unique:true}, // ID đăng nhập
 	name:      {type:String, required:true, unique:true}, // Tên nhân vật
 	avatar:    {type:String, default:''},       // Tên avatar
 	joinedOn:  {type:Date, default:new Date()}, // Ngày tham gia
-
-	email:     {type:String, default:''}, // EMail
-	cmt:       {type:String, default:''}, // CMT
 
 	security:  {                          // Bảo Mật
 		login:  {type:Number, default:0}, // Bảo mật đăng nhập
@@ -29,6 +29,8 @@ let Schema = new mongoose.Schema({
 	hu:        {type:Number, default:0},                         // Số lần Nổ Hũ REd
 
 	type:      {type:Boolean, default:false, index:true},        // Bot = true | Users = false
+	veryphone: {type:Boolean, default:false},                    // trạng thái xác thực
+	veryold:   {type:Boolean, default:false},                    // đã từng xác thực
 
 	otpFirst:  {type:Boolean, default:false},                    // Kiểm tra lần đầu lấy mã OTP
 

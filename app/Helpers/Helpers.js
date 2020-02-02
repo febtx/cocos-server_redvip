@@ -57,9 +57,9 @@ let cutEmail = function(email) {
 
 let cutPhone = function(phone) {
 	let string = '';
-	let start = phone.slice(0, 3);
+	let start = phone.slice(0, 6);
 	let end   = phone.slice(phone.length-2, phone.length);
-	return string.concat(start, '*****', end);
+	return string.concat(start, '****', end);
 }
 
 let validateEmail = function(t) {

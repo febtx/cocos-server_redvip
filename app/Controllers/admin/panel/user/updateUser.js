@@ -13,12 +13,6 @@ module.exports = function(client, data){
 		var uData = data.data;
 		var update = {};
 		var password = null;
-		if (!!uData.email && Helper.validateEmail(uData.email)) {
-			update['email'] = uData.email;
-		}
-		if (!!uData.cmt && validator.isLength(uData.cmt, {min:9, max: 12})) {
-			update['cmt'] = uData.cmt;
-		}
 		if (!!uData.red && !validator.isEmpty(uData.red)) {
 			update['red'] = Helper.getOnlyNumberInString(uData.red);
 		}
