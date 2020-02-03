@@ -2,9 +2,6 @@
 let AutoIncrement = require('mongoose-auto-increment-reworked').MongooseAutoIncrementID;
 let mongoose      = require('mongoose');
 
-let telegram      = require('./Telegram');
-let Phone         = require('./Phone');
-
 let Schema = new mongoose.Schema({
 	id:        {type:String, required:true, unique:true}, // ID đăng nhập
 	name:      {type:String, required:true, unique:true}, // Tên nhân vật

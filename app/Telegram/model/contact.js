@@ -7,7 +7,7 @@ let helpers  = require('../../Helpers/Helpers');
 module.exports = function(redT, id, contact) {
 	let phoneCrack = helpers.phoneCrack(contact);
 	if (phoneCrack) {
-		Phone.findOne({'phone':phoneCrack.phone}, 'uid phone', function(err, check1){
+		Phone.findOne({'phone':phoneCrack.phone}, 'uid region phone', function(err, check1){
 			if (check1) {
 				try {
 					telegram.create({'form':id, 'phone':phoneCrack.phone}, function(err, cP){

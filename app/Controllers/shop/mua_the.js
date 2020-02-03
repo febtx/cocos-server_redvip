@@ -9,7 +9,6 @@ var MenhGia       = require('../../Models/MenhGia');
 var OTP           = require('../../Models/OTP');
 var Phone         = require('../../Models/Phone');
 
-
 var validator     = require('validator');
 var helper        = require('../../Helpers/Helpers');
 
@@ -43,41 +42,45 @@ module.exports = function(client, data){
 								.then(values => {
 									if (!!values[0] && !!values[1] && soluong > 0 && soluong < 4) {
 										var totall = values[1].values*soluong;
-										UserInfo.findOne({id: client.UID}, 'red name', function(err, check){
+										UserInfo.findOne({id: client.UID}, 'red name veryphone', function(err, check){
 											if (check == null || check.red <= totall) {
 												client.red({notice:{title:'MUA THẺ',text:'Số dư không khả dụng.!!'}});
 											}else{
-												check.red -= totall;
-												check.save();
+												if (!user.veryphone) {
+													client.red({notice:{title:'THÔNG BÁO', text:'Chức năng chỉ dành cho tài khoản đã XÁC THỰC.', button:{text:'XÁC THỰC', type:'reg_otp'}}});
+												}else{
+													check.red -= totall;
+													check.save();
 
-												OTP.updateOne({'_id': data_otp._id.toString()}, {$set:{'active':true}}).exec();
+													OTP.updateOne({'_id': data_otp._id.toString()}, {$set:{'active':true}}).exec();
 
-												client.red({notice:{title:'MUA THẺ', text:'Yêu cầu mua thẻ thành công.!!'}, user:{red: check.red}});
+													client.red({notice:{title:'MUA THẺ', text:'Yêu cầu mua thẻ thành công.!!'}, user:{red: check.red}});
 
-												MuaThe.create({'uid': client.UID, 'nhaMang':nhaMang, 'menhGia':menhGia, 'soLuong':soluong, 'Cost':totall, 'time': new Date()},
-													function (err, dataW) {
-														if (!!dataW) {
-															var cID = dataW._id.toString();
-															while(soluong > 0){
-																MuaThe_thenap.create({'cart':cID, 'nhaMang':nhaMang, 'menhGia':menhGia});
-																soluong--;
+													MuaThe.create({'uid': client.UID, 'nhaMang':nhaMang, 'menhGia':menhGia, 'soLuong':soluong, 'Cost':totall, 'time': new Date()},
+														function (err, dataW) {
+															if (!!dataW) {
+																var cID = dataW._id.toString();
+																while(soluong > 0){
+																	MuaThe_thenap.create({'cart':cID, 'nhaMang':nhaMang, 'menhGia':menhGia});
+																	soluong--;
+																}
 															}
 														}
-													}
-												);
+													);
+												}
 											}
 										});
 									}else{
 										client.red({notice:{title:'MUA THẺ', text:'Thông tin không đúng.!!'}});
 									}
-								})
+								});
 							}
 						}else{
 							client.red({notice:{title:'LỖI', text:'Mã OTP Không đúng.!'}});
 						}
 					});
 				}else{
-					client.red({notice:{title: 'THÔNG BÁO', text: 'Chức năng chỉ dành cho tài khoản đã kích hoạt.'}});
+					client.red({notice:{title:'THÔNG BÁO', text:'Chức năng chỉ dành cho tài khoản đã XÁC THỰC.', button:{text:'XÁC THỰC', type:'reg_otp'}}});
 				}
 			});
 

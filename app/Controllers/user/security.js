@@ -1,8 +1,7 @@
 
-var UserInfo  = require('../../Models/UserInfo');
-var Phone     = require('../../Models/Phone');
+var Phone  = require('../../Models/Phone');
+var helper = require('../../Helpers/Helpers');
 
-var helper    = require('../../Helpers/Helpers');
 function regPhone(client, phone){
 	phone = ''+phone+'';
 	if(!helper.checkPhoneValid(phone)) {

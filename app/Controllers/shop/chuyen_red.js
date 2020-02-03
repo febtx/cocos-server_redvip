@@ -42,7 +42,7 @@ module.exports = function(client, data){
 									]}).exec();
 
 									var active2 = UserInfo.findOne({name:name}, 'id name red').exec();
-									var active3 = UserInfo.findOne({id:client.UID}, 'red').exec();
+									var active3 = UserInfo.findOne({id:client.UID}, 'red veryphone').exec();
 									Promise.all([active1, active2, active3])
 									.then(valuesCheck => {
 										var daily = valuesCheck[0];
@@ -55,28 +55,32 @@ module.exports = function(client, data){
 												if (user == null || (user.red-10000 < red)) {
 													client.red({notice:{title:'CHUYỂN RED',text:'Số dư không khả dụng.!!'}});
 												}else{
-													UserInfo.updateOne({id: client.UID}, {$inc:{red:-red}}).exec();
-													client.red({notice:{title:'CHUYỂN RED', text: 'Giao dịch thành công.!!'}, user:{red:user.red-red}});
-													var thanhTien = !!daily ? red : Helper.anPhanTram(red, 1, 2);
-													var create = {'uid':client.UID, 'from':client.profile.name, 'to':to.name, 'red':red, 'red_c':thanhTien, 'time': new Date()};
-													if (void 0 !== data.message && !validator.isEmpty(data.message.trim())) {
-														create = Object.assign(create, {message: data.message});
-													}
-													ChuyenRed.create(create);
+													if (!user.veryphone) {
+														client.red({notice:{title:'THÔNG BÁO', text:'Chức năng chỉ dành cho tài khoản đã XÁC THỰC.', button:{text:'XÁC THỰC', type:'reg_otp'}}});
+													}else{
+														UserInfo.updateOne({id: client.UID}, {$inc:{red:-red}}).exec();
+														client.red({notice:{title:'CHUYỂN RED', text: 'Giao dịch thành công.!!'}, user:{red:user.red-red}});
+														var thanhTien = !!daily ? red : Helper.anPhanTram(red, 1, 2);
+														var create = {'uid':client.UID, 'from':client.profile.name, 'to':to.name, 'red':red, 'red_c':thanhTien, 'time': new Date()};
+														if (void 0 !== data.message && !validator.isEmpty(data.message.trim())) {
+															create = Object.assign(create, {message: data.message});
+														}
+														ChuyenRed.create(create);
 
-													var createTo = {'uid':to.id, 'from':client.profile.name, 'to':to.name, 'red':red, 'red_c':thanhTien, 'time': new Date()};
-													if (void 0 !== data.message && !validator.isEmpty(data.message.trim())) {
-														createTo = Object.assign(createTo, {message: data.message});
-													}
-													ChuyenRed.create(createTo);
+														var createTo = {'uid':to.id, 'from':client.profile.name, 'to':to.name, 'red':red, 'red_c':thanhTien, 'time': new Date()};
+														if (void 0 !== data.message && !validator.isEmpty(data.message.trim())) {
+															createTo = Object.assign(createTo, {message: data.message});
+														}
+														ChuyenRed.create(createTo);
 
-													UserInfo.updateOne({name:to.name}, {$inc:{red:thanhTien}}).exec();
-													if (void 0 !== client.redT.users[to.id]) {
-														Promise.all(client.redT.users[to.id].map(function(obj){
-															obj.red({notice:{title:'CHUYỂN RED', text:'Bạn nhận được ' + Helper.numberWithCommas(thanhTien) + ' Red.' + '\n' + 'Từ người chơi: ' + client.profile.name}, user:{red: to.red*1+thanhTien}});
-														}));
+														UserInfo.updateOne({name:to.name}, {$inc:{red:thanhTien}}).exec();
+														if (void 0 !== client.redT.users[to.id]) {
+															Promise.all(client.redT.users[to.id].map(function(obj){
+																obj.red({notice:{title:'CHUYỂN RED', text:'Bạn nhận được ' + Helper.numberWithCommas(thanhTien) + ' Red.' + '\n' + 'Từ người chơi: ' + client.profile.name}, user:{red: to.red*1+thanhTien}});
+															}));
+														}
+														OTP.updateOne({'_id':data_otp._id.toString()}, {$set:{'active':true}}).exec();
 													}
-													OTP.updateOne({'_id':data_otp._id.toString()}, {$set:{'active':true}}).exec();
 												}
 											}
 										}else{
@@ -89,7 +93,7 @@ module.exports = function(client, data){
 							}
 						});
 					}else{
-						client.red({notice:{title:'THÔNG BÁO', text:'Chức năng chỉ dành cho tài khoản đã kích hoạt.', button:{text:'KÍCH HOẠT', type:'reg_otp'}}});
+						client.red({notice:{title:'THÔNG BÁO', text:'Chức năng chỉ dành cho tài khoản đã XÁC THỰC.', button:{text:'XÁC THỰC', type:'reg_otp'}}});
 					}
 				});
 			}

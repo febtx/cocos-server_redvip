@@ -25,18 +25,22 @@ module.exports = function(client, data){
 							if (((new Date()-Date.parse(data_otp.date))/1000) > 180 || data_otp.active) {
 								client.red({notice:{title:'LỖI', text:'Mã OTP đã hết hạn.!'}});
 							}else{
-								UserInfo.findOne({'id':client.UID}, 'red', function(err3, dU){
+								UserInfo.findOne({'id':client.UID}, 'red veryphone', function(err3, dU){
 									if (dU) {
-										var rut = data.rut>>0;
-										if (rut < 20000) {
-											client.red({notice:{title:'THẤT BẠI', text:'Rút tối thiểu là 20.000.!'}});
+										if (!dU.veryphone) {
+											client.red({notice:{title:'THÔNG BÁO', text:'Chức năng chỉ dành cho tài khoản đã XÁC THỰC.', button:{text:'XÁC THỰC', type:'reg_otp'}}});
 										}else{
-											if (dU.red >= rut) {
-												Bank_history.create({uid:client.UID, bank:data.bank, number:data.number, name:data.name, money:rut, type:1, time:new Date()});
-												UserInfo.updateOne({id:client.UID}, {$inc:{'red':-rut}}).exec();
-												client.red({notice:{title:'THÀNH CÔNG', text:'Đã gửi yêu cầu rút tiền.!'}, user:{red:dU.red-rut}});
+											var rut = data.rut>>0;
+											if (rut < 20000) {
+												client.red({notice:{title:'THẤT BẠI', text:'Rút tối thiểu là 20.000.!'}});
 											}else{
-												client.red({notice:{title:'THẤT BẠI', text:'Sô dư không khả dụng.!'}});
+												if (dU.red >= rut) {
+													Bank_history.create({uid:client.UID, bank:data.bank, number:data.number, name:data.name, money:rut, type:1, time:new Date()});
+													UserInfo.updateOne({id:client.UID}, {$inc:{'red':-rut}}).exec();
+													client.red({notice:{title:'THÀNH CÔNG', text:'Đã gửi yêu cầu rút tiền.!'}, user:{red:dU.red-rut}});
+												}else{
+													client.red({notice:{title:'THẤT BẠI', text:'Sô dư không khả dụng.!'}});
+												}
 											}
 										}
 									}
