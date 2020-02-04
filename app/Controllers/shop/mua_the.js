@@ -46,16 +46,13 @@ module.exports = function(client, data){
 											if (check == null || check.red <= totall) {
 												client.red({notice:{title:'MUA THẺ',text:'Số dư không khả dụng.!!'}});
 											}else{
-												if (!user.veryphone) {
+												if (!check.veryphone) {
 													client.red({notice:{title:'THÔNG BÁO', text:'Chức năng chỉ dành cho tài khoản đã XÁC THỰC.', button:{text:'XÁC THỰC', type:'reg_otp'}}});
 												}else{
 													check.red -= totall;
 													check.save();
-
 													OTP.updateOne({'_id': data_otp._id.toString()}, {$set:{'active':true}}).exec();
-
-													client.red({notice:{title:'MUA THẺ', text:'Yêu cầu mua thẻ thành công.!!'}, user:{red: check.red}});
-
+													client.red({notice:{title:'MUA THẺ', text:'Yêu cầu mua thẻ thành công.!!'}, user:{red:check.red}});
 													MuaThe.create({'uid': client.UID, 'nhaMang':nhaMang, 'menhGia':menhGia, 'soLuong':soluong, 'Cost':totall, 'time': new Date()},
 														function (err, dataW) {
 															if (!!dataW) {
@@ -83,7 +80,6 @@ module.exports = function(client, data){
 					client.red({notice:{title:'THÔNG BÁO', text:'Chức năng chỉ dành cho tài khoản đã XÁC THỰC.', button:{text:'XÁC THỰC', type:'reg_otp'}}});
 				}
 			});
-
 		}
 	}
 }
