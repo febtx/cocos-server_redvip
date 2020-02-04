@@ -95,7 +95,7 @@ let spin = function(io, user){
 	let addQuy  = Math.floor(bet*0.01);
 	let bet_win = 0;
 
-	HU.findOne({game:'arb', type:bet, red:true}, 'name bet min toX balans x', function(err, dataHu){
+	HU.findOne({game:'arb', type:bet}, 'name bet min toX balans x', function(err, dataHu){
 		if (!dataHu) {
 			return void 0;
 		}
@@ -298,7 +298,7 @@ let spin = function(io, user){
 								bet_win += okHu;
 							}
 							io.sendInHome({pushnohu:{title:'Thiên Thú', name:user.name, bet:okHu}});
-							HU.updateOne({game:'arb', type:bet, red:true}, {$set:{name:'', bet:quyMin}}).exec();
+							HU.updateOne({game:'arb', type:bet}, {$set:{name:'', bet:quyMin}}).exec();
 							AngryBirds_red.create({'name':user.name, 'type':2, 'win':bet_win, 'bet':bet, 'time':new Date()});
 						}else{
 							bet_win += bet*10;
@@ -319,7 +319,7 @@ let spin = function(io, user){
 			if (!nohu && bet_win >= bet*10) {
 				io.sendInHome({news:{t:{game:'Thiên Thú', users:user.name, bet:bet_win, status:2}}});
 			}
-			HU.updateOne({game:'arb', type:bet, red:true}, {$inc:huUpdate}).exec();
+			HU.updateOne({game:'arb', type:bet}, {$inc:huUpdate}).exec();
 
 			let vipConfig = Helpers.getConfig('topVip');
 			if (!!vipConfig && vipConfig.status === true) {

@@ -100,7 +100,7 @@ let spin = function(io, user){
 
 	let bet_win   = 0;
 	// tạo kết quả
-	HU.findOne({game:'bigbabol', type:bet, red:true}, 'name bet min toX balans x', function(err, dataHu){
+	HU.findOne({game:'bigbabol', type:bet}, 'name bet min toX balans x', function(err, dataHu){
 		if (!dataHu) {
 			return void 0;
 		}
@@ -246,7 +246,7 @@ let spin = function(io, user){
 							bet_win += okHu;
 						}
 						io.sendInHome({pushnohu:{title:'Thỉnh Kinh', name:user.name, bet:okHu}});
-						HU.updateOne({game:'bigbabol', type:bet, red:true}, {$set:{name:'', bet:quyMin}}).exec();
+						HU.updateOne({game:'bigbabol', type:bet}, {$set:{name:'', bet:quyMin}}).exec();
 						BigBabol_red.create({'name':user.name, 'type':2, 'win':bet_win, 'bet':bet, 'kq':1, 'line':1, 'time':new Date()});
 						nohu = true;
 					}else if(!nohu && line_win.win == 4) {
@@ -276,7 +276,7 @@ let spin = function(io, user){
 			if (!nohu && bet_win >= cuoc*2.24) {
 				io.sendInHome({news:{t:{game:'Thỉnh Kinh', users:user.name, bet:bet_win, status:2}}});
 			}
-			HU.updateOne({game:'bigbabol', type:bet, red:true}, {$inc:huUpdate}).exec();
+			HU.updateOne({game:'bigbabol', type:bet}, {$inc:huUpdate}).exec();
 
 			let vipConfig = Helpers.getConfig('topVip');
 			if (!!vipConfig && vipConfig.status === true) {

@@ -196,7 +196,7 @@ let spin = function(io, user){
 	let bet_win   = 0;
 	let nohu      = false;
 	// tạo kết quả
-	HU.findOne({game:'long', type:bet, red:true}, {}, function(err2, dataHu){
+	HU.findOne({game:'long', type:bet}, {}, function(err2, dataHu){
 		if (!dataHu) {
 			return void 0;
 		}
@@ -359,7 +359,7 @@ let spin = function(io, user){
 						if (!nohu) {
 							okHu = Math.floor(dataHu.bet-Math.ceil(dataHu.bet*2/100));
 							bet_win += okHu;
-							HU.updateOne({game:'long', type:bet, red:true}, {$set:{name:'', bet:dataHu.min}}).exec();
+							HU.updateOne({game:'long', type:bet}, {$set:{name:'', bet:dataHu.min}}).exec();
 						}else{
 							okHu = Math.floor(dataHu.min-Math.ceil(dataHu.min*2/100));
 							bet_win += okHu;
@@ -459,7 +459,7 @@ let spin = function(io, user){
 			if (!nohu && bet_win >= tongCuoc*2.24) {
 				io.sendInHome({news:{t:{game:'Đập Hũ', users:user.name, bet:bet_win, status:2}}});
 			}
-			HU.updateOne({game:'long', type:bet, red:true}, {$inc:{bet:addQuy}}).exec();
+			HU.updateOne({game:'long', type:bet}, {$inc:{bet:addQuy}}).exec();
 
 
 			let vipConfig = Helpers.getConfig('topVip');

@@ -57,11 +57,11 @@ let spin = function(io, user){
 	// Kết thúc Sử lý bài
 
 	// Kiểm tra kết quả
-	HU.findOne({game:'mini3cay', type:cuoc, red:true}, {}, function(err, data){
+	HU.findOne({game:'mini3cay', type:cuoc}, {}, function(err, data){
 		let huUpdate = {bet:addQuy};
 		if (bo3 && bo3_a === 0) {
 			// NỔ HŨ
-			HU.updateOne({game:'mini3cay', type:cuoc, red:true}, {$set:{name:'', bet:data.min}}).exec();
+			HU.updateOne({game:'mini3cay', type:cuoc}, {$set:{name:'', bet:data.min}}).exec();
 			an = Math.floor(data.bet-Math.ceil(data.bet*2/100));
 			io.sendInHome({pushnohu:{title:'MINI 3 CÂY', name:user.name, bet:an}});
 		}else if (Day && dongChat) {
@@ -71,7 +71,7 @@ let spin = function(io, user){
 			an = cuoc*20;
 			io.sendInHome({news:{t:{game:'MINI 3 CÂY', users:user.name, bet:an, status:2}}});
 		}
-		HU.updateOne({game:'mini3cay', type:cuoc, red:true}, {$inc:huUpdate}).exec();
+		HU.updateOne({game:'mini3cay', type:cuoc}, {$inc:huUpdate}).exec();
 
 		io = null;
 		user = null;

@@ -85,8 +85,6 @@ function random_cel2(){
 }
 
 function check_win(data, line){
-	let win_icon = 0;
-	let win_type = null;
 	let thaythe  = 0;  // Thay Thế (WinD)
 	let arrT     = []; // Mảng lọc các bộ
 
@@ -207,8 +205,6 @@ function check_win(data, line){
 	arrT.sort(function(a, b){return b.x-a.x});
 	let win = arrT[0];
 	data = null;
-	win_icon = null;
-	win_type = null;
 	thaythe  = null;
 	arrT     = null;
 	return {line:line, win:win.icon, type:win.lanve};

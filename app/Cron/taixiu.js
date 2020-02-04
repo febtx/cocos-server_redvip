@@ -94,9 +94,9 @@ let TopHu = function(){
 				arb: result.filter(function(arb){
 					return (arb.game === 'arb')
 				}),
-				//candy: result.filter(function(candy){
-				//	return (candy.game === 'candy')
-				//}),
+				candy: result.filter(function(candy){
+					return (candy.game === 'candy')
+				}),
 				long: result.filter(function(long){
 					return (long.game === 'long')
 				}),

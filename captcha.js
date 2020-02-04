@@ -37,8 +37,8 @@ module.exports = function(data){
 			Create(this, 'chargeCard');
 			break;
 
-		case 'withdrawXu':
-			Create(this, 'withdrawXu');
+		case 'regOTP':
+			Create(this, 'regOTP');
 			break;
 
 		case 'withdrawCard':

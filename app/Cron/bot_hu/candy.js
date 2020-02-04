@@ -59,29 +59,6 @@ let check_win = function(data, line){
 	data = null;
 	arrT= null;
 	return {line:line, win:win_icon, type:number_win};
-
-	/**
-	return Promise.all(arrT.map(function(c, index){
-		if (c === 5) {
-			win_icon = index;
-			number_win = 5;
-		}
-		if (c === 4) {
-			win_icon = index;
-			number_win = 4;
-		}
-		if (c === 3) {
-			win_icon = index;
-			number_win = 3;
-		}
-		return void 0;
-	})).then(result => {
-		result = null;
-		data = null;
-		arrT= null;
-		return {line:line, win:win_icon, type:number_win};
-	})
-	*/
 }
 
 let spin = function(io, user){
@@ -108,7 +85,10 @@ let spin = function(io, user){
 	let bet_win   = 0;
 	let nohu      = false;
 	// tạo kết quả
-	HU.findOne({game:'candy', type:bet, red:true}, {}, function(err2, dataHu){
+	HU.findOne({game:'candy', type:bet}, {}, function(err2, dataHu){
+		if (!dataHu) {
+			return void 0;
+		}
 		let huUpdate   = {bet:addQuy};
 
 		let aRwin = Math.floor(Math.random()*16);
@@ -236,12 +216,12 @@ let spin = function(io, user){
 						if (!nohu) {
 							okHu = Math.floor(dataHu.bet-Math.ceil(dataHu.bet*2/100));
 							bet_win += okHu;
-							HU.updateOne({game:'candy', type:bet, red:true}, {$set:{name:'', bet:dataHu.min}}).exec();
+							HU.updateOne({game:'candy', type:bet}, {$set:{name:'', bet:dataHu.min}}).exec();
 						}else{
 							okHu = Math.floor(dataHu.min-Math.ceil(dataHu.min*2/100));
 							bet_win += okHu;
 						}
-						io.sendInHome({pushnohu:{title:'Candy', name:user.name, bet:okHu}});
+						io.sendInHome({pushnohu:{title:'Panda', name:user.name, bet:okHu}});
 						nohu = true;
 					}
 				}else if(!nohu && line_win.win == 5) {
@@ -293,9 +273,9 @@ let spin = function(io, user){
 				}
 			});
 			if (!nohu && bet_win >= tongCuoc*2.24) {
-				io.sendInHome({news:{t:{game:'Candy', users:user.name, bet:bet_win, status:2}}});
+				io.sendInHome({news:{t:{game:'Panda', users:user.name, bet:bet_win, status:2}}});
 			}
-			HU.updateOne({game:'candy', type:bet, red:true}, {$inc:huUpdate}).exec();
+			HU.updateOne({game:'candy', type:bet}, {$inc:huUpdate}).exec();
 
 			io = null
 			user = null;

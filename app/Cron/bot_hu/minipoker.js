@@ -78,7 +78,7 @@ let spin = function(io, user){
 		}
 	}
 
-	HU.findOne({game:'minipoker', type:bet, red:true}, 'name bet min toX balans x', function(err, dataHu){
+	HU.findOne({game:'minipoker', type:bet}, 'name bet min toX balans x', function(err, dataHu){
 		if (!dataHu) {
 			return void 0;
 		}
@@ -102,7 +102,7 @@ let spin = function(io, user){
 			if (toX < 1 && balans > 0) {
 				quyMin = quyMin*dataHu.x;
 			}
-			HU.updateOne({game:'minipoker', type:bet, red:true}, {$set:{name:'', bet:quyMin}}).exec();
+			HU.updateOne({game:'minipoker', type:bet}, {$set:{name:'', bet:quyMin}}).exec();
 			an = Math.floor(quyHu-Math.ceil(quyHu*2/100));
 			io.sendInHome({pushnohu:{title:'MINI POKER', name:user.name, bet:an}});
 			miniPokerRed.create({'name':user.name, 'win':an, 'bet':bet, 'type':2, 'kq':ketqua, 'time':new Date()});
@@ -115,7 +115,7 @@ let spin = function(io, user){
 			an = (bet*150);
 			io.sendInHome({news:{t:{game:'MINI POKER', users:user.name, bet:an, status:2}}});
 		}
-		HU.updateOne({game:'minipoker', type:bet, red:true}, {$inc:huUpdate}).exec();
+		HU.updateOne({game:'minipoker', type:bet}, {$inc:huUpdate}).exec();
 
 		let vipConfig = Helpers.getConfig('topVip');
 		if (!!vipConfig && vipConfig.status === true) {
