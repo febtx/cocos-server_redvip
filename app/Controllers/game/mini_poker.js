@@ -14,7 +14,6 @@ let base_card = require('../../../data/card');
 function spin(client, data){
 	if (!!data && !!data.cuoc) {
 		let bet = data.cuoc>>0; // Mức cược
-		let red = true;
 		if (!(bet == 100 || bet == 1000 || bet == 10000)) {
 			client.red({mini:{poker:{status:0}}, notice:{text:'DỮ LIỆU KHÔNG ĐÚNG...', title:'MINI POKER'}});
 		}else{
@@ -24,8 +23,6 @@ function spin(client, data){
 				}else{
 					let UID  = client.UID;
 					let name = client.profile.name;
-
-					let phe     = red ? 2 : 4;    // Phế
 					let addQuy  = (bet*0.01)>>0;
 					let an      = 0;
 					let code    = 0;
@@ -132,7 +129,7 @@ function spin(client, data){
 								randomType = null;
 								randomMin = null;
 							}
-							an   = (quyHu-Math.ceil(quyHu*phe/100))>>0;
+							an   = (quyHu-Math.ceil(quyHu*2/100))>>0;
 
 							client.redT.sendInHome({pushnohu:{title:'MINI POKER', name:name, bet:an}});
 							huUpdate['hu']   = uInfo['hu']   = mini_users['hu']   = 1; // Cập nhật Số Hũ Red đã Trúng
@@ -145,17 +142,13 @@ function spin(client, data){
 							an   = (bet*1000);
 							text = 'Thắng Lớn';
 							code = 1;
-							if (red) {
-								client.redT.sendInHome({news:{t:{game:'MINI POKER', users:name, bet:an, status:2}}});
-							}
+							client.redT.sendInHome({news:{t:{game:'MINI POKER', users:name, bet:an, status:2}}});
 						}else if (tuQuy != null) {
 							// x150     TỨ QUÝ (TỨ QUÝ)
 							an   = (bet*150);
 							text = 'Tứ Quý';
 							code = 1;
-							if (red) {
-								client.redT.sendInHome({news:{t:{game:'MINI POKER', users:name, bet:an, status:2}}});
-							}
+							client.redT.sendInHome({news:{t:{game:'MINI POKER', users:name, bet:an, status:2}}});
 						}else if (bo3 && bo2 > 0) {
 							// x50      CÙ LŨ (1 BỘ 3 VÀ 1 BỘ 2)
 							an   = (bet*50);
@@ -266,7 +259,6 @@ function spin(client, data){
 function log(client, data){
 	if (!!data && !!data.page) {
 		let page = data.page>>0; // trang
-		let red  = true;
 		if (page < 1) {
 			client.red({notice:{text:'DỮ LIỆU KHÔNG ĐÚNG...', title:'MINI POKER'}});
 		}else{

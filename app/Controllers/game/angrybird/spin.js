@@ -121,9 +121,7 @@ function check_win(data, line){
 
 module.exports = function(client, data){
 	if (!!data && !!data.cuoc) {
-		let bet  = data.cuoc>>0;   // Mức cược
-		let red  = true;           // Loại tiền
-
+		let bet = data.cuoc>>0;   // Mức cược
 		if (!(bet == 100 || bet == 1000 || bet == 10000)) {
 			client.red({mini:{arb:{status:0}}, notice:{text:'DỮ LIỆU KHÔNG ĐÚNG...', title:'THẤT BẠI'}});
 		}else{
@@ -131,7 +129,6 @@ module.exports = function(client, data){
 				if (!user || user.red < bet) {
 					client.red({mini:{arb:{status:0, notice:'Bạn không đủ RED để quay.!!'}}});
 				}else{
-					let phe = red ? 2 :4;    // Phế
 					let addQuy = (bet*0.01)>>0;
 
 					let line_nohu = 0;
@@ -155,7 +152,7 @@ module.exports = function(client, data){
 						let balans   = dataHu.balans;
 
 						let celSS = null;
-						if (config.chedo == 0 || !red) {
+						if (config.chedo == 0) {
 							// khó
 							celSS = [
 								random_cel2(), random_cel2(), random_cel2(),
@@ -481,12 +478,12 @@ module.exports = function(client, data){
 
 											if (!nohu) {
 												nohu = true;
-												let okHu = (quyHu-Math.ceil(quyHu*phe/100))>>0;
+												let okHu = (quyHu-Math.ceil(quyHu*2/100))>>0;
 												bet_win += okHu;
 												client.redT.sendInHome({pushnohu:{title:'Thiên Thú', name:client.profile.name, bet:okHu}});
 												huUpdate['hu']   = uInfo['hu']   = mini_users['hu']  += 1; // Cập nhật Số Hũ Red đã Trúng
 											}else{
-												let okHu = (quyMin-Math.ceil(quyMin*phe/100))>>0;
+												let okHu = (quyMin-Math.ceil(quyMin*2/100))>>0;
 												bet_win += okHu;
 												client.redT.sendInHome({pushnohu:{title:'Thiên Thú', name:client.profile.name, bet:okHu}});
 												huUpdate['hu']   = uInfo['hu']   = mini_users['hu']   += 1; // Cập nhật Số Hũ Red đã Trúng
@@ -509,14 +506,12 @@ module.exports = function(client, data){
 								return (line_win.type != null);
 							});
 
-							bet_win  = nohu ? bet_win :bet_win*heso; // Tổng tiền ăn đc (chưa cắt phế)
+							bet_win  = nohu ? bet_win : bet_win*heso; // Tổng tiền ăn đc (chưa cắt phế)
 							let tien = bet_win-bet;
 							if (!nohu && bet_win >= bet*10) {
 								isBigWin = true;          // Là thắng lớn
 								//type = 1;
-								if (red) {
-									client.redT.sendInHome({news:{t:{game:'Thiên Thú', users:client.profile.name, bet:bet_win, status:2}}});
-								}
+								bet_win >= 10000 && client.redT.sendInHome({news:{t:{game:'Thiên Thú', users:client.profile.name, bet:bet_win, status:2}}});
 							}
 
 							uInfo['red'] = tien;                                   // Cập nhật Số dư Red trong tài khoản

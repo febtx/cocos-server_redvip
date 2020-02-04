@@ -164,7 +164,6 @@ function gameBonus(client, bet){
 module.exports = function(client, data){
 	if (!!data && !!data.cuoc && Array.isArray(data.line)) {
 		let bet  = data.cuoc>>0;             // Mức cược
-		let red  = true;
 		let line = Array.from(new Set(data.line)); // Dòng cược // fix trùng lặp
 		if (!(bet == 100 || bet == 1000 || bet == 10000) || line.length < 1) {
 			client.red({VuongQuocRed:{status:0}, notice:{text:'DỮ LIỆU KHÔNG ĐÚNG...', title:'THẤT BẠI'}});
@@ -177,7 +176,6 @@ module.exports = function(client, data){
 					client.red({VuongQuocRed:{status:0, notice:'Bạn không đủ RED để quay.!!'}});
 				}else{
 					let config = Helpers.getConfig('vqred');
-					let phe = 2;    // Phế
 					let addQuy = (tongCuoc*0.005)>>0;
 
 					let line_nohu = 0;
@@ -490,12 +488,12 @@ module.exports = function(client, data){
 										// Nổ Hũ
 										type = 2;
 										if (!nohu) {
-											let okHu = (quyHu-Math.ceil(quyHu*phe/100))>>0;
+											let okHu = (quyHu-Math.ceil(quyHu*2/100))>>0;
 											bet_win += okHu;
 											HU.updateOne({game:'vuongquocred', type:bet}, {$set:{name:'', bet:dataHu.min}}).exec();
 											client.redT.sendInHome({pushnohu:{title:'Ngộ Không', name:client.profile.name, bet:okHu}});
 										}else{
-											let okHu = (dataHu.min-Math.ceil(dataHu.min*phe/100))>>0;
+											let okHu = (dataHu.min-Math.ceil(dataHu.min*2/100))>>0;
 											bet_win += okHu;
 											client.redT.sendInHome({pushnohu:{title:'Ngộ Không', name:client.profile.name, bet:okHu}});
 										}
@@ -594,7 +592,7 @@ module.exports = function(client, data){
 							if (!nohu && bet_win >= tongCuoc*2.24) {
 								isBigWin = true;
 								//type = 1;
-								client.redT.sendInHome({news:{t:{game:'Ngộ Không', users:client.profile.name, bet:bet_win, status:2}}});
+								bet_win >= 10000 && client.redT.sendInHome({news:{t:{game:'Ngộ Không', users:client.profile.name, bet:bet_win, status:2}}});
 							}
 							if (free > 0) {
 								client.VuongQuocRed.free += free;

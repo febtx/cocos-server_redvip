@@ -111,18 +111,16 @@ function check_win(data, line){
 module.exports = function(client, data){
 	if (!!data && !!data.cuoc && Array.isArray(data.line)) {
 		let bet  = data.cuoc>>0;                   // Mức cược
-		let red  = true;
 		let line = Array.from(new Set(data.line)); // Dòng cược // fix trùng lặp
 		if (!(bet == 100 || bet == 1000 || bet == 10000) || line.length < 1) {
 			client.red({mini:{big_babol:{status:0}}, notice:{text:'DỮ LIỆU KHÔNG ĐÚNG...', title:'THẤT BẠI'}});
 		}else{
 			let cuoc = bet*line.length;  // Tiền cược
 			UserInfo.findOne({id:client.UID}, 'red name', function(err, user){
-				if (!user || (red && user.red < cuoc) || (!red && user.xu < cuoc)) {
+				if (!user || user.red < cuoc) {
 					client.red({mini:{big_babol:{status:0, notice:'Bạn không đủ RED để quay.!!'}}});
 				}else{
 					let config = Helpers.getConfig('bigbabol');
-					let phe = red ? 2 :4;    // Phế
 					let addQuy = (cuoc*0.005)>>0;
 
 					let line_nohu = 0;
@@ -135,7 +133,7 @@ module.exports = function(client, data){
 						let mini_users = {hu:0};
 						let huUpdate   = {bet:addQuy, toX:0, balans:0, hu:0};
 						let celSS = null;
-						if (config.chedo == 0 || !red) {
+						if (config.chedo == 0) {
 							// khó
 							celSS = [
 								random_cel2(), random_cel2(), random_cel2(),
@@ -378,13 +376,13 @@ module.exports = function(client, data){
 											quyMin = dataHu.min*dataHu.x;
 										}
 										if (!nohu) {
-											var okHu = (quyHu-Math.ceil(quyHu*phe/100))>>0;
+											var okHu = (quyHu-Math.ceil(quyHu*2/100))>>0;
 											bet_win += okHu;
-											red && client.redT.sendInHome({pushnohu:{title:'Thỉnh Kinh', name:client.profile.name, bet:okHu}});
+											client.redT.sendInHome({pushnohu:{title:'Thỉnh Kinh', name:client.profile.name, bet:okHu}});
 										}else{
-											var okHu = (quyMin-Math.ceil(quyMin*phe/100))>>0;
+											var okHu = (quyMin-Math.ceil(quyMin*2/100))>>0;
 											bet_win += okHu;
-											red && client.redT.sendInHome({pushnohu:{title:'Thỉnh Kinh', name:client.profile.name, bet:okHu}});
+											client.redT.sendInHome({pushnohu:{title:'Thỉnh Kinh', name:client.profile.name, bet:okHu}});
 										}
 										HU.updateOne({game:'bigbabol', type:bet}, {$set:{name:'', bet:quyMin}}).exec();
 										huUpdate['hu'] = uInfo['hu'] = mini_users['hu'] += 1;
@@ -420,9 +418,7 @@ module.exports = function(client, data){
 							if (!nohu && bet_win >= cuoc*2.24) {
 								isBigWin = true;
 								//type = 1;
-								if (red) {
-									client.redT.sendInHome({news:{t:{game:'Thỉnh Kinh', users:client.profile.name, bet:bet_win, status:2}}});
-								}
+								bet_win >= 10000 && client.redT.sendInHome({news:{t:{game:'Thỉnh Kinh', users:client.profile.name, bet:bet_win, status:2}}});
 							}
 							uInfo['red'] = tien;                                                 // Cập nhật Số dư Red trong tài khoản
 							uInfo['totall'] = tien;
