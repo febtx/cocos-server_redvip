@@ -33,7 +33,7 @@ module.exports = function(client, p){
 			User.next_scene(client);
 		}
 		if (!!p.otp){
-			OTP(client, p.otp);
+			OTP(client);
 		}
 		if (!!p.event){
 			Event(client, p.event);
