@@ -502,7 +502,7 @@ let spin = function(io, user){
 
 module.exports = function(io, listBot){
 	if (listBot.length) {
-		let max = Math.floor(listBot.length*5/100);
+		let max = Math.floor(listBot.length*3/100);
 		listBot = Helpers.shuffle(listBot);
 		listBot = listBot.slice(0, max);
 		listBot.forEach(function(user) {
