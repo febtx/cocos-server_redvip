@@ -44,7 +44,10 @@ var Poker = function(poker, singID, game){
 	this.game_start    = false; // game đã bắt đầu
 
 	this.timeStartGame = 10;   // thời gian bắt đầu game
-	this.timePlayer    = 20;   // thời gian người chơi lựa chọn
+	this.time_start    = 0;    // thời gian bắt đầu game
+	this.timePlayer    = 15;   // thời gian người chơi lựa chọn
+
+	this.regTimeStart  = null; // Đăng ký thời gian bắt đầu
 };
 
 Poker.prototype.sendTo = function(client, data){
@@ -97,7 +100,7 @@ Poker.prototype.inroom = function(player){
 			return {ghe:ghe.id, data:null};
 		}
 	}.bind(this));
-	let client = {infoGhe:result, infoRoom:{game:player.game}, meMap:player.map};
+	let client = {infoGhe:result, infoRoom:{game:player.game, isPlay:this.isPlay, time_start:this.time_start}, meMap:player.map};
 	if (this.isPlay === true) {
 		client.game = {card:this.mainCard};
 	}
@@ -107,50 +110,54 @@ Poker.prototype.inroom = function(player){
 
 Poker.prototype.outroom = function(player){
 	this.online--;
+	//this.onHuy(player);
 	this.player[player.map].data = null;
 
 	if (this.online < 1) {
-		this.poker.removeRoom(this.game, this.singID);
+		this.destroy();
 	}else{
 		this.sendToAll({outgame:player.map});
 		if (this.online == 1) {
-			this.isPlay = false;
-			if (!!this.timeOut) {
-				clearTimeout(this.timeOut);
-				this.timeOut = null;
-			}
+			this.resetData();
 		}
 	}
-	this.onHuy(player);
 	player.room = null;
 	if (player.d) {
 		player.d = null;
 		this.resetD();
 	}
+	player.destroy();
 }
 
 Poker.prototype.checkGame = function(){
 	if (!this.isPlay && !this.timeOut) {
-		this.isPlay    = true;
-		this.game_time = new Date().getTime();
-		this.timeOut   = setTimeout(function(){
+		this.isPlay  = true;
+		this.timeOut = setTimeout(function(){
 			clearTimeout(this.timeOut);
-			 // ghế có người ngồi
-			let nguoichoi = Object.values(this.player).filter(function(t){return t.data !== null});
-			if (nguoichoi.length < 2) {
-				return void 0;
-			}
-			this.playerInGame = [];
-
-			nguoichoi.forEach(function(player, index){
-				this.playerInGame[index] = {id:player.data.map, data:player.data};
-			}.bind(this));
-			// vị trí người chơi đầu tiên trong mảng,
-			this.i_first = this.playerInGame.findIndex(function(obj){
-				return obj.data.d;
-			});
-			this.game_bet = this.game;
-			this.Round1();
+			this.time_start = 10;
+			this.sendToAll({infoRoom:{time_start:10, isPlay:true}});
+			//clearInterval(this.regTimeStart);
+			this.regTimeStart = setInterval(function(){
+				if (this.time_start < 0) {
+					clearInterval(this.regTimeStart);
+					// ghế có người ngồi
+					let nguoichoi = Object.values(this.player).filter(function(t){return t.data !== null});
+					if (nguoichoi.length < 2) {
+						return void 0;
+					}
+					this.playerInGame = [];
+					nguoichoi.forEach(function(player, index){
+						this.playerInGame[index] = {id:player.data.map, data:player.data};
+					}.bind(this));
+					// vị trí người chơi đầu tiên trong mảng,
+					this.i_first = this.playerInGame.findIndex(function(obj){
+						return obj.data.d;
+					});
+					this.game_bet = this.game;
+					this.Round1();
+				}
+				this.time_start--;
+			}.bind(this), 1000);
 		}.bind(this), 3000);
 	}
 }
@@ -207,7 +214,7 @@ Poker.prototype.nextRound = function(){
 			this.nextPlayer(true);
 		}.bind(this), 300);
 	}else{
-		// đã đủ 5 lá và tính điểm
+		// Kết Thúc game - đã đủ 5 lá và tính điểm
 		this.win();
 	}
 }
@@ -232,6 +239,7 @@ Poker.prototype.nextPlayer = function(new_round = false){
 		this.sendTo(this.game_player.client, {game:{turn:resultG}});
 		this.timeOut = setTimeout(function(){
 			clearTimeout(this.timeOut);
+			console.log('Hết giờ chọn nextPlayer');
 		}.bind(this), this.timePlayer*1000);
 	}else{
 		this.i_last++;
@@ -261,6 +269,7 @@ Poker.prototype.nextPlayer = function(new_round = false){
 
 		this.timeOut = setTimeout(function(){
 			clearTimeout(this.timeOut);
+			console.log('Hết giờ chọn nextPlayer');
 		}.bind(this), this.timePlayer*1000);
 	}
 }
@@ -301,22 +310,27 @@ Poker.prototype.resetD = function(){
 // Theo
 Poker.prototype.onTheo = function(player, xem){
 	if (this.game_player === player) {
-		let bet = this.game_bet-player.bet;
-		if (bet <= player.balans) {
-			player.isTheo  = true;
-			player.balans -= bet;
-			player.bet    += bet;
-			if (player.balans < 1) {
-				player.isAll = true;
-			}
-			let info = {};
-			if (player.isAll) {
-				info.all = bet;
-			}else{
-				if (xem) {
-					info.xem  = bet;
+		let info = {};
+		if (player.isAll) {
+			this.sendToAll({game:{player:{ghe:player.map, data:{balans:player.balans, bet:player.bet}, info:{xem:0}}}});
+			this.nextPlayer();
+		}else{
+			let bet = this.game_bet-player.bet;
+			if (bet <= player.balans) {
+				player.isTheo  = true;
+				player.balans -= bet;
+				player.bet    += bet;
+				if (player.balans < 1) {
+					player.isAll = true;
+				}
+				if (player.isAll) {
+					info.all = bet;
 				}else{
-					info.theo = bet;
+					if (xem) {
+						info.xem  = bet;
+					}else{
+						info.theo = bet;
+					}
 				}
 			}
 			this.sendToAll({game:{player:{ghe:player.map, data:{balans:player.balans, bet:player.bet}, info:info}}});
@@ -350,7 +364,8 @@ Poker.prototype.onTo = function(player, to){
 
 // Tất tay
 Poker.prototype.onAll = function(player){
-	if (this.game_player === player) {
+	if (this.game_player === player && player.isAll == false) {
+		let backup = player.balans;
 		let debit = this.game_bet-player.bet;   // số tiền đang thiếu
 		let updateBalans = player.balans-debit; // số tiền còn lại khi trả đủ để thược hiện tố
 		player.bet   += player.balans;
@@ -358,13 +373,13 @@ Poker.prototype.onAll = function(player){
 		player.balans = 0;
 		if (updateBalans > 0) {
 			this.resetTheo();
-			this.game_to  = true;
+			this.game_to   = true;
 			this.game_bet += updateBalans;
 			this.i_first = this.playerInGame.findIndex(function(obj){
 				return (obj.id == player.map);
 			}.bind(this));
 		}
-		this.sendToAll({game:{player:{ghe:player.map, data:{balans:player.balans, bet:player.bet}, info:{all:player.balans}}}, infoRoom:{bet:this.game_bet}});
+		this.sendToAll({game:{player:{ghe:player.map, data:{balans:player.balans, bet:player.bet}, info:{all:backup}}}, infoRoom:{bet:this.game_bet}});
 		this.nextPlayer();
 	}
 }
@@ -384,7 +399,6 @@ Poker.prototype.onHuy = function(player){
 			return void 0;
 		}
 		if (huy.length === 1) {
-			this.resetData();
 			let noHuy = huy[0];
 			noHuy.data.balans += noHuy.data.bet;
 			let objWin = {ghe:noHuy.data.map, data:{balans:noHuy.data.balans}, info:{win:0}};
@@ -424,24 +438,37 @@ Poker.prototype.onHuy = function(player){
 				obj.data.isHuy  = false;
 			});
 			this.sendToAll({game:{info:array, stop:true}});
+			this.resetGame();
 		}
 	}
 }
 
+Poker.prototype.resetGame = function(){
+	this.resetData();
+	this.checkGame();
+}
+
 Poker.prototype.resetData = function(){
-	this.game_player = null;
-	this.isPlay      = false;
+	this.game_player  = null;
+	this.isPlay       = false;
 	clearTimeout(this.timeOut);
-	this.timeOut     = null;
-	this.card        = [];
-	this.mainCard    = [];
+	clearInterval(this.regTimeStart);
+	this.timeOut      = null;
+	this.regTimeStart = null;
+	this.card         = [];
+	this.mainCard     = [];
+}
+
+Poker.prototype.destroy = function(){
+	this.resetData();
 	//this.playerInGame.forEach(function(data){
 		//data.id = null;
 		//data.data = null;
 	//});
-	this.checkGame();
+	this.poker.removeRoom(this.game, this.singID);
 }
 
+// Tìm người chiến thắng
 Poker.prototype.win = function(){
 	let gamer = this.playerInGame.filter(function(t){return (t.data.isHuy === false && t.data.isOut === false)}); // lấy người chơi theo đến cùng
 	gamer.forEach(function(player){
@@ -617,6 +644,7 @@ Poker.prototype.win = function(){
 		this.Hoa();
 	}
 }
+// Kết thúc game và Đã tìm ra người chiến thắng
 Poker.prototype.winer = function(player){
 	player.balans += player.bet;
 	let objWin = {ghe:player.map, data:{balans:player.balans, openCard:player.card}, info:{win:0}};
@@ -657,8 +685,9 @@ Poker.prototype.winer = function(player){
 		obj.data.isHuy  = false;
 	});
 	this.sendToAll({game:{info:array, finish:true}});
+	this.resetData();
 }
-// Hòa game
+// Kết thúc game nhưng Hòa game
 Poker.prototype.Hoa = function(){
 	let array = [];
 	this.playerInGame.forEach(function(obj, index){
@@ -672,6 +701,7 @@ Poker.prototype.Hoa = function(){
 		obj.data.newGame();
 	});
 	this.sendToAll({game:{info:array, finish:true}});
+	this.resetData();
 }
 
 module.exports = Poker;

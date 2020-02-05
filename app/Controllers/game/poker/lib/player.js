@@ -275,4 +275,8 @@ Player.prototype.dequyDay = function(bo, c){
 	}.bind(this));
 }
 
+// Phá Hủy
+Player.prototype.destroy = function(){
+}
+
 module.exports = Player;
