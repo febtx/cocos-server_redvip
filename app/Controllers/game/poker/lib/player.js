@@ -6,6 +6,7 @@ var Player = function(client, game, balans, auto){
 	this.map     = null;  // vị trí ghế ngồi
 
 	this.isHuy   = false; // người chơi đã hủy bài
+	this.isPlay  = false; // người chơi đang chơi
 	this.isOut   = false; // người chơi đã thoát
 
 	this.uid     = client.UID;          // id người chơi
@@ -18,7 +19,6 @@ var Player = function(client, game, balans, auto){
 	this.isTheo  = false;  // đang theo/xem
 	this.isAll   = false;  // đang tất tay
 
-	this.d       = false;
 	this.listDay = [];   // tất cả các dây có thể sảy ra
 	this.dayCao  = [];   // list dây cao nhất
 	this.boCard  = [];   // Bộ bài
@@ -33,9 +33,12 @@ Player.prototype.addRoom = function(room){
 	return this.room;
 }
 
-Player.prototype.outGame = function(){
+Player.prototype.outGame = function(kick = false){
 	// Thoát game sẽ trả lại tiền vào tài khoản và thoát game
 	this.room.onHuy(this);
+	if (kick) {
+		this.client.red({kick:true});
+	}
 	this.isOut = true;
 	this.client.poker = null;
 	this.client = null;
@@ -43,11 +46,11 @@ Player.prototype.outGame = function(){
 	if (!!this.room) {
 		this.room.outroom(this);
 	}
+	this.room = null;
+	this.destroy();
 
 	if (this.balans > 0) {
-		let uInfo = {};
-		uInfo.red = this.balans;
-		UserInfo.updateOne({id:this.uid}, {$inc:uInfo}).exec();
+		UserInfo.updateOne({id:this.uid}, {$inc:{red:this.balans}}).exec();
 	}
 }
 
@@ -58,13 +61,35 @@ Player.prototype.newGame = function(){
 	this.listDay = [];    // tất cả các dây có thể sảy ra
 	this.dayCao  = [];    // list dây cao nhất
 	this.boCard  = [];    // Bộ bài
-	this.loc_chat = []; // Lọc chất
+	this.loc_chat = [];   // Lọc chất
 	this.caoNhat = null;  // Ghép đc cao nhất
-	this.card    = [];  // Ghép đc cao nhất
+	this.card    = [];    // Ghép đc cao nhất
 	this.bet     = 0;     // số tiền cược
+	this.isPlay  = false;
+
+	if (this.balans < 200) {
+		if (this.autoNap) {
+			let min = this.game*20;
+			UserInfo.findOne({id:this.uid}, 'red', function(err, user){
+				if (!user || user.red < min) {
+					this.outGame(true);
+				}else{
+					user.red -= min;
+					user.save();
+					this.balans += min;
+					this.room.sendToAll({game:{player:{ghe:this.map, data:{balans:this.balans}, info:{nap:min}}}});
+				}
+			}.bind(this));
+		}else{
+			this.outGame(true);
+		}
+	}
 }
 
 Player.prototype.tralai = function(){
+	if (void 0 !== this.du && this.du > 0) {
+		UserInfo.updateOne({id:this.uid}, {$inc:{red:this.du}}).exec();
+	}
 }
 Player.prototype.onHuy  = function(){
 	if(this.isHuy === false){
@@ -258,6 +283,16 @@ Player.prototype.checkBo = function(){
 			this.caoNhat = {code:3, bo2A:bo2_a, bo2B:bo2_b};
 		}else if (bo2_a !== null) {
 			this.caoNhat = {code:2, bo2:bo2_a};
+		}else{
+			let point = 0;
+			this.card.forEach(function(card){
+				if (card.card == 0) {
+					point += 14;
+				}else{
+					point += card.card;
+				}
+			});
+			this.caoNhat = {code:1, point:point};
 		}
 	}
 }
@@ -277,6 +312,34 @@ Player.prototype.dequyDay = function(bo, c){
 
 // Phá Hủy
 Player.prototype.destroy = function(){
+	/**
+	if (this.isPlay == false) {
+		delete this.room;
+		delete this.map;
+
+		delete this.isHuy;
+		delete this.isPlay;
+		delete this.isOut;
+
+		delete this.uid;
+		delete this.name;
+
+		delete this.client;
+		delete this.game;
+		delete this.balans;
+		delete this.autoNap;
+		delete this.isTheo;
+		delete this.isAll;
+
+		delete this.listDay;
+		delete this.dayCao;
+		delete this.boCard;
+		delete this.loc_chat;
+		delete this.caoNhat;
+
+		delete this.bet;
+	}
+	*/
 }
 
 module.exports = Player;

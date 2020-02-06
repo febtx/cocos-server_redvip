@@ -43,7 +43,7 @@ var Poker = function(poker, singID, game){
 
 	this.game_start    = false; // game đã bắt đầu
 
-	this.timeStartGame = 10;   // thời gian bắt đầu game
+	this.timeStartGame = 5;   // thời gian bắt đầu game
 	this.time_start    = 0;    // thời gian bắt đầu game
 	this.timePlayer    = 15;   // thời gian người chơi lựa chọn
 
@@ -55,8 +55,7 @@ Poker.prototype.sendTo = function(client, data){
 }
 
 Poker.prototype.sendToAll = function(data, player = null){
-	var trongPhong = Object.values(this.player); // danh sách ghế
-	trongPhong.forEach(function(ghe){
+	Object.values(this.player).forEach(function(ghe){
 		if (!!ghe.data && ghe.data !== player) {
 			!!ghe.data.client && ghe.data.client.red(data);
 		}
@@ -73,29 +72,23 @@ Poker.prototype.inroom = function(player){
 	}
 
 	player.room = this;
-	var trongPhong = Object.values(this.player);                          // danh sách ghế
-	var gheTrong = trongPhong.filter(function(t){return t.data == null}); // lấy các ghế trống
+	let trongPhong = Object.values(this.player); // danh sách ghế
+	let gheTrong = trongPhong.filter(function(t){return t.data == null}); // lấy các ghế trống
 
 	// lấy ngẫu nhiên 1 ghế trống và ngồi
-	var rand = (Math.random()*gheTrong.length)>>0;
+	let rand = (Math.random()*gheTrong.length)>>0;
 	gheTrong = gheTrong[rand];
 
 	this.player[gheTrong.id].data = player; // ngồi
 	player.map = gheTrong.id;               // vị trí ngồi
 
-	if(this.online == 1){
-		player.d = true;
-	}
-
-	this.sendToAll({ingame:{ghe:player.map, data:{name:player.name, balans:player.balans, d:player.d}}}, player);
-
-	trongPhong = Object.values(this.player); // danh sách ghế
+	this.sendToAll({ingame:{ghe:player.map, data:{name:player.name, balans:player.balans}}}, player);
 	let result = trongPhong.map(function(ghe){
 		if (!!ghe.data) {
 			if (this.isPlay === true) {
 				return {ghe:ghe.id, data:{name:ghe.data.name, balans:ghe.data.balans, bet:ghe.data.bet, card:{}}};
 			}
-			return {ghe:ghe.id, data:{name:ghe.data.name, balans:ghe.data.balans, d:ghe.data.d}};
+			return {ghe:ghe.id, data:{name:ghe.data.name, balans:ghe.data.balans}};
 		}else{
 			return {ghe:ghe.id, data:null};
 		}
@@ -105,13 +98,13 @@ Poker.prototype.inroom = function(player){
 		client.game = {card:this.mainCard};
 	}
 	this.sendTo(player.client, client);
-	this.online > 1 && this.checkGame();
+	this.online > 1 && this.checkGame(3500);
 }
 
 Poker.prototype.outroom = function(player){
 	this.online--;
-	//this.onHuy(player);
 	this.player[player.map].data = null;
+	this.onHuy(player);
 
 	if (this.online < 1) {
 		this.destroy();
@@ -121,44 +114,60 @@ Poker.prototype.outroom = function(player){
 			this.resetData();
 		}
 	}
-	player.room = null;
-	if (player.d) {
-		player.d = null;
-		this.resetD();
-	}
-	player.destroy();
 }
 
-Poker.prototype.checkGame = function(){
+Poker.prototype.checkGame = function(tru = 0){
 	if (!this.isPlay && !this.timeOut) {
 		this.isPlay  = true;
 		this.timeOut = setTimeout(function(){
 			clearTimeout(this.timeOut);
-			this.time_start = 10;
-			this.sendToAll({infoRoom:{time_start:10, isPlay:true}});
-			//clearInterval(this.regTimeStart);
+			this.time_start = this.timeStartGame;
+			let nguoichoi = Object.values(this.player).filter(function(t){return t.data !== null});
+			nguoichoi.forEach(function(player){
+				player.data.newGame();
+			}.bind(this));
+			this.sendToAll({infoRoom:{time_start:this.timeStartGame, isPlay:true}});
+
 			this.regTimeStart = setInterval(function(){
 				if (this.time_start < 0) {
 					clearInterval(this.regTimeStart);
 					// ghế có người ngồi
-					let nguoichoi = Object.values(this.player).filter(function(t){return t.data !== null});
+					nguoichoi = Object.values(this.player).filter(function(t){return t.data !== null});
 					if (nguoichoi.length < 2) {
 						return void 0;
 					}
 					this.playerInGame = [];
 					nguoichoi.forEach(function(player, index){
+						player.data.isPlay = true;
 						this.playerInGame[index] = {id:player.data.map, data:player.data};
 					}.bind(this));
-					// vị trí người chơi đầu tiên trong mảng,
-					this.i_first = this.playerInGame.findIndex(function(obj){
-						return obj.data.d;
-					});
-					this.game_bet = this.game;
+					// Ngẫu nhiên người được chơi,
+					this.i_first = (Math.random()*this.playerInGame.length)>>0;
+
+					let newGhe = [];
+					if (this.i_first != 0) {
+						newGhe = [...this.playerInGame.slice(this.i_first), ...this.playerInGame.slice(0, this.i_first)];
+					}else{
+						newGhe = this.playerInGame;
+					}
+					let tru100 = newGhe[newGhe.length-1];
+					let tru50  = newGhe[newGhe.length-2];
+					if (tru100) {
+						tru100.data.bet = this.game*2;
+						tru100.data.balans -= this.game*2;
+						tru100.data.isTheo = true;
+					}
+					if (void 0 !== tru50 && tru50 !== newGhe[0]) {
+						tru50.data.bet = this.game;
+						tru50.data.balans -= this.game;
+					}
+					newGhe = null;
+					this.game_bet = this.game*2;
 					this.Round1();
 				}
 				this.time_start--;
 			}.bind(this), 1000);
-		}.bind(this), 3000);
+		}.bind(this), 5000-tru);
 	}
 }
 
@@ -171,9 +180,10 @@ Poker.prototype.Round1 = function(){
 	this.card = Helpers.shuffle(this.card); // tráo bài lần 3
 	// chia bài
 	let chia = [];
-	this.playerInGame.forEach(function(player, index){
+	let first = this.playerInGame.map(function(player, index){
 		player.data.card = this.card.splice(0, 2);
 		chia[index] = {id:player.id};
+		return {id:player.id, bet:player.data.bet};
 	}.bind(this));
 	this.playerInGame.forEach(function(player){
 		chia.forEach(function(dataChia){
@@ -183,8 +193,10 @@ Poker.prototype.Round1 = function(){
 				delete dataChia.data;
 			}
 		});
-		this.sendTo(player.data.client, {game:{chia_bai:chia}, infoRoom:{bet:this.game_bet}})
+		this.sendTo(player.data.client, {game:{chia_bai:chia}, infoRoom:{bet:this.game_bet, first:first}})
 	}.bind(this));
+
+	first = null;
 
 	clearTimeout(this.timeOut);
 	this.timeOut = setTimeout(function(){
@@ -239,7 +251,7 @@ Poker.prototype.nextPlayer = function(new_round = false){
 		this.sendTo(this.game_player.client, {game:{turn:resultG}});
 		this.timeOut = setTimeout(function(){
 			clearTimeout(this.timeOut);
-			console.log('Hết giờ chọn nextPlayer');
+			this.hetgio();
 		}.bind(this), this.timePlayer*1000);
 	}else{
 		this.i_last++;
@@ -269,8 +281,19 @@ Poker.prototype.nextPlayer = function(new_round = false){
 
 		this.timeOut = setTimeout(function(){
 			clearTimeout(this.timeOut);
-			console.log('Hết giờ chọn nextPlayer');
+			this.hetgio();
 		}.bind(this), this.timePlayer*1000);
+	}
+}
+
+// Hết thời gian chưa chọn
+Poker.prototype.hetgio = function(player){
+	if (this.game_player) {
+		if (this.game_player.isAll || (!this.game_to && this.game_player.isTheo)) {
+			this.game_player.onXem();
+		}else{
+			this.game_player.onHuy();
+		}
 	}
 }
 
@@ -294,19 +317,6 @@ Poker.prototype.btnSelect = function(player){
 	return select;
 }
 
-Poker.prototype.resetD = function(){
-	let trongPhong = Object.values(this.player);                         // danh sách ghế
-	trongPhong = trongPhong.filter(function(t){return t.data !== null}); // ghế có người ngồi
-	// lấy ngẫu nhiên 1 ghế làm D
-	let rand = (Math.random()*trongPhong.length)>>0;
-	trongPhong.forEach(function(player, index){
-		if (rand === index) {
-			player.data.d = true;
-		}else{
-			player.data.d = false;
-		}
-	});
-}
 // Theo
 Poker.prototype.onTheo = function(player, xem){
 	if (this.game_player === player) {
@@ -413,8 +423,6 @@ Poker.prototype.onHuy = function(player){
 						if (obj.data.isOut === false) {
 							array = array.concat({ghe:obj.data.map, data:{balans:obj.data.balans}, info:{lost:obj.data.bet}});
 						}
-						obj.data.bet = 0;
-						obj.data.newGame();
 					}else{
 						// có trả lại
 						objWin.info.win    += noHuy.data.bet;
@@ -423,19 +431,14 @@ Poker.prototype.onHuy = function(player){
 						if (obj.data.isOut) {
 							obj.data.du = obj.data.bet-noHuy.data.bet;
 							obj.data.tralai();
+							obj.data.isPlay = false;
+							obj.data.destroy();
 						}else{
 							obj.data.balans += obj.data.bet-noHuy.data.bet;
 							array = array.concat({ghe:obj.data.map, data:{balans:obj.data.balans}, info:{lost:noHuy.data.bet}});
 						}
-						obj.data.bet = 0;
-						obj.data.newGame();
 					}
-				}else{
-					obj.data.newGame();
 				}
-				obj.data.isTheo = false;
-				obj.data.isAll  = false;
-				obj.data.isHuy  = false;
 			});
 			this.sendToAll({game:{info:array, stop:true}});
 			this.resetGame();
@@ -445,7 +448,7 @@ Poker.prototype.onHuy = function(player){
 
 Poker.prototype.resetGame = function(){
 	this.resetData();
-	this.checkGame();
+	this.online > 1 && this.checkGame();
 }
 
 Poker.prototype.resetData = function(){
@@ -461,10 +464,6 @@ Poker.prototype.resetData = function(){
 
 Poker.prototype.destroy = function(){
 	this.resetData();
-	//this.playerInGame.forEach(function(data){
-		//data.id = null;
-		//data.data = null;
-	//});
 	this.poker.removeRoom(this.game, this.singID);
 }
 
@@ -506,7 +505,6 @@ Poker.prototype.win = function(){
 			g_player.checkBo();
 		}
 	}.bind(this));
-
 	// Lọc người chơi đang có bộ bài
 	let player_bo = this.playerInGame.filter(function(player) {
 		return player.data.caoNhat !== null;
@@ -523,6 +521,15 @@ Poker.prototype.win = function(){
 			}else{
 				let card = null;
 				switch(code){
+					case 1:
+						player_bo.sort(function(a, b){return b.data.caoNhat.point-a.data.caoNhat.point});
+						player_bo[0].data.caoNhat.point;
+						if (player_bo[0].data.caoNhat.point > player_bo[1].data.caoNhat.point) {
+							this.winer(player_bo[0].data);
+						}else{
+							this.Hoa();
+						}
+						break;
 					case 2:
 						player_bo.sort(function(a, b){return b.data.caoNhat.bo2[0].card-a.data.caoNhat.bo2[0].card});
 						card = player_bo[player_bo.length-1].data.caoNhat.bo2[0].card === 0 ? player_bo[player_bo.length-1].data.caoNhat.bo2[0].card : player_bo[0].data.caoNhat.bo2[0].card;
@@ -656,12 +663,10 @@ Poker.prototype.winer = function(player){
 				// ăn tất
 				objWin.info.win    += obj.data.bet;
 				objWin.data.balans += obj.data.bet;
-				player.balans  += obj.data.bet;
+				player.balans      += obj.data.bet;
 				if (obj.data.isOut === false) {
 					array = array.concat({ghe:obj.data.map, data:{balans:obj.data.balans, openCard:obj.data.card}, info:{lost:obj.data.bet}});
 				}
-				obj.data.bet = 0;
-				obj.data.newGame();
 			}else{
 				// có trả lại
 				objWin.info.win    += player.bet;
@@ -670,22 +675,18 @@ Poker.prototype.winer = function(player){
 				if (obj.data.isOut) {
 					obj.data.du = obj.data.bet-player.bet;
 					obj.data.tralai();
+					obj.data.isPlay = false;
+					obj.data.destroy();
 				}else{
 					obj.data.balans += obj.data.bet-player.bet;
 					array = array.concat({ghe:obj.data.map, data:{balans:obj.data.balans, openCard:obj.data.card}, info:{lost:player.bet}});
 				}
-				obj.data.bet = 0;
-				obj.data.newGame();
 			}
-		}else{
-			obj.data.newGame();
 		}
-		obj.data.isTheo = false;
-		obj.data.isAll  = false;
-		obj.data.isHuy  = false;
 	});
 	this.sendToAll({game:{info:array, finish:true}});
 	this.resetData();
+	this.resetGame();
 }
 // Kết thúc game nhưng Hòa game
 Poker.prototype.Hoa = function(){
@@ -695,10 +696,11 @@ Poker.prototype.Hoa = function(){
 		if (obj.data.isOut) {
 			obj.data.du = obj.data.bet;
 			obj.data.tralai();
+			obj.data.isPlay  = false;
+			obj.data.destroy();
 		}else{
 			array = array.concat({ghe:obj.data.map, data:{balans:obj.data.balans, openCard:obj.data.card}, info:{hoa:obj.data.bet}});
 		}
-		obj.data.newGame();
 	});
 	this.sendToAll({game:{info:array, finish:true}});
 	this.resetData();

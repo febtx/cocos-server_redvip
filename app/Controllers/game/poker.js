@@ -1,6 +1,7 @@
 
 let reg    = require('./poker/reg');    // đăng kí vào phòng
 let ingame = require('./poker/ingame'); // vào phòng
+let nap    = require('./poker/nap');    // Nạp Thêm tiền
 
 module.exports = function(client, data){
 	if (!!data.reg) {
@@ -10,6 +11,9 @@ module.exports = function(client, data){
 		ingame(client);
 	}
 	if (!!client.poker) {
+		if (!!data.nap) {
+			nap(client, data.nap);
+		}
 		if (!!data.outgame) {
 			client.poker.outGame();
 		}
