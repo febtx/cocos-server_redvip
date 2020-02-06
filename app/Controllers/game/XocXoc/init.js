@@ -246,8 +246,9 @@ XocXoc.prototype.thanhtoan = function(dice = null){
 
 					update['redPlay'] = updateGame['bet'] = tongDat;
 
-					UserInfo.updateOne({id:cuoc.uid}, {$inc:update}).exec();
+					!cuoc.bot && UserInfo.updateOne({id:cuoc.uid}, {$inc:update}).exec();
 					XocXoc_user.updateOne({uid:cuoc.uid}, {$inc:updateGame}).exec();
+
 					if(void 0 !== this.clients[cuoc.uid]){
 						let status = {};
 						if (TongThang > 0) {
@@ -382,15 +383,15 @@ XocXoc.prototype.resetDataAdmin = function(){
 XocXoc.prototype.randomChip = function(){
 	let a = (Math.random()*35)>>0;
 	if (a == 34) {
-		return 1000000;
+		return 1000;
 	}else if (a >= 30 && a < 34) {
-		return 100000;
+		return 1000000;
 	}else if (a >= 25 && a < 30) {
-		return 50000;
+		return 100000;
 	}else if (a >= 18 && a < 25) {
 		return 10000;
 	}else{
-		return 1000;
+		return 50000;
 	}
 }
 
@@ -426,7 +427,10 @@ XocXoc.prototype.bot = function(data){
 			}
 			break;
 		case 100000:
-			this.botCuoc(chip, data);
+			var rand = Math.floor(Math.random()*(5-1+1))+1;
+			for (let i = rand; i >= 0; i--) {
+				this.botCuoc(chip, data);
+			}
 			break;
 		case 100000:
 			this.botCuoc(chip, data);
@@ -443,7 +447,7 @@ XocXoc.prototype.botCuoc = function(cuoc, data){
 				checkOne[box] += cuoc;
 				checkOne.save();
 			}else{
-				var create = {uid:data.id,name:data.name, phien:this.phien, time:new Date()};
+				var create = {uid:data.id, bot:true, name:data.name, phien:this.phien, time:new Date()};
 				create[box] = cuoc;
 				XocXoc_cuoc.create(create);
 			}

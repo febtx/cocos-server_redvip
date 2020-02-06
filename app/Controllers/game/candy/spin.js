@@ -320,6 +320,10 @@ module.exports = function(client, data){
 			client.Candy.bet = bet;
 			let tongCuoc = bet*line.length;
 			UserInfo.findOne({id:client.UID}, 'red name', function(err, user){
+				if (!user) {
+					client.terminate();
+					return void 0;
+				}
 				if (client.Candy.free === 0 && user.red < tongCuoc) {
 					client.red({candy:{status:0, notice:'Bạn không đủ RED để quay.!!'}});
 				}else{

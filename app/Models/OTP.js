@@ -9,6 +9,6 @@ let Schema = new mongoose.Schema({
     date:   {type: Date,    required: true}, // Thời gian tạo
 });
 
-Schema.index({uid: 1, phone: 1}, {background: true});
+Schema.index({uid:1, phone:1}, {background:true});
 
 module.exports = mongoose.model('OTP', Schema);

@@ -57,7 +57,7 @@ module.exports = function(bot, io){
 		io.baucua.info.redTom  += cuoc;
 	}
 
-	let create = {uid: bot.id, name: bot.name, phien: io.BauCua_phien, time: new Date()};
+	let create = {uid:bot.id, bot:true, name:bot.name, phien:io.BauCua_phien, time:new Date()};
 	create[userCuoc] = cuoc;
 	BauCua_cuoc.create(create);
 	bot = null;

@@ -34,6 +34,7 @@ let Schema = new mongoose.Schema({
 	gitCode:   {type:Number,  default:0},                        // Số lần Lấy mã GiftCode thành công
 	gitRed:    {type:Number,  default:0},                        // Tiền lấy đc từ GiftCode
 	gitTime:   {type:Date},                                      // Ngày tham gia
+	rights:    {type:Number,  default:0},                        // Cấp bậc
 });
 
 Schema.plugin(AutoIncrement.plugin, {modelName:'UserInfo', field:'UID'});

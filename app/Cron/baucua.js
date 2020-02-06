@@ -165,7 +165,7 @@ let thongtin_thanhtoan = function thongtin_thanhtoan(dice = null){
 
 					update['redPlay'] = updateGame['bet'] = tongDat;
 
-					UserInfo.updateOne({id:cuoc.uid}, {$inc:update}).exec();
+					!cuoc.bot && UserInfo.updateOne({id:cuoc.uid}, {$inc:update}).exec();
 					BauCua_user.updateOne({uid:cuoc.uid}, {$inc:updateGame}).exec();
 
 					if(void 0 !== io.users[cuoc.uid]){

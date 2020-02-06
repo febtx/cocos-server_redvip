@@ -219,7 +219,7 @@ let thongtin_thanhtoan = function(game_id, dice = false){
 								obj.tralai    = obj.bet;
 								obj.save();
 
-								UserInfo.updateOne({id:obj.uid}, {$inc:{red:obj.bet}}).exec();
+								!obj.bot && UserInfo.updateOne({id:obj.uid}, {$inc:{red:obj.bet}}).exec();
 								return TXCuocOne.updateOne({uid:obj.uid, phien:game_id}, {$set:{win:win}, $inc:{tralai:obj.bet}}).exec();
 							}else{
 								// Trả lại 1 phần
@@ -237,7 +237,7 @@ let thongtin_thanhtoan = function(game_id, dice = false){
 									betwinP = truChietKhau(betPlay, 2);
 									obj.betwin    = betwinP;
 									let redUpdate = obj.bet+betwinP;
-									UserInfo.updateOne({id:obj.uid}, {$inc:{totall:betwinP, red:redUpdate, redPlay:betPlay, redWin:betwinP}}).exec();
+									!obj.bot && UserInfo.updateOne({id:obj.uid}, {$inc:{totall:betwinP, red:redUpdate, redPlay:betPlay, redWin:betwinP}}).exec();
 									TaiXiu_User.updateOne({uid: obj.uid}, {$inc:{totall:betwinP, tWinRed:betwinP, tRedPlay:betPlay}}).exec();
 
 									if (!!vipConfig && vipConfig.status === true) {
@@ -251,7 +251,7 @@ let thongtin_thanhtoan = function(game_id, dice = false){
 										});
 									}
 								}else{
-									UserInfo.updateOne({id:obj.uid}, {$inc:{totall:-betPlay, red:obj.tralai, redPlay:betPlay, redLost:betPlay}}).exec();
+									!obj.bot && UserInfo.updateOne({id:obj.uid}, {$inc:{totall:-betPlay, red:obj.tralai, redPlay:betPlay, redLost:betPlay}}).exec();
 									TaiXiu_User.updateOne({uid: obj.uid}, {$inc:{totall:-betPlay, tLostRed:betPlay, tRedPlay:betPlay}}).exec();
 								}
 								obj.save();
@@ -278,14 +278,14 @@ let thongtin_thanhtoan = function(game_id, dice = false){
 								}
 
 								let redUpdate = obj.bet+betwin;
-								UserInfo.updateOne({id:obj.uid}, {$inc:{totall:betwin, red:redUpdate, redWin:betwin, redPlay:obj.bet}}).exec();
+								!obj.bot && UserInfo.updateOne({id:obj.uid}, {$inc:{totall:betwin, red:redUpdate, redWin:betwin, redPlay:obj.bet}}).exec();
 								TaiXiu_User.updateOne({uid: obj.uid}, {$inc:{totall:betwin, tWinRed:betwin, tRedPlay: obj.bet}}).exec();
 								return TXCuocOne.updateOne({uid:obj.uid, phien:game_id}, {$set:{win:true}, $inc:{betwin:betwin}}).exec();
 							}else{
 								obj.thanhtoan = true;
 								obj.save();
 
-								UserInfo.updateOne({id:obj.uid}, {$inc:{totall:-obj.bet, redLost:obj.bet, redPlay:obj.bet}}).exec();
+								!obj.bot && UserInfo.updateOne({id:obj.uid}, {$inc:{totall:-obj.bet, redLost:obj.bet, redPlay:obj.bet}}).exec();
 								TaiXiu_User.updateOne({uid: obj.uid}, {$inc:{totall:-obj.bet, tLostRed:obj.bet, tRedPlay:obj.bet}}).exec();
 							}
 						}
@@ -301,7 +301,7 @@ let thongtin_thanhtoan = function(game_id, dice = false){
 								obj.tralai    = obj.bet;
 								obj.save();
 
-								UserInfo.updateOne({id:obj.uid}, {$inc:{red:obj.bet}}).exec();
+								!obj.bot && UserInfo.updateOne({id:obj.uid}, {$inc:{red:obj.bet}}).exec();
 								return TXCuocOne.updateOne({uid:obj.uid, phien:game_id}, {$set:{win:win}, $inc:{tralai:obj.bet}}).exec();
 							}else{
 								// Trả lại 1 phần
@@ -319,7 +319,7 @@ let thongtin_thanhtoan = function(game_id, dice = false){
 									betwinP = truChietKhau(betPlay, 2);
 									obj.betwin    = betwinP;
 									let redUpdate = obj.bet+betwinP;
-									UserInfo.updateOne({id:obj.uid}, {$inc:{totall:betwinP, red:redUpdate, redPlay:betPlay, redWin:betwinP}}).exec();
+									!obj.bot && UserInfo.updateOne({id:obj.uid}, {$inc:{totall:betwinP, red:redUpdate, redPlay:betPlay, redWin:betwinP}}).exec();
 									TaiXiu_User.updateOne({uid: obj.uid}, {$inc:{totall:betwinP, tWinRed:betwinP, tRedPlay:betPlay}}).exec();
 
 									if (!!vipConfig && vipConfig.status === true) {
@@ -333,7 +333,7 @@ let thongtin_thanhtoan = function(game_id, dice = false){
 										});
 									}
 								}else{
-									UserInfo.updateOne({id:obj.uid}, {$inc:{totall:-betPlay, red:obj.tralai, redPlay: betPlay, redLost:betPlay}}).exec();
+									!obj.bot && UserInfo.updateOne({id:obj.uid}, {$inc:{totall:-betPlay, red:obj.tralai, redPlay: betPlay, redLost:betPlay}}).exec();
 									TaiXiu_User.updateOne({uid: obj.uid}, {$inc:{totall:-betPlay, tLostRed:betPlay, tRedPlay:betPlay}}).exec();
 								}
 								obj.save();
@@ -360,14 +360,14 @@ let thongtin_thanhtoan = function(game_id, dice = false){
 								}
 
 								let redUpdate = obj.bet+betwin;
-								UserInfo.updateOne({id:obj.uid}, {$inc:{totall:betwin, red:redUpdate, redWin:betwin, redPlay:obj.bet}}).exec();
+								!obj.bot && UserInfo.updateOne({id:obj.uid}, {$inc:{totall:betwin, red:redUpdate, redWin:betwin, redPlay:obj.bet}}).exec();
 								TaiXiu_User.updateOne({uid: obj.uid}, {$inc:{totall:betwin, tWinRed:betwin, tRedPlay: obj.bet}}).exec();
 								return TXCuocOne.updateOne({uid:obj.uid, phien:game_id}, {$set:{win:true}, $inc:{betwin:betwin}}).exec();
 							}else{
 								obj.thanhtoan = true;
 								obj.save();
 
-								UserInfo.updateOne({id:obj.uid}, {$inc:{totall:-obj.bet, redLost:obj.bet, redPlay:obj.bet}}).exec();
+								!obj.bot && UserInfo.updateOne({id:obj.uid}, {$inc:{totall:-obj.bet, redLost:obj.bet, redPlay:obj.bet}}).exec();
 								TaiXiu_User.updateOne({uid:obj.uid}, {$inc:{totall:-obj.bet, tLostRed:obj.bet, tRedPlay:obj.bet}}).exec();
 							}
 						}
