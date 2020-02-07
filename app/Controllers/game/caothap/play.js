@@ -27,12 +27,9 @@ function newGame(client, data) {
 					client.caothap = client.caothap || {};
 					var create = {'uid': client.UID, 'play': true, 'a': [], 'goc': cuoc, 'cuoc': cuoc, 'bet': cuoc, 'time': new Date()};  // Dữ liệu tạo phiên mới
 					var addQuy = (cuoc*0.01)>>0;                 // Thêm vào hũ
-					var uInfo     = {};                         // đối tượng cập nhật người dùng
-					var uInfoGame = {};
 					user.red    -= cuoc;
 					user.redPlay = user.redPlay*1+cuoc;
 					user.save();
-
 
 					let vipStatus = Helpers.getConfig('topVip');
 					if (!!vipStatus && vipStatus.status === true) {
@@ -45,8 +42,6 @@ function newGame(client, data) {
 							}
 						});
 					}
-
-					CaoThap_user.updateOne({'uid': client.UID}, {$inc: uInfoGame}).exec();
 
 					HU.findOneAndUpdate({game:'caothap', type:cuoc}, {$inc:{bet:addQuy}}, function(err, caothap){
 						var checkName = (client.profile.name == caothap.name);
@@ -216,7 +211,7 @@ function playGame(client, select) {
 										var nohu = create.bet = (caothap.bet-Math.ceil(caothap.bet*phe/100))>>0;
 
 										uInfo['red']    = nohu;            // Cập nhật Số dư Red trong tài khoản
-										uInfo['redWin'] = uInfoGame['win'] = nohu-result.goc; // Cập nhật Số Red đã Thắng
+										uInfo['redWin'] = uInfoGame['win'] = uInfoGame.totall = nohu-result.goc; // Cập nhật Số Red đã Thắng
 										CaoThap_red.updateOne({'_id': client.caothap.id}, {$set: {play: false, cuoc: result.bet, bet: nohu, card: card, a: result.a, time: new Date()}, $inc: {buoc:1}}).exec();
 										CaoThap_redbuoc.create(create);
 										client.redT.sendInHome({pushnohu:{title:'Trên Dưới', name:client.profile.name, bet:nohu}});
@@ -232,6 +227,7 @@ function playGame(client, select) {
 									clearTimeout(client.caothap.time);
 									isAnNon = false;
 									uInfo['redLost'] = uInfoGame['lost'] = result.goc; // Cập nhật Số Red đã Thua
+									uInfoGame.totall = -result.goc;
 									UserInfo.updateOne({id:client.UID}, {$inc: uInfo}).exec();
 									CaoThap_user.updateOne({'uid': client.UID}, {$inc: uInfoGame}).exec();
 								}
@@ -278,6 +274,7 @@ function annon(client) {
 								// lỗ
 								uInfo['redLost'] = uInfoGame['lost'] = -tien;
 							}
+							uInfoGame.totall = tien;
 						}
 						CaoThap_red.updateOne({'_id': client.caothap.id}, {$set: {play: false, time: new Date()}}).exec();
 						UserInfo.updateOne({id:client.UID}, {$inc: uInfo}).exec();
@@ -349,6 +346,7 @@ function reconnect(client){
 						// lỗ
 						uInfo['redLost'] = uInfoGame['lost'] = -tien;
 					}
+					uInfoGame.totall = tien;
 				}
 				CaoThap_red.updateOne({'_id': client.caothap.id}, {$set: {play: false}}).exec();
 				UserInfo.updateOne({id:client.UID}, {$inc: uInfo}).exec();

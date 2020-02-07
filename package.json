@@ -16,6 +16,7 @@
 		"express": "^4.17.1",
 		"express-ws": "^4.0.0",
 		"is-mobile": "^2.1.0",
+		"jsdom": "^16.1.0",
 		"jsonwebtoken": "^8.5.1",
 		"mongoose": "^5.7.1",
 		"mongoose-auto-increment-reworked": "^1.2.1",
@@ -28,7 +29,10 @@
 		"svg2img": "^0.6.1",
 		"validator": "^11.1.0"
 	},
-	"devDependencies": {},
+	"devDependencies": {
+		"bufferutil": "^4.0.1",
+		"utf-8-validate": "^5.0.2"
+	},
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/MrT98/RedVip.git"

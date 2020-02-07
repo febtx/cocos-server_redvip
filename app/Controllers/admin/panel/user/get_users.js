@@ -82,15 +82,37 @@ module.exports = function(client, data){
 										});
 									});
 								}))
-								.then(function(data){
-									client.red({users:{get_users:{data:data, page:page, kmess:10, total:1}}});
-								})
+								.then(function(datar){
+									client.red({users:{get_users:{data:datar, page:page, kmess:10, total:1}}});
+									client = null;
+									data   = null;
+									datar  = null;
+									kmess  = null;
+									total  = null;
+									match  = null;
+									sort   = null;
+									page   = null;
+								});
 							}else{
 								client.red({users:{get_users:{data:[], page:1, kmess:10, total:0}}});
+								client = null;
+								data   = null;
+								kmess  = null;
+								total  = null;
+								match  = null;
+								sort   = null;
+								page   = null;
 							}
 						});
 					}else{
 						client.red({users:{get_users:{data:[], page:1, kmess:10, total:0}}});
+						client = null;
+						data   = null;
+						kmess  = null;
+						total  = null;
+						match  = null;
+						sort   = null;
+						page   = null;
 					}
 				});
 			}else if (!isEmpty(data.phone)) {
@@ -112,53 +134,48 @@ module.exports = function(client, data){
 											});
 										});
 									}))
-									.then(function(data){
-										client.red({users:{get_users:{data:data, page:page, kmess:kmess, total:1}}});
+									.then(function(datar){
+										client.red({users:{get_users:{data:datar, page:page, kmess:kmess, total:1}}});
+										client = null;
+										data   = null;
+										datar  = null;
+										kmess  = null;
+										total  = null;
+										match  = null;
+										sort   = null;
+										page   = null;
 									});
 								}else{
-									client.red({users:{get_users:{data:[], page:page, kmess:kmess, total:1}}});
-								}
-							});
-							/**
-							UserInfo.aggregate([
-								{$match: match},
-								{
-									$project:{
-										profit: {$subtract: ['$redWin', '$redLost']},
-										id:       '$id',
-										UID:      '$UID',
-										name:     '$name',
-										red:      '$red',
-										xu:       '$xu',
-										type:     '$type',
-									}
-								},
-							]).exec(function(err, result2){
-								if (result2.length) {
-									Promise.all(result2.map(function(obj){
-										delete obj._id;
-										obj.phone = result.region+result.phone;
-										return new Promise(function(resolve, reject) {
-											Users.findOne({'_id': obj.id}, function(error, result3){
-												obj.username = result3.local.username;
-												resolve(obj);
-											})
-										});
-									}))
-									.then(function(data){
-										client.red({users:{get_users:{data:data, page:page, kmess:10, total:1}}});
-									})
-								}else{
 									client.red({users:{get_users:{data:[], page:1, kmess:10, total:0}}});
+									client = null;
+									data   = null;
+									kmess  = null;
+									total  = null;
+									match  = null;
+									sort   = null;
+									page   = null;
 								}
 							});
-							*/
 						}else{
 							client.red({users:{get_users:{data:[], page:1, kmess:10, total:0}}});
+							client = null;
+							data   = null;
+							kmess  = null;
+							total  = null;
+							match  = null;
+							sort   = null;
+							page   = null;
 						}
 					});
 				}else{
 					client.red({users:{get_users:{data:[], page:1, kmess:10, total:0}}});
+					client = null;
+					data   = null;
+					kmess  = null;
+					total  = null;
+					match  = null;
+					sort   = null;
+					page   = null;
 				}
 			}else{
 				UserInfo.countDocuments(match).exec(function(err, total){
@@ -177,11 +194,26 @@ module.exports = function(client, data){
 									});
 								});
 							}))
-							.then(function(data){
-								client.red({users:{get_users:{data:data, page:page, kmess:kmess, total:total}}});
+							.then(function(datar){
+								client.red({users:{get_users:{data:datar, page:page, kmess:kmess, total:total}}});
+								client = null;
+								data   = null;
+								datar  = null;
+								kmess  = null;
+								total  = null;
+								match  = null;
+								sort   = null;
+								page   = null;
 							});
 						}else{
-							client.red({users:{get_users:{data:[], page:page, kmess:kmess, total:total}}});
+							client.red({users:{get_users:{data:[], page:1, kmess:10, total:0}}});
+							client = null;
+							data   = null;
+							kmess  = null;
+							total  = null;
+							match  = null;
+							sort   = null;
+							page   = null;
 						}
 					});
 				});

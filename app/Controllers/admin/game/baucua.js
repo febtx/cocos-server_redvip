@@ -1,6 +1,8 @@
 
-const BauCua_setDice = require('./baucua/set_dice');
-const BauCua_getNew  = require('./baucua/get_new');
+let BauCua_setDice = require('./baucua/set_dice');
+let BauCua_getNew  = require('./baucua/get_new');
+let dashboard      = require('./baucua/dashboard');
+let resetTop       = require('./baucua/resetTop');
 
 module.exports = function(client, data) {
 	if (void 0 !== data.view) {
@@ -11,5 +13,11 @@ module.exports = function(client, data) {
 	}
 	if (void 0 !== data.set_dice) {
 		BauCua_setDice(client, data.set_dice);
+	}
+	if (!!data.dashboard) {
+		dashboard(client, data.dashboard);
+	}
+	if (!!data.resetTop) {
+		resetTop(client);
 	}
 }

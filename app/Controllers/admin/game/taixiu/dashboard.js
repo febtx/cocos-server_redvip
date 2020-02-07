@@ -99,11 +99,13 @@ function get_top(client, data){
 let resetTop = function(client){
 	TX_User.updateMany({}, {'$set':{'tWinRed':0, 'tLostRed':0, 'totall':0, 'tRedPlay':0}}).exec(function(err, result){
 		get_top(client, {page: 1, sort:5});
+		client = null;
 	});
 }
 let resetDay = function(client){
 	TX_User.updateMany({}, {'$set':{'tLineWinRed':0, 'tLineWinRedH':0, 'tLineLostRed':0, 'tLineLostRedH':0}}).exec(function(err, result){
 		viewDashboard(client);
+		client = null;
 	});
 }
 module.exports = function(client, data) {

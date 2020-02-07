@@ -1,6 +1,7 @@
 
 let Users_TX           = require('../../../../Models/TaiXiu_user');
 let Users_BauCua       = require('../../../../Models/BauCua/BauCua_user');
+let Users_XocDia       = require('../../../../Models/XocXoc/XocXoc_user');
 let Users_BigBabol     = require('../../../../Models/BigBabol/BigBabol_users');
 let Users_CaoThap      = require('../../../../Models/CaoThap/CaoThap_user');
 //let Users_Mini3Cay     = require('../../../../Models/Mini3Cay/Mini3Cay_user');
@@ -51,6 +52,20 @@ module.exports = function(client, id){
 
 		var wait_BauCua = new Promise((resolve, reject)=>{
 			Users_BauCua.findOne({'uid': id}, function(err, result) {
+				if (!!result) {
+					result = result._doc;
+					delete result._id;
+					delete result.uid;
+					delete result.__v;
+					resolve(result);
+				}else{
+					reject('RedT Err!!');
+				}
+			});
+		});
+
+		var wait_XocDia = new Promise((resolve, reject)=>{
+			Users_XocDia.findOne({'uid': id}, function(err, result) {
 				if (!!result) {
 					result = result._doc;
 					delete result._id;
@@ -159,20 +174,22 @@ module.exports = function(client, id){
 			});
 		});
 
-		var active = [wait_user, wait_TX, wait_BauCua, wait_BigBabol, wait_CaoThap, wait_miniPoker, wait_VuongQuocRed, wait_AngryBirds, wait_LongLan, wait_Candy];
+		var active = [wait_user, wait_TX, wait_BauCua, wait_XocDia, wait_BigBabol, wait_CaoThap, wait_miniPoker, wait_VuongQuocRed, wait_AngryBirds, wait_LongLan, wait_Candy];
 		Promise.all(active).then(resulf => {
 			client.red({users:{get_info:{
 				profile:   resulf[0],
 				taixiu:    resulf[1],
 				baucua:    resulf[2],
-				bigbabol:  resulf[3],
-				caothap:   resulf[4],
-				minipoker: resulf[5],
-				vqred:     resulf[6],
-				angrybird: resulf[7],
-				longlan:   resulf[8],
-				candy:     resulf[9],
+				xocxoc:    resulf[3],
+				bigbabol:  resulf[4],
+				caothap:   resulf[5],
+				minipoker: resulf[6],
+				vqred:     resulf[7],
+				angrybird: resulf[8],
+				longlan:   resulf[9],
+				candy:     resulf[10],
 			}}});
+			client = null;
 		});
 	}
 }
