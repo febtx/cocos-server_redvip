@@ -3,7 +3,7 @@ let mongoose = require('mongoose');
 
 let Schema = new mongoose.Schema({
 	uid:    {type: String, required: true, unique: true},               // ID Người chơi
-	hu:     {type: Number, default: 0, index:true},                     // Số lần Nổ Hũ REd
+	hu:     {type: Number, default: 0},                     // Số lần Nổ Hũ REd
 	bet:    {type: mongoose.Schema.Types.Long, default: 0, index:true}, // Số tiền đã chơi
 	win:    {type: mongoose.Schema.Types.Long, default: 0, index:true}, // Số tiền đã thắng
 	lost:   {type: mongoose.Schema.Types.Long, default: 0, index:true}, // Số Red đã thua
