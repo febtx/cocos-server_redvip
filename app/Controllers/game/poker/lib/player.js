@@ -24,7 +24,6 @@ var Player = function(client, game, balans, auto){
 	this.boCard  = [];   // Bộ bài
 	this.loc_chat = []; // Lọc chất
 	this.caoNhat = null; // Ghép đc cao nhất
-
 	this.bet     = 0; // số tiền cược
 }
 
@@ -135,7 +134,6 @@ Player.prototype.checkDay = function(){
 				let typeCard = dataH1[0].type; // chất đầu tiên
 				let dongChat = dataH1.filter(type_card => type_card.type === typeCard); // Kiểm tra đồng chất
 				dongChat     = dongChat.length == 5 ? true :false;  // Dây là đồng chất
-				//let AK       = dataH1.sort(function(a, b){return a.card-b.card}); // sắp sếp từ A đến K (A23...JQK)
 				if (dataH1[4].card-dataH1[0].card === 4 || (dataH1[4].card-dataH1[1].card === 3 && dataH1[0].card === 0 && dataH1[4].card === 12)) {
 					let bai_cao = dataH1[4].card-dataH1[0].card === 4 ? dataH1[4] : dataH1[0]; // Bài cao nhất
 					this.dayCao.push({bai_cao:bai_cao, dongChat:dongChat, bo:dataH1});
@@ -153,9 +151,9 @@ Player.prototype.checkDay = function(){
 			if (day_dong_chat.length === 1) {
 				this.caoNhat = day_dong_chat[0];
 			}else{
-				let cao  = day_dong_chat.sort(function(a, b){return b.bai_cao.card-a.bai_cao.card});
-				let upN  = cao[0];
-				let dowN = cao[cao.length-1];
+				day_dong_chat.sort(function(a, b){return b.bai_cao.card-a.bai_cao.card});
+				let upN  = day_dong_chat[0];
+				let dowN = day_dong_chat[day_dong_chat.length-1];
 				if (dowN.bai_cao.card === 0) {
 					this.caoNhat = dowN;
 				}else{
@@ -168,9 +166,9 @@ Player.prototype.checkDay = function(){
 			if (this.dayCao.length === 1) {
 				this.caoNhat = this.dayCao[0];
 			}else{
-				let dcao  = this.dayCao.sort(function(a, b){return b.bai_cao.card-a.bai_cao.card});
-				let dupN  = dcao[0];
-				let ddowN = dcao[dcao.length-1];
+				this.dayCao.sort(function(a, b){return b.bai_cao.card-a.bai_cao.card});
+				let dupN  = this.dayCao[0];
+				let ddowN = this.dayCao[this.dayCao.length-1];
 				if (ddowN.bai_cao.card === 0) {
 					this.caoNhat = ddowN;
 				}else{
@@ -178,6 +176,14 @@ Player.prototype.checkDay = function(){
 				}
 			}
 			this.caoNhat.code = 5; 
+		}
+		this.card.sort(function(a, b){return b.card-a.card});
+		if (this.card[1].card === 0) {
+			this.caoNhat.cao  = this.card[1];
+			this.caoNhat.thap = this.card[0];
+		}else{
+			this.caoNhat.cao  = this.card[0];
+			this.caoNhat.thap = this.card[1];
 		}
 	}else{
 		this.checkBo();
@@ -188,18 +194,24 @@ Player.prototype.checkBo = function(){
 	// Đồng chất
 	this.loc_chat.forEach(function(el){
 		if(el.length > 4) {
-			let lacaonhat = el.sort(function(a, b){return b.card-a.card});
-			let ddowN = lacaonhat[lacaonhat.length-1];
+			el.sort(function(a, b){return b.card-a.card});
+			let lacaonhat = null;
+			let ddowN = el[el.length-1];
 			if (ddowN.card === 0) {
 				lacaonhat = ddowN;
 			}else{
-				lacaonhat = lacaonhat[0];
+				lacaonhat = el[0];
 			}
 			let chat_my = this.card.filter(function(cmy) {
 				return cmy.type == lacaonhat.type;
 			});
-			if (chat_my.length > 0) {
-				this.caoNhat = {code:6, up:lacaonhat}; 
+			if (chat_my.length > 0){
+				this.card.sort(function(a, b){return b.card-a.card});
+				if (this.card[1].card === 0) {
+					this.caoNhat = {code:6, cao:this.card[1], thap:this.card[0], caonhat:lacaonhat, bo:el};
+				}else{
+					this.caoNhat = {code:6, cao:this.card[0], thap:this.card[1], caonhat:lacaonhat, bo:el};
+				}
 			}
 		}
 	}.bind(this));
@@ -213,6 +225,7 @@ Player.prototype.checkBo = function(){
 			let isMe = false;
 			switch(c.length){
 				case 4:
+					// tứ quý
 					for(let i = 0; i < 4; i++){
 						let d = c[i];
 						if ((d.card === this.card[0].card && d.type === this.card[0].type) || (d.card === this.card[1].card && d.type === this.card[1].type)) {
@@ -251,12 +264,12 @@ Player.prototype.checkBo = function(){
 			if (bo3.length === 1) {
 				bo3_a = bo3[0];
 			}else{
-				let dcao  = bo3.sort(function(a, b){return b[0].card-a[0].card});
-				let ddowN = dcao[dcao.length-1];
+				bo3.sort(function(a, b){return b[0].card-a[0].card});
+				let ddowN = bo3[bo3.length-1];
 				if (ddowN[0].card === 0) {
 					bo3_a = ddowN;
 				}else{
-					bo3_a = dcao[0];
+					bo3_a = bo3[0];
 				}
 			}
 		}
@@ -264,35 +277,42 @@ Player.prototype.checkBo = function(){
 			if (bo2.length === 1) {
 				bo2_a = bo2[0];
 			}else{
-				let dcao  = bo2.sort(function(a, b){return b[0].card-a[0].card});
-				let ddowN = dcao[dcao.length-1];
+				bo2.sort(function(a, b){return b[0].card-a[0].card});
+				let ddowN = bo2[bo2.length-1];
 				if (ddowN[0].card === 0) {
 					bo2_a = ddowN;
-					bo2_b = dcao[0];
+					bo2_b = bo2[0];
 				}else{
-					bo2_a = dcao[0];
-					bo2_b = dcao[1];
+					bo2_a = bo2[0];
+					bo2_b = bo2[1];
 				}
 			}
 		}
 		if (bo3_a !== null && bo2_a !== null ) {
-			this.caoNhat = {code:7, bo3:bo3_a, bo2:bo2_a};
+			this.caoNhat = {code:7, bo3:bo3_a, bo2:bo2_a, bo:[...bo3_a, ...bo2_a]};
 		}else if (bo3_a !== null) {
-			this.caoNhat = {code:4, bo3:bo3_a};
+			this.card.sort(function(a, b){return b.card-a.card});
+			if (this.card[1].card === 0) {
+				this.caoNhat = {code:4, cao:this.card[1], thap:this.card[0], bo:bo3_a};
+			}else{
+				this.caoNhat = {code:4, cao:this.card[0], thap:this.card[1], bo:bo3_a};
+			}
 		}else if (bo2_a !== null && bo2.length > 1) {
-			this.caoNhat = {code:3, bo2A:bo2_a, bo2B:bo2_b};
+			this.caoNhat = {code:3, bo2A:bo2_a, bo2B:bo2_b, bo:[...bo2_a, ...bo2_b]};
 		}else if (bo2_a !== null) {
-			this.caoNhat = {code:2, bo2:bo2_a};
+			this.card.sort(function(a, b){return b.card-a.card});
+			if (this.card[1].card === 0) {
+				this.caoNhat = {code:2, cao:this.card[1], thap:this.card[0], bo:bo2_a};
+			}else{
+				this.caoNhat = {code:2, cao:this.card[0], thap:this.card[1], bo:bo2_a};
+			}
 		}else{
-			let point = 0;
-			this.card.forEach(function(card){
-				if (card.card == 0) {
-					point += 14;
-				}else{
-					point += card.card;
-				}
-			});
-			this.caoNhat = {code:1, point:point};
+			this.card.sort(function(a, b){return b.card-a.card});
+			if (this.card[1].card === 0) {
+				this.caoNhat = {code:1, cao:this.card[1], thap:this.card[0], bo:this.card};
+			}else{
+				this.caoNhat = {code:1, cao:this.card[0], thap:this.card[1], bo:this.card};
+			}
 		}
 	}
 }

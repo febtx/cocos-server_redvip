@@ -241,15 +241,13 @@ module.exports = function() {
 							if (win > 0) {
 								tongTra += win;
 								objC.win = win;
+								UserInfo.updateOne({name:objC.name}, {$inc:{red:win}}).exec();
 							}
 							objC.save();
 						});
 						data.cuoc = tongCuoc;
 						data.tra = tongTra;
 						data.save();
-						if(tongTra > 0){
-							UserInfo.updateOne({name:objC.name}, {$inc:{red:tongTra}}).exec();
-						}
 					}
 				}
 			});
