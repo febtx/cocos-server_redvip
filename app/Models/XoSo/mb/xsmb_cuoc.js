@@ -13,6 +13,4 @@ let Schema = new mongoose.Schema({
 	time:      {type: Date},                                   // thời gian
 });
 
-//Schema.index({name:1, date:1}, {background: true});
-
 module.exports = mongoose.model('xsmb_cuoc', Schema);

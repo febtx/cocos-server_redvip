@@ -186,10 +186,6 @@ Poker.prototype.checkGame = function(tru = 0){
 Poker.prototype.Round1 = function(){
 	this.card = [...base_card.card]; // bộ bài mới
 
-	this.card = this.card.filter(function(card) {
-		return card.type == 0;
-	});
-
 	this.card = Helpers.shuffle(this.card); // tráo bài lần 1
 	this.card = Helpers.shuffle(this.card); // tráo bài lần 2
 	this.card = Helpers.shuffle(this.card); // tráo bài lần 3

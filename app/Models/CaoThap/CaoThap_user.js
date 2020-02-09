@@ -8,7 +8,7 @@ let Schema = new mongoose.Schema({
 	win:    {type: mongoose.Schema.Types.Long, default: 0, index:true}, // Số tiền đã thắng
 	lost:   {type: mongoose.Schema.Types.Long, default: 0, index:true}, // Số Red đã thua
 	totall: {type: mongoose.Schema.Types.Long, default: 0, index:true}, // Thắng trừ thua
-	time:   {type: mongoose.Schema.Types.Long, default: 0, index:true}, // quay gần đây
+	time:   {type: mongoose.Schema.Types.Long, default: 0}, // quay gần đây
 	select: {type: Number, default: 0}, // quay gần đây
 });
 module.exports = mongoose.model('CaoThap_user', Schema);
