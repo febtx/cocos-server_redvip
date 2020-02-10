@@ -11,11 +11,16 @@ module.exports = function(client, data){
 	if (!!data.room && !!data.balans) {
 		let room   = data.room>>0;
 		let balans = data.balans>>0;
-		let red    = data.red>>0;
 
-		if ((room === 1 && red === 100) || (room === 2 && red === 1000) || (room === 3 && red === 10000)){
-			let min = red*20;
-			let max = red*200;
+		let bet = {
+			1:10,
+			2:100,
+			3:1000,
+		};
+
+		if (room === 1 || room === 2 || room === 3){
+			let min = bet[room]*200;
+			let max = bet[room]*2000;
 			if (balans < min || balans > max) {
 				client.red({notice:{title:'THẤT BẠI', text:'Dữ liệu không đúng...', load: false}});
 			}else{

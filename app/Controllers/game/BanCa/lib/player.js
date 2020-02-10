@@ -118,7 +118,16 @@ Player.prototype.unlock = function(){
 
 Player.prototype.nap = function(nap){
 	nap = nap>>0;
-	if (nap > 0) {
+	let bet = {
+		1:10,
+		2:100,
+		3:1000,
+	};
+	let min = bet[this.game]*200;
+	let max = bet[this.game]*2000;
+	if (nap < min || nap > max) {
+		client.red({notice:{title:'THẤT BẠI', text:'Dữ liệu không đúng...', load: false}});
+	}else{
 		UserInfo.findOne({id:this.uid}, 'red', function(err, user){
 			if (!!user && user.red >= nap) {
 				user.red -= nap;
