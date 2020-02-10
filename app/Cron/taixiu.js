@@ -505,18 +505,20 @@ let playGame = function(){
 			}else{
 				thongtin_thanhtoan(io.TaiXiu_phien);
 				if (!!botList.length && io.TaiXiu_time > 2) {
-					let timeBot = (Math.floor(Math.random()*(6-2+1))+2)>>0;
-					if (!(io.TaiXiu_time%timeBot)) {
-						let userCuoc = (Math.random()*7)>>0;
-						let iH = 0;
-						for (iH = 0; iH < userCuoc; iH++) {
-							let dataT = botList[iH];
-							if (!!dataT) {
-								bot.tx(dataT, io);
-								botList.splice(iH, 1); // Xoá bot đã đặt tránh trùng lặp
-							}
-							dataT = null;
+					let userCuoc = 0;
+					if (!((Math.random()*3)>>0)) {
+						userCuoc = (Math.random()*9)>>0;
+					}else{
+						userCuoc = (Math.random()*18)>>0;
+					}
+					let iH = 0;
+					for (iH = 0; iH < userCuoc; iH++) {
+						let dataT = botList[iH];
+						if (!!dataT) {
+							bot.tx(dataT, io);
+							botList.splice(iH, 1); // Xoá bot đã đặt tránh trùng lặp
 						}
+						dataT = null;
 					}
 				}
 			}

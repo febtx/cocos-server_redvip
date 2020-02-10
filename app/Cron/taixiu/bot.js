@@ -22,7 +22,7 @@ let random = function(){
 		return (Math.floor(Math.random()*(100-10+1))+10)*10000;
 	}else if (a >= 21 && a < 26) {
 		// 21 22 23 24 25
-		return (Math.floor(Math.random()*(100-10+1))+10)*10000;
+		return (Math.floor(Math.random()*(100-10+1))+10)*30000;
 	}else if (a >= 15 && a < 21) {
 		// 15 16 17 18 19 20
 		return (Math.floor(Math.random()*(10-5+1))+5)*100000;
