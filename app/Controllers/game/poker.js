@@ -11,6 +11,12 @@ module.exports = function(client, data){
 		ingame(client);
 	}
 	if (!!client.poker) {
+		if (!!data.card) {
+			client.poker.viewCard(data.card);
+		}
+		if (!!data.maincard) {
+			client.poker.mainCard();
+		}
 		if (!!data.nap) {
 			nap(client, data.nap);
 		}

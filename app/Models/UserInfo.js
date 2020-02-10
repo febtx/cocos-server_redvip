@@ -5,7 +5,7 @@ let mongoose      = require('mongoose');
 let Schema = new mongoose.Schema({
 	id:        {type:String, required:true, unique:true}, // ID đăng nhập
 	name:      {type:String, required:true, unique:true}, // Tên nhân vật
-	avatar:    {type:String, default:''},       // Tên avatar
+	avatar:    {type:String, default:'0'},       // Tên avatar
 	joinedOn:  {type:Date, default:new Date()}, // Ngày tham gia
 
 	security:  {                          // Bảo Mật

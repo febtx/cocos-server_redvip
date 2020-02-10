@@ -82,13 +82,13 @@ Poker.prototype.inroom = function(player){
 	this.player[gheTrong.id].data = player; // ngồi
 	player.map = gheTrong.id;               // vị trí ngồi
 
-	this.sendToAll({ingame:{ghe:player.map, data:{name:player.name, balans:player.balans}}}, player);
+	this.sendToAll({ingame:{ghe:player.map, data:{name:player.name, avatar:player.avatar, balans:player.balans}}}, player);
 	let result = trongPhong.map(function(ghe){
 		if (!!ghe.data) {
 			if (this.isPlay === true) {
-				return {ghe:ghe.id, data:{name:ghe.data.name, balans:ghe.data.balans, bet:ghe.data.bet, card:{}}};
+				return {ghe:ghe.id, data:{name:ghe.data.name, avatar:ghe.data.avatar, balans:ghe.data.balans, bet:ghe.data.bet, card:{}}};
 			}
-			return {ghe:ghe.id, data:{name:ghe.data.name, balans:ghe.data.balans}};
+			return {ghe:ghe.id, data:{name:ghe.data.name, avatar:ghe.data.avatar, balans:ghe.data.balans}};
 		}else{
 			return {ghe:ghe.id, data:null};
 		}
@@ -98,7 +98,7 @@ Poker.prototype.inroom = function(player){
 		client.game = {card:this.mainCard};
 	}
 	this.sendTo(player.client, client);
-	this.online > 1 && this.checkGame(3500);
+	this.online > 1 && this.checkGame(5000);
 }
 
 Poker.prototype.outroom = function(player){
@@ -178,7 +178,7 @@ Poker.prototype.checkGame = function(tru = 0){
 				}
 				this.time_start--;
 			}.bind(this), 1000);
-		}.bind(this), 5000-tru);
+		}.bind(this), 8000-tru);
 	}
 }
 

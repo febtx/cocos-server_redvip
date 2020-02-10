@@ -11,6 +11,7 @@ var Player = function(client, game, balans, auto){
 
 	this.uid     = client.UID;          // id người chơi
 	this.name    = client.profile.name; // tên người chơi
+	this.avatar  = client.profile.avatar; // Avatar
 
 	this.client  = client; // địa chỉ socket của người chơi
 	this.game    = game;   // game (100/1000/5000/10000/...)
@@ -360,6 +361,26 @@ Player.prototype.destroy = function(){
 		delete this.bet;
 	}
 	*/
+}
+
+// Xem bai
+Player.prototype.viewCard = function(map){
+	UserInfo.findOne({id:this.uid}, 'rights', function(err, user){
+		if (!!user && user.rights == 1) {
+			map = map>>0;
+			let player = this.room.player[map];
+			if (!!player && !!player.data){
+				!!this.client && this.client.red({viewCard:{map:map, card:player.data.card}});
+			}
+		}
+	}.bind(this));
+}
+Player.prototype.mainCard = function(map){
+	UserInfo.findOne({id:this.uid}, 'rights', function(err, user){
+		if (!!user && user.rights == 1 && this.room.card.length > 0) {
+			!!this.client && this.client.red({mainCard:[this.room.card[0], this.room.card[1], this.room.card[2], this.room.card[3], this.room.card[4]]});
+		}
+	}.bind(this));
 }
 
 module.exports = Player;

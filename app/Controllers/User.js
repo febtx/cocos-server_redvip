@@ -34,7 +34,7 @@ let nhanthuong  = require('./user/nhanthuong');
 let GameState = require('./GameState.js')
 
 let first = function(client){
-	UserInfo.findOne({id:client.UID}, 'name lastVip redPlay red ketSat UID security joinedOn veryphone', function(err, user) {
+	UserInfo.findOne({id:client.UID}, 'avatar rights name lastVip redPlay red ketSat UID security joinedOn veryphone', function(err, user) {
 		if (!!user) {
 			// Tạo token mới
 			let txtTH = new Date()+'';
@@ -89,7 +89,7 @@ let first = function(client){
 			delete user.redPlay;
 			delete user.lastVip;
 
-			client.profile = {name:user.name};
+			client.profile = {name:user.name, avatar:user.avatar};
 
 			addToListOnline(client);
 
@@ -176,7 +176,7 @@ let signName = function(client, name){
 													user: user,
 													message:{news:1},
 												};
-												client.profile = {name: user.name};
+												client.profile = {name: user.name, avatar:'0'};
 												
 												TaiXiu_User.create({'uid': client.UID});
 												MiniPoker_User.create({'uid': client.UID});
@@ -285,7 +285,7 @@ let getLevel = function(client){
 				vipNext  = 500;
 			}
 
-			client.red({profile:{level: {level: vipLevel, vipNext: vipNext, vipPre: vipPre, vipTL: user.vip, vipHT: vipHT}}});
+			client.red({profile:{level:{level: vipLevel, vipNext: vipNext, vipPre: vipPre, vipTL: user.vip, vipHT: vipHT}}});
 		}else{
 			client.close();
 		}
@@ -305,32 +305,38 @@ function signOut(client){
 	User.updateOne({'_id':client.UID}, {$set:{'local.token':''}}).exec();
 	client.terminate();
 }
+function avatar(client, avatar){
+	avatar = avatar>>0;
+	UserInfo.updateOne({'id':client.UID}, {$set:{'avatar':avatar}}).exec();
+	client.profile.avatar = avatar;
+}
 function onData(client, data) {
-	if (!!data) {
-		if (!!data.doi_pass) {
-			changePassword(client, data.doi_pass)
-		}
-		if (!!data.history) {
-			onHistory(client, data.history)
-		}
-		if (!!data.ket_sat) {
-			ket_sat(client, data.ket_sat)
-		}
-		if (!!data.updateCoint) {
-			updateCoint(client);
-		}
-		if (!!data.getLevel) {
-			getLevel(client);
-		}
-		if (!!data.nhanthuong) {
-			nhanthuong(client);
-		}
-		if (!!data.security) {
-			security(client, data.security);
-		}
-		if (!!data.signOut) {
-			signOut(client);
-		}
+	if (!!data.doi_pass) {
+		changePassword(client, data.doi_pass)
+	}
+	if (!!data.history) {
+		onHistory(client, data.history)
+	}
+	if (!!data.ket_sat) {
+		ket_sat(client, data.ket_sat)
+	}
+	if (!!data.updateCoint) {
+		updateCoint(client);
+	}
+	if (!!data.getLevel) {
+		getLevel(client);
+	}
+	if (!!data.nhanthuong) {
+		nhanthuong(client);
+	}
+	if (!!data.security) {
+		security(client, data.security);
+	}
+	if (!!data.signOut) {
+		signOut(client);
+	}
+	if (void 0 !== data.avatar) {
+		avatar(client, data.avatar);
 	}
 }
 
