@@ -507,9 +507,9 @@ let playGame = function(){
 				if (!!botList.length && io.TaiXiu_time > 2) {
 					let userCuoc = 0;
 					if (!((Math.random()*3)>>0)) {
-						userCuoc = (Math.random()*9)>>0;
+						userCuoc = (Math.random()*5)>>0;
 					}else{
-						userCuoc = (Math.random()*18)>>0;
+						userCuoc = (Math.random()*10)>>0;
 					}
 					let iH = 0;
 					for (iH = 0; iH < userCuoc; iH++) {
