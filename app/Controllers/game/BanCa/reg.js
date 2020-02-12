@@ -13,8 +13,8 @@ module.exports = function(client, data){
 		let balans = data.balans>>0;
 
 		let bet = {
-			1:10,
-			2:100,
+			1:100,
+			2:500,
 			3:1000,
 		};
 

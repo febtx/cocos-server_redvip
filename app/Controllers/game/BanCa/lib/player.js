@@ -119,8 +119,8 @@ Player.prototype.unlock = function(){
 Player.prototype.nap = function(nap){
 	nap = nap>>0;
 	let bet = {
-		1:10,
-		2:100,
+		1:100,
+		2:500,
 		3:1000,
 	};
 	let min = bet[this.game]*200;
