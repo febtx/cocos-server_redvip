@@ -81,19 +81,20 @@ Poker.prototype.inroom = function(player){
 
 	this.player[gheTrong.id].data = player; // ngồi
 	player.map = gheTrong.id;               // vị trí ngồi
-
+	let card = [];
 	this.sendToAll({ingame:{ghe:player.map, data:{name:player.name, avatar:player.avatar, balans:player.balans}}}, player);
 	let result = trongPhong.map(function(ghe){
 		if (!!ghe.data) {
 			if (this.isPlay === true) {
-				return {ghe:ghe.id, data:{name:ghe.data.name, avatar:ghe.data.avatar, balans:ghe.data.balans, bet:ghe.data.bet, card:{}}};
+				card = card.concat({ghe:ghe.id, card:{}});
+				return {ghe:ghe.id, data:{name:ghe.data.name, avatar:ghe.data.avatar, balans:ghe.data.balans, bet:ghe.data.bet}};
 			}
 			return {ghe:ghe.id, data:{name:ghe.data.name, avatar:ghe.data.avatar, balans:ghe.data.balans}};
 		}else{
 			return {ghe:ghe.id, data:null};
 		}
 	}.bind(this));
-	let client = {infoGhe:result, infoRoom:{game:player.game, isPlay:this.isPlay, time_start:this.time_start}, meMap:player.map};
+	let client = {infoGhe:result, infoRoom:{game:player.game, isPlay:this.isPlay, time_start:this.time_start, card:card}, meMap:player.map};
 	if (this.isPlay === true) {
 		client.game = {card:this.mainCard};
 	}
@@ -700,7 +701,11 @@ Poker.prototype.winer = function(player){
 				objWin.data.balans += obj.data.bet;
 				player.balans      += obj.data.bet;
 				if (obj.data.isOut === false) {
-					array = array.concat({ghe:obj.data.map, data:{balans:obj.data.balans, openCard:obj.data.card}, info:{lost:obj.data.bet}});
+					if (obj.data.isHuy) {
+						array = array.concat({ghe:obj.data.map, data:{balans:obj.data.balans}, info:{lost:obj.data.bet}});
+					}else{
+						array = array.concat({ghe:obj.data.map, data:{balans:obj.data.balans, openCard:obj.data.card}, info:{lost:obj.data.bet}});
+					}
 				}
 			}else{
 				// có trả lại
@@ -714,7 +719,11 @@ Poker.prototype.winer = function(player){
 					obj.data.destroy();
 				}else{
 					obj.data.balans += obj.data.bet-player.bet;
-					array = array.concat({ghe:obj.data.map, data:{balans:obj.data.balans, openCard:obj.data.card}, info:{lost:player.bet}});
+					if (obj.data.isHuy) {
+						array = array.concat({ghe:obj.data.map, data:{balans:obj.data.balans}, info:{lost:player.bet}});
+					}else{
+						array = array.concat({ghe:obj.data.map, data:{balans:obj.data.balans, openCard:obj.data.card}, info:{lost:player.bet}});
+					}
 				}
 			}
 		}
