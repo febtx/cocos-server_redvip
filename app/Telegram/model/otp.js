@@ -14,16 +14,27 @@ module.exports = function(bot, id) {
 							var otp = (Math.random()*(9999-1000+1)+1000)>>0; // OTP từ 1000 đến 9999
 							OTP.create({'uid':checkPhone.uid, 'phone':checkPhone.phone, 'code':otp, 'date':new Date()});
 							bot.sendMessage(id, '*OTP*:  ' + otp + '', {parse_mode:'markdown', reply_markup:{remove_keyboard:true}});
+							bot = null;
+							id = null;
+							checkPhone = null;
 						}else{
 							bot.sendMessage(id, 'OTP:  _' + data.code + '_', {parse_mode:'markdown', reply_markup:{remove_keyboard:true}});
+							bot = null;
+							checkPhone = null;
+							id = null;
 						}
 					});
 				}else{
 					bot.sendMessage(id, '_Thao tác thất bại, không thể đọc số điện thoại_', {parse_mode:'markdown', reply_markup:{remove_keyboard:true}});
+					bot = null;
+					checkPhone = null;
+					id = null;
 				}
 			});
 		}else{
 			bot.sendMessage(id, '_Thao tác thất bại, không thể đọc số điện thoại_', {parse_mode:'markdown', reply_markup:{remove_keyboard:true}});
+			bot = null;
+			id = null;
 		}
 	});
 }

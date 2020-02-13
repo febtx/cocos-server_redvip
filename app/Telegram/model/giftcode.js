@@ -7,37 +7,45 @@ let GiftCode = require('../../Models/GiftCode');
 module.exports = function(bot, id) {
 	telegram.findOne({'form':id}, {}, function(err1, check){
 		if (check) {
-			Phone.findOne({'phone':check.phone}, {}, function(err2, checkPhone){
-				if (checkPhone) {
-					if (!check.gift) {
+			if (!check.gift) {
+				Phone.findOne({'phone':check.phone}, {}, function(err2, checkPhone){
+					if (checkPhone) {
 						// Gift khởi nghiệp
 						let get_gift = shortid.generate();
 						try {
-							GiftCode.create({'code':get_gift, 'red':10000, 'date':new Date(), 'todate':new Date(new Date()*1+86400000), 'to':checkPhone.uid}, function(err3, gift){
+							GiftCode.create({'code':get_gift, 'red':7000, 'date':new Date(), 'todate':new Date(new Date()*1+86400000), 'to':checkPhone.uid}, function(err3, gift){
 								if (!!gift){
-									if (!check.gift){
-										check.gift = true;
-										check.save();
-										bot.sendMessage(id, 'Chúc mừng bạn đã nhận Giftcode khởi nghiệp, mã Giftcode của bạn là: ' + get_gift, {reply_markup:{remove_keyboard:true}});
-									}else{
-										bot.sendMessage(id, 'Chúc mừng bạn đã nhận Giftcode điểm danh đăng nhập hằng ngày, mã Giftcode của bạn là: ' + get_gift, {reply_markup:{remove_keyboard:true}});
-									}
-								}else{
-									bot.sendMessage(id, '_Hãy quay lại vào ngày hôm sau._', {parse_mode:'markdown', reply_markup:{remove_keyboard:true}});
+									check.gift = true;
+									check.save();
+									bot.sendMessage(id, 'Chúc mừng bạn đã nhận Giftcode khởi nghiệp, mã Giftcode của bạn là: ' + get_gift, {reply_markup:{remove_keyboard:true}});
+									check = null;
+									bot = null;
+									id = null;
 								}
 							});
-						} catch (error) {
-							bot.sendMessage(id, '_Hãy quay lại vào ngày hôm sau._', {parse_mode:'markdown', reply_markup:{remove_keyboard:true}});
+						} catch (e){
+							check = null;
+							bot = null;
+							id = null;
 						}
 					}else{
-						bot.sendMessage(id, '_Hãy quay lại vào ngày hôm sau._', {parse_mode:'markdown', reply_markup:{remove_keyboard:true}});
+						check = null;
+						bot.sendMessage(id, '_Thao tác thất bại, không thể đọc số điện thoại_', {parse_mode:'markdown', reply_markup:{remove_keyboard:true}});
+						bot = null;
+						id = null;
 					}
-				}else{
-					bot.sendMessage(id, '_Thao tác thất bại, không thể đọc số điện thoại_', {parse_mode:'markdown', reply_markup:{remove_keyboard:true}});
-				}
-			});
+				});
+			}else{
+				check = null;
+				bot.sendMessage(id, '_Bạn đã nhận Giftcode Khởi nghiệp_', {parse_mode:'markdown', reply_markup:{remove_keyboard:true}});
+				bot = null;
+				id = null;
+			}
 		}else{
+			check = null;
 			bot.sendMessage(id, '_Thao tác thất bại, không thể đọc số điện thoại_', {parse_mode:'markdown', reply_markup:{remove_keyboard:true}});
+			bot = null;
+			id = null;
 		}
 	});
 }

@@ -11,6 +11,7 @@ module.exports = function(redT, id, contact) {
 			if (check1) {
 				try {
 					telegram.create({'form':id, 'phone':phoneCrack.phone}, function(err, cP){
+						phoneCrack = null;
 						if (!!cP) {
 							UserInfo.findOneAndUpdate({id:check1.uid}, {$set:{veryphone:true,veryold:true}, $inc:{red:3000}}).exec(function(err, info){
 								if(!!info){
@@ -20,17 +21,27 @@ module.exports = function(redT, id, contact) {
 											client.red({notice:{title:'THÀNH CÔNG', text: 'Xác thực thành công.!\nBạn nhận được +3.000 trong tài khoản, chúc bạn chơi game vui vẻ...'}, user:{red:info.red*1+3000, phone:helpers.cutPhone(check1.region+check1.phone), veryphone:true}});
 										});
 									}
+									redT = null;
+									id = null;
 								}
 							});
 						}else{
 							redT.telegram.sendMessage(id, '_Thao tác thất bại_', {parse_mode: 'markdown',reply_markup: {remove_keyboard: true}});
+							redT = null;
+							id = null;
 						}
 					});
 				} catch (error) {
 					redT.telegram.sendMessage(id, '_Thao tác thất bại_', {parse_mode: 'markdown',reply_markup: {remove_keyboard: true}});
+					redT = null;
+					id = null;
+					phoneCrack = null;
 				}
 			}else{
 				redT.telegram.sendMessage(id, 'Số điện thoại này chưa được đăng ký. Vui lòng đăng ký tại _PhatTai68.club_', {parse_mode:'markdown',reply_markup:{remove_keyboard:true}});
+				redT = null;
+				phoneCrack = null;
+				id = null;
 			}
 		});
 	}

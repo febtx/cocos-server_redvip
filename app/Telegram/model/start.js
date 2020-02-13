@@ -11,6 +11,8 @@ module.exports = function(bot, id) {
 			    }
 			};
 			bot.sendMessage(id, '*HƯỚNG DẪN*' + '\n\n' + 'Nhập:' + '\n' + '*OTP*:           Lấy mã OTP miễn phí.' + '\n' + '*GiftCode*:  Nhận ngay GiftCode khởi nghiệp.', opts);
+			bot = null;
+			id = null;
 		}else{
 			let opts = {
 				parse_mode: 'markdown',
@@ -22,6 +24,8 @@ module.exports = function(bot, id) {
 			    }
 			};
 			bot.sendMessage(id, '*PhatTai68.club*  Đây là lần đầu tiên bạn sử dụng App OTP. Vui lòng ấn CHIA SẺ SỐ ĐIỆN THOẠI để _XÁC THỰC_ và lấy mã OTP miễn phí.', opts);
+			bot = null;
+			id = null;
 		}
 	});
 }
