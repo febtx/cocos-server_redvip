@@ -1,21 +1,22 @@
 
 let Poker  = require('../Controllers/game/poker/Controller');
+let BaCay  = require('../Controllers/game/BaCay/Controller');
 
 let XocXoc = require('../Controllers/game/XocXoc/init');
 let BanCa  = require('../Controllers/game/BanCa/Controller');
 
 let GiftCode = require('./autoGiftcode');
 
-
 module.exports = function(io){
 	io.users  = []; // danh sách người dùng đăng nhập
 	io.admins = []; // danh sách admin đăng nhập
 
 	io.game = {
-		poker:    new Poker(), // thiết lập game poker
-		giftcode: new GiftCode(io),
-		xocxoc:   new XocXoc(io), // thiết lập game Xóc Đĩa
-		fish:     new BanCa(),    // thiết lập game Bắn Cá
+		poker:    new Poker(),      // Quản lý phòng game Poker
+		bacay:    new BaCay(),      // Quản lý phòng game Ba Cây
+		giftcode: new GiftCode(io), // Auto phát giftcode
+		xocxoc:   new XocXoc(io),   // thiết lập game Xóc Đĩa
+		fish:     new BanCa(),      // thiết lập game Bắn Cá
 	};
 
 	// Phát sóng tới tất cả người dùng và khách

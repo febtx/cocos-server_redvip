@@ -38,6 +38,9 @@ let Candy   = require('./game/candy');
 // Poker
 let Poker   = require('./game/poker');
 
+// 3 Cây
+let BaCay   = require('./game/BaCay/index');
+
 // Long Lân
 let LongLan = require('./game/longlan');
 
@@ -81,6 +84,10 @@ module.exports = function(client, data){
 
 	if (!!data.poker) {
 		Poker(client, data.poker);
+	}
+
+	if (!!data.bacay) {
+		BaCay(client, data.bacay);
 	}
 
 	if (!!data.candy) {

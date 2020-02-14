@@ -37,6 +37,11 @@ module.exports = function(client, data){
 					});
 					if (inGame) {
 						client.red({notice:{title:'CẢNH BÁO', text:'Bạn hoặc ai đó đang chơi Poker bằng tài khoản này ...', load: false}});
+						min  = null;
+						room = null;
+						balans = null;
+						auto = null;
+						client = null;
 					}else{
 						UserInfo.findOne({id: client.UID}, 'red name', function(err, user){
 							if (!user || user.red < min) {
@@ -57,6 +62,11 @@ module.exports = function(client, data){
 									client.red({toGame:'Poker'});
 									//client.red({notice:{title:'BẢO TRÌ', text:'Game đang bảo trì...', load: false}});
 								}
+								min  = null;
+								room = null;
+								balans = null;
+								auto = null;
+								client = null;
 							}
 						});
 					}
@@ -64,6 +74,10 @@ module.exports = function(client, data){
 			}
 		}else{
 			client.red({notice:{title:'THẤT BẠI', text:'Dữ liệu không đúng...', load: false}});
+			room = null;
+			balans = null;
+			auto = null;
+			client = null;
 		}
 	}
 };

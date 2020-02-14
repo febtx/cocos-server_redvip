@@ -40,6 +40,8 @@ app.use(express.static('public'));
 
 // server socket
 let redT = expressWs.getWss();
+
+process.redT = redT;
 //redT.telegram = TelegramBot;
 
 require('./app/Helpers/socketUser')(redT); // Add function socket
