@@ -17,6 +17,32 @@ let Player = function(client, game){
 	this.boCard    = [];     // Bộ bài
 	this.betChuong = 0; // Cược chương
 	this.betGa     = 0; // Cược gà
+	this.balans    = 0; // TK
+
+	this.addRoom = function(room){
+		this.room = room;
+		return this.room;
+	}
+
+	this.outGame = function(kick = false){
+		// Thoát game sẽ trả lại tiền vào tài khoản và thoát game
+		if (kick) {
+			this.client.red({kick:true});
+		}
+		this.isOut = true;
+		this.client.bacay = null;
+		this.client = null;
+
+		if (!!this.room){
+			this.room.outroom(this);
+		}
+		this.room = null;
+		/**
+		if (this.balans > 0) {
+			UserInfo.updateOne({id:this.uid}, {$inc:{red:this.balans}}).exec();
+		}
+		*/
+	}
 }
 
 module.exports = Player;

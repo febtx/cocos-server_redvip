@@ -85,7 +85,7 @@ Poker.prototype.inroom = function(player){
 	this.sendToAll({ingame:{ghe:player.map, data:{name:player.name, avatar:player.avatar, balans:player.balans}}}, player);
 	let result = trongPhong.map(function(ghe){
 		if (!!ghe.data) {
-			if (this.isPlay === true) {
+			if (ghe.data.isPlay === true) {
 				card = card.concat({ghe:ghe.id, card:{}});
 				return {ghe:ghe.id, data:{name:ghe.data.name, avatar:ghe.data.avatar, balans:ghe.data.balans, bet:ghe.data.bet}};
 			}
@@ -142,7 +142,7 @@ Poker.prototype.checkGame = function(tru = 0){
 						player.data.isPlay = true;
 						this.playerInGame[index] = {id:player.data.map, data:player.data};
 					}.bind(this));
-					// Ngẫu nhiên người được chơi,
+					// Ngẫu nhiên người chơi đầu tiên.
 					this.i_first = (Math.random()*this.playerInGame.length)>>0;
 
 					let newGhe = [];

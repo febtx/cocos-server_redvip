@@ -14,8 +14,9 @@ module.exports = function(client, data){
 			//client.bacay.viewCard(data.card);
 		}
 		if (!!data.outgame) {
-			client.poker.outGame();
+			client.bacay.outGame();
 		}
+
 	}
 	client = null;
 	data = null;

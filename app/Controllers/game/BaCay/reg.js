@@ -36,6 +36,7 @@ module.exports = function(client, room){
 						client.red({notice:{title:'THẤT BẠI', text:'Bạn cần tối thiểu '+numberWithCommas(min)+' RED để vào phòng.!!', load:false}});
 					}else{
 						client.bacay = new Player(client, room);
+						client.bacay.balans = user.red>>0;
 						client.red({toGame:'3Cay'});
 					}
 					min  = null;
