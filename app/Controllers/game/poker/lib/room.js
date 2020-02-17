@@ -122,6 +122,7 @@ Poker.prototype.checkGame = function(tru = 0){
 		this.isPlay  = true;
 		this.timeOut = setTimeout(function(){
 			clearTimeout(this.timeOut);
+			this.timeOut == null;
 			this.time_start = this.timeStartGame;
 			let nguoichoi = Object.values(this.player).filter(function(t){return t.data !== null});
 			nguoichoi.forEach(function(player){
@@ -135,6 +136,7 @@ Poker.prototype.checkGame = function(tru = 0){
 					// ghế có người ngồi
 					nguoichoi = Object.values(this.player).filter(function(t){return t.data !== null});
 					if (nguoichoi.length < 2) {
+						this.isPlay = false;
 						return void 0;
 					}
 					this.playerInGame = [];
@@ -273,9 +275,17 @@ Poker.prototype.nextPlayer = function(new_round = false){
 		if (this.i_last === this.i_first) {
 			// kết thúc vòng chơi
 			this.sendToAll({game:{offSelect:true}});
-			//this.sendTo(this.game_player.client, {game:{offSelect:true}});
-			this.game_player = null;
-			this.nextRound();
+			if(this.game_to == true){
+				this.game_to = false;
+				this.i_first = this.playerInGame.findIndex(function(obj){
+					return (obj.id == this.game_player.map);
+				}.bind(this));
+				this.i_last = this.i_first;
+				this.nextPlayer();
+			}else{
+				this.game_player = null;
+				this.nextRound();
+			}
 			return void 0;
 		}
 

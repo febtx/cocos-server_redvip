@@ -14,19 +14,27 @@ let Player = function(client, game){
 
 	this.client    = client; // địa chỉ socket của người chơi
 	this.game      = game;   // game (100/1000/5000/10000/...)
-	this.boCard    = [];     // Bộ bài
 	this.betChuong = 0; // Cược chương
 	this.betGa     = 0; // Cược gà
 	this.balans    = 0; // TK
+	this.win       = 0; // Win
+	this.lost      = 0; // Lost
+	this.toNhat    = null;
 
+	this.isLat     = false;
+
+	this.point     = 0; // Điểm
+
+	// vào phòng chơi
 	this.addRoom = function(room){
 		this.room = room;
 		return this.room;
 	}
 
+	// thoát game
 	this.outGame = function(kick = false){
 		// Thoát game sẽ trả lại tiền vào tài khoản và thoát game
-		if (kick) {
+		if (kick && this.client) {
 			this.client.red({kick:true});
 		}
 		this.isOut = true;
@@ -42,6 +50,69 @@ let Player = function(client, game){
 			UserInfo.updateOne({id:this.uid}, {$inc:{red:this.balans}}).exec();
 		}
 		*/
+	}
+
+	// đặt lại dữ liệu để tiếp tục ván mới
+	this.newGame = function(){
+		this.card        = null;  // Bộ bài
+		this.point       = 0;     // Điểm
+		this.betChuong   = 0;     // số tiền cược Chương
+		this.betGa       = 0;     // số tiền cược Gà
+		this.isPlay      = false;
+		this.toNhat      = null;
+		this.win         = 0; // Win
+		this.lost        = 0; // Lost
+		this.isLat       = false;
+	}
+
+	// Cược Chương
+	this.cuocChuong = function(bet){
+		if (this.room.game_round === 1) {
+			bet = bet>>0;
+			if (this.game <= bet && bet <= this.game*2) {
+				UserInfo.findOne({id:this.uid}, 'red').exec(function(err, user){
+					if (!!user) {
+						if (user.red >= bet) {
+							user.red -= bet;
+							user.save();
+							this.betChuong = bet;
+							this.room.bet_chuong += bet;
+							this.room.sendToAll({game:{player:{map:this.map, bet:this.betChuong, isBetChuong:true, balans:user.red, betChuong:this.betChuong, betGa:this.betGa}}});
+						}else{
+							this.client.red({game:{notice:'Số dư không khả dụng.'}, user:{red:user.red}});
+						}
+					}
+				}.bind(this));
+			}
+		}
+	}
+
+	// Cược Gà
+	this.cuocGa = function(){
+		if (this.room.game_round === 1) {
+			UserInfo.findOne({id:this.uid}, 'red').exec(function(err, user){
+				if (!!user) {
+					if (user.red >= this.game){
+						user.red -= this.game;
+						user.save();
+						this.betGa = this.game;
+						this.room.bet_ga += this.game;
+						this.room.sendToAll({infoRoom:{betGa:this.room.bet_ga}, game:{player:{map:this.map, bet:this.betGa, balans:user.red, betChuong:this.betChuong, betGa:this.betGa}}});
+					}else{
+						this.client.red({game:{notice:'Số dư không khả dụng.'}, user:{red:user.red}});
+					}
+				}
+			}.bind(this));
+		}
+	}
+
+
+	// Lật bài
+	this.onLat = function(){
+		if (this.room.game_round === 2 && this.isLat == false) {
+			this.isLat = true;
+			this.room.sendToAll({game:{lat:{map:this.map, card:this.card, point:this.point}}}, this);
+		}
 	}
 }
 

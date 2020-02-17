@@ -13,6 +13,12 @@ module.exports = function(client, data){
 		if (!!data.card) {
 			//client.bacay.viewCard(data.card);
 		}
+		if (!!data.cuocG) {
+			client.bacay.cuocGa();
+		}
+		if (!!data.cuocC) {
+			client.bacay.cuocChuong(data.cuocC);
+		}
 		if (!!data.outgame) {
 			client.bacay.outGame();
 		}

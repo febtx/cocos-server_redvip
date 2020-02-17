@@ -23,9 +23,9 @@ var Player = function(client, game, balans, auto){
 	this.listDay = [];   // tất cả các dây có thể sảy ra
 	this.dayCao  = [];   // list dây cao nhất
 	this.boCard  = [];   // Bộ bài
-	this.loc_chat = []; // Lọc chất
+	this.loc_chat = [];  // Lọc chất
 	this.caoNhat = null; // Ghép đc cao nhất
-	this.bet     = 0; // số tiền cược
+	this.bet     = 0;    // số tiền cược
 }
 
 Player.prototype.addRoom = function(room){
