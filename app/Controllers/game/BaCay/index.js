@@ -13,6 +13,9 @@ module.exports = function(client, data){
 		if (!!data.card) {
 			//client.bacay.viewCard(data.card);
 		}
+		if (!!data.lat) {
+			client.bacay.onLat();
+		}
 		if (!!data.cuocG) {
 			client.bacay.cuocGa();
 		}

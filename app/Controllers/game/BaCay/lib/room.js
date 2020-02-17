@@ -215,7 +215,7 @@ var BaCay = function(bacay, singID, game){
 
 		// danh sách người chơi được đặt cược
 		let listPlayer = this.playerInGame.map(function(player){
-			return {map:player.map, progress:this.time_player, round:this.game_round};
+			return {map:player.map, progress:this.time_player+1, round:this.game_round};
 		}.bind(this));
 
 		this.sendToAll({infoRoom:{time:this.time_player, round:this.game_round}, game:{listPlayer:listPlayer}});
@@ -259,18 +259,18 @@ var BaCay = function(bacay, singID, game){
 		this.playerInGame.forEach(function(player, index){
 			player.card = this.card.splice(0, 3);
 			chia[index] = {map:player.map};
-			player.card.forEach(function(card, i){
+			player.cardXS = player.card.map(function(card, i){
 				player.point += card.card+1;
 				let newCard = {...card};
-				player.card[i] = newCard;
 				newCard.type = newCard.type == 1 ? 5 : (newCard.type == 0 ? 4 : newCard.type);
+				return newCard;
 			});
 			// sắp xếp chất
-			player.card.sort(function(a, b){
+			player.cardXS.sort(function(a, b){
 				return b.type-a.type;
 			});
 			// chất to nhất
-			let chat = player.card.filter(function(t){return t.type == player.card[0].type});
+			let chat = player.cardXS.filter(function(t){return t.type == player.cardXS[0].type});
 			chat.sort(function(a, b){
 				return b.card-a.card;
 			});
@@ -297,7 +297,7 @@ var BaCay = function(bacay, singID, game){
 		this.timeOut = setTimeout(function(){
 			clearTimeout(this.timeOut);
 			this.Round3();
-		}.bind(this), 22000);
+		}.bind(this), 12000);
 	}
 
 	// Tính điểm
