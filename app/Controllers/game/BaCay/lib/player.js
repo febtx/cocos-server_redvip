@@ -17,8 +17,9 @@ let Player = function(client, game){
 	this.betChuong = 0; // Cược chương
 	this.betGa     = 0; // Cược gà
 	this.balans    = 0; // TK
-	this.win       = 0; // Win
-	this.lost      = 0; // Lost
+	this.win       = 0; // Thắng
+	this.lost      = 0; // Thua
+	this.totall    = 0; // Tổng tiền thắng thua sau game
 	this.toNhat    = null;
 
 	this.isLat     = false;
@@ -62,6 +63,7 @@ let Player = function(client, game){
 		this.toNhat      = null;
 		this.win         = 0; // Win
 		this.lost        = 0; // Lost
+		this.totall      = 0; // Tổng tiền thắng thua sau game
 		this.isLat       = false;
 	}
 

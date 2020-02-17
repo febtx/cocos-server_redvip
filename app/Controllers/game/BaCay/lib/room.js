@@ -127,6 +127,10 @@ var BaCay = function(bacay, singID, game){
 		}
 	}
 
+	this.resetGame = function(){
+		this.resetData();
+		this.online > 1 && this.checkGame();
+	}
 	// Đặt lại dữ liệu phòng
 	this.resetData = function(){
 		this.game_round   = 0;     // round game
@@ -140,6 +144,9 @@ var BaCay = function(bacay, singID, game){
 		this.regTimeStart = null;
 		this.card         = [];
 		this.playerInGame = [];
+		Object.values(this.player).forEach(function(player){
+			player.newGame();
+		});
 	}
 
 	// Phá hủy phòng
@@ -223,7 +230,6 @@ var BaCay = function(bacay, singID, game){
 		this.regTimeStart = setInterval(function(){
 			if (this.time_player < 0) {
 				clearInterval(this.regTimeStart);
-				console.log('chia bài');
 				// hết thời gian đặt cược, kích người chơi không đặt cược trừ chương
 				this.playerInGame.forEach(function(player){
 					if (player !== this.chuong && player.betChuong === 0) {
@@ -259,18 +265,18 @@ var BaCay = function(bacay, singID, game){
 		this.playerInGame.forEach(function(player, index){
 			player.card = this.card.splice(0, 3);
 			chia[index] = {map:player.map};
-			player.cardXS = player.card.map(function(card, i){
+			let temp1 = player.card.map(function(card, i){
 				player.point += card.card+1;
 				let newCard = {...card};
 				newCard.type = newCard.type == 1 ? 5 : (newCard.type == 0 ? 4 : newCard.type);
 				return newCard;
 			});
 			// sắp xếp chất
-			player.cardXS.sort(function(a, b){
+			temp1.sort(function(a, b){
 				return b.type-a.type;
 			});
 			// chất to nhất
-			let chat = player.cardXS.filter(function(t){return t.type == player.cardXS[0].type});
+			let chat = temp1.filter(function(t){return t.type == temp1[0].type});
 			chat.sort(function(a, b){
 				return b.card-a.card;
 			});
@@ -303,8 +309,6 @@ var BaCay = function(bacay, singID, game){
 	// Tính điểm
 	this.Round3 = function(){
 		this.game_round = 3;    // round game
-		console.log('Tổng Cược chương', this.bet_truong);
-		console.log('Cược Gà', this.bet_ga);
 		UserInfo.findOne({id:this.chuong.uid}, 'red').exec(function(err, truong){
 			if (!!truong) {
 				if (truong.red >= this.bet_truong) {
@@ -316,26 +320,23 @@ var BaCay = function(bacay, singID, game){
 					}.bind(this));
 
 					// trả thưởng cho người chơi cao hơn chương
-					console.log('cao_chuong', cao_chuong.length);
 					cao_chuong.length > 0 && this.cao_chuong(cao_chuong);
 
 					// danh sách người chơi có điểm bằng chương
 					let bang_chuong = gamer.filter(function(t){
 						return t.point == this.chuong.point;
 					}.bind(this));
-					console.log('bang_chuong', bang_chuong.length);
 					bang_chuong.length > 1 && this.bang_chuong(bang_chuong);
 
 					// danh sách người chơi có điểm thấp hơn chương
 					let thap_chuong = gamer.filter(function(t){
 						return t.point < this.chuong.point;
 					}.bind(this));
-					console.log('thap_chuong', thap_chuong.length);
 
 					thap_chuong.length > 0 && this.thap_chuong(thap_chuong);
 					// Kết thúc tính điểm với chương
 
-					/*
+					///*
 					// danh sách người chơi đánh Gà
 					let gamer_ga = gamer.filter(function(t){return t.betGa > 0}); // lấy người chơi đánh Gà
 					if (gamer_ga.length > 1) {
@@ -364,10 +365,28 @@ var BaCay = function(bacay, singID, game){
 							// tìm ra người ăn gà
 							top_gamer_ga = top_gamer_ga[0];
 						}
-						console.log('top_gamer_ga', top_gamer_ga);
+						gamer_ga.forEach(function(player){
+							if (player === top_gamer_ga) {
+								// là người ăn gà
+								player.totall += this.bet_ga;
+								player.balans += this.bet_ga;
+								UserInfo.updateOne({id:player.uid}, {$inc:{red:this.bet_ga}}).exec();
+							}else{
+								// người thua gà
+								player.totall -= this.betGa;
+							}
+						}.bind(this));
 					}
-					*/
-
+					// Gửi thông tin thắng thua
+					let data = gamer.map(function(player){
+						let player_g = {map:player.map};
+						player_g.openCard = {card:player.card, point:player.point};
+						player_g.totall = player.totall;
+						player_g.balans = player.balans;
+						return player_g;
+					});
+					this.sendToAll({game:{done:data}});
+					this.resetGame();
 				}else{
 					// trả lại
 					console.log('trả lại');
@@ -386,7 +405,7 @@ var BaCay = function(bacay, singID, game){
 			if (player.betChuong > 0) {
 				let win = player.betChuong*2;
 				totall += player.betChuong;
-				player.win += win;
+				player.totall += win;
 				player.balans += win;
 				UserInfo.findOneAndUpdate({id:player.uid}, {$inc:{red:win}}).exec(function(err, user){
 					if (!!user) {
@@ -397,9 +416,9 @@ var BaCay = function(bacay, singID, game){
 				});
 			}
 		});
-		//console.log('cao', totall);
 		if (totall > 0) {
 			this.chuong.balans -= totall;
+			this.chuong.totall -= totall;
 			UserInfo.findOneAndUpdate({id:this.chuong.uid}, {$inc:{red:-totall}}).exec(function(err, user){
 				if (!!user) {
 					this.chuong.balans = user.red-totall;
@@ -459,12 +478,12 @@ var BaCay = function(bacay, singID, game){
 		list.forEach(function(player){
 			if (player.betChuong > 0) {
 				totall += player.betChuong;
-				player.lost += player.betChuong;
+				player.totall -= player.betChuong;
 			}
 		});
-		//console.log('thap', totall);
 		if (totall > 0) {
 			this.chuong.balans += totall;
+			this.chuong.totall += totall;
 			UserInfo.findOneAndUpdate({id:this.chuong.uid}, {$inc:{red:totall}}).exec(function(err, user){
 				if (!!user){
 					this.chuong.balans = user.red*1+totall;
