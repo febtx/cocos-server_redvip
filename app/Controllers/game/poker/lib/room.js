@@ -275,17 +275,7 @@ Poker.prototype.nextPlayer = function(new_round = false){
 		if (this.i_last === this.i_first) {
 			// kết thúc vòng chơi
 			this.sendToAll({game:{offSelect:true}});
-			if(this.game_to == true){
-				this.game_to = false;
-				this.i_first = this.playerInGame.findIndex(function(obj){
-					return (obj.id == this.game_player.map);
-				}.bind(this));
-				this.i_last = this.i_first;
-				this.nextPlayer();
-			}else{
-				this.game_player = null;
-				this.nextRound();
-			}
+			this.nextRound();
 			return void 0;
 		}
 
@@ -738,7 +728,7 @@ Poker.prototype.winer = function(player){
 			}
 		}
 	});
-	this.sendToAll({game:{info:{data:array, win:{ghe:player.map, bo:player.caoNhat.bo}}, finish:true}});
+	this.sendToAll({game:{info:{data:array, win:{ghe:player.map, bo:player.caoNhat.bo, code:player.caoNhat.code}}, finish:true}});
 	this.resetGame();
 }
 // Kết thúc game nhưng Hòa game

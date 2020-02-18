@@ -108,7 +108,10 @@ Player.prototype.onTheo = function(){
 }
 Player.prototype.onTo   = function(to){
 	if(this.isHuy === false){
-		this.room.onTo(this, to);
+		to = to>>0;
+		if (to >= this.game) {
+			this.room.onTo(this, to);
+		}
 	}
 }
 Player.prototype.onAll  = function(){

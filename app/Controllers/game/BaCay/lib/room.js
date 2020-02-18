@@ -230,10 +230,10 @@ var BaCay = function(bacay, singID, game){
 		this.regTimeStart = setInterval(function(){
 			if (this.time_player < 0) {
 				clearInterval(this.regTimeStart);
-				// hết thời gian đặt cược, kích người chơi không đặt cược trừ chương
+				// hết thời gian đặt cược, tự cược với mức tiền của phòng
 				this.playerInGame.forEach(function(player){
 					if (player !== this.chuong && player.betChuong === 0) {
-						player.outGame(true);
+						player.cuocChuong(player.game);
 					}
 				}.bind(this));
 
@@ -366,20 +366,19 @@ var BaCay = function(bacay, singID, game){
 							top_gamer_ga = top_gamer_ga[0];
 						}
 						gamer_ga.forEach(function(player){
-							if (player === top_gamer_ga) {
-								// là người ăn gà
-								player.totall += this.bet_ga;
-								player.balans += this.bet_ga;
-								UserInfo.findOneAndUpdate({id:player.uid}, {$inc:{red:this.bet_ga}}).exec(function(err, user){
-									if (!!user) {
-										player.balans = user.red*1+this.bet_ga;
-									}
-									player = null;
-								}.bind(this));
-							}else{
-								// người thua gà
-								player.totall -= this.betGa;
+							if (player !== top_gamer_ga) {
+								player.totall -= player.betGa;
 							}
+						}.bind(this));
+						top_gamer_ga.totall += this.bet_ga;
+						top_gamer_ga.balans += this.bet_ga;
+						let bet_ga = this.bet_ga;
+						UserInfo.findOneAndUpdate({id:top_gamer_ga.uid}, {$inc:{red:this.bet_ga}}).exec(function(err, user){
+							if (!!user) {
+								top_gamer_ga.balans = user.red*1+bet_ga;
+							}
+							bet_ga = null;
+							top_gamer_ga = null;
 						}.bind(this));
 					}
 					// Gửi thông tin thắng thua
