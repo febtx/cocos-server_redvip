@@ -145,7 +145,7 @@ var BaCay = function(bacay, singID, game){
 		this.card         = [];
 		this.playerInGame = [];
 		Object.values(this.player).forEach(function(player){
-			player.newGame();
+			!!player && player.newGame();
 		});
 	}
 
@@ -156,7 +156,7 @@ var BaCay = function(bacay, singID, game){
 	}
 
 	// Kiểm tra và bắt đầu chơi
-	this.checkGame = function(tru){
+	this.checkGame = function(tru = 0){
 		if (!this.isPlay && !this.timeOut) {
 			this.isPlay  = true;
 			this.timeOut = setTimeout(function(){
@@ -370,7 +370,12 @@ var BaCay = function(bacay, singID, game){
 								// là người ăn gà
 								player.totall += this.bet_ga;
 								player.balans += this.bet_ga;
-								UserInfo.updateOne({id:player.uid}, {$inc:{red:this.bet_ga}}).exec();
+								UserInfo.findOneAndUpdate({id:player.uid}, {$inc:{red:this.bet_ga}}).exec(function(err, user){
+									if (!!user) {
+										player.balans = user.red*1+this.bet_ga;
+									}
+									player = null;
+								}.bind(this));
 							}else{
 								// người thua gà
 								player.totall -= this.betGa;

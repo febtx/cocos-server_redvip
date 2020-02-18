@@ -78,8 +78,9 @@ let Player = function(client, game){
 							user.red -= bet;
 							user.save();
 							this.betChuong = bet;
+							this.balans    = user.red*1;
 							this.room.bet_chuong += bet;
-							this.room.sendToAll({game:{player:{map:this.map, bet:this.betChuong, isBetChuong:true, balans:user.red, betChuong:this.betChuong, betGa:this.betGa}}});
+							this.room.sendToAll({game:{player:{map:this.map, bet:this.betChuong, isBetChuong:true, balans:this.balans, betChuong:this.betChuong, betGa:this.betGa}}});
 						}else{
 							this.client.red({game:{notice:'Số dư không khả dụng.'}, user:{red:user.red}});
 						}
@@ -97,9 +98,10 @@ let Player = function(client, game){
 					if (user.red >= this.game){
 						user.red -= this.game;
 						user.save();
-						this.betGa = this.game;
+						this.balans = user.red*1;
+						this.betGa  = this.game;
 						this.room.bet_ga += this.game;
-						this.room.sendToAll({infoRoom:{betGa:this.room.bet_ga}, game:{player:{map:this.map, bet:this.betGa, balans:user.red, betChuong:this.betChuong, betGa:this.betGa}}});
+						this.room.sendToAll({infoRoom:{betGa:this.room.bet_ga}, game:{player:{map:this.map, bet:this.betGa, balans:this.balans, betChuong:this.betChuong, betGa:this.betGa}}});
 					}else{
 						this.client.red({game:{notice:'Số dư không khả dụng.'}, user:{red:user.red}});
 					}
