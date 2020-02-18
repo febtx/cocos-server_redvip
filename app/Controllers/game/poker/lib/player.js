@@ -151,20 +151,22 @@ Player.prototype.checkDay = function(){
 			return el.dongChat;
 		});
 		if (day_dong_chat.length > 0) {
-			// Dây đồng chất cao nhất // code = 9
+			// Dây đồng chất
 			if (day_dong_chat.length === 1) {
 				this.caoNhat = day_dong_chat[0];
+				this.caoNhat.code = 9; // Sảnh Thùng
 			}else{
 				day_dong_chat.sort(function(a, b){return b.bai_cao.card-a.bai_cao.card});
 				let upN  = day_dong_chat[0];
 				let dowN = day_dong_chat[day_dong_chat.length-1];
 				if (dowN.bai_cao.card === 0) {
 					this.caoNhat = dowN;
+					this.caoNhat.code = 10; // Thùng Phá Sảnh
 				}else{
 					this.caoNhat = upN;
+					this.caoNhat.code = 9; // Sảnh Thùng
 				}
 			}
-			this.caoNhat.code = 9; 
 		}else{
 			// Dây cao nhất // code = 5
 			if (this.dayCao.length === 1) {
@@ -179,7 +181,7 @@ Player.prototype.checkDay = function(){
 					this.caoNhat = dupN;
 				}
 			}
-			this.caoNhat.code = 5; 
+			this.caoNhat.code = 5;
 		}
 		this.card.sort(function(a, b){return b.card-a.card});
 		if (this.card[1].card === 0) {

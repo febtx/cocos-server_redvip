@@ -650,6 +650,18 @@ Poker.prototype.win = function(){
 							this.checkBaiLe(player_bo, true);
 						}
 						break;
+					case 10:
+						player_bo.sort(function(a, b){return b.data.caoNhat.bai_cao.card-a.data.caoNhat.bai_cao.card});
+						card = player_bo[player_bo.length-1].data.caoNhat.bai_cao.card === 0 ? player_bo[player_bo.length-1].data.caoNhat.bai_cao.card : player_bo[0].data.caoNhat.bai_cao.card;
+						player_bo = player_bo.filter(function(player) {
+							return player.data.caoNhat.bai_cao.card === card;
+						});
+						if (player_bo.length === 1) {
+							this.winer(player_bo[0].data);
+						}else{
+							this.checkBaiLe(player_bo, true);
+						}
+						break;
 				}
 			}
 		}
