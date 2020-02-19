@@ -97,6 +97,22 @@ var BaCay = function(bacay, singID, game){
 	}
 
 	// Có người thoát khỏi phòng
+	this.checkOutRoom = function(player){
+		if (this.game_round == 0 || this.game_round == 1) {
+			player.isOut = true;
+			if (player.client) {
+				player.client.red({kick:true});
+				player.client.bacay = null;
+			}
+			player.client = null;
+			player.room = null;
+			this.outroom(player);
+		}else{
+			this.sendToAll({game:{regOut:{map:player.map, reg:true}}});
+		}
+		player = null;
+	}
+	// Có người thoát khỏi phòng
 	this.outroom = function(player){
 		this.online--;
 		this.player[player.map] = null;
@@ -105,19 +121,8 @@ var BaCay = function(bacay, singID, game){
 		}
 		if (this.chuong === player) {
 			this.chuong = null;
-			this.chuongThoat();
+			this.online > 0 && this.chuongThoat();
 		}
-		/**
-		if (this.isPlay) {
-			this.playerInGame = nguoichoi.map(function(player){
-						player.isPlay = true;
-						return player;
-				});
-
-			this.playerInGame.filter(function(t){return t.isOut === false}); // lấy người chơi theo đến cùng
-		}
-		*/
-
 		if (this.online < 1) {
 			this.destroy();
 		}else{
@@ -126,6 +131,7 @@ var BaCay = function(bacay, singID, game){
 				this.resetData();
 			}
 		}
+		player = null;
 	}
 
 	this.resetGame = function(){
@@ -135,7 +141,12 @@ var BaCay = function(bacay, singID, game){
 
 	// Chương thoát, dừng game và trả lại tiền cược
 	this.chuongThoat = function(){
-		if (this.isPlay && (this.game_round == 1 || this.game_round == 2)) {
+		// chuyển chương
+		let nguoichoi = Object.values(this.player).filter(function(t){return t !== null});
+		this.chuong = nguoichoi[(Math.random()*nguoichoi.length)>>0];
+		this.sendToAll({game:{truong:this.chuong.map}});
+
+		if(this.isPlay && this.game_round == 1){
 			// trả lại tiền cược
 		}
 	}
@@ -156,8 +167,16 @@ var BaCay = function(bacay, singID, game){
 		this.card         = [];
 		this.playerInGame = [];
 		Object.values(this.player).forEach(function(player){
-			!!player && player.newGame();
-		});
+			if (!!player) {
+				!!player && player.newGame();
+				if (player.regOut) {
+					setTimeout(function(){
+						player.outGame(true);
+						player = null;
+					}, 2000);
+				}
+			}
+		}.bind(this));
 	}
 
 	// Phá hủy phòng
@@ -178,8 +197,13 @@ var BaCay = function(bacay, singID, game){
 				let nguoichoi = Object.values(this.player).filter(function(t){return t !== null});
 				let arrPromise = [];
 				nguoichoi.forEach(function(player){
-					player.newGame();
-					arrPromise.push(UserInfo.findOne({id:player.uid}, 'red').exec());
+					if (player.regOut) {
+						// kíck
+						player.outGame(true);
+					}else{
+						player.newGame();
+						arrPromise.push(UserInfo.findOne({id:player.uid}, 'red').exec());
+					}
 				}.bind(this));
 				// kiểm tra đủ tiền ở lại bàn
 				Promise.all(arrPromise).then(results => {
@@ -241,15 +265,15 @@ var BaCay = function(bacay, singID, game){
 		this.regTimeStart = setInterval(function(){
 			if (this.time_player < 0) {
 				clearInterval(this.regTimeStart);
+				// lấy người chơi chưa thoát
+				this.playerInGame = this.playerInGame.filter(function(t){return !t.isOut && t.betChuong == 0 && t.betGa == 0});
+
 				// hết thời gian đặt cược, tự cược với mức tiền của phòng
 				this.playerInGame.forEach(function(player){
 					if (player !== this.chuong && player.betChuong === 0) {
 						player.cuocChuong(player.game);
 					}
 				}.bind(this));
-
-				// lấy người chơi chưa thoát
-				this.playerInGame = this.playerInGame.filter(function(t){return t.isOut === false;});
 
 				if (this.playerInGame.length < 2) {
 					// game dừng và trả lại tiền cược
@@ -323,8 +347,11 @@ var BaCay = function(bacay, singID, game){
 		UserInfo.findOne({id:this.chuong.uid}, 'red').exec(function(err, truong){
 			if (!!truong) {
 				if (truong.red >= this.bet_truong) {
-					let gamer = this.playerInGame.filter(function(t){return t.isOut === false}); // lấy người chơi theo đến cùng
+					// thoát phải trả tiền cho chương
+					let listOut = this.playerInGame.filter(function(t){return t.isOut});         // lấy người chơi đã thoát
+					listOut.length > 0 && this.thap_chuong(listOut);
 
+					let gamer = this.playerInGame.filter(function(t){return t.isOut === false}); // lấy người chơi theo đến cùng
 					// danh sách người chơi có điểm cao hơn chương
 					let cao_chuong = gamer.filter(function(t){
 						return t.point > this.chuong.point;
@@ -445,12 +472,48 @@ var BaCay = function(bacay, singID, game){
 					// trả lại (Chương không đủ trả)
 					this.chuong = null; // tước quyền chương
 					console.log('trả lại (Chương không đủ trả)');
+					// trả lại tiền
+					this.playerInGame.forEach(function(player){
+						let balans = player.betGa+player.betChuong;
+						if(balans > 0){
+							player.balans += balans;
+							UserInfo.findOneAndUpdate({id:player.uid}, {$inc:{red:balans}}).exec(function(err, user){
+								if (!!user) {
+									player.balans = user.red*1+player.betGa;
+								}
+								player = null;
+							});
+						}
+					}.bind(this));
+					let listPlayer = Object.values(this.player).filter(function(t){return t !== null});
+					listPlayer = listPlayer.map(function(player){
+						return {map:player.map, balans:player.balans};
+					});
+					this.sendToAll({game:{stop:0, listPlayer:listPlayer}});
 					this.resetGame();
 				}
 			}else{
 				// trả lại (Chương không tồn tại trong cơ sở dữ liệu)
 				this.chuong = null; // tước quyền chương
 				console.log('trả lại (Chương không tồn tại trong cơ sở dữ liệu)');
+				// trả lại tiền
+				this.playerInGame.forEach(function(player){
+					let balans = player.betGa+player.betChuong;
+					if(balans > 0){
+						player.balans += balans;
+						UserInfo.findOneAndUpdate({id:player.uid}, {$inc:{red:balans}}).exec(function(err, user){
+							if (!!user) {
+								player.balans = user.red*1+player.betGa;
+							}
+							player = null;
+						});
+					}
+				}.bind(this));
+				let listPlayer = Object.values(this.player).filter(function(t){return t !== null});
+				listPlayer = listPlayer.map(function(player){
+					return {map:player.map, balans:player.balans};
+				});
+				this.sendToAll({game:{stop:0, listPlayer:listPlayer}});
 				this.resetGame();
 			}
 		}.bind(this));

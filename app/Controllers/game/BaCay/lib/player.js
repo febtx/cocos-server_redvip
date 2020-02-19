@@ -6,6 +6,7 @@ let Player = function(client, game){
 	this.map     = null;  // vị trí ghế ngồi
 
 	this.isPlay  = false; // người chơi đang chơi
+	this.regOut  = false; // Đăng ký rời phòng
 	this.isOut   = false; // người chơi đã thoát
 
 	this.uid     = client.UID;          // id người chơi
@@ -34,23 +35,20 @@ let Player = function(client, game){
 
 	// thoát game
 	this.outGame = function(kick = false){
-		// Thoát game sẽ trả lại tiền vào tài khoản và thoát game
-		if (kick && this.client) {
-			this.client.red({kick:true});
+		if (this.regOut) {
+			this.regOut = false;
+			if (!!this.room){
+				this.room.sendToAll({game:{regOut:{map:this.map, reg:false}}});
+			}
+		}else{
+			this.regOut = true;
+			if (kick && this.client) {
+				this.client.red({kick:true});
+			}
+			if (!!this.room){
+				this.room.checkOutRoom(this);
+			}
 		}
-		this.isOut = true;
-		this.client.bacay = null;
-		this.client = null;
-
-		if (!!this.room){
-			this.room.outroom(this);
-		}
-		this.room = null;
-		/**
-		if (this.balans > 0) {
-			UserInfo.updateOne({id:this.uid}, {$inc:{red:this.balans}}).exec();
-		}
-		*/
 	}
 
 	// đặt lại dữ liệu để tiếp tục ván mới
