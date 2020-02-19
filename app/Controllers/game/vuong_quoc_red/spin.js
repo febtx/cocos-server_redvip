@@ -119,7 +119,7 @@ function check_win(data, line){
 
 function gameBonusX(bet, x){
 	if (x == 0) {
-		return (bet*((Math.random()*(20-2+1))+2))>>0;
+		return (bet*((Math.random()*(15-2+1))+2))>>0;
 	}else{
 		return bet*x;
 	}
