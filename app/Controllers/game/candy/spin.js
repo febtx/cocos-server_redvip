@@ -645,10 +645,14 @@ module.exports = function(client, data){
 										isFree = true;
 									}
 								} else if (line_win.win == 8) {
-									if (!nohu && line_win.type === 4){
-										// Bonus x5
+									if (!nohu && line_win.type === 5){
+										// Bonus x2
 										checkWin = true;
-										bonusX += 5;
+										bonusX += 2;
+									}else if (!nohu && line_win.type === 4){
+										// Bonus x1.3
+										checkWin = true;
+										bonusX += 1.3;
 									}else if (!nohu && line_win.type === 3){
 										// Bonus x1
 										checkWin = true;
