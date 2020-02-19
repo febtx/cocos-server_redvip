@@ -105,6 +105,7 @@ var BaCay = function(bacay, singID, game){
 		}
 		if (this.chuong === player) {
 			this.chuong = null;
+			this.chuongThoat();
 		}
 		/**
 		if (this.isPlay) {
@@ -130,6 +131,16 @@ var BaCay = function(bacay, singID, game){
 	this.resetGame = function(){
 		this.resetData();
 		this.online > 1 && this.checkGame();
+	}
+
+	// Chương thoát, dừng game và trả lại tiền cược
+	this.chuongThoat = function(){
+		if (this.isPlay && (this.game_round == 1 || this.game_round == 2)) {
+			// trả lại tiền cược
+		}
+	}
+	// dừng game, trả lại tiền nếu đang đặt
+	this.stopGame = function(){
 	}
 	// Đặt lại dữ liệu phòng
 	this.resetData = function(){
@@ -185,12 +196,12 @@ var BaCay = function(bacay, singID, game){
 					}
 
 					// đặt chương mới
-					if (!!this.chuongNew) {
+					if (!!this.chuongNew){
 						this.chuong = this.chuongNew;
-					}else{
-						// Ngẫu nhiên người cầm chương.
+					}else if(!this.chuong){
 						this.chuong = nguoichoi[(Math.random()*nguoichoi.length)>>0];
 					}
+					this.chuongNew = null;
 					this.sendToAll({infoRoom:{time_start:this.timeStartGame, isPlay:true}, game:{truong:this.chuong.map}});
 
 					this.regTimeStart = setInterval(function(){
@@ -336,7 +347,36 @@ var BaCay = function(bacay, singID, game){
 					thap_chuong.length > 0 && this.thap_chuong(thap_chuong);
 					// Kết thúc tính điểm với chương
 
-					///*
+					// Tính điểm 10 vào cao hơn chương làm chương
+					// Danh sách người có điểm 10
+					let list10 = gamer.filter(function(t){
+						return t.point == 10;
+					}.bind(this));
+
+					if (list10.length > 1) {
+						// sắp sếp theo chất
+						list10.sort(function(player_a, player_b){
+							return player_b.toNhat.type-player_a.toNhat.type;
+						});
+						// chất to nhất
+						let chat = list10.filter(function(t){return t.toNhat.type == list10[0].toNhat.type});
+						chat.sort(function(player_a, player_b){
+							return player_b.toNhat.card-player_a.toNhat.card;
+						});
+
+						// tìm ra chương mới
+						list10 = chat[0];
+						if (chat[0].toNhat.type == 5 && chat[chat.length-1].toNhat.card == 0) {
+							list10 = chat[chat.length-1];
+						}
+						if (list10 !== this.chuong) {
+							this.chuongNew = list10;
+						}
+					}else if (list10.length == 1 && list10[0] !== this.chuong) {
+						this.chuongNew = list10[0];
+					}
+					// kết thúc tìm chương
+
 					// danh sách người chơi đánh Gà
 					let gamer_ga = gamer.filter(function(t){return t.betGa > 0}); // lấy người chơi đánh Gà
 					if (gamer_ga.length > 1) {
@@ -370,7 +410,7 @@ var BaCay = function(bacay, singID, game){
 								player.totall -= player.betGa;
 							}
 						}.bind(this));
-						top_gamer_ga.totall += this.bet_ga;
+						top_gamer_ga.totall += this.bet_ga-top_gamer_ga.betGa;
 						top_gamer_ga.balans += this.bet_ga;
 						let bet_ga = this.bet_ga;
 						UserInfo.findOneAndUpdate({id:top_gamer_ga.uid}, {$inc:{red:this.bet_ga}}).exec(function(err, user){
@@ -380,6 +420,16 @@ var BaCay = function(bacay, singID, game){
 							bet_ga = null;
 							top_gamer_ga = null;
 						}.bind(this));
+					}else if (gamer_ga.length == 1) {
+						// trả lại Gà khi chỉ có 1 người cược
+						gamer_ga = gamer_ga[0];
+						gamer_ga.balans += gamer_ga.betGa;
+						UserInfo.findOneAndUpdate({id:gamer_ga.uid}, {$inc:{red:gamer_ga.betGa}}).exec(function(err, user){
+							if (!!user) {
+								gamer_ga.balans = user.red*1+gamer_ga.betGa;
+							}
+							gamer_ga = null;
+						});
 					}
 					// Gửi thông tin thắng thua
 					let data = gamer.map(function(player){
@@ -392,12 +442,16 @@ var BaCay = function(bacay, singID, game){
 					this.sendToAll({game:{done:data}});
 					this.resetGame();
 				}else{
-					// trả lại
-					console.log('trả lại');
+					// trả lại (Chương không đủ trả)
+					this.chuong = null; // tước quyền chương
+					console.log('trả lại (Chương không đủ trả)');
+					this.resetGame();
 				}
 			}else{
-				// trả lại
-				console.log('trả lại');
+				// trả lại (Chương không tồn tại trong cơ sở dữ liệu)
+				this.chuong = null; // tước quyền chương
+				console.log('trả lại (Chương không tồn tại trong cơ sở dữ liệu)');
+				this.resetGame();
 			}
 		}.bind(this));
 	};
@@ -409,7 +463,7 @@ var BaCay = function(bacay, singID, game){
 			if (player.betChuong > 0) {
 				let win = player.betChuong*2;
 				totall += player.betChuong;
-				player.totall += win;
+				player.totall += player.betChuong;
 				player.balans += win;
 				UserInfo.findOneAndUpdate({id:player.uid}, {$inc:{red:win}}).exec(function(err, user){
 					if (!!user) {
