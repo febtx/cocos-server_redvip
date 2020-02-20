@@ -78,21 +78,42 @@ var BaCay = function(bacay, singID, game){
 
 		trongPhong = Object.entries(this.player);
 
-		let card = [];
 		this.sendToAll({ingame:{ghe:player.map, data:{name:player.name, avatar:player.avatar, balans:player.balans}}}, player);
+
+		let card = [];
+		let client = {infoRoom:{game:this.game, isPlay:this.isPlay, time_start:this.time_start, betGa:this.bet_ga}, meMap:player.map, game:{}};
+		if (this.game_round == 1) {
+			client.infoRoom.time = this.time_player;
+			client.infoRoom.round = this.game_round;
+		}
 		let result = trongPhong.map(function(ghe){
 			if (!!ghe[1]) {
-				if (ghe[1].isPlay === true) {
-					card = card.concat({ghe:ghe[0], card:{}});
-					return {ghe:ghe[0], data:{name:ghe[1].name, avatar:ghe[1].avatar, balans:ghe[1].balans, betChuong:ghe[1].betChuong, betGa:ghe[1].betGa}};
+				let data = {ghe:ghe[0], data:{name:ghe[1].name, avatar:ghe[1].avatar, balans:ghe[1].balans}};
+				if (this.game_round == 1) {
+					data.data.betChuong = ghe[1].betChuong;
+					data.data.betGa     = ghe[1].betGa;
+					data.data.progress  = this.time_player+1;
+					data.data.round     = 1;
+				}else if (this.game_round == 2) {
+					data.data.betChuong = ghe[1].betChuong;
+					data.data.betGa     = ghe[1].betGa;
+					if (ghe[1].isPlay) {
+						card = card.concat({ghe:ghe[0], card:{}});
+					}
 				}
-				return {ghe:ghe[0], data:{name:ghe[1].name, avatar:ghe[1].avatar, balans:ghe[1].balans}};
+				return data;
 			}else{
 				return {ghe:ghe[0], data:null};
 			}
 		}.bind(this));
-		let client = {infoGhe:result, infoRoom:{game:player.game, isPlay:this.isPlay, time_start:this.time_start, card:card}, meMap:player.map};
+		client.infoGhe = result;
+		client.infoRoom.card = card;
+		if (this.chuong) {
+			client.game.truong = this.chuong.map;
+		}
+
 		player.client.red(client);
+
 		this.online > 1 && this.checkGame(5000);
 	}
 
