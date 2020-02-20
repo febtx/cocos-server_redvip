@@ -89,15 +89,15 @@ var BaCay = function(bacay, singID, game){
 		let result = trongPhong.map(function(ghe){
 			if (!!ghe[1]) {
 				let data = {ghe:ghe[0], data:{name:ghe[1].name, avatar:ghe[1].avatar, balans:ghe[1].balans}};
-				if (this.game_round == 1) {
-					data.data.betChuong = ghe[1].betChuong;
-					data.data.betGa     = ghe[1].betGa;
-					data.data.progress  = this.time_player+1;
-					data.data.round     = 1;
-				}else if (this.game_round == 2) {
-					data.data.betChuong = ghe[1].betChuong;
-					data.data.betGa     = ghe[1].betGa;
-					if (ghe[1].isPlay) {
+				if (ghe[1].isPlay) {
+					if (this.game_round == 1) {
+						data.data.betChuong = ghe[1].betChuong;
+						data.data.betGa     = ghe[1].betGa;
+						data.data.progress  = this.time_player+1;
+						data.data.round     = 1;
+					}else if (this.game_round == 2) {
+						data.data.betChuong = ghe[1].betChuong;
+						data.data.betGa     = ghe[1].betGa;
 						card = card.concat({ghe:ghe[0], card:{}});
 					}
 				}
