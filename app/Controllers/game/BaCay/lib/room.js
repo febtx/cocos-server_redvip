@@ -98,7 +98,7 @@ var BaCay = function(bacay, singID, game){
 
 	// Có người thoát khỏi phòng
 	this.checkOutRoom = function(player){
-		if (this.game_round == 0) {
+		if (this.game_round == 0 || !player.isPlay) {
 			if (player.client) {
 				player.client.red({kick:true});
 				player.client.bacay = null;
@@ -462,7 +462,7 @@ var BaCay = function(bacay, singID, game){
 				}else{
 					// trả lại (Chương không đủ trả)
 					this.chuong = null; // tước quyền chương
-					console.log('trả lại (Chương không đủ trả)');
+					//console.log('trả lại (Chương không đủ trả)');
 					// trả lại tiền
 					this.playerInGame.forEach(function(player){
 						let balans = player.betGa+player.betChuong;
@@ -486,7 +486,7 @@ var BaCay = function(bacay, singID, game){
 			}else{
 				// trả lại (Chương không tồn tại trong cơ sở dữ liệu)
 				this.chuong = null; // tước quyền chương
-				console.log('trả lại (Chương không tồn tại trong cơ sở dữ liệu)');
+				//console.log('trả lại (Chương không tồn tại trong cơ sở dữ liệu)');
 				// trả lại tiền
 				this.playerInGame.forEach(function(player){
 					let balans = player.betGa+player.betChuong;
