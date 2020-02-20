@@ -121,7 +121,7 @@ let Player = function(client, game){
 
 	// Cược Chương
 	this.cuocChuong = function(bet){
-		if (this.room.game_round === 1) {
+		if (this.isPlay && this.room.game_round === 1) {
 			bet = bet>>0;
 			if (this.game <= bet && bet <= this.game*2) {
 				UserInfo.findOne({id:this.uid}, 'red').exec(function(err, user){
@@ -144,7 +144,7 @@ let Player = function(client, game){
 
 	// Cược Gà
 	this.cuocGa = function(){
-		if (this.room.game_round === 1) {
+		if (this.isPlay && this.room.game_round === 1) {
 			UserInfo.findOne({id:this.uid}, 'red').exec(function(err, user){
 				if (!!user) {
 					if (user.red >= this.game){
@@ -165,7 +165,7 @@ let Player = function(client, game){
 
 	// Lật bài
 	this.onLat = function(){
-		if (this.room.game_round === 2 && this.isLat == false) {
+		if (this.isPlay && this.room.game_round === 2 && this.isLat == false) {
 			this.isLat = true;
 			this.room.sendToAll({game:{lat:{map:this.map, card:this.card, point:this.point}}}, this);
 		}
