@@ -37,7 +37,7 @@ var BaCay = function(bacay, singID, game){
 
 	this.game_time      = 0;    // mini time
 
-	this.timePlayerCuoc = 20;   // thời gian người chơi đặt cược
+	this.timePlayerCuoc = 15;   // thời gian người chơi đặt cược
 	this.time_player    = 0;    // thời gian còn lại của các người chơi
 
 	this.game_round     = 0;    // round game
@@ -98,12 +98,12 @@ var BaCay = function(bacay, singID, game){
 
 	// Có người thoát khỏi phòng
 	this.checkOutRoom = function(player){
-		if (this.game_round == 0 || this.game_round == 1) {
-			player.isOut = true;
+		if (this.game_round == 0) {
 			if (player.client) {
 				player.client.red({kick:true});
 				player.client.bacay = null;
 			}
+			delete process.redT.game.bacay.player[player.uid];
 			player.client = null;
 			player.room = null;
 			this.outroom(player);
@@ -158,7 +158,6 @@ var BaCay = function(bacay, singID, game){
 		this.game_round   = 0;     // round game
 		this.bet_truong   = 0;     // tổng cược chương
 		this.bet_ga       = 0;     // tổng cược Gà
-		// this.chuong       = null;  // Cầm chương
 		this.isPlay       = false;
 		clearTimeout(this.timeOut);
 		clearInterval(this.regTimeStart);
@@ -257,7 +256,7 @@ var BaCay = function(bacay, singID, game){
 
 		// danh sách người chơi được đặt cược
 		let listPlayer = this.playerInGame.map(function(player){
-			return {map:player.map, progress:this.time_player+1, round:this.game_round};
+			return {map:player.map, progress:this.time_player+1, round:1};
 		}.bind(this));
 
 		this.sendToAll({infoRoom:{time:this.time_player, round:this.game_round}, game:{listPlayer:listPlayer}});
@@ -265,9 +264,6 @@ var BaCay = function(bacay, singID, game){
 		this.regTimeStart = setInterval(function(){
 			if (this.time_player < 0) {
 				clearInterval(this.regTimeStart);
-				// lấy người chơi chưa thoát
-				this.playerInGame = this.playerInGame.filter(function(t){return !t.isOut && t.betChuong == 0 && t.betGa == 0});
-
 				// hết thời gian đặt cược, tự cược với mức tiền của phòng
 				this.playerInGame.forEach(function(player){
 					if (player !== this.chuong && player.betChuong === 0) {
@@ -338,7 +334,7 @@ var BaCay = function(bacay, singID, game){
 		this.timeOut = setTimeout(function(){
 			clearTimeout(this.timeOut);
 			this.Round3();
-		}.bind(this), 12000);
+		}.bind(this), 8000);
 	}
 
 	// Tính điểm
@@ -347,13 +343,8 @@ var BaCay = function(bacay, singID, game){
 		UserInfo.findOne({id:this.chuong.uid}, 'red').exec(function(err, truong){
 			if (!!truong) {
 				if (truong.red >= this.bet_truong) {
-					// thoát phải trả tiền cho chương
-					let listOut = this.playerInGame.filter(function(t){return t.isOut});         // lấy người chơi đã thoát
-					listOut.length > 0 && this.thap_chuong(listOut);
-
-					let gamer = this.playerInGame.filter(function(t){return t.isOut === false}); // lấy người chơi theo đến cùng
 					// danh sách người chơi có điểm cao hơn chương
-					let cao_chuong = gamer.filter(function(t){
+					let cao_chuong = this.playerInGame.filter(function(t){
 						return t.point > this.chuong.point;
 					}.bind(this));
 
@@ -361,13 +352,13 @@ var BaCay = function(bacay, singID, game){
 					cao_chuong.length > 0 && this.cao_chuong(cao_chuong);
 
 					// danh sách người chơi có điểm bằng chương
-					let bang_chuong = gamer.filter(function(t){
+					let bang_chuong = this.playerInGame.filter(function(t){
 						return t.point == this.chuong.point;
 					}.bind(this));
 					bang_chuong.length > 1 && this.bang_chuong(bang_chuong);
 
 					// danh sách người chơi có điểm thấp hơn chương
-					let thap_chuong = gamer.filter(function(t){
+					let thap_chuong = this.playerInGame.filter(function(t){
 						return t.point < this.chuong.point;
 					}.bind(this));
 
@@ -376,7 +367,7 @@ var BaCay = function(bacay, singID, game){
 
 					// Tính điểm 10 vào cao hơn chương làm chương
 					// Danh sách người có điểm 10
-					let list10 = gamer.filter(function(t){
+					let list10 = this.playerInGame.filter(function(t){
 						return t.point == 10;
 					}.bind(this));
 
@@ -405,12 +396,12 @@ var BaCay = function(bacay, singID, game){
 					// kết thúc tìm chương
 
 					// danh sách người chơi đánh Gà
-					let gamer_ga = gamer.filter(function(t){return t.betGa > 0}); // lấy người chơi đánh Gà
+					let gamer_ga = this.playerInGame.filter(function(t){return t.betGa > 0}); // lấy người chơi đánh Gà
 					if (gamer_ga.length > 1) {
 						gamer_ga.sort(function(player_a, player_b){
 							return player_b.point-player_a.point;
 						});
-						let top_gamer_ga = gamer.filter(function(t){return t.point == gamer_ga[0].point});
+						let top_gamer_ga = this.playerInGame.filter(function(t){return t.point == gamer_ga[0].point});
 						if (top_gamer_ga.length > 1) {
 							// có nhiều người bằng điểm, tính chất
 							// sắp xếp chất
@@ -459,7 +450,7 @@ var BaCay = function(bacay, singID, game){
 						});
 					}
 					// Gửi thông tin thắng thua
-					let data = gamer.map(function(player){
+					let data = this.playerInGame.map(function(player){
 						let player_g = {map:player.map};
 						player_g.openCard = {card:player.card, point:player.point};
 						player_g.totall = player.totall;

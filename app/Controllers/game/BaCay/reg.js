@@ -19,8 +19,8 @@ module.exports = function(client, room){
 		room == 500000)
 	{
 		let inGame = false;
-		if (client.redT.users[client.UID]) {
-			client.redT.users[client.UID].forEach(function(obj){
+		if (process.redT.users[client.UID]) {
+			process.redT.users[client.UID].forEach(function(obj){
 				if(!!obj.bacay){
 					inGame = true;
 				}
@@ -30,19 +30,30 @@ module.exports = function(client, room){
 				room = null;
 				client = null;
 			}else{
-				let min = room*4;
-				UserInfo.findOne({id:client.UID}, 'red name', function(err, user){
-					if (!user || user.red < min) {
-						client.red({notice:{title:'THẤT BẠI', text:'Bạn cần tối thiểu '+numberWithCommas(min)+' RED để vào phòng.!!', load:false}});
-					}else{
-						client.bacay = new Player(client, room);
-						client.bacay.balans = user.red>>0;
-						client.red({toGame:'3Cay'});
-					}
-					min  = null;
+				let reconnect = process.redT.game.bacay.player[client.UID];
+				if(void 0 !== reconnect){
+					client.bacay = reconnect;
+					reconnect.client = client;
+					client.red({toGame:'3Cay'});
 					room = null;
 					client = null;
-				});
+					reconnect = null;
+				}else{
+					let min = room*4;
+					UserInfo.findOne({id:client.UID}, 'red name', function(err, user){
+						if (!user || user.red < min) {
+							client.red({notice:{title:'THẤT BẠI', text:'Bạn cần tối thiểu '+numberWithCommas(min)+' RED để vào phòng.!!', load:false}});
+						}else{
+							client.bacay = new Player(client, room);
+							process.redT.game.bacay.player[client.UID] = client.bacay;
+							client.bacay.balans = user.red>>0;
+							client.red({toGame:'3Cay'});
+						}
+						min  = null;
+						room = null;
+						client = null;
+					});
+				}
 			}
 		}
 	}else{

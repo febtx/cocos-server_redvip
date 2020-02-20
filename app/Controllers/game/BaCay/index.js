@@ -22,8 +22,8 @@ module.exports = function(client, data){
 		if (!!data.cuocC) {
 			client.bacay.cuocChuong(data.cuocC);
 		}
-		if (!!data.outgame) {
-			client.bacay.outGame();
+		if (!!data.regOut) {
+			client.bacay.onRegOut();
 		}
 
 	}

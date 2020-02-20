@@ -14,6 +14,7 @@ let BaCay = function(){
 		200000: {},
 		500000: {},
 	};
+	this.player = {};
 }
 
 BaCay.prototype.addRoom = function(room){

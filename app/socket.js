@@ -22,7 +22,7 @@ let signMethod = function(client) {
 			this.poker = null;
 		}
 		if (!!this.bacay) {
-			this.bacay.outGame();
+			this.bacay.disconnect();
 			this.bacay = null;
 		}
 		if (!!this.fish) {
