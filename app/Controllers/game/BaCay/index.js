@@ -10,8 +10,14 @@ module.exports = function(client, data){
 		ingame(client);
 	}
 	if (!!client.bacay) {
-		if (!!data.card) {
-			//client.bacay.viewCard(data.card);
+		if (!!data.viewcard) {
+			client.bacay.viewCard(data.viewcard);
+		}
+		if (!!data.listCard) {
+			client.bacay.listCard();
+		}
+		if (!!data.setCard) {
+			client.bacay.setCard(data.setCard);
 		}
 		if (!!data.lat) {
 			client.bacay.onLat();

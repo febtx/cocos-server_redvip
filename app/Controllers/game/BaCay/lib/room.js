@@ -319,9 +319,7 @@ var BaCay = function(bacay, singID, game){
 			chia[index] = {map:player.map};
 			let temp1 = player.card.map(function(card, i){
 				player.point += card.card+1;
-				let newCard = {...card};
-				newCard.type = newCard.type == 1 ? 5 : (newCard.type == 0 ? 4 : newCard.type);
-				return newCard;
+				return {card:card.card, type:card.type == 1 ? 5 : (card.type == 0 ? 4 : card.type)};
 			});
 			// sắp xếp chất
 			temp1.sort(function(a, b){
@@ -355,7 +353,7 @@ var BaCay = function(bacay, singID, game){
 		this.timeOut = setTimeout(function(){
 			clearTimeout(this.timeOut);
 			this.Round3();
-		}.bind(this), 8000);
+		}.bind(this), 12000);
 	}
 
 	// Tính điểm

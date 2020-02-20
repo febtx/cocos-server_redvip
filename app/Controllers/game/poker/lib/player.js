@@ -378,6 +378,7 @@ Player.prototype.viewCard = function(map){
 				!!this.client && this.client.red({viewCard:{map:map, card:player.data.card}});
 			}
 		}
+		map = null;
 	}.bind(this));
 }
 Player.prototype.mainCard = function(map){

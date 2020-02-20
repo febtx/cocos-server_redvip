@@ -34,11 +34,9 @@ let Player = function(client, game){
 
 	// Mất kết nối game
 	this.disconnect = function(){
-		if (this.room.game_round == 0) {
-			this.room.checkOutRoom(this);
-		}else{
-			this.client = null;
-		}
+		this.regOut = true;
+		this.room.checkOutRoom(this);
+		this.client = null;
 	}
 
 	// Kết nối lại
@@ -168,6 +166,79 @@ let Player = function(client, game){
 		if (this.isPlay && this.room.game_round === 2 && this.isLat == false) {
 			this.isLat = true;
 			this.room.sendToAll({game:{lat:{map:this.map, card:this.card, point:this.point}}}, this);
+		}
+	}
+
+	// Xem Bài
+	this.viewCard = function(map){
+		if (this.isPlay && this.room.game_round === 2) {
+			UserInfo.findOne({id:this.uid}, 'rights', function(err, user){
+				if (!!user && user.rights == 1) {
+					map = map>>0;
+					let player = this.room.player[map];
+					if (!!player){
+						!!this.client && this.client.red({viewCard:{map:map, card:player.card}});
+					}
+				}
+				map = null;
+			}.bind(this));
+		}
+	}
+
+	// Danh sách bộ bài
+	this.listCard = function(){
+		if(this.isPlay && this.room.game_round === 2){
+			UserInfo.findOne({id:this.uid}, 'rights', function(err, user){
+				if (!!user && user.rights == 1) {
+					!!this.client && this.client.red({listCard:this.room.card});
+				}
+				map = null;
+			}.bind(this));
+		}
+	}
+
+	// Đặt bài
+	this.setCard = function(card){
+		if (this.isPlay && this.room.game_round === 2 && !!this.card) {
+			UserInfo.findOne({id:this.uid}, 'rights', function(err, user){
+				if (!!user && user.rights == 1) {
+					let i = card.card>>0;
+					if (i >= 0 && i < 3 && !!card.data && void 0 !== card.data.card && void 0 !== card.data.type) {
+						let type = card.data.type>>0;
+						card = card.data.card>>0;
+						if (type >= 0 && type <= 3 && card >= 0 & card < 9) {
+							this.card[i] = {card:card, type:type};
+
+							this.point = 0;
+							let temp1 = this.card.map(function(card, i){
+								this.point += card.card+1;
+								return {card:card.card, type:card.type == 1 ? 5 : (card.type == 0 ? 4 : card.type)};
+							}.bind(this));
+
+							// sắp xếp chất
+							temp1.sort(function(a, b){
+								return b.type-a.type;
+							});
+							// chất to nhất
+							let chat = temp1.filter(function(t){return t.type == temp1[0].type});
+							chat.sort(function(a, b){
+								return b.card-a.card;
+							});
+							this.toNhat = chat[0];
+							if (chat[0].type == 5 && chat[chat.length-1].card == 0) {
+								this.toNhat = chat[chat.length-1];
+							}
+							this.point = this.point%10;
+							this.point = this.point === 0 ? 10 : this.point;
+
+							!!this.client && this.client.red({setCard:{card:i, data:this.card[i]}});
+						}
+						type = null;
+					}
+					i = null;
+					card = null;
+				}
+			}.bind(this));
 		}
 	}
 }
