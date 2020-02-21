@@ -10,6 +10,7 @@ module.exports = function() {
 	xsmb.findOne({date:date}, {}, function(err, data){
 		if (!!data && !data.pay) {
 			xsmb_cuoc.find({date:date}, {}, function(errC, cuoc){
+				date = null;
 				if (cuoc.length > 0) {
 					// tách lô 2 số
 					let lo2so = [data.g1.substring(data.g1.length-2), data.gdb.substring(data.gdb.length-2), ...data.g2.map(function(obj){return obj.substring(obj.length-2)}), ...data.g3.map(function(obj){return obj.substring(obj.length-2)}), ...data.g4.map(function(obj){return obj.substring(obj.length-2)}), ...data.g5.map(function(obj){return obj.substring(obj.length-2)}), ...data.g6.map(function(obj){return obj.substring(obj.length-2)}), ...data.g7.map(function(obj){return obj.substring(obj.length-2)})];
@@ -248,6 +249,7 @@ module.exports = function() {
 						data.cuoc = tongCuoc;
 						data.tra = tongTra;
 						data.save();
+						data = null;
 					}
 				}
 			});

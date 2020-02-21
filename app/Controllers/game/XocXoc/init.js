@@ -268,6 +268,7 @@ XocXoc.prototype.thanhtoan = function(dice = null){
 					return {users:cuoc.name, bet:totall};
 				}.bind(this)))
 				.then(function(arrayOfResults) {
+					gameChan = null;
 					phien = null;
 					dice = null;
 					red3   = null;
@@ -297,6 +298,7 @@ XocXoc.prototype.thanhtoan = function(dice = null){
 					}
 				}.bind(this));
 			}else{
+				gameChan = null;
 				phien = null;
 				dice = null;
 				red3   = null;
@@ -445,20 +447,24 @@ XocXoc.prototype.botCuoc = function(cuoc, data){
 	let time = this.randomTime();
 	setTimeout(function(){
 		let box = this.randomBox();
+		let temp_c = cuoc;
 		XocXoc_cuoc.findOne({uid:data.id, phien:this.phien}, function(err, checkOne){
 			if (checkOne){
-				checkOne[box] += cuoc;
+				checkOne[box] += temp_c;
 				checkOne.save();
 			}else{
 				var create = {uid:data.id, bot:true, name:data.name, phien:this.phien, time:new Date()};
-				create[box] = cuoc;
+				create[box] = temp_c;
 				XocXoc_cuoc.create(create);
 			}
+			data = null;
+			temp_c = null;
 		}.bind(this));
 		this.data.red[box] += cuoc;
 		Object.values(this.clients).forEach(function(users){
 			users.red({xocxoc:{chip:{box:box, cuoc:cuoc}}});
 		});
+		cuoc = null;
 	}.bind(this), time);
 }
 

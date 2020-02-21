@@ -25,10 +25,10 @@ function getLogs(client){
 	});
 
 	var active2 = new Promise((resolve, reject) => {
-		TaiXiu_User.findOne({uid:client.UID}, 'tLineWinRed tLineLostRed tLineWinRedH tLineLostRedH', function(err, data) {
-			data = data._doc;
-			delete data._id;
-			resolve(data);
+		TaiXiu_User.findOne({uid:client.UID}, 'tLineWinRed tLineLostRed tLineWinRedH tLineLostRedH', function(err, data_a2) {
+			data_a2 = data_a2._doc;
+			delete data_a2._id;
+			resolve(data_a2);
 		});
 	});
 
@@ -46,6 +46,8 @@ function getLogs(client){
 		data.logs   = values[0];
 		data.du_day = values[1];
 		client.red({taixiu:data});
+		data = null;
+		client = null;
 	});
 }
 
@@ -65,6 +67,7 @@ function getNew(client){
 
 	Promise.all([active1, active2]).then(values => {
 		client.red({user:values[0], taixiu:{du_day:values[1]}});
+		client = null;
 	});
 }
 
@@ -73,18 +76,24 @@ var chat = function(client, str){
 		UserInfo.findOne({id:client.UID}, 'red', function(err, user){
 			if (!user || user.red < 1000) {
 				client.red({taixiu:{err:'Tài khoản phải có ít nhất 1.000 Red để chat.!!'}});
+				client = null;
+				str = null;
 			}else{
 				if (!validator.isLength(str, {min:1, max:250})) {
 					client.red({taixiu:{err:'Số lượng kí tự từ 1 - 250.'}});
+					client = null;
+					str = null;
 				}else{
 					str = validator.trim(str);
 					if (!validator.isLength(str, {min:1, max:250})) {
 						client.red({taixiu:{err:'Số lượng kí tự từ 1 - 250.'}});
+						client = null;
+						str = null;
 					}else{
 						TXChat.findOne({}, 'uid value', {sort:{'_id':-1}}, function(err, post) {
 							if (!post || post.uid != client.UID || (post.uid == client.UID && post.value != str)) {
 								TXChat.create({'uid':client.UID, 'name':client.profile.name, 'value':str});
-								var content = {taixiu:{chat:{message:{user:client.profile.name, value:str}}}};
+								let content = {taixiu:{chat:{message:{user:client.profile.name, value:str}}}};
 								Object.values(client.redT.users).forEach(function(users){
 									users.forEach(function(member){
 										if (member != client){
@@ -93,6 +102,8 @@ var chat = function(client, str){
 									});
 								});
 							}
+							str = null;
+							client = null;
 						});
 					}
 				}
@@ -106,8 +117,8 @@ var cuoc = function(client, data){
 		if (client.redT.TaiXiu_time < 2 || client.redT.TaiXiu_time > 60) {
 			client.red({taixiu:{err:'Vui lòng cược ở phiên sau.!!'}});
 		}else{
-			var bet    = data.bet>>0; // Số tiền
-			var select = !!data.select; // Cửa đặt (Tài:1, Xỉu:0)
+			let bet    = data.bet>>0;   // Số tiền
+			let select = !!data.select; // Cửa đặt (Tài:1, Xỉu:0)
 
 			if (bet < 1000){
 				client.red({taixiu:{err:'Số tiền phải lớn hơn 1000.!!'}});
@@ -118,7 +129,7 @@ var cuoc = function(client, data){
 					}else{
 						user.red -= bet;
 						user.save();
-						var phien = client.redT.TaiXiu_phien;
+						let phien = client.redT.TaiXiu_phien;
 						TXCuocOne.findOne({uid:client.UID, phien:phien}, 'bet select', function(isCuocErr, isCuoc) {
 							if (!!isCuoc) {
 								// update
@@ -139,6 +150,7 @@ var cuoc = function(client, data){
 									}
 
 									io.taixiuAdmin.list.unshift({name:user.name, select:select, bet:bet, time:new Date()});
+									io = null;
 									TXCuoc.create({uid:client.UID, name:user.name, phien:phien, bet:bet, select:select, time:new Date()});
 
 									var taixiuVery = select ? {red_me_tai:isCuoc.bet} : {red_me_xiu:isCuoc.bet};
@@ -167,6 +179,7 @@ var cuoc = function(client, data){
 									io.taixiuAdmin.taixiu.red_player_xiu += 1;
 								}
 								io.taixiuAdmin.list.unshift({name:user.name, select:select, bet:bet, time:new Date()});
+								io = null;
 								TXCuocOne.create({uid:client.UID, phien:phien, select:select, bet:bet});
 								TXCuoc.create({uid:client.UID, name:user.name, phien:phien, bet:bet, select:select, time:new Date()});
 
@@ -179,6 +192,11 @@ var cuoc = function(client, data){
 									});
 								}
 							}
+							bet    = null;
+							select = null;
+							phien  = null;
+							client = null;
+							user   = null;
 						});
 					}
 				});
@@ -201,10 +219,11 @@ var get_phien = function(client, data){
 
 		Promise.all([getPhien, getCuoc]).then(values => {
 			if (!!values[0]) {
-				var infoPhienCuoc = values[0];
-				var phienCuoc     = values[1];
+				let infoPhienCuoc = values[0];
+				let phienCuoc     = values[1];
 
-				var dataT = {};
+				let dataT = {};
+
 				dataT['phien'] = phien;
 				dataT['time']  = infoPhienCuoc.time;
 				dataT['dice']  = [infoPhienCuoc.dice1, infoPhienCuoc.dice2, infoPhienCuoc.dice3];
@@ -239,9 +258,31 @@ var get_phien = function(client, data){
 					dataT['dataL'] = result[0];
 					dataT['dataR'] = result[1];
 					client.red({taixiu:{get_phien:dataT}});
+
+					infoPhienCuoc = null;
+					phienCuoc     = null;
+					dataT  = null;
+					phien  = null;
+					getPhien = null;
+					//getCuoc  = null;
+					getCuoc  = null;
+					tong_L        = null;
+					tong_R        = null;
+					tong_tralai_L = null;
+					tong_tralai_R = null;
+					client = null;
 				});
 			}else{
 				client.red({notice:{title:'LỖI', text:'Phiên không tồn tại...', load:false}});
+				phien  = null;
+				getPhien = null;
+				//getCuoc  = null;
+				getCuoc  = null;
+				tong_L        = null;
+				tong_R        = null;
+				tong_tralai_L = null;
+				tong_tralai_R = null;
+				client = null;
 			}
 		});
 	}
@@ -270,9 +311,16 @@ var get_log = function(client, data){
 						}))
 						.then(function(arrayOfResults) {
 							client.red({taixiu:{get_log:{data:arrayOfResults, page:page, kmess:kmess, total:total}}});
-						})
+							client = null;
+							kmess = null;
+							page = null;
+							total = null;
+						});
 					}else{
-						client.red({taixiu:{get_log:{data:[], page:page, kmess:kmess, total:0}}});
+						client.red({taixiu:{get_log:{data:[], page:page, kmess:9, total:0}}});
+						page = null;
+						client = null;
+						kmess = null;
 					}
 				});
 			});
@@ -290,10 +338,13 @@ var get_top = async function(client, data){
 					})
 				})
 			}))
-			.then(function(data){
-				client.red({taixiu:{get_top:data}});
+			.then(function(result){
+				client.red({taixiu:{get_top:result}});
+				client = null;
 			});
 		});
+	}else{
+		client = null;
 	}
 }
 

@@ -5,6 +5,8 @@ module.exports = function(client, data){
 		let page = data.page>>0; // trang
 		if (page < 1) {
 			client.red({notice:{text: 'DỮ LIỆU KHÔNG ĐÚNG...', title: 'THẤT BẠI'}});
+			page = null;
+			client = null;
 		}else{
 			let kmess = 10;
 			AngryBirds_red.countDocuments({name: client.profile.name}).exec(function(err, total){
@@ -16,6 +18,10 @@ module.exports = function(client, data){
 					}))
 					.then(resultArr => {
 						client.red({mini:{arb:{log:{data:resultArr, page:page, kmess:kmess, total:total}}}});
+						page = null;
+						kmess = null;
+						total = null;
+						client = null;
 					})
 				});
 			});

@@ -129,10 +129,7 @@ module.exports = function(client, data){
 				if (!user || user.red < bet) {
 					client.red({mini:{arb:{status:0, notice:'Bạn không đủ RED để quay.!!'}}});
 				}else{
-					let addQuy = (bet*0.01)>>0;
-
 					let line_nohu = 0;
-					let win_arr   = null;
 					let bet_win   = 0;
 					let type      = 0;   // Loại được ăn lớn nhất trong phiên
 
@@ -141,7 +138,7 @@ module.exports = function(client, data){
 					HU.findOne({game:'arb', type:bet}, 'name bet min toX balans x', function(err, dataHu){
 						let uInfo      = {hu:0};
 						let mini_users = {hu:0};
-						let huUpdate   = {bet:addQuy, toX:0, balans:0, hu:0};
+						let huUpdate   = {bet:(bet*0.01)>>0, toX:0, balans:0, hu:0};
 
 						let nohu     = false;
 						let isBigWin = false;
@@ -174,6 +171,7 @@ module.exports = function(client, data){
 								random_celR(), 1,              0,
 							];
 						}
+						config = null;
 
 						celSS = Helpers.shuffle(celSS); // tráo bài lần 1
 						celSS = Helpers.shuffle(celSS); // tráo bài lần 2
@@ -524,59 +522,103 @@ module.exports = function(client, data){
 							if (tien < 0){
 								huUpdate['redLost'] = uInfo['redLost'] = mini_users['lost'] = tien*(-1); // Cập nhật Số Red đã Thua
 							}
-
-							AngryBirds_red.create({'name':client.profile.name, 'type':type, 'win':bet_win, 'bet':bet, 'time':new Date()}, function (err, small) {
+							let temp_bet1 = bet;
+							let temp_name1 = client.profile.name;
+							let temp_client1 = client;
+							AngryBirds_red.create({'name':temp_name1, 'type':type, 'win':bet_win, 'bet':temp_bet1, 'time':new Date()}, function (err, small) {
 								if (err){
-									client.red({mini:{arb:{status:0, notice:'Có lỗi sảy ra, vui lòng thử lại.!!'}}});
+									temp_client1.red({mini:{arb:{status:0, notice:'Có lỗi sảy ra, vui lòng thử lại.!!'}}});
 								}else{
-									client.red({mini:{arb:{status:1, cel:[cel1, cel2, cel3], celR:[celR1, celR2], line_win:result, nohu:nohu, isBigWin:isBigWin, win:bet_win}}, user:{red:user.red-bet}});
+									temp_client1.red({mini:{arb:{status:1, cel:[cel1, cel2, cel3], celR:[celR1, celR2], line_win:result, nohu:nohu, isBigWin:isBigWin, win:bet_win}}, user:{red:user.red-temp_bet1}});
 								}
+								temp_bet1 = null;
+								temp_name1 = null;
+								temp_client1 = null;
+								cel1 = null;
+								cel2 = null;
+								cel3 = null;
+								celR1 = null;
+								celR2 = null;
+								result = null;
+								bet_win = null;
+								user = null;
 							});
+							nohu     = null;
+							isBigWin = null;
+							quyHu    = null;
+							quyMin   = null;
+							toX      = null;
+							balans   = null;
+							celSS    = null;
+							line_nohu = null;
 
-							MegaJP_user.findOne({uid:client.UID}, {}, function(err, updateMega){
+							let temp_uid2 = client.UID;
+							let temp_bet2 = bet;
+							MegaJP_user.findOne({uid:temp_uid2}, {}, function(err, updateMega){
 								if (!!updateMega) {
 									if (tien > 0){
-										updateMega['win'+bet] += tien;
+										updateMega['win'+temp_bet2] += tien;
 									}
 									if (tien < 0){
-										updateMega['lost'+bet] += tien*-1;
+										updateMega['lost'+temp_bet2] += tien*-1;
 									}
 
-									let MWin    = updateMega['win'+bet];
-									let MLost   = updateMega['lost'+bet];
-									let MUpdate = updateMega['last'+bet];
+									let MWin    = updateMega['win'+temp_bet2];
+									let MLost   = updateMega['lost'+temp_bet2];
+									let MUpdate = updateMega['last'+temp_bet2];
 									let RedHuong = MLost-MWin-MUpdate;
-									if (bet !== 10000) {
-										if (RedHuong > bet*4000) {
-											updateMega[bet] += 1;
-											updateMega['last'+bet] += RedHuong;
-											MegaJP_nhan.create({'uid':client.UID, 'room':bet, 'to':100, 'sl':1, 'status':true, 'time':new Date()});
+									if (temp_bet2 !== 10000) {
+										if (RedHuong > temp_bet2*4000) {
+											updateMega[temp_bet2] += 1;
+											updateMega['last'+temp_bet2] += RedHuong;
+											MegaJP_nhan.create({'uid':temp_uid2, 'room':temp_bet2, 'to':100, 'sl':1, 'status':true, 'time':new Date()});
 										}
 									}else{
-										if (RedHuong > bet*1000) {
-											updateMega[bet] += 1;
-											updateMega['last'+bet] += RedHuong;
-											MegaJP_nhan.create({'uid':client.UID, 'room':bet, 'to':100, 'sl':1, 'status':true, 'time':new Date()});
+										if (RedHuong > temp_bet2*1000) {
+											updateMega[temp_bet2] += 1;
+											updateMega['last'+temp_bet2] += RedHuong;
+											MegaJP_nhan.create({'uid':temp_uid2, 'room':temp_bet2, 'to':100, 'sl':1, 'status':true, 'time':new Date()});
 										}
 									}
 									updateMega.save();
+									MWin    = null;
+									MLost   = null;
+									MUpdate = null;
+									RedHuong = null;
 								}
+								temp_uid2 = null;
+								temp_bet2 = null;
+								tien = null;
 							});
 							HU.updateOne({game:'arb', type:bet}, {$inc:huUpdate}).exec();
 							UserInfo.updateOne({id:client.UID}, {$inc:uInfo}).exec();
 							AngryBirds_user.updateOne({'uid':client.UID}, {$set:{time:new Date().getTime(), select:bet}, $inc:mini_users}).exec();
 
+							uInfo      = null;
+							mini_users = null;
+
+							let temp_bet3 = bet;
+							let temp_name3 = client.profile.name;
 							let vipStatus = Helpers.getConfig('topVip');
 							if (!!vipStatus && vipStatus.status === true) {
-								TopVip.updateOne({'name':client.profile.name}, {$inc:{vip:bet}}).exec(function(errV, userV){
+								TopVip.updateOne({'name':temp_name3}, {$inc:{vip:temp_bet3}}).exec(function(errV, userV){
 									if (!!userV && userV.n === 0) {
 										try{
-							    			TopVip.create({'name':client.profile.name, 'vip':bet});
+											TopVip.create({'name':temp_name3, 'vip':temp_bet3});
+											temp_name3 = null;
+											temp_bet3 = null;
 										} catch(e){
+											temp_name3 = null;
+											temp_bet3 = null;
 										}
 									}
 								});
+							}else{
+								temp_name3 = null;
+								temp_bet3 = null;
 							}
+							bet = null;
+							client = null;
 						})
 					})
 				}

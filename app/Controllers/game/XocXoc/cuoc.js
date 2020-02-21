@@ -78,6 +78,9 @@ module.exports = function(client, data){
 								name = null;
 								cuoc = null;
 							});
+						}else{
+							name = null;
+							cuoc = null;
 						}
 
 						client  = null;
