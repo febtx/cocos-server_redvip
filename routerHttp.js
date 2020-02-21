@@ -27,6 +27,11 @@ module.exports = function(app, redT) {
 	});
 
 	// Admin
+	app.get('/download/android', function(req, res) {
+		return res.render('download/android');
+	});
+
+	// Admin
 	app.get('/68ClubA/', function(req, res) {
 		return res.render('admin');
 	});
