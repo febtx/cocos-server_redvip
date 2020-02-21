@@ -534,9 +534,10 @@ var BaCay = function(bacay, singID, game){
 		let totall = 0; // tổng tiền chương phải trả
 		list.forEach(function(player){
 			if (player.betChuong > 0) {
-				let win = player.betChuong*2;
+				let an = (player.betChuong*0.98)>>0; // trừ phế 2%
+				let win = an+player.betChuong;
 				totall += player.betChuong;
-				player.totall += player.betChuong;
+				player.totall += an;
 				player.balans += win;
 				UserInfo.findOneAndUpdate({id:player.uid}, {$inc:{red:win}}).exec(function(err, user){
 					if (!!user) {
@@ -608,7 +609,7 @@ var BaCay = function(bacay, singID, game){
 		let totall = 0; // tổng tiền chương ăn
 		list.forEach(function(player){
 			if (player.betChuong > 0) {
-				totall += player.betChuong;
+				totall += (player.betChuong*0.98)>>0; // trừ phế 2%
 				player.totall -= player.betChuong;
 			}
 		});

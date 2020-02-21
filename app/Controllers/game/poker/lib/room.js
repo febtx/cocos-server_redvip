@@ -706,12 +706,13 @@ Poker.prototype.winer = function(player){
 	let array = [objWin];
 
 	this.playerInGame.forEach(function(obj, index){
-		if (player !== obj.data) {
+		if (player !== obj.data && obj.data.bet > 0) {
 			if (obj.data.bet <= player.bet) {
 				// ăn tất
-				objWin.info.win += obj.data.bet;
-				objWin.data.balans += obj.data.bet;
-				player.balans      += obj.data.bet;
+				let an = (obj.data.bet*0.98)>>0; // trừ phế 2%
+				objWin.info.win += an;
+				objWin.data.balans += an;
+				player.balans      += an;
 				if (obj.data.isOut === false) {
 					if (obj.data.isHuy) {
 						array = array.concat({ghe:obj.data.map, data:{balans:obj.data.balans}, info:{lost:obj.data.bet}});
@@ -721,9 +722,10 @@ Poker.prototype.winer = function(player){
 				}
 			}else{
 				// có trả lại
-				objWin.info.win += player.bet;
-				objWin.data.balans += player.bet;
-				player.balans      += player.bet;
+				let an = (player.bet*0.98)>>0; // trừ phế 2%
+				objWin.info.win += an;
+				objWin.data.balans += an;
+				player.balans      += an;
 				if (obj.data.isOut) {
 					obj.data.du = obj.data.bet-player.bet;
 					obj.data.tralai();

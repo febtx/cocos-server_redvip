@@ -398,9 +398,20 @@ XocXoc.prototype.randomChip = function(){
 }
 
 XocXoc.prototype.randomBox = function(){
-	let a = Math.floor(Math.random()*6);
-	let data = ['chan', 'le', 'red3', 'red4', 'white3', 'white4'];
-	return data[a];
+	let a = Math.floor(Math.random()*46);
+	if (a >= 0 && a < 10) {
+		return 'chan';
+	}else if (a >= 0 && a < 20) {
+		return 'le';
+	}else if (a >= 20 && a < 28) {
+		return 'red3';
+	}else if (a >= 28 && a < 36) {
+		return 'white3';
+	}else if (a >= 36 && a < 41) {
+		return 'red4';
+	}else if (a >= 41 && a < 46) {
+		return 'white4';
+	}
 }
 
 XocXoc.prototype.randomTime = function(){
