@@ -24,7 +24,19 @@ module.exports = function() {
 			let content = data.data.content;
 			if (content.length > 100) {
 				let dom = new JSDOM(`<!DOCTYPE html>`+content);
+
+				let date = dom.window.document.querySelector('h2').textContent;
+				date = date.match(/[0-9]{1,2}-[0-9]{1,2}-[0-9]{4}/);
+				if (date.length > 0) {
+					date = date[0];
+					let arrD = date.split('-');
+					date = Helpers.numberPad(arrD[0], 2) + '/' + Helpers.numberPad(arrD[1], 2) + '/' + arrD[2];
+				}else{
+					return;
+				}
+
 				let number = dom.window.document.getElementsByClassName('number');
+
 				let db   = check(number[0].textContent);
 				let g1   = check(number[1].textContent);
 
@@ -64,13 +76,6 @@ module.exports = function() {
 				let g7_3 = check(number[25].textContent);
 				let g7_4 = check(number[26].textContent);
 				let g7   = [g7_1, g7_2, g7_3, g7_4];
-
-				let date = dom.window.document.getElementsByClassName('title-a')[2].textContent;
-				date = date.trim();
-				date = date.split(' ');
-				date = date[date.length-1];
-				let arrD = date.split('-');
-				date = Helpers.numberPad(arrD[0], 2) + '/' + Helpers.numberPad(arrD[1], 2) + '/' + arrD[2];
 
 				dom = null;
 				number = null;
