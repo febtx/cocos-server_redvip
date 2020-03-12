@@ -12,12 +12,12 @@ module.exports = function(client, data){
 		regOpen(client);
 	}
 	if (!!data.cuoc) {
-		cuoc(client, data.cuoc)
+		cuoc(client, data.cuoc);
 	}
 	if (data.tops) {
-		tops(client)
+		tops(client);
 	}
 	if (!!data.viewlogs) {
-		viewlogs(client, data.viewlogs)
+		viewlogs(client, data.viewlogs);
 	}
 };

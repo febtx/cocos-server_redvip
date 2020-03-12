@@ -12,6 +12,8 @@ module.exports = function(client){
 		}))
 		.then(function(data){
 			client.red({mini:{baucua:{tops:data}}});
+			data = null;
+			client = null;
 		});
 	});
 };
